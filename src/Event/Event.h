@@ -4,11 +4,11 @@
 #include <string>
 
 namespace Event {
-    typedef std::string EventType;
 
     class Event {
     public:
-        Event(const EventType & type): type_(type)
+        typedef std::string Type;
+        Event(const Type & type): type_(type)
         {}
 
         Event (const Event & event): type_(event.type_)
@@ -19,13 +19,13 @@ namespace Event {
 
         // virtual std::string serialize() const = 0;
 
-        const EventType & getType()const
+        const Type & getType()const
         {
             return type_;
         }
 
     private:
-        EventType type_;
+        Type type_;
     };
 
 }

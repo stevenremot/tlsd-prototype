@@ -2,27 +2,26 @@
 #include <iostream>
 
 #include "Event/EventManager.h"
+#include "Ecs/World.h"
 
 using std::cout;
 using std::endl;
 
-using Event::EventType;
-
 class QuitEvent: public Event::Event
 {
 public:
-static const EventType Type;
-    QuitEvent(): Event::Event(Type)
+    static const Event::Type TYPE;
+    QuitEvent(): Event::Event(TYPE)
     {}
 };
-const EventType QuitEvent::Type = "quit";
+const Event::Event::Type QuitEvent::TYPE = "quit";
 
 class PrintEvent: public Event::Event
 {
 public:
-static const EventType Type;
+    static const Type TYPE;
 
-    PrintEvent(char c): Event::Event(Type), c_(c)
+    PrintEvent(char c): Event::Event(TYPE), c_(c)
     {}
 
     char getChar() const
@@ -33,9 +32,9 @@ private:
     char c_;
 };
 
-const EventType PrintEvent::Type = "print";
+const Event::Event::Type PrintEvent::TYPE = "print";
 
-class PrintListener: public Event::EventListener
+class PrintListener: public Event::EventListenerInterface
 {
 public:
     virtual void call(const Event::Event & event)
@@ -46,7 +45,7 @@ public:
 
 static bool loop = true;
 
-class QuitListener: public Event::EventListener
+class QuitListener: public Event::EventListenerInterface
 {
 public:
     virtual void call(const Event::Event & event)
@@ -55,12 +54,32 @@ public:
     }
 };
 
+class MessageComponent: public Ecs::Component
+{
+public:
+    static const Ecs::Component::Type Type;
+    MessageComponent(const char * message): Component(Type),
+                                            message_(message)
+    {}
+
+    const char * getMessage() const
+    {
+        return message_;
+    }
+
+private:
+    const char * message_;
+};
+
+const Ecs::Component::Type MessageComponent::Type = "message";
+
 int main() {
+    // Event test
     Event::EventManager m;
     Event::ListenerRegister & reg = m.getListenerRegister();
 
-    reg.put(PrintEvent::Type, new PrintListener());
-    reg.put(QuitEvent::Type, new QuitListener());
+    reg.put(PrintEvent::TYPE, new PrintListener());
+    reg.put(QuitEvent::TYPE, new QuitListener());
 
     Event::EventQueue & queue = m.getEventQueue();
 
@@ -74,6 +93,27 @@ int main() {
     while (loop)
     {
         m.run();
+    }
+
+    // Ecs test
+    cout << endl;
+    Ecs::World w = Ecs::World();
+
+    Ecs::Entity entity1 = w.createEntity();
+    w.addComponent(entity1, new MessageComponent("Hello world !"));
+    Ecs::Entity entity2 = w.createEntity();
+
+    Ecs::ComponentGroup::ComponentTypeCollection types;
+    types.insert(MessageComponent::Type);
+
+    Ecs::ComponentGroup prototype(types);
+    Ecs::World::ComponentGroupCollection groups = w.getComponents(prototype);
+
+    Ecs::World::ComponentGroupCollection::iterator group;
+    for (group = groups.begin(); group != groups.end(); ++group)
+    {
+        cout << group->getEntity() << " says ";
+        cout << static_cast<MessageComponent &>(group->getComponent(MessageComponent::Type)).getMessage() << endl;
     }
 
     return 0;

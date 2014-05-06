@@ -5,21 +5,21 @@
 #include <list>
 
 #include "Event.h"
-#include "EventListener.h"
+#include "EventListenerInterface.h"
 
 namespace Event
 {
     class ListenerRegister
     {
     public:
-        typedef std::list<EventListener *> EventListenerList;
+        typedef std::list<EventListenerInterface *> EventListenerList;
 
-        void put(EventType type, EventListener * listener);
+        void put(Event::Type type, EventListenerInterface * listener);
 
-        const EventListenerList getListeners(EventType type) const;
+        const EventListenerList getListeners(Event::Type type) const;
 
     private:
-        std::map< EventType, EventListenerList > listeners_;
+        std::map< Event::Type, EventListenerList > listeners_;
     };
 }
 

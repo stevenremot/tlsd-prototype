@@ -6,12 +6,12 @@ using std::out_of_range;
 
 namespace Event
 {
-    void ListenerRegister::put(EventType type, EventListener * listener)
+    void ListenerRegister::put(Event::Type type, EventListenerInterface * listener)
     {
         listeners_[type].push_back(listener);
     }
 
-    const ListenerRegister::EventListenerList ListenerRegister::getListeners(EventType type) const
+    const ListenerRegister::EventListenerList ListenerRegister::getListeners(Event::Type type) const
     {
         try
         {
