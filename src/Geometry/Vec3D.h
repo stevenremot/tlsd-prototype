@@ -164,7 +164,7 @@ namespace Geometry
     template<typename T>
     std::ostream& operator<<(std::ostream& out, const Vec3D<T>& vec)
     {
-        out << "Vec3D(" <<
+        return out << "Vec3D(" <<
             vec.getX() << ", " <<
             vec.getY() << ", " <<
             vec.getZ() << ")";

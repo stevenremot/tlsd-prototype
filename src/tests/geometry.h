@@ -17,27 +17,18 @@
     <http://www.gnu.org/licenses/>.
 */
 
-#include <cstdlib>
-#include <iostream>
-#include <vector>
+#ifndef TESTS_GEOMETRY_H
+#define TESTS_GEOMETRY_H
 
-#include "tests/event.h"
-#include "tests/ecs.h"
-#include "tests/geometry.h"
-
-using std::cout;
-using std::endl;
-using std::string;
-using std::vector;
-
-
-
-
-int main()
+namespace GeometryTest
 {
-    // EventTest::testEvents();
-    // EcsTest::testEcs();
-    GeometryTest::testVectors();
-
-    return 0;
+    void testVectors();
 }
+
+
+#endif
+
+// Emacs local variables
+// Local variables:
+// mode: c++
+// End:

@@ -149,7 +149,7 @@ namespace Geometry
     template<typename T>
     std::ostream& operator<<(std::ostream& out, const Vec2D<T>& vec)
     {
-        out << "Vec2D(" << vec.getX() << ", " << vec.getY() << ")";
+        return out << "Vec2D(" << vec.getX() << ", " << vec.getY() << ")";
     }
 
     typedef Vec2D<int> Vec2Di;
