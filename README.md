@@ -5,6 +5,10 @@
 This is the prototype of an action RPG game developed for a school
 project: The Lost Souls Downfall.
 
+##Dependencies##
+
+- pthread
+
 ##Contributions##
 
 As it is a school project, we can not accept contributions for now.
