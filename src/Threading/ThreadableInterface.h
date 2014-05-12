@@ -17,44 +17,25 @@
     <http://www.gnu.org/licenses/>.
 */
 
-#ifndef EVENT_EVENT_H
-#define EVENT_EVENT_H
+#ifndef THREADING_THREADABLE_INTERFACE_H
+#define THREADING_THREADABLE_INTERFACE_H
 
-#include <string>
-
-namespace Event {
+namespace Threading
+{
     /**
-     * Base class for all the application's events.
+     * Interface for code blocks that can run into a thread.
      */
-    class Event {
+    class ThreadableInterface
+    {
     public:
         /**
-         * The type of event's types.
-         *
-         * Each event should define it's type as a static variable named Type,
-         * and pass it in Event base constructor at instanciation.
+         * This method will be executed at each thread loop.
          */
-        typedef std::string Type;
-
-        Event(const Type & type): type_(type)
-        {}
-
-        Event (const Event & event): type_(event.type_)
-        {}
-
-        virtual ~Event()
-        {}
-
-        const Type & getType() const
-        {
-            return type_;
-        }
-
-    private:
-        Type type_;
+        virtual void run() = 0;
     };
 
 }
+
 #endif
 
 // Emacs local variables

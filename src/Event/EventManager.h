@@ -20,6 +20,7 @@
 #ifndef EVENT_EVENT_MANAGER_H
 #define EVENT_EVENT_MANAGER_H
 
+#include "../Threading/ThreadableInterface.h"
 #include "EventQueue.h"
 #include "ListenerRegister.h"
 
@@ -28,7 +29,7 @@ namespace Event
     /**
      * Class in charge of running the event loop.
      */
-    class EventManager
+    class EventManager: public Threading::ThreadableInterface
     {
     public:
         /**

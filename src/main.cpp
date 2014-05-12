@@ -19,12 +19,17 @@
 
 #include <cstdlib>
 #include <iostream>
+#include <vector>
 
 #include "Event/EventManager.h"
 #include "Ecs/World.h"
+#include "Threading/ThreadableInterface.h"
+#include "Threading/Thread.h"
 
 using std::cout;
 using std::endl;
+using std::string;
+using std::vector;
 
 class QuitEvent: public Event::Event
 {
@@ -47,6 +52,7 @@ public:
     {
         return c_;
     }
+
 private:
     char c_;
 };
@@ -100,6 +106,12 @@ int main() {
     reg.put(PrintEvent::TYPE, new PrintListener());
     reg.put(QuitEvent::TYPE, new QuitListener());
 
+    vector<Threading::ThreadableInterface*> threadables;
+    threadables.push_back(&m);
+
+    Threading::Thread eventThread(threadables, 1);
+    eventThread.start();
+
     Event::EventQueue & queue = m.getEventQueue();
 
     queue.push(new PrintEvent('h'));
@@ -111,8 +123,11 @@ int main() {
 
     while (loop)
     {
-        m.run();
+        cout << ".";
+        Threading::sleep(0, 500);
     }
+
+    eventThread.stop();
 
     // Ecs test
     cout << endl;

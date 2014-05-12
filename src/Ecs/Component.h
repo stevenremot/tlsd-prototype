@@ -60,13 +60,6 @@ namespace Ecs
             return type_;
         }
 
-        /**
-         * Converts the component to a character string.
-         *
-         * TODO: externalize?
-         */
-        virtual std::string serialize() const;
-
     private:
         Type type_;
     };
