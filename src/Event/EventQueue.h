@@ -24,11 +24,13 @@
 
 #include "Event.h"
 
-namespace Event {
+namespace Event
+{
     /**
      * Represent a queue of events.
      */
-    class EventQueue {
+    class EventQueue
+    {
     public:
         /**
          * Push an event at the back of the queue.
@@ -36,16 +38,16 @@ namespace Event {
          * A pointer is required because the event could live longer
          * than the function that provided it.
          */
-        void push(const Event * event);
+        void push(const Event* event);
 
         /**
          * Return the event at the top of the queue and remove it.
          *
          * *Caution*: It is up to the caller to handle event's deletion.
          */
-        const Event * pop();
+        const Event* pop();
     private:
-        std::list<const Event *> events_;
+        std::list<const Event*> events_;
     };
 }
 

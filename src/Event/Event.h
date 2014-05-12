@@ -22,11 +22,13 @@
 
 #include <string>
 
-namespace Event {
+namespace Event
+{
     /**
      * Base class for all the application's events.
      */
-    class Event {
+    class Event
+    {
     public:
         /**
          * The type of event's types.
@@ -36,16 +38,16 @@ namespace Event {
          */
         typedef std::string Type;
 
-        Event(const Type & type): type_(type)
+        Event(const Type& type): type_(type)
         {}
 
-        Event (const Event & event): type_(event.type_)
+        Event (const Event& event): type_(event.type_)
         {}
 
         virtual ~Event()
         {}
 
-        const Type & getType() const
+        const Type& getType() const
         {
             return type_;
         }

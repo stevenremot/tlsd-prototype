@@ -22,16 +22,18 @@
 
 #include "Event.h"
 
-namespace Event {
+namespace Event
+{
     /**
      * Interface for classes that can be called when an event occurs.
      */
-    class EventListenerInterface {
+    class EventListenerInterface
+    {
     public:
         /**
          * Method to call when the wanted type of event occurs
          */
-        virtual void call(const Event & event) = 0;
+        virtual void call(const Event& event) = 0;
     };
 
 }

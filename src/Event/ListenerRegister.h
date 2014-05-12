@@ -37,12 +37,12 @@ namespace Event
         /**
          * Type of the event lists returns by the query methods.
          */
-        typedef std::list<EventListenerInterface *> EventListenerList;
+        typedef std::list<EventListenerInterface*> EventListenerList;
 
         /**
          * Add an association between an event type and a listener.
          */
-        void put(Event::Type type, EventListenerInterface * listener);
+        void put(Event::Type type, EventListenerInterface* listener);
 
         /**
          * Return event listeners associated to type.

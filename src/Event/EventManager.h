@@ -40,12 +40,12 @@ namespace Event
          */
         void run();
 
-        EventQueue & getEventQueue()
+        EventQueue& getEventQueue()
         {
             return queue_;
         }
 
-        ListenerRegister & getListenerRegister()
+        ListenerRegister& getListenerRegister()
         {
             return listeners_;
         }
