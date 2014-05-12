@@ -26,10 +26,17 @@
 #include "Threading/ThreadableInterface.h"
 #include "Threading/Thread.h"
 
+#include "Geometry/Vec2D.h"
+#include "Geometry/Vec3D.h"
+
 using std::cout;
 using std::endl;
 using std::string;
 using std::vector;
+
+//////////////////////////////////////////////////
+// Test events
+//////////////////////////////////////////////////
 
 class QuitEvent: public Event::Event
 {
@@ -79,27 +86,8 @@ public:
     }
 };
 
-class MessageComponent: public Ecs::Component
+void testEvents()
 {
-public:
-    static const Ecs::Component::Type Type;
-    MessageComponent(const char * message): Component(Type),
-                                            message_(message)
-    {}
-
-    const char * getMessage() const
-    {
-        return message_;
-    }
-
-private:
-    const char * message_;
-};
-
-const Ecs::Component::Type MessageComponent::Type = "message";
-
-int main() {
-    // Event test
     Event::EventManager m;
     Event::ListenerRegister & reg = m.getListenerRegister();
 
@@ -128,9 +116,29 @@ int main() {
     }
 
     eventThread.stop();
+}
 
-    // Ecs test
-    cout << endl;
+class MessageComponent: public Ecs::Component
+{
+public:
+    static const Ecs::Component::Type Type;
+    MessageComponent(const char * message): Component(Type),
+                                            message_(message)
+    {}
+
+    const char * getMessage() const
+    {
+        return message_;
+    }
+
+private:
+    const char * message_;
+};
+
+const Ecs::Component::Type MessageComponent::Type = "message";
+
+void testEcs()
+{
     Ecs::World w = Ecs::World();
 
     Ecs::Entity entity1 = w.createEntity();
@@ -149,6 +157,35 @@ int main() {
         cout << group->getEntity() << " says ";
         cout << static_cast<MessageComponent &>(group->getComponent(MessageComponent::Type)).getMessage() << endl;
     }
+}
+
+void testVectors()
+{
+    Geometry::Vec2Df v1(1, 2);
+    Geometry::Vec2Df v2(4, 5);
+
+    cout << v1 + v2 << endl;
+    cout << v1 - v2 << endl;
+    cout << v1 * v2 << endl;
+    cout << v1 * 4 << endl;
+    cout << -v1 << endl;
+    cout << v1.getLength() << endl;
+
+    Geometry::Vec3Df v3(1, 2, 3);
+    Geometry::Vec3Df v4(4, 5, 6);
+
+    cout << v3 + v4 << endl;
+    cout << v3 - v4 << endl;
+    cout << v3 * v4 << endl;
+    cout << v3 * 4 << endl;
+    cout << -v3 << endl;
+    cout << v3.getLength() << endl;
+}
+
+int main() {
+    // testEvents();
+    // testEcs();
+    testVectors();
 
     return 0;
 }
