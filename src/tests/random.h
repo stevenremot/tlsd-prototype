@@ -17,26 +17,17 @@
     <http://www.gnu.org/licenses/>.
 */
 
-#include <cstdlib>
-#include <iostream>
-#include <vector>
+#ifndef TESTS_RANDOM_H
+#define TESTS_RANDOM_H
 
-#include "tests/event.h"
-#include "tests/ecs.h"
-#include "tests/geometry.h"
-#include "tests/random.h"
-
-using std::cout;
-using std::endl;
-using std::string;
-using std::vector;
-
-int main()
+namespace RandomTest
 {
-    // EventTest::testEvents();
-    // EcsTest::testEcs();
-    // GeometryTest::testVectors();
-    RandomTest::testNumberGenerator();
-
-    return 0;
+    void testNumberGenerator();
 }
+
+#endif
+
+// Emacs local variables
+// Local variables:
+// mode: c++
+// End:

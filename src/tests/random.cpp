@@ -17,26 +17,33 @@
     <http://www.gnu.org/licenses/>.
 */
 
-#include <cstdlib>
-#include <iostream>
-#include <vector>
+#include "random.h"
 
-#include "tests/event.h"
-#include "tests/ecs.h"
-#include "tests/geometry.h"
-#include "tests/random.h"
+#include <iostream>
+
+#include "../Random/NumberGenerator.h"
 
 using std::cout;
 using std::endl;
-using std::string;
-using std::vector;
 
-int main()
+namespace RandomTest
 {
-    // EventTest::testEvents();
-    // EcsTest::testEcs();
-    // GeometryTest::testVectors();
-    RandomTest::testNumberGenerator();
+    void testNumberGenerator()
+    {
+        Random::NumberGenerator ng;
 
-    return 0;
+        cout << "Uniform : " << endl;
+        for (unsigned int i = 0; i < 10; i++)
+        {
+            cout << ng.getUniform(0) << ", ";
+        }
+        cout << endl;
+
+        cout << "Poisson : " << endl;
+        for (unsigned int i = 0; i < 10; i++)
+        {
+            cout << ng.getPoisson(6) << ", ";
+        }
+        cout << endl;
+    }
 }
