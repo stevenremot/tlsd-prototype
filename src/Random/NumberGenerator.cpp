@@ -44,8 +44,6 @@ namespace Random
     float NumberGenerator::getUniform(float min, float max)
     {
         currentSeed_ = computeNextSeed();
-        // std::cout << "Current seed : " << currentSeed_ << std::endl;
-        // std::cout << "Max          : " << RandMax << std::endl;
         return (static_cast<float>(currentSeed_) / static_cast<float>(RandMax)) *
             (max - min) + min;
     }

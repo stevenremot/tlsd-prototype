@@ -1,7 +1,7 @@
 debugEnv = Environment()
 debugEnv.Append(CXXFLAGS = ["-Wall", "-g"])
 
-# Uncomment it to use Clanginstead of gcc
+# Uncomment it to use Clang instead of gcc
 # Clang can be more verbose on some errors
 # debugEnv.Replace(CC = "clang",
 #                  CXX = "clang++")
