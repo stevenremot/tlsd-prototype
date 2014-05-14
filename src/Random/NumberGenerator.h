@@ -20,14 +20,12 @@
 #ifndef RANDOM_NUMBER_GENERATOR_H
 #define RANDOM_NUMBER_GENERATOR_H
 
-#include <cstdint>
-
 namespace Random
 {
     /**
      * Random number generator seed
      */
-    typedef std::uint32_t Seed;
+    typedef unsigned int Seed;
     /**
      * Create a seed
      *
