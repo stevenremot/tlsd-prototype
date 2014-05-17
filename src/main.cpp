@@ -25,6 +25,7 @@
 #include "tests/ecs.h"
 #include "tests/geometry.h"
 #include "tests/random.h"
+#include "tests/graph.h"
 
 using std::cout;
 using std::endl;
@@ -36,7 +37,8 @@ int main()
     // EventTest::testEvents();
     // EcsTest::testEcs();
     // GeometryTest::testVectors();
-    RandomTest::testNumberGenerator();
+    // RandomTest::testNumberGenerator();
+    GraphTest::testPlanarGraph();
 
     return 0;
 }

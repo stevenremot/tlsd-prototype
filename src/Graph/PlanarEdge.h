@@ -42,12 +42,15 @@ namespace Graph
             }
         };
 
+        PlanarEdge() {};
         PlanarEdge(const PlanarNode& firstNode,
                    const PlanarNode& secondNode,
                    const lemon::ListGraph::Edge edge);
 
         PlanarEdge(const PlanarEdge& edge);
         PlanarEdge& operator=(const PlanarEdge& edge);
+
+        bool operator==(const PlanarEdge& edge) const;
 
         // Getters and setters
         PlanarNode& getFirstNode() { return firstNode_; }
@@ -57,6 +60,11 @@ namespace Graph
         PlanarNode& getSecondNode() { return secondNode_; }
         const PlanarNode& getSecondNode() const { return secondNode_; }
         void setSecondNode(const PlanarNode& node) { secondNode_ = node; }
+
+        /**
+         * Return true if the given node is at one extremity of the edge
+         */
+        bool hasNode(const PlanarNode& node);
 
         /**
          * Return the other extremity of the edge

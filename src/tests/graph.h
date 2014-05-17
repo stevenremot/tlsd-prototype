@@ -17,39 +17,17 @@
     <http://www.gnu.org/licenses/>.
 */
 
-#include "PlanarNode.h"
+#ifndef TESTS_GRAPH_H
+#define TESTS_GRAPH_H
 
-using Geometry::Vec2Df;
-
-namespace Graph
+namespace GraphTest
 {
-    PlanarNode::PlanarNode()
-    {}
-
-    PlanarNode::PlanarNode(const Vec2Df& position):
-        position_(position)
-    {}
-
-    PlanarNode::PlanarNode(const lemon::ListGraph::Node& node,
-                           const Geometry::Vec2Df& position):
-        node_(node),
-        position_(position)
-    {}
-
-    PlanarNode::PlanarNode(const PlanarNode& node):
-        node_(node.node_),
-        position_(node.position_)
-    {}
-
-    PlanarNode& PlanarNode::operator=(const PlanarNode& node)
-    {
-        node_ = node.node_;
-        position_ = node.position_;
-        return *this;
-    }
-
-    bool PlanarNode::operator==(const PlanarNode& node) const
-    {
-        return position_ == node.position_;
-    }
+    void testPlanarGraph();
 }
+
+#endif
+
+// Emacs local variables
+// Local variables:
+// mode: c++
+// End:

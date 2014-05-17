@@ -10,7 +10,7 @@ if ARGUMENTS.get("clang", 0):
     env.Replace(CC = "clang",
                 CXX = "clang++")
 
-env.Program('program', Glob('src/*.cpp') + Glob('src/**/*.cpp'), LIBS=["pthread"])
+env.Program('program', Glob('src/*.cpp') + Glob('src/**/*.cpp'), LIBS=["pthread", "emon"])
 
 # Emacs local variables
 # Local variables:

@@ -43,6 +43,17 @@ namespace Graph
         return *this;
     }
 
+    bool PlanarEdge::operator==(const PlanarEdge& edge) const
+    {
+        return firstNode_ == edge.firstNode_ &&
+            secondNode_ == edge.secondNode_;
+    }
+
+    bool PlanarEdge::hasNode(const PlanarNode& node)
+    {
+        return firstNode_ == node || secondNode_ == node;
+    }
+
     PlanarNode& PlanarEdge::getNode(const PlanarNode& node)
     {
         if (node == firstNode_)

@@ -34,6 +34,8 @@ namespace Graph
     class PlanarNode
     {
     public:
+        PlanarNode();
+        PlanarNode(const Geometry::Vec2Df& position);
         PlanarNode(const lemon::ListGraph::Node& node,
                    const Geometry::Vec2Df& position);
 
