@@ -49,6 +49,7 @@ namespace ThreadingTest
             messages_.push_back("hello");
             messages_.push_back("world");
             messages_.push_back("!");
+            messages_.push_back("/quit");
         }
 
         void run()
@@ -58,10 +59,6 @@ namespace ThreadingTest
                 cout << "Sending " << messages_.front() << endl;
                 chanInput_ << messages_.front();
                 messages_.pop_front();
-            }
-            else
-            {
-                chanInput_.close();
             }
         }
 
@@ -87,15 +84,16 @@ namespace ThreadingTest
         bool loop = true;
         while (loop)
         {
-            if (chanOutput.isClosed())
+            string message;
+            chanOutput >> message;
+
+            if (message == "/quit")
             {
                 cout << "Closed" << endl;
                 loop = false;
             }
             else
             {
-                string message;
-                chanOutput >> message;
                 cout << "Message received : " << message << endl;
             }
         }

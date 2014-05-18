@@ -35,11 +35,11 @@ using std::vector;
 
 int main()
 {
-    // EventTest::testEvents();
-    // EcsTest::testEcs();
-    // GeometryTest::testVectors();
-    // RandomTest::testNumberGenerator();
-    // GraphTest::testPlanarGraph();
+    EventTest::testEvents();
+    EcsTest::testEcs();
+    GeometryTest::testVectors();
+    RandomTest::testNumberGenerator();
+    GraphTest::testPlanarGraph();
     ThreadingTest::testChannel();
 
     return 0;

@@ -44,15 +44,13 @@ namespace Threading
     class Channel
     {
     public:
-        Channel(): data_(new std::list<T>), refs_(new int), closed_(new bool)
+        Channel(): data_(new std::list<T>), refs_(new int)
         {
             *refs_ = 1;
-            *closed_ = false;
         }
 
         Channel(const Channel& channel): data_(channel.data_),
-                                         refs_(channel.refs_),
-                                         closed_(channel.closed_)
+                                         refs_(channel.refs_)
         {
             (*refs_) += 1;
         }
@@ -62,7 +60,6 @@ namespace Threading
             freeData();
             data_ = channel.data_;
             refs_ = channel.refs_;
-            closed_ = channel.closed_;
 
             (*refs_) += 1;
 
@@ -74,25 +71,13 @@ namespace Threading
             freeData();
         }
 
-        bool isClosed() const
-        {
-            return *closed_;
-        }
-
-        void close()
-        {
-            *closed_ = true;
-        }
-
         void operator<<(const T& data)
         {
-            ensureNotClosed();
             data_->push_back(data);
         }
 
         void operator>>(T& data)
         {
-            ensureNotClosed();
             while(data_->empty())
             {
                 sleep(0, 10);
@@ -105,15 +90,6 @@ namespace Threading
     private:
         std::list<T>* data_;
         int* refs_;
-        bool* closed_;
-
-        void ensureNotClosed() const
-        {
-            if (isClosed())
-            {
-                throw ChannelClosedException();
-            }
-        }
 
         void freeData()
         {
@@ -123,7 +99,6 @@ namespace Threading
             {
                 delete data_;
                 delete refs_;
-                delete closed_;
             }
         }
     };
@@ -156,22 +131,6 @@ namespace Threading
             channel_ << data;
         }
 
-        /**
-         * Return true if the channel is closed.
-         */
-        bool isClosed() const
-        {
-            return channel_.isClosed();
-        }
-
-        /**
-         * Close the channel
-         */
-        void close()
-        {
-            channel_.close();
-        }
-
     private:
         Channel<T> channel_;
     };
@@ -202,22 +161,6 @@ namespace Threading
         void operator>>(T& data)
         {
             channel_ >> data;
-        }
-
-        /**
-         * Return true if the channel is closed.
-         */
-        bool isClosed() const
-        {
-            return channel_.isClosed();
-        }
-
-        /**
-         * Close the channel
-         */
-        void close()
-        {
-            channel_.close();
         }
 
     private:
