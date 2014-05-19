@@ -1,9 +1,24 @@
-debugEnv = Environment()
-debugEnv.Append(CXXFLAGS = ["-Wall", "-g"])
+env = Environment()
 
-# Uncomment it to use Clang instead of gcc
-# Clang can be more verbose on some errors
-# debugEnv.Replace(CC = "clang",
-#                  CXX = "clang++")
+env.Append(CXXFLAGS = ["-Wall"])
 
-debugEnv.Program('program', Glob('src/*.cpp') + Glob('src/**/*.cpp'), LIBS=["pthreadGC2"])
+if ARGUMENTS.get("debug", 0):
+    env.Append(CXXFLAGS = ["-g"])
+
+
+if ARGUMENTS.get("clang", 0):
+    env.Replace(CC = "clang",
+                CXX = "clang++")
+
+libs = []
+if env['PLATFORM'] == 'win32':
+	libs = ["pthreadGC2","lemon"]
+elif env['PLATFORM'] == 'posix':
+	libs = ["pthread","emon"]
+					
+env.Program('program', Glob('src/*.cpp') + Glob('src/**/*.cpp'), LIBS=libs)
+
+# Emacs local variables
+# Local variables:
+# mode: python
+# End:
