@@ -15,7 +15,8 @@ namespace Threading {
         struct timespec tim;
         tim.tv_sec = seconds;
         tim.tv_nsec = milliseconds * 1000000L;
-        return nanosleep(&tim, NULL);
+        //return nanosleep(&tim, NULL);
+        return 0;
     }
 
     void Thread::start()

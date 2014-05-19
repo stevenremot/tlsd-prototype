@@ -6,4 +6,4 @@ debugEnv.Append(CXXFLAGS = ["-Wall", "-g"])
 # debugEnv.Replace(CC = "clang",
 #                  CXX = "clang++")
 
-debugEnv.Program('program', Glob('src/*.cpp') + Glob('src/**/*.cpp'), LIBS=["pthread"])
+debugEnv.Program('program', Glob('src/*.cpp') + Glob('src/**/*.cpp'), LIBS=["pthreadGC2"])
