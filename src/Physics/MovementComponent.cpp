@@ -1,3 +1,6 @@
-#include "movementcomponent.h"
+#include "MovementComponent.h"
 
-const Ecs::Component::Type MovementComponent::Type = "movement";
+namespace Physics
+{
+  const Ecs::Component::Type MovementComponent::Type = "movement";
+}

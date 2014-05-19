@@ -1,3 +1,6 @@
-#include "positioncomponent.h"
+#include "PositionComponent.h"
 
-const Ecs::Component::Type PositionComponent::Type = "position";
+namespace Geometry
+{
+  const Ecs::Component::Type PositionComponent::Type = "position";
+}
