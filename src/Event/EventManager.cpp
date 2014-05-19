@@ -23,9 +23,7 @@ namespace Event
 {
     void EventManager::run()
     {
-        Event* event = NULL;
-        head_ >> event;
-
+        const Event* event = queue_.pop();
         if (event != NULL)
         {
             const ListenerRegister::EventListenerList& listeners = listeners_.getListeners(event->getType());

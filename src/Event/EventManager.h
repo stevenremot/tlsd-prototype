@@ -21,25 +21,17 @@
 #define EVENT_EVENT_MANAGER_H
 
 #include "../Threading/ThreadableInterface.h"
-#include "../Threading/Channel.h"
 #include "EventQueue.h"
 #include "ListenerRegister.h"
 
 namespace Event
 {
-
     /**
      * Class in charge of running the event loop.
      */
     class EventManager: public Threading::ThreadableInterface
     {
     public:
-
-        EventManager()
-        {
-            Threading::createChannel(queue_, head_);
-        }
-
         /**
          * Do one iteration of the event loop.
          *
@@ -60,7 +52,6 @@ namespace Event
 
     private:
         EventQueue queue_;
-        EventHead head_;
         ListenerRegister listeners_;
     };
 }

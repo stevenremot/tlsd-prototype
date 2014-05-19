@@ -25,8 +25,6 @@
 #include "tests/ecs.h"
 #include "tests/geometry.h"
 #include "tests/random.h"
-#include "tests/graph.h"
-#include "tests/threading.h"
 
 using std::cout;
 using std::endl;
@@ -35,12 +33,10 @@ using std::vector;
 
 int main()
 {
-    EventTest::testEvents();
-    EcsTest::testEcs();
-    GeometryTest::testVectors();
+    // EventTest::testEvents();
+    // EcsTest::testEcs();
+    // GeometryTest::testVectors();
     RandomTest::testNumberGenerator();
-    GraphTest::testPlanarGraph();
-    ThreadingTest::testChannel();
 
     return 0;
 }

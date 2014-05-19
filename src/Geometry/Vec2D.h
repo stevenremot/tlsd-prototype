@@ -61,10 +61,6 @@ namespace Geometry
         inline void setY(T y) { y_ = y; }
 
         // Vector operations
-        inline bool operator==(const Vec2D& vec) const
-        {
-            return x_ == vec.x_ && y_ == vec.y_;
-        }
 
         inline Vec2D operator+(const Vec2D& vec) const
         {

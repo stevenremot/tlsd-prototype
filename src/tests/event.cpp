@@ -58,22 +58,22 @@ namespace EventTest
         vector<Threading::ThreadableInterface*> threadables;
         threadables.push_back(&m);
 
-        Threading::Thread eventThread(threadables, 3);
+        Threading::Thread eventThread(threadables, 1);
         eventThread.start();
 
         Event::EventQueue & queue = m.getEventQueue();
 
-        queue << new PrintEvent('h');
-        queue << new PrintEvent('e');
-        queue << new PrintEvent('l');
-        queue << new PrintEvent('l');
-        queue << new PrintEvent('o');
-        queue << new QuitEvent();
+        queue.push(new PrintEvent('h'));
+        queue.push(new PrintEvent('e'));
+        queue.push(new PrintEvent('l'));
+        queue.push(new PrintEvent('l'));
+        queue.push(new PrintEvent('o'));
+        queue.push(new QuitEvent());
 
         while (loop)
         {
             cout << ".";
-            Threading::sleep(0, 200);
+            Threading::sleep(0, 500);
         }
 
         eventThread.stop();
