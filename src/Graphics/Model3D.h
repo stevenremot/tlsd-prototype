@@ -33,9 +33,17 @@ namespace Graphics
     class Model3D
     {
     public:
-        Model3D(std::vector<Geometry::Vec3Df>& vertices, std::vector<Face>& faces):
+        Model3D() {}
+
+        Model3D(const std::vector<Geometry::Vec3Df>& vertices,
+                const std::vector<Face>& faces):
             vertices_(vertices),
             faces_(faces)
+        {}
+
+        Model3D(const Model3D& model):
+            vertices_(model.getVertices()),
+            faces_(model.getFaces())
         {}
 
         std::vector<Geometry::Vec3Df>& getVertices()
@@ -43,7 +51,17 @@ namespace Graphics
             return vertices_;
         }
 
+        const std::vector<Geometry::Vec3Df>& getVertices() const
+        {
+            return vertices_;
+        }
+
         std::vector<Face>& getFaces()
+        {
+            return faces_;
+        }
+
+        const std::vector<Face>& getFaces() const
         {
             return faces_;
         }
