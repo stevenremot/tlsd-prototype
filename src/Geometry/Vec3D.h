@@ -66,6 +66,10 @@ namespace Geometry
         inline void setZ(T z) { z_ = z; }
 
         // Vector operations
+        inline bool operator==(const Vec3D& vec) const
+        {
+            return x_ == vec.x_ && y_ == vec.y_ && z_ == vec.z_;
+        }
 
         inline Vec3D operator+(const Vec3D& vec) const
         {

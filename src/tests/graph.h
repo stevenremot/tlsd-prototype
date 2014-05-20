@@ -17,30 +17,17 @@
     <http://www.gnu.org/licenses/>.
 */
 
-#include <cstdlib>
-#include <iostream>
-#include <vector>
+#ifndef TESTS_GRAPH_H
+#define TESTS_GRAPH_H
 
-#include "tests/event.h"
-#include "tests/ecs.h"
-#include "tests/geometry.h"
-#include "tests/random.h"
-#include "tests/graph.h"
-#include "tests/threading.h"
-
-using std::cout;
-using std::endl;
-using std::string;
-using std::vector;
-
-int main()
+namespace GraphTest
 {
-    EventTest::testEvents();
-    EcsTest::testEcs();
-    GeometryTest::testVectors();
-    RandomTest::testNumberGenerator();
-    GraphTest::testPlanarGraph();
-    ThreadingTest::testChannel();
-
-    return 0;
+    void testPlanarGraph();
 }
+
+#endif
+
+// Emacs local variables
+// Local variables:
+// mode: c++
+// End:

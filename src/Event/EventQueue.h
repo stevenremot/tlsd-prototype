@@ -27,28 +27,16 @@
 namespace Event
 {
     /**
-     * Represent a queue of events.
+     * Represent a queue of events
+     *
+     * New events can be added to it.
      */
-    class EventQueue
-    {
-    public:
-        /**
-         * Push an event at the back of the queue.
-         *
-         * A pointer is required because the event could live longer
-         * than the function that provided it.
-         */
-        void push(const Event* event);
+    typedef Threading::ChannelInput<Event*> EventQueue;
 
-        /**
-         * Return the event at the top of the queue and remove it.
-         *
-         * *Caution*: It is up to the caller to handle event's deletion.
-         */
-        const Event* pop();
-    private:
-        std::list<const Event*> events_;
-    };
+    /**
+     * Receive the events sent to the event queue
+     */
+    typedef Threading::ChannelOutput<Event*> EventHead;
 }
 
 #endif

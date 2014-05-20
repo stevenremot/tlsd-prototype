@@ -17,26 +17,39 @@
     <http://www.gnu.org/licenses/>.
 */
 
-#include "EventQueue.h"
+#include "PlanarNode.h"
 
-namespace Event
+using Geometry::Vec2Df;
+
+namespace Graph
 {
-    using std::list;
+    PlanarNode::PlanarNode()
+    {}
 
-    void EventQueue::push(const Event* event)
+    PlanarNode::PlanarNode(const Vec2Df& position):
+        position_(position)
+    {}
+
+    PlanarNode::PlanarNode(const lemon::ListGraph::Node& node,
+                           const Geometry::Vec2Df& position):
+        node_(node),
+        position_(position)
+    {}
+
+    PlanarNode::PlanarNode(const PlanarNode& node):
+        node_(node.node_),
+        position_(node.position_)
+    {}
+
+    PlanarNode& PlanarNode::operator=(const PlanarNode& node)
     {
-        events_.push_back(event);
+        node_ = node.node_;
+        position_ = node.position_;
+        return *this;
     }
 
-    const Event* EventQueue::pop()
+    bool PlanarNode::operator==(const PlanarNode& node) const
     {
-        if (events_.empty())
-        {
-            return NULL;
-        }
-
-        const Event* event = events_.front();
-        events_.pop_front();
-        return event;
+        return position_ == node.position_;
     }
 }
