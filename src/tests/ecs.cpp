@@ -20,16 +20,43 @@
 #include "ecs.h"
 
 #include <iostream>
+#include <string>
 
 using std::cout;
 using std::endl;
+using std::string;
 
 #include "../Ecs/World.h"
 
 namespace EcsTest
 {
+    class MessageComponent: public Ecs::Component
+    {
+    public:
+        static const Ecs::Component::Type Type;
+        static const std::vector<Ecs::Component::Type> Dependencies;
+
+        MessageComponent(const string& message): Component(Type),
+                                                 message_(message)
+        {}
+
+        const string& getMessage() const
+        {
+            return message_;
+        }
+
+        virtual const std::vector<Ecs::Component::Type>& getDependentComponents()
+        {
+            return Dependencies;
+        }
+
+    private:
+        string message_;
+    };
 
     const Ecs::Component::Type MessageComponent::Type = "message";
+    const std::vector<Ecs::Component::Type> MessageComponent::Dependencies =
+        std::vector<Ecs::Component::Type>();
 
     void testEcs()
     {

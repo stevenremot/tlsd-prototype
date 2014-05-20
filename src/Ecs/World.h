@@ -54,9 +54,18 @@ namespace Ecs
         class DoesNotSatisfyException: public std::exception
         {
         public:
-            const char * what() const throw()
+            const char* what() const throw()
             {
                 return "Entity's components does not satisfy group requirements.";
+            }
+        };
+
+        class MissingDependentComponentException: public std::exception
+        {
+        public:
+            const char* what() const throw()
+            {
+                return "Attempted to add to add a component with unsatisfied dependencies";
             }
         };
 

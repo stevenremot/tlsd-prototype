@@ -24,26 +24,7 @@
 
 namespace EcsTest
 {
-    class MessageComponent: public Ecs::Component
-    {
-    public:
-        static const Ecs::Component::Type Type;
-        MessageComponent(const char * message): Component(Type),
-                                                message_(message)
-        {}
-
-        const char * getMessage() const
-        {
-            return message_;
-        }
-
-    private:
-        const char * message_;
-    };
-
-
     void testEcs();
-
 }
 
 #endif
