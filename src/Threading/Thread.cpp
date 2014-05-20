@@ -3,6 +3,10 @@
 #include <iostream>
 #include <ctime>
 
+#ifdef _WIN32
+#include <windows.h>
+#endif
+
 using std::cout;
 using std::endl;
 
@@ -12,11 +16,15 @@ namespace Threading {
 
     int sleep(long seconds, long milliseconds)
     {
+#ifdef _WIN32
+        Sleep(seconds * 1000L + milliseconds)
+        return 0;
+#else
         struct timespec tim;
         tim.tv_sec = seconds;
         tim.tv_nsec = milliseconds * 1000000L;
-        //return nanosleep(&tim, NULL);
-        return 0;
+        return nanosleep(&tim, NULL);
+#endif
     }
 
     void Thread::start()
