@@ -17,32 +17,17 @@
     <http://www.gnu.org/licenses/>.
 */
 
-#include <cstdlib>
-#include <iostream>
-#include <vector>
+#ifndef TESTS_CORE_H
+#define TESTS_CORE_H
 
-#include "tests/event.h"
-#include "tests/ecs.h"
-#include "tests/geometry.h"
-#include "tests/random.h"
-#include "tests/graph.h"
-#include "tests/threading.h"
-#include "tests/core.h"
-
-using std::cout;
-using std::endl;
-using std::string;
-using std::vector;
-
-int main()
+namespace CoreTest
 {
-    // EventTest::testEvents();
-    // EcsTest::testEcs();
-    // GeometryTest::testVectors();
-    // RandomTest::testNumberGenerator();
-    // GraphTest::testPlanarGraph();
-    // ThreadingTest::testChannel();
-    CoreTest::testSharedPtr();
-
-    return 0;
+    void testSharedPtr();
 }
+
+#endif
+
+// Emacs local variables
+// Local variables:
+// mode: c++
+// End:
