@@ -40,6 +40,7 @@ int main()
     GeometryTest::testVectors();
     RandomTest::testNumberGenerator();
     GraphTest::testPlanarGraph();
+    GraphTest::testIsBetween();
     ThreadingTest::testChannel();
 
     return 0;

@@ -23,6 +23,7 @@
 namespace GraphTest
 {
     void testPlanarGraph();
+    void testIsBetween();
 }
 
 #endif
