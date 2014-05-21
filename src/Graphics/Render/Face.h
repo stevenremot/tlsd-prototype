@@ -22,7 +22,7 @@
 
 #include <stdexcept>
 
-#include "Color.h"
+#include "../Color.h"
 
 namespace Graphics
 {
