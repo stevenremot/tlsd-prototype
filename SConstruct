@@ -12,11 +12,11 @@ if ARGUMENTS.get("clang", 0):
 
 libs = []
 if env['PLATFORM'] == 'win32':
-	libs = ["pthreadGC2","lemon"]
+	libs = ["pthreadGC2","lemon","Irrlicht"]
 elif env['PLATFORM'] == 'posix':
-	libs = ["pthread","emon"]
+	libs = ["pthread","emon","Irrlicht"]
 					
-env.Program('program', Glob('src/*.cpp') + Glob('src/**/*.cpp'), LIBS=libs)
+env.Program('program', Glob('src/*.cpp') + Glob('src/*/*.cpp') + Glob('src/*/*/*.cpp'), LIBS=libs)
 
 # Emacs local variables
 # Local variables:

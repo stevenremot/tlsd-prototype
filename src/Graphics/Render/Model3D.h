@@ -22,7 +22,7 @@
 
 #include <vector>
 
-#include "../Geometry/Vec3D.h"
+#include "../../Geometry/Vec3D.h"
 #include "Face.h"
 
 namespace Graphics
