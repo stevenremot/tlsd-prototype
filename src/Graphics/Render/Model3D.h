@@ -17,56 +17,44 @@
     <http://www.gnu.org/licenses/>.
 */
 
-#ifndef GRAPHICS_FACE_H
-#define GRAPHICS_FACE_H
+#ifndef GRAPHICS_RENDER_MODEL3D_H
+#define GRAPHICS_RENDER_MODEL3D_H
 
-#include <stdexcept>
+#include <vector>
 
-#include "Color.h"
+#include "../Geometry/Vec3D.h"
+#include "Face.h"
 
 namespace Graphics
 {
-    /**
-     *Represent a triangle in a 3D mesh
-     */
-    class Face
+    namespace Render
     {
-    public:
-        Face(unsigned int v1, unsigned int v2, unsigned int v3, const Color& color):
-            color_(color)
+        /**
+         * Class describing a 3D coloured mesh
+         */
+        class Model3D
         {
-            vertices_[0] = v1;
-            vertices_[1] = v2;
-            vertices_[2] = v3;
-        }
+        public:
+            Model3D(std::vector<Geometry::Vec3Df>& vertices, std::vector<Face>& faces):
+                vertices_(vertices),
+                faces_(faces)
+            {}
 
-        unsigned int& operator[](unsigned int i)
-        {
-            if (i >= 3)
+            std::vector<Geometry::Vec3Df>& getVertices()
             {
-                throw std::out_of_range("Looked beyond the 3 vertices.");
+                return vertices_;
             }
-            return vertices_[i];
-        }
 
-        unsigned int operator[](unsigned int i) const
-        {
-            if (i >= 3)
+            std::vector<Face>& getFaces()
             {
-                throw std::out_of_range("Looked beyond the 3 vertices.");
+                return faces_;
             }
-            return vertices_[i];
-        }
 
-        const Color& getColor() const
-        {
-            return color_;
-        }
-
-    private:
-        unsigned int vertices_[3];
-        Color color_;
-    };
+        private:
+            std::vector<Geometry::Vec3Df> vertices_;
+            std::vector<Face> faces_;
+        };
+    }
 }
 
 #endif
