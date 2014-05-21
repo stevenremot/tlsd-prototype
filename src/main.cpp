@@ -41,7 +41,7 @@ int main()
     // GeometryTest::testVectors();
     // RandomTest::testNumberGenerator();
     // GraphTest::testPlanarGraph();
-    // ThreadingTest::testChannel();
+    ThreadingTest::testChannel();
     CoreTest::testSharedPtr();
 
     return 0;

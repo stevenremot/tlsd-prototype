@@ -43,14 +43,14 @@ namespace Core
             *refs_ = 1;
         }
 
-        SharedPtr(SharedPtr& ptr):
+        SharedPtr(const SharedPtr& ptr):
             data_(ptr.data_),
             refs_(ptr.refs_)
         {
             (*refs_) += 1;
         }
 
-        SharedPtr& operator=(T* data)
+        SharedPtr& operator=(const T* data)
         {
             unassign();
             data_ = data;
@@ -58,7 +58,7 @@ namespace Core
             *refs_ = 1;
         }
 
-        SharedPtr& operator=(SharedPtr& ptr)
+        SharedPtr& operator=(const SharedPtr& ptr)
         {
             unassign();
             data_ = ptr.data_;
