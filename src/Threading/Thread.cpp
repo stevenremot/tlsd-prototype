@@ -17,7 +17,7 @@ namespace Threading {
     int sleep(long seconds, long milliseconds)
     {
 #ifdef _WIN32
-        Sleep(seconds * 1000L + milliseconds)
+        Sleep(seconds * 1000L + milliseconds);
         return 0;
 #else
         struct timespec tim;

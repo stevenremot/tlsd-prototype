@@ -3,7 +3,7 @@
 
 #include <vector>
 
-#include "sensor.h"
+#include "Sensor.h"
 #include "../../Ecs/World.h"
 
 using std::vector;
@@ -25,17 +25,17 @@ namespace AI
             /**
              * Add a new sensor. If the sensor is already in the list, it's not added.
              */
-            void addSensor(const SensorType & sensorType);
+            void addSensor(const AI::Sensor::Sensor::SensorType & sensorType);
 
             /**
              * Remove a sensor. If the sensor's type does not match a type in the sensors list, no component is removed.
              */
-            void removeSensor(const SensorType & sensorType);
+            void removeSensor(const AI::Sensor::Sensor::SensorType & sensorType);
 
             void updateSensors();
 
         private:
-            typedef vector<Sensor> SensorsList;
+            typedef vector<Sensor*> SensorsList;
 
             Ecs::World& world_;
             SensorsList sensorsList_;

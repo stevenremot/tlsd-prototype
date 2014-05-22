@@ -45,7 +45,7 @@ namespace Ecs
     {
         // Suppose all components have different types
 
-        if (components_.size() != components.size())
+        if (components_.size() > components.size())
         {
             return false;
         }

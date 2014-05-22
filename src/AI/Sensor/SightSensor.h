@@ -16,6 +16,9 @@ namespace AI
         class SightSensor : public PeriodicSensor
         {
         public:
+
+            static const Sensor::SensorType Type;
+
             SightSensor(Ecs::World& world,WorkingMemory& memory, int updateRate = 100, int detectionRadius = 100);
 
             /**

@@ -3,40 +3,40 @@
 
 #include <string>
 
-#include "../MemoryFact.h"
+//#include "../MemoryFact.h"
+#include "../WorkingMemory.h"
 #include "../../Ecs/World.h"
-
-using Ecs::World;
 
 namespace AI
 {
-
-    /**
-     * Base class for sensor
-     * A sensor add memory's facts to the agent's memory.
-     * It is responsible for cleaning the facts it has added.
-     */
-    class Sensor
+    namespace Sensor
     {
-        typedef std::string SensorType;
+        /**
+         * Base class for sensor
+         * A sensor add memory's facts to the agent's memory.
+         * It is responsible for cleaning the facts it has added.
+         */
+        class Sensor
+        {
+        public:
+            typedef std::string SensorType;
 
-    public:
-        Sensor(SensorType sensorType, World& world, WorkingMemory& memory)
-            : sensorType_(sensorType), world_(world), memory_(memory){}
-        virtual ~Sensor(){}
-        virtual bool update() = 0;
-        virtual void cleanMemory() = 0;
+            Sensor(SensorType sensorType, Ecs::World& world, WorkingMemory& memory)
+                : sensorType_(sensorType), world_(world), memory_(memory){}
+            virtual ~Sensor(){}
+            virtual bool update() = 0;
+            virtual void cleanMemory() = 0;
 
-        bool hasBeenUpdated() const {return hasBeenUpdated_;}
-        const SensorType& getSensorType() const {return sensorType_;}
+            bool hasBeenUpdated() const {return hasBeenUpdated_;}
+            const SensorType& getSensorType() const {return sensorType_;}
 
-    protected:
-        const SensorType sensorType_;
-        World& world_;
-        WorkingMemory& memory_;
-        bool hasBeenUpdated_;
-    };
-
+        protected:
+            SensorType sensorType_;
+            Ecs::World& world_;
+            WorkingMemory& memory_;
+            bool hasBeenUpdated_;
+        };
+    }
 }
 
 #endif // SENSOR_H

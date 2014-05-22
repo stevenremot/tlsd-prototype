@@ -5,20 +5,12 @@
 #include <string>
 
 #include "../Geometry/Vec3D.h"
+#include "../Ecs/Entity.h"
 
 using std::vector;
 
-using Geometry::Vec3Df;
-
 namespace AI
 {
-/**
- * @brief The MemoryFact class
- * Faire des classes filles pour chaque type ?
- * Chaque fact dispose d'une bitset qui indiques quels sont les attributs que le fait a modifiés.
- * Utilisé comme test avant d'analyser plus en détail la requête
- *
- */
 /**
  * Class for the facts in the memory of the entity.
  * 
@@ -34,22 +26,26 @@ public:
     MemoryFact();
     MemoryFact(MemoryFactType factType, float factBelief);
 
-    MemoryFactType getFactType() const {return _factType;}
-    float getFactBelief() const {return _factBelief;}
+    MemoryFactType getFactType() const {return factType_;}
+    float getFactBelief() const {return factBelief_;}
+    void setFactBelief(float factBelief) {factBelief_ = factBelief;}
 
     // Getters & setters for attributes
-    void setCharacterId(int characterId) {_characterId = characterId;}
-    void setPosition(const Vec3Df& position) { _position = position;}
+    void setCharacterId(Ecs::Entity characterId) {characterId_ = characterId;}
+    void setPosition(const Geometry::Vec3Df& position) { position_ = position;}
 
-    int getCharacterId() const {return _characterId;}
-    Vec3Df getPosition() const {return _position;} 
+    Ecs::Entity getCharacterId() const {return characterId_;}
+    Geometry::Vec3Df getPosition() const {return position_;}
+
+    bool operator ==(const MemoryFact & otherFact) const;
+
 private:
-    MemoryFactType _factType;
-    float _factBelief;
+    MemoryFactType factType_;
+    float factBelief_;
 
     //Attributes
-    Vec3Df  _position; 
-    int _characterId;
+    Geometry::Vec3Df  position_;
+    Ecs::Entity characterId_;
     // To be continued...
 
 };

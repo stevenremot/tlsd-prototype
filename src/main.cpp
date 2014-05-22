@@ -27,6 +27,7 @@
 #include "tests/random.h"
 #include "tests/graph.h"
 #include "tests/threading.h"
+#include "tests/ai.h"
 
 using std::cout;
 using std::endl;
@@ -35,12 +36,13 @@ using std::vector;
 
 int main()
 {
-    EventTest::testEvents();
-    EcsTest::testEcs();
-    GeometryTest::testVectors();
-    RandomTest::testNumberGenerator();
-    GraphTest::testPlanarGraph();
-    ThreadingTest::testChannel();
+    //    EventTest::testEvents();
+    //    EcsTest::testEcs();
+    //    GeometryTest::testVectors();
+    //    RandomTest::testNumberGenerator();
+    //    GraphTest::testPlanarGraph();
+    //    ThreadingTest::testChannel();
+    AITest::testAI();
 
     return 0;
 }

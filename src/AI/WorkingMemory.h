@@ -13,36 +13,43 @@ using AI::MemoryFact;
 
 namespace AI
 {
-/**
- * @brief WorkingMemory
- * Le planner y cherche les memory facts les plus intéressants pour prendre une décision ou exécuter une action.
- */
+
 /**
  * Working memory is where all the memory's facts created by the sensors are stored.
  *
  *  Warning : WorkingMemory is not responsible for cleaning the memory's facts.
  */
-class WorkingMemory
-{
-public:
+    class WorkingMemory
+    {
+    public:
+        typedef vector<MemoryFact*> MemoryFactsList;
+        typedef map<MemoryFact::MemoryFactType, MemoryFactsList> MemoryFactsMap;
 
-    typedef vector<MemoryFact*> MemoryFactsList;
+        WorkingMemory();
+        ~WorkingMemory();
+        void addMemoryFact(MemoryFact* fact);
+        void removeMemoryFact(MemoryFact* fact);
 
-    WorkingMemory();
-    ~WorkingMemory();
-    void addMemoryFact(MemoryFact* fact);
-    void removeMemoryFact(MemoryFact* fact);
+        MemoryFactsList getMemoryFacts() const {return memoryFacts_;}
 
-    MemoryFactsList getMemoryFacts() const {return memoryFacts_;}
-    const MemoryFactsList& getMemoryFactsByType(const MemoryFact::MemoryFactType & memoryFactType);
-    // Pour l'instant, un getter par type de fact, mais il faudrait une méthode plus generique
-    MemoryFact* getEnnemyFactFromCharacterId(int id);
-private:
-    typedef map<MemoryFact::MemoryFactType, MemoryFactsList> MemoryFactsMap;
+        /**
+         * Get the list of the memory's facts of the specified type.
+         * @return true if the fact's type is registered in the map, false otherwise.
+         */
+        bool getMemoryFactsByType(const MemoryFact::MemoryFactType & memoryFactType, MemoryFactsList& factsList);
 
-    MemoryFactsList memoryFacts_;
-    MemoryFactsMap memoryFactsMap_;
-    
-};
+        MemoryFactsMap getMemoryFactsMap() const {return memoryFactsMap_;}
+        WorkingMemory &operator = (const WorkingMemory &w)
+        {
+            memoryFacts_ = w.getMemoryFacts();
+            memoryFactsMap_ = w.getMemoryFactsMap();
+            return *this;
+        }
+
+    private:
+        MemoryFactsList memoryFacts_;
+        MemoryFactsMap memoryFactsMap_;
+
+    };
 }
 #endif // WORKINGMEMORY_H
