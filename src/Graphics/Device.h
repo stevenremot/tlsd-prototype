@@ -3,6 +3,8 @@
 
 #include <irrlicht/IrrlichtDevice.h>
 
+#include "../Threading/ThreadableInterface.h"
+
 
 namespace Graphics
 {
@@ -10,11 +12,14 @@ namespace Graphics
     * This class provides binding with the Irrlicht Graphics Engine's device
     * It also manages the window's initialization
     */
-    class Device
+    class Device : public Threading::ThreadableInterface
     {
     public:
         Device();
         ~Device();
+
+        // override
+        virtual void run();
 
         bool initializeIrrlichtEngine();
         irr::video::IVideoDriver* getIrrlichtVideoDriver();

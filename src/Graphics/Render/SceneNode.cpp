@@ -7,7 +7,8 @@ namespace Graphics
         using irr::core::vector3df;
 
         SceneNode::SceneNode(const SceneNode* parent) :
-            parent_(parent)
+            parent_(parent),
+            irrlichtSceneNode_(NULL)
         {
             //ctor
         }
@@ -18,7 +19,9 @@ namespace Graphics
             for(std::list<SceneNode*>::iterator it = children_.begin(); it != children_.end(); ++it)
                 delete *it;
 
-            irrlichtSceneNode_->remove();
+            // inherited classes have their own type of irrlicht scene node
+            if (irrlichtSceneNode_ != NULL)
+                irrlichtSceneNode_->remove();
         }
 
         Vec3Df SceneNode::getPosition() const

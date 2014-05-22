@@ -16,6 +16,11 @@ namespace Graphics
         //dtor
     }
 
+    void Device::run()
+    {
+        // TODO : render loop
+    }
+
     bool Device::initializeIrrlichtEngine()
     {
         irr::SIrrlichtCreationParameters params;
