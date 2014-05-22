@@ -38,11 +38,12 @@ int main()
 {
     // EventTest::testEvents();
     // EcsTest::testEcs();
+    EcsTest::testSharedEntity();
     // GeometryTest::testVectors();
     // RandomTest::testNumberGenerator();
     // GraphTest::testPlanarGraph();
-    ThreadingTest::testChannel();
-    CoreTest::testSharedPtr();
+    // ThreadingTest::testChannel();
+    // CoreTest::testSharedPtr();
 
     return 0;
 }
