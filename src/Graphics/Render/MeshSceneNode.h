@@ -19,7 +19,7 @@ namespace Graphics
             void initFromModel3D(const Model3D& model);
         protected:
         private:
-            irr::scene::IMeshSceneNode* irrlichtSceneNode_;
+
         };
     }
 }

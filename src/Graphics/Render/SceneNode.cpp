@@ -6,7 +6,7 @@ namespace Graphics
     {
         using irr::core::vector3df;
 
-        SceneNode::SceneNode(const SceneNode& parent) :
+        SceneNode::SceneNode(const SceneNode* parent) :
             parent_(parent)
         {
             //ctor
@@ -44,7 +44,7 @@ namespace Graphics
             return id_;
         }
 
-        const SceneNode& SceneNode::getParent() const
+        const SceneNode* SceneNode::getParent() const
         {
             return parent_;
         }
@@ -52,6 +52,11 @@ namespace Graphics
         const std::list<SceneNode*>& SceneNode::getChildren() const
         {
             return children_;
+        }
+
+        void SceneNode::setIrrlichtSceneNode(irr::scene::ISceneNode* node)
+        {
+            irrlichtSceneNode_ = node;
         }
     }
 }

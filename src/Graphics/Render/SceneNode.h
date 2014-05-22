@@ -19,8 +19,10 @@ namespace Graphics
         class SceneNode
         {
             public:
-                SceneNode(const SceneNode& parent);
+                SceneNode(const SceneNode* parent);
                 virtual ~SceneNode();
+
+                void setIrrlichtSceneNode(irr::scene::ISceneNode* node);
 
             protected:
                 Vec3Df getPosition() const;
@@ -29,15 +31,14 @@ namespace Graphics
 
                 const unsigned int getId() const;
 
-                const SceneNode& getParent() const;
+                const SceneNode* getParent() const;
                 const std::list<SceneNode*>& getChildren() const;
 
-                const SceneNode& parent_;
+                const SceneNode* parent_;
                 std::list<SceneNode*> children_;
                 unsigned int id_;
-
-            private:
                 irr::scene::ISceneNode* irrlichtSceneNode_;
+            private:
         };
     }
 }

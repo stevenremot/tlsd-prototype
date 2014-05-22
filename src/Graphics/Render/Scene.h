@@ -16,12 +16,14 @@ namespace Graphics
         class Scene
         {
         public:
-            Scene();
+            Scene(irr::scene::ISceneManager* sceneManager);
             virtual ~Scene();
         protected:
         private:
             irr::scene::ISceneManager* irrlichtSceneManager_;
             SceneNode* rootSceneNode_;
+
+            unsigned int currentMaxId_;
         };
     }
 }
