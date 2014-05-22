@@ -39,6 +39,7 @@ int main()
     // EventTest::testEvents();
     // EcsTest::testEcs();
     EcsTest::testSharedEntity();
+    EcsTest::testEcs();
     // GeometryTest::testVectors();
     // RandomTest::testNumberGenerator();
     // GraphTest::testPlanarGraph();
