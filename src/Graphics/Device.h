@@ -25,6 +25,7 @@ namespace Graphics
         irr::video::IVideoDriver* getIrrlichtVideoDriver();
     private:
         irr::IrrlichtDevice* irrlichtDevice_;
+        bool initialized_;
     };
 }
 

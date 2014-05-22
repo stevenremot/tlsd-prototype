@@ -27,6 +27,7 @@
 #include "tests/random.h"
 #include "tests/graph.h"
 #include "tests/threading.h"
+#include "tests/render.h"
 
 using std::cout;
 using std::endl;
@@ -35,6 +36,8 @@ using std::vector;
 
 int main()
 {
+    RenderTest::testThread();
+
     EventTest::testEvents();
     EcsTest::testEcs();
     GeometryTest::testVectors();
