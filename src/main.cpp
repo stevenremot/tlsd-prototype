@@ -37,12 +37,12 @@ using std::vector;
 int main()
 {
     // EventTest::testEvents();
-    // EcsTest::testEcs();
+    EcsTest::testEcs();
     // GeometryTest::testVectors();
     // RandomTest::testNumberGenerator();
     // GraphTest::testPlanarGraph();
-    ThreadingTest::testChannel();
-    CoreTest::testSharedPtr();
+    // ThreadingTest::testChannel();
+    // CoreTest::testSharedPtr();
 
     return 0;
 }
