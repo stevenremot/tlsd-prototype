@@ -26,7 +26,7 @@ namespace Graphics
         void SceneNode::removeIrrlichtSceneNode()
         {
             if (irrlichtSceneNode_ != NULL)
-                removeIrrlichtSceneNode();
+                irrlichtSceneNode_->remove();
         }
 
         Vec3Df SceneNode::getPosition() const
@@ -65,6 +65,11 @@ namespace Graphics
         {
             vector3df irrScale = vector3df(sca.getX(), sca.getZ(), sca.getY());
             irrlichtSceneNode_->setScale(irrScale);
+        }
+
+        void SceneNode::setId(unsigned int id)
+        {
+            id_ = id;
         }
 
         const unsigned int SceneNode::getId() const

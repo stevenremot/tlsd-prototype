@@ -50,6 +50,11 @@ namespace Graphics
                 return faces_;
             }
 
+            bool isEmpty() const
+            {
+                return vertices_.empty() && faces_.empty();
+            }
+
         private:
             std::vector<Geometry::Vec3Df> vertices_;
             std::vector<Face> faces_;

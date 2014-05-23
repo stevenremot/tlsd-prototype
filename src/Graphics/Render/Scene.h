@@ -1,6 +1,7 @@
 #ifndef GRAPHICS_RENDER_SCENE_H
 #define GRAPHICS_RENDER_SCENE_H
 
+#include <string>
 #include <vector>
 #include <irrlicht/ISceneManager.h>
 
@@ -19,6 +20,8 @@ namespace Graphics
             Scene(irr::scene::ISceneManager* sceneManager);
             virtual ~Scene();
 
+            void addMeshSceneNodeFromModel3D(const Model3D& model3d);
+            void addMeshSceneNodeFromFile(const string& meshFile, const string& textureFile);
         protected:
         private:
             irr::scene::ISceneManager* irrlichtSceneManager_;

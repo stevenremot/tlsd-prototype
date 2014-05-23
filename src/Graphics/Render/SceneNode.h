@@ -32,6 +32,8 @@ namespace Graphics
                 Vec3Df getRotation() const;
                 Vec3Df getScale() const;
 
+                void setId(unsigned int id);
+
                 const unsigned int getId() const;
 
                 const SceneNode* getParent() const;
