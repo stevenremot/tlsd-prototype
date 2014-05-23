@@ -36,6 +36,20 @@ namespace Graph
         nodes_(graph_),
         edges_(graph_)
     {
+        insertData(nodes, edges);
+    }
+
+    PlanarGraph::PlanarGraph(const PlanarGraph& graph):
+        graph_(),
+        nodes_(graph_),
+        edges_(graph_)
+    {
+        insertData(graph.getNodes(), graph.getEdges());
+    }
+
+    void PlanarGraph::insertData(const NodeCollection& nodes,
+                                 const EdgeCollection& edges)
+    {
         for (unsigned int i = 0; i < nodes.size(); i++)
         {
             const PlanarNode& node = nodes[i];

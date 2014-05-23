@@ -139,6 +139,22 @@ namespace Geometry
             return std::sqrt(getSquaredLength());
         }
 
+        inline Vec2D getOrthogonal() const
+        {
+            return Vec2D(-y_, x_);
+        }
+
+        inline Vec2D normalize() const
+        {
+            const float length = getLength();
+            if (length == 0)
+            {
+                return *this;
+            }
+
+            return (*this) / length;
+        }
+
     private:
         T x_;
         T y_;

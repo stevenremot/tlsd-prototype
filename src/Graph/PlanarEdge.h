@@ -62,6 +62,13 @@ namespace Graph
         void setSecondNode(const PlanarNode& node) { secondNode_ = node; }
 
         /**
+         * Return the direction vector of the edge
+         *
+         * It is the difference between the second and the first node
+         */
+        Geometry::Vec2Df getDirection() const;
+
+        /**
          * Return true if the given node is at one extremity of the edge
          */
         bool hasNode(const PlanarNode& node);

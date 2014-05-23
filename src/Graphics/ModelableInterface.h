@@ -17,13 +17,20 @@
     <http://www.gnu.org/licenses/>.
 */
 
-#ifndef TESTS_GRAPH_H
-#define TESTS_GRAPH_H
+#ifndef GRAPHICS_MODELABLE_INTERFACE_H
+#define GRAPHICS_MODELABLE_INTERFACE_H
 
-namespace GraphTest
+#include "Model3D.h"
+
+namespace Graphics
 {
-    void testPlanarGraph();
-    void testIsBetween();
+    /**
+     * Interface for objects that can be represented by a 3D model
+     */
+    class ModelableInterface
+    {
+        virtual const Model3D& getModel() const = 0;
+    };
 }
 
 #endif

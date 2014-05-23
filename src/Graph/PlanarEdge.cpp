@@ -49,6 +49,12 @@ namespace Graph
             secondNode_ == edge.secondNode_;
     }
 
+    Geometry::Vec2Df PlanarEdge::getDirection() const
+    {
+        return getSecondNode().getPosition() -
+            getFirstNode().getPosition();
+    }
+
     bool PlanarEdge::hasNode(const PlanarNode& node)
     {
         return firstNode_ == node || secondNode_ == node;

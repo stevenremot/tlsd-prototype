@@ -20,15 +20,19 @@
 #include "graph.h"
 
 #include <iostream>
+#include <vector>
 
 #include "../Graph/PlanarGraph.h"
+#include "../Graph/PlanarUtil.h"
 
 using std::cout;
 using std::endl;
+using std::vector;
 
 using Graph::PlanarGraph;
 using Graph::PlanarNode;
 using Graph::PlanarEdge;
+using Graph::isBetween;
 
 using Geometry::Vec2Df;
 
@@ -92,6 +96,68 @@ namespace GraphTest
             PlanarEdge& edge = edges[i];
             const PlanarNode& otherNode = edge.getOtherNode(n1);
             cout << "Neighbour : " << otherNode.getPosition() << endl;
+        }
+    }
+
+    void testIsBetween()
+    {
+        vector<Vec2Df> baseDirections;
+        vector<Vec2Df> nextDirections;
+        vector<Vec2Df> consideredDirections;
+        vector<Graph::Direction> trueDirections;
+
+        baseDirections.push_back(Vec2Df(1, 0));
+        nextDirections.push_back(Vec2Df(1, 1));
+        consideredDirections.push_back(Vec2Df(1, 0));
+        trueDirections.push_back(Graph::ClockwiseDirection);
+
+        baseDirections.push_back(Vec2Df(1, 0));
+        nextDirections.push_back(Vec2Df(1, 1));
+        consideredDirections.push_back(Vec2Df(0, 1));
+        trueDirections.push_back(Graph::CounterClockwiseDirection);
+
+        baseDirections.push_back(Vec2Df(1, 0));
+        nextDirections.push_back(Vec2Df(1, 0));
+        consideredDirections.push_back(Vec2Df(1, 1));
+        trueDirections.push_back(Graph::CounterClockwiseDirection);
+
+        baseDirections.push_back(Vec2Df(1, 0));
+        nextDirections.push_back(Vec2Df(1, 0));
+        consideredDirections.push_back(Vec2Df(1, -1));
+        trueDirections.push_back(Graph::ClockwiseDirection);
+
+        bool failed = false;
+
+        for (unsigned int i = 0; i < baseDirections.size(); i++)
+        {
+            Graph::Direction falseDirection;
+            if (trueDirections[i] == Graph::ClockwiseDirection)
+                falseDirection = Graph::CounterClockwiseDirection;
+            else
+                falseDirection = Graph::ClockwiseDirection;
+
+            if (!isBetween(baseDirections[i],
+                           nextDirections[i],
+                           consideredDirections[i],
+                           trueDirections[i]))
+            {
+                cout << "isBetween : Error with data set " << i << " at truth test." << endl;
+                failed = true;
+            }
+
+            if (isBetween(baseDirections[i],
+                          nextDirections[i],
+                          consideredDirections[i],
+                          falseDirection))
+            {
+                cout << "isBetween : Error with data set " << i << " at false test." << endl;
+                failed = true;
+            }
+        }
+
+        if (!failed)
+        {
+            cout << "isBetween : All tests passed." << endl;
         }
     }
 }
