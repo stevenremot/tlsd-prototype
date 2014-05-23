@@ -45,6 +45,24 @@ namespace Graph
                    const Geometry::Vec2Df& nextDirection,
                    const Geometry::Vec2Df& consideredDirection,
                    Direction clockwise);
+
+    /**
+     * Return the next edge to visit in the graph.
+     *
+     * @param[in] commonNode the node whose edges are to be considered
+     * @param[in] baseDirection the direction we "come from"
+     * @param[in] edges edges to consider
+     * @param[in] clockwise the walking direction.
+     *                      when clockwise, the right-most edge is choosen
+     * @param[out] edge the variable that will get the result
+     *
+     * @return true if there was edges to consider, false otherwise
+     */
+    bool getNextEdge(const PlanarNode& commonNode,
+                     const Geometry::Vec2Df& baseDirection,
+                     const PlanarGraph::EdgeCollection& edges,
+                     Direction clockwise,
+                     PlanarEdge& edge);
 }
 
 #endif

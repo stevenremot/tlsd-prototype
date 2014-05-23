@@ -55,4 +55,36 @@ namespace Graph
 
         return false;
     }
+
+    bool getNextEdge(const PlanarNode& commonNode,
+                     const Geometry::Vec2Df& baseDirection,
+                     const PlanarGraph::EdgeCollection& edges,
+                     Direction clockwise,
+                     PlanarEdge& edge)
+    {
+        if (edges.empty())
+        {
+            return false;
+        }
+
+        const Vec2Df& p1 = commonNode.getPosition();
+
+        edge = edges[0];
+        Vec2Df nextDirection = edge.getOtherNode(commonNode).getPosition() - p1;
+
+        for (unsigned int i = 0; i < edges.size(); i++)
+        {
+            const PlanarEdge& currentEdge = edges[i];
+            Vec2Df currentDirection =
+                currentEdge.getOtherNode(commonNode).getPosition() - p1;
+
+            if (isBetween(baseDirection, nextDirection, currentDirection, clockwise))
+            {
+                edge = currentEdge;
+                nextDirection = currentDirection;
+            }
+        }
+
+        return true;
+    }
 }

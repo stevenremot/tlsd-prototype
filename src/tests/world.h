@@ -17,20 +17,12 @@
     <http://www.gnu.org/licenses/>.
 */
 
-#ifndef GRAPHICS_MODELABLE_INTERFACE_H
-#define GRAPHICS_MODELABLE_INTERFACE_H
+#ifndef TESTS_WORLD_H
+#define TESTS_WORLD_H
 
-#include "Model3D.h"
-
-namespace Graphics
+namespace WorldTest
 {
-    /**
-     * Interface for objects that can be represented by a 3D model
-     */
-    class ModelableInterface
-    {
-        virtual const Model3D& getModel() const = 0;
-    };
+    void testRoadNetworkModel();
 }
 
 #endif

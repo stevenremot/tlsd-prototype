@@ -17,36 +17,22 @@
     <http://www.gnu.org/licenses/>.
 */
 
-#include <cstdlib>
-#include <iostream>
-#include <vector>
+#ifndef WORLD_BUILDING_H
+#define WORLD_BUILDING_H
 
-#include "tests/event.h"
-#include "tests/ecs.h"
-#include "tests/geometry.h"
-#include "tests/random.h"
-#include "tests/graph.h"
-#include "tests/threading.h"
-#include "tests/core.h"
-#include "tests/world.h"
+#include "../Graphics/ModelableInterface.h"
 
-using std::cout;
-using std::endl;
-using std::string;
-using std::vector;
-
-int main()
+namespace World
 {
-    // EventTest::testEvents();
-    // EcsTest::testEcs();
-    // EcsTest::testSharedEntity();
-    // CoreTest::testSharedPtr();
-    // GeometryTest::testVectors();
-    // RandomTest::testNumberGenerator();
-    // GraphTest::testPlanarGraph();
-    // GraphTest::testIsBetween();
-    // ThreadingTest::testChannel();
-    WorldTest::testRoadNetworkModel();
-
-    return 0;
+    /**
+     * Base class for in-game buildings
+     */
+    typedef Graphics::ModelableInterface BuildingInterface;
 }
+
+#endif
+
+// Emacs local variables
+// Local variables:
+// mode: c++
+// End:

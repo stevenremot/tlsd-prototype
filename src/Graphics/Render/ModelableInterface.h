@@ -17,36 +17,28 @@
     <http://www.gnu.org/licenses/>.
 */
 
-#include <cstdlib>
-#include <iostream>
-#include <vector>
+#ifndef GRAPHICS_MODELABLE_INTERFACE_H
+#define GRAPHICS_MODELABLE_INTERFACE_H
 
-#include "tests/event.h"
-#include "tests/ecs.h"
-#include "tests/geometry.h"
-#include "tests/random.h"
-#include "tests/graph.h"
-#include "tests/threading.h"
-#include "tests/core.h"
-#include "tests/world.h"
+#include "Model3D.h"
 
-using std::cout;
-using std::endl;
-using std::string;
-using std::vector;
-
-int main()
+namespace Graphics
 {
-    // EventTest::testEvents();
-    // EcsTest::testEcs();
-    // EcsTest::testSharedEntity();
-    // CoreTest::testSharedPtr();
-    // GeometryTest::testVectors();
-    // RandomTest::testNumberGenerator();
-    // GraphTest::testPlanarGraph();
-    // GraphTest::testIsBetween();
-    // ThreadingTest::testChannel();
-    WorldTest::testRoadNetworkModel();
-
-    return 0;
+    namespace Render
+    {
+        /**
+         * Interface for objects that can be represented by a 3D model
+         */
+        class ModelableInterface
+        {
+            virtual const Model3D& getModel() const = 0;
+        };
+    }
 }
+
+#endif
+
+// Emacs local variables
+// Local variables:
+// mode: c++
+// End:

@@ -17,36 +17,31 @@
     <http://www.gnu.org/licenses/>.
 */
 
-#include <cstdlib>
-#include <iostream>
-#include <vector>
+#ifndef GEOMETRY_UTIL_2D_H
+#define GEOMETRY_UTIL_2D_H
 
-#include "tests/event.h"
-#include "tests/ecs.h"
-#include "tests/geometry.h"
-#include "tests/random.h"
-#include "tests/graph.h"
-#include "tests/threading.h"
-#include "tests/core.h"
-#include "tests/world.h"
+#include "Vec2D.h"
 
-using std::cout;
-using std::endl;
-using std::string;
-using std::vector;
-
-int main()
+namespace Geometry
 {
-    // EventTest::testEvents();
-    // EcsTest::testEcs();
-    // EcsTest::testSharedEntity();
-    // CoreTest::testSharedPtr();
-    // GeometryTest::testVectors();
-    // RandomTest::testNumberGenerator();
-    // GraphTest::testPlanarGraph();
-    // GraphTest::testIsBetween();
-    // ThreadingTest::testChannel();
-    WorldTest::testRoadNetworkModel();
-
-    return 0;
+    /**
+     * Return a median vector of v1 and v2.
+     *
+     * v1's end is the same point than v2's start
+     *
+     * The median direction is toward the "left" of v1.
+     */
+    Vec2Df getMedian(const Vec2Df& v1, const Vec2Df& v2)
+    {
+        Vec2Df o1 = v1.getOrthogonal().normalize();
+        Vec2Df o2 = v2.getOrthogonal().normalize();
+        return (o2 + o1).normalize();
+    }
 }
+
+#endif
+
+// Emacs local variables
+// Local variables:
+// mode: c++
+// End:

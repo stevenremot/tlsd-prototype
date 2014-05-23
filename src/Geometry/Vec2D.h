@@ -118,6 +118,19 @@ namespace Geometry
             return *this;
         }
 
+        inline Vec2D operator/(T t) const
+        {
+            return Vec2D(x_ / t,
+                         y_ / t);
+        }
+
+        inline Vec2D& operator /=(T t)
+        {
+            x_ /= t;
+            y_ /= t;
+            return *this;
+        }
+
         inline Vec2D operator-() const
         {
             return Vec2D(-x_, -y_);
@@ -147,7 +160,7 @@ namespace Geometry
         inline Vec2D normalize() const
         {
             const float length = getLength();
-            if (length == 0)
+            if (length == 0.0)
             {
                 return *this;
             }
