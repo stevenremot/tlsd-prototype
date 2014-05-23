@@ -29,6 +29,6 @@ namespace RenderTest
         std::cout << "thread stopped" << std::endl;
 
         // make sure the device object is deleted after the thread is stopped
-        Threading::sleep(1,0);
+        //Threading::sleep(1,0);
     }
 }
