@@ -36,13 +36,13 @@ using std::vector;
 
 int main()
 {
-    // EventTest::testEvents();
+    EventTest::testEvents();
     EcsTest::testEcs();
-    // GeometryTest::testVectors();
-    // RandomTest::testNumberGenerator();
-    // GraphTest::testPlanarGraph();
-    // ThreadingTest::testChannel();
-    // CoreTest::testSharedPtr();
+    GeometryTest::testVectors();
+    RandomTest::testNumberGenerator();
+    GraphTest::testPlanarGraph();
+    ThreadingTest::testChannel();
+    CoreTest::testSharedPtr();
 
     return 0;
 }

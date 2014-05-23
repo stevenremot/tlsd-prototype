@@ -41,6 +41,7 @@ namespace Threading {
     void Thread::stop()
     {
         running_ = false;
+        pthread_join(thread_, NULL);
     }
 
     void* Thread::loopFunction(void * obj)
