@@ -23,6 +23,7 @@
 namespace GeometryTest
 {
     void testVectors();
+    void testPolygons();
 }
 
 

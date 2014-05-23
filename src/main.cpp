@@ -42,11 +42,12 @@ int main()
     // EcsTest::testSharedEntity();
     // CoreTest::testSharedPtr();
     // GeometryTest::testVectors();
+    GeometryTest::testPolygons();
     // RandomTest::testNumberGenerator();
     // GraphTest::testPlanarGraph();
     // GraphTest::testIsBetween();
     // ThreadingTest::testChannel();
-    WorldTest::testRoadNetworkModel();
+    // WorldTest::testRoadNetworkModel();
 
     return 0;
 }

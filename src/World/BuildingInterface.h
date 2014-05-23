@@ -20,14 +20,14 @@
 #ifndef WORLD_BUILDING_H
 #define WORLD_BUILDING_H
 
-#include "../Graphics/ModelableInterface.h"
+#include "../Graphics/Render/ModelableInterface.h"
 
 namespace World
 {
     /**
      * Base class for in-game buildings
      */
-    typedef Graphics::ModelableInterface BuildingInterface;
+    typedef Graphics::Render::ModelableInterface BuildingInterface;
 }
 
 #endif

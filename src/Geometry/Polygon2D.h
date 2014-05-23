@@ -27,9 +27,44 @@
 namespace Geometry
 {
     /**
-     * TODO Implement
+     * Represent a 2D polygon
+     *
+     * It is basically a sequence of points.
      */
-    typedef std::vector<Vec2Df> Polygon2D;
+    class Polygon2D
+    {
+    public:
+        Polygon2D(const std::vector<Vec2Df>& points): points_(points)
+        {}
+
+        Polygon2D(const Polygon2D& polygon): points_(polygon.points_)
+        {}
+
+        const std::vector<Vec2Df>& getPoints() const
+        {
+            return points_;
+        }
+
+        /**
+         * Return true if the point is inside the polygon.
+         *
+         * Works only for a convex polygon.
+         */
+        bool contains(const Vec2Df& point) const;
+
+        /**
+         * Apply an offset operation to the polygon
+         *
+         * @param value the offset's value. If it is positive, the polygon will
+         *              grow. Otherwise it will shrink.
+         *
+         * @return the offseted polygon
+         */
+        std::vector<Polygon2D> offset(float value) const;
+
+    private:
+            std::vector<Vec2Df> points_;
+    };
 }
 
 #endif
