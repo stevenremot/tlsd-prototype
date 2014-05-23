@@ -18,6 +18,7 @@ namespace Graphics
         public:
             Scene(irr::scene::ISceneManager* sceneManager);
             virtual ~Scene();
+
         protected:
         private:
             irr::scene::ISceneManager* irrlichtSceneManager_;

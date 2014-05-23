@@ -16,17 +16,13 @@ namespace Graphics
             MeshSceneNode(const SceneNode& parent);
             virtual ~MeshSceneNode();
 
-            // overrides
-            virtual Vec3Df getPosition() const;
-            virtual Vec3Df getRotation() const;
-            virtual Vec3Df getScale() const;
-
             void setIrrlichtSceneNode(irr::scene::IMeshSceneNode* node);
 
             void initFromModel3D(const Model3D& model);
         protected:
+            // override
+            virtual void removeIrrlichtSceneNode();
         private:
-            irr::scene::IMeshSceneNode* irrlichtSceneNode_;
 
         };
     }

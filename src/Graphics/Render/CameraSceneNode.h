@@ -18,11 +18,6 @@ namespace Graphics
             CameraSceneNode(const SceneNode* parent);
             virtual ~CameraSceneNode();
 
-            // overrides
-            virtual Vec3Df getPosition() const;
-            virtual Vec3Df getRotation() const;
-            virtual Vec3Df getScale() const;
-
             void setIrrlichtSceneNode(irr::scene::ICameraSceneNode* node);
 
             /*
@@ -34,10 +29,11 @@ namespace Graphics
             */
             void initPositionAndTarget();
         protected:
+            // override
+            virtual void removeIrrlichtSceneNode();
         private:
             float maxVerticalAngle_;
             float rotateSpeed_;
-            irr::scene::ICameraSceneNode* irrlichtSceneNode_;
         };
     }
 }

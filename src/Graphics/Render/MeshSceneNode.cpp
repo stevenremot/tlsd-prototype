@@ -14,30 +14,17 @@ namespace Graphics
 
         MeshSceneNode::~MeshSceneNode()
         {
-            irrlichtSceneNode_->remove();
+
         }
 
-        Vec3Df MeshSceneNode::getPosition() const
+        void MeshSceneNode::removeIrrlichtSceneNode()
         {
-            vector3df irrPosition = irrlichtSceneNode_->getPosition();
-            return Vec3Df(irrPosition.X, irrPosition.Z, irrPosition.Y);
-        }
-
-        Vec3Df MeshSceneNode::getRotation() const
-        {
-            vector3df irrRotation = irrlichtSceneNode_->getRotation();
-            return Vec3Df(irrRotation.X, irrRotation.Z, irrRotation.Y);
-        }
-
-        Vec3Df MeshSceneNode::getScale() const
-        {
-            vector3df irrScale = irrlichtSceneNode_->getScale();
-            return Vec3Df(irrScale.X, irrScale.Z, irrScale.Y);
+            dynamic_cast<irr::scene::IMeshSceneNode*>(irrlichtSceneNode_)->remove();
         }
 
         void MeshSceneNode::setIrrlichtSceneNode(irr::scene::IMeshSceneNode* node)
         {
-            irrlichtSceneNode_ = node;
+            irrlichtSceneNode_ = dynamic_cast<irr::scene::ISceneNode*>(node);
         }
     }
 }

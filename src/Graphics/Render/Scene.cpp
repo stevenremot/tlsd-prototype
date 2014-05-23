@@ -9,6 +9,8 @@ namespace Graphics
         {
             rootSceneNode_ = new SceneNode(NULL);
             rootSceneNode_->setIrrlichtSceneNode(irrlichtSceneManager_->getRootSceneNode());
+
+            currentMaxId_ = 1;
         }
 
         Scene::~Scene()

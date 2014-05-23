@@ -24,9 +24,13 @@ namespace Graphics
 
                 void setIrrlichtSceneNode(irr::scene::ISceneNode* node);
 
-                virtual Vec3Df getPosition() const;
-                virtual Vec3Df getRotation() const;
-                virtual Vec3Df getScale() const;
+                void setPosition(const Vec3Df& pos);
+                void setRotation(const Vec3Df& rot);
+                void setScale(const Vec3Df& sca);
+
+                Vec3Df getPosition() const;
+                Vec3Df getRotation() const;
+                Vec3Df getScale() const;
 
                 const unsigned int getId() const;
 
@@ -34,12 +38,14 @@ namespace Graphics
                 const std::list<SceneNode*>& getChildren() const;
 
             protected:
+                virtual void removeIrrlichtSceneNode();
+
                 const SceneNode* parent_;
                 std::list<SceneNode*> children_;
                 unsigned int id_;
-
-            private:
                 irr::scene::ISceneNode* irrlichtSceneNode_;
+            private:
+
         };
     }
 }

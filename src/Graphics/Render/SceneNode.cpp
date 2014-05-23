@@ -20,8 +20,13 @@ namespace Graphics
                 delete *it;
 
             // inherited classes have their own type of irrlicht scene node
+            removeIrrlichtSceneNode();
+        }
+
+        void SceneNode::removeIrrlichtSceneNode()
+        {
             if (irrlichtSceneNode_ != NULL)
-                irrlichtSceneNode_->remove();
+                removeIrrlichtSceneNode();
         }
 
         Vec3Df SceneNode::getPosition() const
@@ -40,6 +45,26 @@ namespace Graphics
         {
             vector3df irrScale = irrlichtSceneNode_->getScale();
             return Vec3Df(irrScale.X, irrScale.Z, irrScale.Y);
+        }
+
+        void SceneNode::setPosition(const Vec3Df& pos)
+        {
+            vector3df irrPos = vector3df(pos.getX(), pos.getZ(), pos.getY());
+            irrlichtSceneNode_->setPosition(irrPos);
+        }
+
+
+        void SceneNode::setRotation(const Vec3Df& rot)
+        {
+            vector3df irrRot = vector3df(rot.getX(), rot.getZ(), rot.getY());
+            irrlichtSceneNode_->setRotation(irrRot);
+        }
+
+
+        void SceneNode::setScale(const Vec3Df& sca)
+        {
+            vector3df irrScale = vector3df(sca.getX(), sca.getZ(), sca.getY());
+            irrlichtSceneNode_->setScale(irrScale);
         }
 
         const unsigned int SceneNode::getId() const
