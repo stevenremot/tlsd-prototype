@@ -183,6 +183,9 @@ namespace World
 
     Polygon2D RoadNetwork::getConvexHull() const
     {
+        // TODO currently implement as a bounding box
+        //      create a true convex hull
+
         Vec2Df min;
         Vec2Df max;
 

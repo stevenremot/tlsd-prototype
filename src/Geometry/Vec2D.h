@@ -152,6 +152,23 @@ namespace Geometry
             return std::sqrt(getSquaredLength());
         }
 
+        inline float getOrientation() const
+        {
+            if (x_ == 0)
+            {
+                if (y_ < 0)
+                {
+                    return -M_PI / 2.0;
+                }
+                else
+                {
+                    return M_PI / 2.0;
+                }
+            }
+
+            return std::atan2(y_, x_);
+        }
+
         inline Vec2D getOrthogonal() const
         {
             return Vec2D(-y_, x_);
@@ -166,6 +183,11 @@ namespace Geometry
             }
 
             return (*this) / length;
+        }
+
+        static inline Vec2D fromPolar(float orientation, float length)
+        {
+            return Vec2D(cos(orientation) * length, sin(orientation) * length);
         }
 
     private:
