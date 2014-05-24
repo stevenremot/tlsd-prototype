@@ -4,6 +4,7 @@
 #include <irrlicht/IrrlichtDevice.h>
 
 #include "../Threading/ThreadableInterface.h"
+#include "../Event/EventManager.h"
 
 
 namespace Graphics
@@ -15,7 +16,7 @@ namespace Graphics
     class Device : public Threading::ThreadableInterface
     {
     public:
-        Device();
+        Device(Event::EventQueue& eventQueue);
         ~Device();
 
         // override
@@ -24,6 +25,8 @@ namespace Graphics
         bool initializeIrrlichtEngine();
         irr::video::IVideoDriver* getIrrlichtVideoDriver();
     private:
+        Event::EventQueue& eventQueue_;
+
         irr::IrrlichtDevice* irrlichtDevice_;
         bool initialized_;
     };

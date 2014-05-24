@@ -70,6 +70,7 @@ namespace Graphics
         void SceneNode::setId(unsigned int id)
         {
             id_ = id;
+            irrlichtSceneNode_->setID(id_);
         }
 
         const unsigned int SceneNode::getId() const
@@ -87,9 +88,24 @@ namespace Graphics
             return children_;
         }
 
+        irr::scene::ISceneNode* SceneNode::getIrrlichtSceneNode() const
+        {
+            return irrlichtSceneNode_;
+        }
+
         void SceneNode::setIrrlichtSceneNode(irr::scene::ISceneNode* node)
         {
             irrlichtSceneNode_ = node;
+        }
+
+        void SceneNode::activateLight(bool b)
+        {
+            irrlichtSceneNode_->setMaterialFlag(irr::video::EMF_LIGHTING, b);
+        }
+
+        void SceneNode::addChild(SceneNode* child)
+        {
+            children_.push_back(child);
         }
     }
 }

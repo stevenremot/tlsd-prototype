@@ -22,6 +22,11 @@ namespace Graphics
                 SceneNode(const SceneNode* parent);
                 virtual ~SceneNode();
 
+                void addChild(SceneNode* child);
+
+                void activateLight(bool b);
+
+                irr::scene::ISceneNode* getIrrlichtSceneNode() const;
                 void setIrrlichtSceneNode(irr::scene::ISceneNode* node);
 
                 void setPosition(const Vec3Df& pos);

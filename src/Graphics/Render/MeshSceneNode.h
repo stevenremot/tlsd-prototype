@@ -1,12 +1,9 @@
 #ifndef GRAPHICS_RENDER_MESHSCENENODE_H
 #define GRAPHICS_RENDER_MESHSCENENODE_H
 
-// TODO : remove when we have a proper filesystem management
-#include <string>
 #include <irrlicht/IMeshSceneNode.h>
 
 #include "SceneNode.h"
-#include "Model3D.h"
 
 namespace Graphics
 {
@@ -20,10 +17,6 @@ namespace Graphics
 
             void setIrrlichtSceneNode(irr::scene::IMeshSceneNode* node);
 
-            void initFromModel3D(const Model3D& model);
-
-            // TODO : change std::string for our proper filesystem
-            bool initFromModelFile(const std::string& filename);
         protected:
             // override
             virtual void removeIrrlichtSceneNode();

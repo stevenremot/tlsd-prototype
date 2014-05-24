@@ -4,9 +4,12 @@
 #include <stdexcept>
 #include <irrlicht/irrlicht.h>
 
+#include "Render/Scene.h"
+
 namespace Graphics
 {
-    Device::Device() :
+    Device::Device(Event::EventQueue& eventQueue) :
+        eventQueue_(eventQueue),
         irrlichtDevice_(NULL),
         initialized_(false)
     {
@@ -24,7 +27,8 @@ namespace Graphics
         {
             initializeIrrlichtEngine();
             initialized_ = true;
-            std::cout << "init done" << std::endl;
+            eventQueue_ << new Render::InitSceneEvent(irrlichtDevice_->getSceneManager(), irrlichtDevice_->getVideoDriver());
+            std::cout << "[Device]: init done" << std::endl;
             return;
         }
 
@@ -62,7 +66,7 @@ namespace Graphics
         irrlichtDevice_->getCursorControl()->setVisible(false);
 
         // TODO : remove
-        irr::scene::ISceneNode* cube = irrlichtDevice_->getSceneManager()->addCubeSceneNode();
+        irr::scene::ISceneNode* cube = irrlichtDevice_->getSceneManager()->addMeshSceneNode(irrlichtDevice_->getSceneManager()->getMesh("ninja.b3d"));
         cube->setMaterialFlag(irr::video::EMF_LIGHTING,false);
         irrlichtDevice_->getSceneManager()->addCameraSceneNode(0, irr::core::vector3df(0,30,-40), irr::core::vector3df(0,5,0));
 
