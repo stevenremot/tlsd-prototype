@@ -25,8 +25,7 @@ namespace AI
             sensorsManager.updateSensors();
             // update the subsystems
             Subsystem::SubSystemsManager& subsystemsManager = aiComponent.getSubsystemsManager();
-            subsystemsManager.upadateSubsystems();
+            subsystemsManager.updateSubsystems();
         }
-
     }
 }

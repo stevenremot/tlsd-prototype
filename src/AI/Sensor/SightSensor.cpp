@@ -14,6 +14,8 @@ namespace AI
 {
     namespace Sensor
     {
+        // SightSensor's implementation :
+
         const Sensor::SensorType SightSensor::Type = "SigthSensor";
 
         SightSensor::SightSensor(Ecs::World& world, WorkingMemory&memory, int updateRate, int detectionRadius)
@@ -65,10 +67,7 @@ namespace AI
                     }
                     else
                     {
-                        MemoryFact * fact =  new MemoryFact("sightFact", belief);
-                        fact->setCharacterId(entity);
-                        fact->setPosition(entityPosition);
-                        memory_.addMemoryFact(fact);
+                        memory_.addMemoryFact(new SeeEntityFact(entity, entityPosition, belief));
                     }
                 }
                 else if(oldFactForEntity != NULL)
@@ -77,6 +76,16 @@ namespace AI
                 }
             }
             return false;
+        }
+
+        // SeeEnnemyFact's implementation :
+        const MemoryFact::MemoryFactType SeeEntityFact::Type = "sightFact";
+
+        SeeEntityFact::SeeEntityFact(Ecs::Entity entity, const Geometry::Vec3Df & position, float belief):
+            MemoryFact(Type, belief)
+        {
+            setCharacterId(entity);
+            setPosition(position);
         }
     }
 }

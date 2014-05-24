@@ -1,0 +1,24 @@
+#include "AiModule.h"
+
+using std::vector;
+
+namespace AI
+{
+    AiModule::AiModule(Blackboard &blackboard)
+        : blackboard_(blackboard), aiPlan_(NULL)
+    {
+    }
+
+    void AiModule::addAvailableAction(const Action::Action::ActionType& actionType)
+    {
+        // Check if the action is already in the list.
+        vector<AI::Action::Action::ActionType>::iterator it;
+        for(it = availableActions_.begin(); it != availableActions_.end(); ++it)
+        {
+            if((*it) == actionType)
+                return;
+        }
+        // Add the action's type to the list of available actions
+        availableActions_.push_back(actionType);
+    }
+}

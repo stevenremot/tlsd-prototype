@@ -23,7 +23,7 @@ namespace AI
 
             void addSubsystem(const Subsystem::SubsystemType & type);
 
-            void upadateSubsystems();
+            void updateSubsystems();
 
 
         private:

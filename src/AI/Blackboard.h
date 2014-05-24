@@ -2,6 +2,7 @@
 #define BLACKBOARD_H
 
 #include "../Geometry/Vec3D.h"
+#include "../Ecs/Entity.h"
 
 /**
  * Gather getters & setters for the communication between subsystems.
@@ -15,17 +16,15 @@ namespace AI
         Blackboard() : targetId_(-1) {}
         ~Blackboard(){}
         /**
-         * @brief setNavigationTarget
-         * Utilisé par AI module pour indiquer la nouvelle cible
-         * @param _targetPosition
+         * Write a new navigation's target on the blackboard
          */
         void setNavigationTarget(const Geometry::Vec3Df& navigationTarget) {navigationTarget_ = navigationTarget;}
-        /**
-         * @brief getNavigationTarget
-         * Utilisé par nav manager pour savoir si ça correspond bien à son état actuel
-         * @return
-         */
+
         const Geometry::Vec3Df& getNavigationTarget() const {return navigationTarget_;}
+
+        void setCurrentPosition(const Geometry::Vec3Df& currentPosition) {currentPosition_ = currentPosition;}
+
+        const Geometry::Vec3Df& getCurrentPosition() const {return currentPosition_;}
         /**
          * @brief setNavigationStatus
          * Utilise par le navigation manager pour indiquer s'il a fini son trajet
@@ -39,22 +38,26 @@ namespace AI
          */
         bool getNavigationStatus() const;
         /**
-         * @brief setTargetId
-         * Indique l'id du personnage cible par l'agent
-         * Utilise par le targeting system
-         * @param targetId
+         * Write a new target's id on the blackboard
          */
-        void setTargetId(int targetId) {targetId_ = targetId;}
+        void setTargetId(Ecs::Entity targetId) {targetId_ = targetId;}
         /**
-         * @brief getTargetId
-         * Retourne l'id du personnage cible par l'agent
-         * Utilise par le planner
-         * @return
+         * Get the target's id currently written on the blackboard
          */
-        int getTargetId() const {return targetId_;}
+        Ecs::Entity getTargetId() const {return targetId_;}
     private:
-        int targetId_;
+        /**
+         * Id of the target selected by the targeting subsystem.
+         */
+        Ecs::Entity targetId_;
+        /**
+         * Current targeted position.
+         */
         Geometry::Vec3Df navigationTarget_;
+        /**
+         * Current position of the entity
+         */
+        Geometry::Vec3Df currentPosition_;
 
     };
 }

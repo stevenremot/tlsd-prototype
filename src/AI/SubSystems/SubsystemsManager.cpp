@@ -21,7 +21,7 @@ namespace AI
                 subSystemsList_.push_back(new NavigationSubSystem(blackboard_));
         }
 
-        void SubSystemsManager::upadateSubsystems()
+        void SubSystemsManager::updateSubsystems()
         {
             vector<Subsystem*>::iterator subsystem;
             for(subsystem = subSystemsList_.begin(); subsystem != subSystemsList_.end(); ++subsystem)

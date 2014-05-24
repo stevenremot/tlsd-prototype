@@ -28,6 +28,7 @@
 #include "tests/graph.h"
 #include "tests/threading.h"
 #include "tests/ai.h"
+#include "tests/stateMachine.h"
 
 using std::cout;
 using std::endl;
@@ -42,7 +43,8 @@ int main()
     //    RandomTest::testNumberGenerator();
     //    GraphTest::testPlanarGraph();
     //    ThreadingTest::testChannel();
-    AITest::testAI();
+    //    AITest::testAI();
+    StateMachineTest::testStateMachine();
 
     return 0;
 }

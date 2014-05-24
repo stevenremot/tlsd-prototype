@@ -34,6 +34,14 @@ namespace AI
 
             float detectionRadius_;
         };
+
+        class SeeEntityFact : public MemoryFact
+        {
+        public:
+            static const MemoryFact::MemoryFactType Type;
+
+            SeeEntityFact(Ecs::Entity entity, const Geometry::Vec3Df & position, float belief);
+        };
     }
 }
 

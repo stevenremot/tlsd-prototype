@@ -6,6 +6,7 @@
 #include "Blackboard.h"
 #include "Sensor/SensorManager.h"
 #include "SubSystems/SubsystemsManager.h"
+#include "AiModule.h"
 
 
 namespace AI
@@ -20,7 +21,13 @@ namespace AI
 
         AiComponent(Ecs::World& world)
             : Component(Type), memory_(), blackboard_(),
-              subsystemsManager_(blackboard_,memory_), sensorsManager_(world, memory_) {}
+              subsystemsManager_(blackboard_,memory_),
+              sensorsManager_(world, memory_), aiModule_(NULL) {}
+
+        void setAiModule(AiModule* aiModule) {aiModule_ = aiModule;}
+        AiModule* getAiModule() {return aiModule_;}
+
+        Blackboard& getBlackboard() {return blackboard_;}
 
         Subsystem::SubSystemsManager& getSubsystemsManager()
         {
@@ -36,6 +43,7 @@ namespace AI
         Blackboard blackboard_;
         Subsystem::SubSystemsManager subsystemsManager_;
         Sensor::SensorsManager sensorsManager_;
+        AiModule* aiModule_;
     };
 }
 #endif // AICOMPONENT_H
