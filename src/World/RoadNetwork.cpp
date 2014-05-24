@@ -27,6 +27,7 @@
 using std::vector;
 using Geometry::Vec3Df;
 using Geometry::Vec2Df;
+using Geometry::Polygon2D;
 using Graphics::Render::Face;
 using Graph::PlanarGraph;
 using Graph::PlanarEdge;
@@ -178,5 +179,48 @@ namespace World
         }
 
         model_ = Graphics::Render::Model3D(vertices, faces);
+    }
+
+    Polygon2D RoadNetwork::getConvexHull() const
+    {
+        Vec2Df min;
+        Vec2Df max;
+
+        PlanarGraph::NodeCollection nodes = graph_.getNodes();
+
+        min = max = nodes[0].getPosition();
+
+        for (unsigned int i = 1; i < nodes.size(); i++)
+        {
+            const Vec2Df& pos = nodes[i].getPosition();
+
+            if (pos.getX() < min.getX())
+            {
+                min.setX(pos.getX());
+            }
+
+            if (pos.getX() > max.getX())
+            {
+                max.setX(pos.getX());
+            }
+
+            if (pos.getY() < min.getY())
+            {
+                min.setY(pos.getY());
+            }
+
+            if (pos.getY() > max.getY())
+            {
+                max.setY(pos.getY());
+            }
+        }
+
+        std::vector<Vec2Df> points;
+        points.push_back(min);
+        points.push_back(Vec2Df(min.getX(), max.getY()));
+        points.push_back(max);
+        points.push_back(Vec2Df(max.getX(), min.getY()));
+
+        return Polygon2D(points);
     }
 }
