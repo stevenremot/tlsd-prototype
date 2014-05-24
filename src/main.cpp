@@ -28,6 +28,7 @@
 #include "tests/graph.h"
 #include "tests/threading.h"
 #include "tests/core.h"
+#include "tests/network.h"
 
 using std::cout;
 using std::endl;
@@ -36,13 +37,14 @@ using std::vector;
 
 int main()
 {
-    EventTest::testEvents();
+  /*  EventTest::testEvents();
     EcsTest::testEcs();
     GeometryTest::testVectors();
     RandomTest::testNumberGenerator();
     GraphTest::testPlanarGraph();
     ThreadingTest::testChannel();
     CoreTest::testSharedPtr();
-
+*/
+NetworkTest::TestNetwork();
     return 0;
 }
