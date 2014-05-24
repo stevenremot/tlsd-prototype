@@ -15,7 +15,7 @@ Client::Client(Ip ip, Port port, EventQueue eventqueue)
     catch(SocketException &e)
     {
         std::cerr << e.what() << std::endl;
-        exit(1);
+        //exit(1);
     }
 
 }
