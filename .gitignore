@@ -2,3 +2,6 @@ program
 *.o
 *~
 .sconsign.dblite
+*.cbp
+*.layout
+*.exe
