@@ -30,12 +30,25 @@ namespace AI
          * Clean up the former plan so you should check if it has been fully executed before computing a new one.
          */
         virtual void computeNewPlan() = 0;
+
+        //void executePlan();
         //std::vector<Action*> getNewPlan() const {return newPlan_;}
+
+        void cleanPlan()
+        {
+            if(aiPlan_->isPlanCompleted())
+            {
+                delete aiPlan_;
+                aiPlan_ = NULL;
+            }
+        }
+        void setPlan(Plan::AiPlan* aiPlan) {aiPlan_ = aiPlan;}
+        Plan::AiPlan* getPlan() {return aiPlan_;}
 
     protected:
         Blackboard& getBlackboard() {return blackboard_;}
         const std::vector<Action::Action::ActionType>& getAvailableActions() const {return availableActions_;}
-        void setPlan(Plan::AiPlan* aiPlan) {aiPlan_ = aiPlan;}
+
     private:
         Blackboard& blackboard_;
         std::vector<Action::Action::ActionType> availableActions_;

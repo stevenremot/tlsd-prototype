@@ -13,6 +13,7 @@ namespace AI
         {
         public:
             Plan() : planCompleted_(false) {}
+            virtual ~Plan(){}
 
             bool isPlanCompleted() const {return planCompleted_;}
 

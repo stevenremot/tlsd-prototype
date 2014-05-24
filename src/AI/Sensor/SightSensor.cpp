@@ -1,10 +1,14 @@
 #include "SightSensor.h"
 
+#include <vector>
+
 #include "../../Ecs/ComponentGroup.h"
 #include "../../Geometry/PositionComponent.h"
 #include "../../Physics/MovementComponent.h"
 
 using std::max;
+using std::vector;
+
 using Geometry::PositionComponent;
 using Geometry::Vec3Df;
 

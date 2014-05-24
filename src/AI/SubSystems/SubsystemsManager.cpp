@@ -3,10 +3,12 @@
 #include "NavigationSubsystem.h"
 #include "TargetingSubsystem.h"
 
-using AI::Subsystem::NavigationSubSystem;
-using AI::Subsystem::TargetingSubsystem;
-using AI::Subsystem::Subsystem;
+#include "../Action/MoveCloseToTargetAction.h"
+#include "../Action/NoAction.h"
 
+
+using std::vector;
+using AI::Action::MoveCloseToTargetAction;
 
 namespace AI
 {
@@ -21,12 +23,32 @@ namespace AI
                 subSystemsList_.push_back(new NavigationSubSystem(blackboard_));
         }
 
+        Subsystem* SubSystemsManager::getSubsystemByType(const Subsystem::SubsystemType& type)
+        {
+            vector<Subsystem*>::const_iterator it;
+            for(it = subSystemsList_.begin(); it !=  subSystemsList_.end(); ++it)
+                if(type == (*it)->getSubsystemType())
+                    return (*it);
+            return NULL;
+        }
+
         void SubSystemsManager::updateSubsystems()
         {
             vector<Subsystem*>::iterator subsystem;
             for(subsystem = subSystemsList_.begin(); subsystem != subSystemsList_.end(); ++subsystem)
             {
                 (*subsystem)->update();
+            }
+        }
+
+        void SubSystemsManager::dispatchAction(Action::Action* action)
+        {
+            if(action == NULL)
+                return;
+            Subsystem::SubsystemType subsystemType;
+            if(action->getType() == Action::MoveCloseToTargetAction::Type)
+            {
+                subsystemType = NavigationSubSystem::Type;
             }
         }
     }

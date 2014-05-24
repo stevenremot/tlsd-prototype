@@ -1,8 +1,11 @@
 #include "TargetingSubsystem.h"
 
 #include <cfloat>
+#include <vector>
 
 #include "../../Geometry/Vec3D.h"
+
+using std::vector;
 
 using Geometry::Vec3Df;
 

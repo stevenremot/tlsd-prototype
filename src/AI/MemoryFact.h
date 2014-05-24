@@ -1,13 +1,10 @@
 #ifndef MEMORYFACT_H
 #define MEMORYFACT_H
 
-#include <vector>
 #include <string>
 
 #include "../Geometry/Vec3D.h"
 #include "../Ecs/Entity.h"
-
-using std::vector;
 
 namespace AI
 {

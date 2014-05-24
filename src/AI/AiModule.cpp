@@ -21,4 +21,13 @@ namespace AI
         // Add the action's type to the list of available actions
         availableActions_.push_back(actionType);
     }
+
+    /*
+    void AiModule::executePlan()
+    {
+        if(aiPlan_ ==  NULL || aiPlan_->isPlanCompleted())
+            return;
+
+    }
+    */
 }

@@ -26,6 +26,23 @@ namespace AI
             // update the subsystems
             Subsystem::SubSystemsManager& subsystemsManager = aiComponent.getSubsystemsManager();
             subsystemsManager.updateSubsystems();
+
+            // If the plan is over, compute a new one.
+            AiModule* aiModule = aiComponent.getAiModule();
+            aiModule->computeNewPlan();
+            // Get the actions sequence and dispatch them between subsystems
+            Plan::AiPlan* aiPlan = aiModule->getPlan();
+            if(aiPlan != NULL)
+            {
+                while(!aiPlan->isPlanCompleted())
+                {
+                    Action::Action* currentAction = aiPlan->getCurrentAction();
+                    // Send the action to the relevant object
+                    subsystemsManager.dispatchAction(currentAction);
+                    aiPlan->goToNextStep();
+                }
+            }
+
         }
     }
 }

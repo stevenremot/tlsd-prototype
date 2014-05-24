@@ -23,6 +23,8 @@ namespace AI
             TargetingSubsystem(Blackboard& blackboard, WorkingMemory& memory);
             ~TargetingSubsystem();
 
+            virtual void executeAction(Action::Action*){}
+
             virtual bool update();
 
         private:

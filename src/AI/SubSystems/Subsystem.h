@@ -6,6 +6,8 @@
 #include "../Blackboard.h"
 #include "../MemoryFact.h"
 
+#include "../Action/Action.h"
+
 /**
  * Base class for the subsystems of the AI module.
  * Warning : this class has nothing to do with Ecs::System!
@@ -23,6 +25,7 @@ namespace AI
                 : subsystemType_(subsystemType), blackboard_(blackboard) {}
             virtual ~Subsystem(){}
             virtual bool update() = 0;
+            virtual void executeAction(Action::Action* action) = 0;
 
             const SubsystemType & getSubsystemType() const
             {

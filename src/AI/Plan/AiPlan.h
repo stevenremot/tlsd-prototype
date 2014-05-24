@@ -23,7 +23,7 @@ namespace AI
             /**
              * Clean all the pointers in the list.
              */
-            ~AiPlan();
+            virtual ~AiPlan();
             /**
              * Set the current action to the next action in the sequence.
              * If the next action is the last in the list, the plan is complete.

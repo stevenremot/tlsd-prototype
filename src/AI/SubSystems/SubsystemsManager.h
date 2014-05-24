@@ -7,6 +7,7 @@
 #include "../Blackboard.h"
 #include "../WorkingMemory.h"
 
+#include "../Action/Action.h"
 
 namespace AI
 {
@@ -22,8 +23,17 @@ namespace AI
                 : blackboard_(blackboard), memory_(memory){}
 
             void addSubsystem(const Subsystem::SubsystemType & type);
+            /**
+             * @return NULL if there is no subsystem with this type registered in the manager.
+             */
+            Subsystem* getSubsystemByType(const Subsystem::SubsystemType& type);
 
             void updateSubsystems();
+
+            /**
+             * Send the action to the subsystem which can execute it.
+             */
+            void dispatchAction(Action::Action* action);
 
 
         private:

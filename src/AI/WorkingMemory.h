@@ -6,11 +6,6 @@
 
 #include "MemoryFact.h"
 
-using std::vector;
-using std::map;
-
-using AI::MemoryFact;
-
 namespace AI
 {
 
@@ -22,8 +17,8 @@ namespace AI
     class WorkingMemory
     {
     public:
-        typedef vector<MemoryFact*> MemoryFactsList;
-        typedef map<MemoryFact::MemoryFactType, MemoryFactsList> MemoryFactsMap;
+        typedef std::vector<MemoryFact*> MemoryFactsList;
+        typedef std::map<MemoryFact::MemoryFactType, MemoryFactsList> MemoryFactsMap;
 
         WorkingMemory();
         ~WorkingMemory();

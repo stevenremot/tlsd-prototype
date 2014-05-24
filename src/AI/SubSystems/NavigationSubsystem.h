@@ -2,7 +2,7 @@
 #define NAVIGATIONSUBSYSTEM_H
 
 #include "Subsystem.h"
-#include "../../Geometry/Vec2D.h"
+#include "../../Geometry/Vec3D.h"
 
 
 namespace AI
@@ -31,9 +31,11 @@ namespace AI
             void updatePath();
             void findPathToGoal();
             virtual bool update();
+            virtual void executeAction(Action::Action *action);
 
         private:
-            Geometry::Vec2Df navigationTarget_;
+            Geometry::Vec3Df navigationTarget_;
+            //Geometry::Vec3Df currentPosition_;
             bool isFinished_;
         };
     }
