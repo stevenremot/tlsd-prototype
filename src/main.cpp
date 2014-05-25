@@ -28,6 +28,8 @@
 #include "tests/graph.h"
 #include "tests/threading.h"
 #include "tests/core.h"
+#include "tests/ai.h"
+#include "tests/stateMachine.h"
 
 using std::cout;
 using std::endl;
@@ -43,6 +45,7 @@ int main()
     GraphTest::testPlanarGraph();
     ThreadingTest::testChannel();
     CoreTest::testSharedPtr();
+    StateMachineTest::testStateMachine();
 
     return 0;
 }
