@@ -17,10 +17,12 @@
     <http://www.gnu.org/licenses/>.
 */
 
-#include "QueryInserter.h"
-#include "RoadQuery.h"
+#ifndef WORLD_GENERATION_CITY_END_NODE_QUERY_INSERTER_H
+#define WORLD_GENERATION_CITY_END_NODE_QUERY_INSERTER_H
 
-using Geometry::Vec2Df;
+#include "QueryInserterInterface.h"
+
+#include "../../../Graph/PlanarGraph.h"
 
 namespace World
 {
@@ -28,19 +30,30 @@ namespace World
     {
         namespace City
         {
-            Graph::PlanarEdge QueryInserter::insert(const RoadQuery& query, Graph::PlanarGraph& graph)
+            class EndNodeQueryInserter: public QueryInserterInterface
             {
-                Vec2Df direction = Vec2Df::fromPolar(
-                    query.getOrientation(),
-                    query.getLength()
-                );
+            public:
+                EndNodeQueryInserter(const Graph::PlanarNode& endNode):
+                    endNode_(endNode)
+                {}
 
-                const Graph::PlanarNode& end = graph.addNode(
-                    query.getOriginNode().getPosition() + direction
-                );
+                virtual Graph::PlanarEdge insert(const RoadQuery& query, Graph::PlanarGraph& graph);
 
-                return graph.addEdge(query.getOriginNode(), end);
-            }
+                virtual bool mustCreateBranch()
+                {
+                    return false;
+                }
+
+            private:
+                Graph::PlanarNode endNode_;
+            };
         }
     }
 }
+
+#endif
+
+// Emacs local variables
+// Local variables:
+// mode: c++
+// End:

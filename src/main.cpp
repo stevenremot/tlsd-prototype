@@ -29,6 +29,7 @@
 #include "tests/threading.h"
 #include "tests/core.h"
 #include "tests/world.h"
+#include "tests/worldGeneration.h"
 
 using std::cout;
 using std::endl;
@@ -42,12 +43,13 @@ int main()
     // EcsTest::testSharedEntity();
     // CoreTest::testSharedPtr();
     // GeometryTest::testVectors();
-    GeometryTest::testPolygons();
+    // GeometryTest::testPolygons();
     // RandomTest::testNumberGenerator();
     // GraphTest::testPlanarGraph();
     // GraphTest::testIsBetween();
     // ThreadingTest::testChannel();
     // WorldTest::testRoadNetworkModel();
+    WorldGenerationTests::testRoadExpansion();
 
     return 0;
 }

@@ -26,17 +26,16 @@ namespace World
     {
         namespace City
         {
-            void EdgeSplitQueryInserter::insert(
+            Graph::PlanarEdge EdgeSplitQueryInserter::insert(
                 const RoadQuery& query,
                 Graph::PlanarGraph& graph
             ) {
                 graph.removeEdge(edge_);
-                const Graph::PlanarNode& intersection =
-                    graph.addNode(intersection_);
+                const Graph::PlanarNode& intersection = graph.addNode(intersection_);
 
                 graph.addEdge(edge_.getFirstNode(), intersection);
                 graph.addEdge(intersection, edge_.getSecondNode());
-                graph.addEdge(query.getOriginNode(), intersection);
+                return graph.addEdge(query.getOriginNode(), intersection);
             }
         }
     }

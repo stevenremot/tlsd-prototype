@@ -17,10 +17,8 @@
     <http://www.gnu.org/licenses/>.
 */
 
-#include "QueryInserter.h"
+#include "EndNodeQueryInserter.h"
 #include "RoadQuery.h"
-
-using Geometry::Vec2Df;
 
 namespace World
 {
@@ -28,18 +26,9 @@ namespace World
     {
         namespace City
         {
-            Graph::PlanarEdge QueryInserter::insert(const RoadQuery& query, Graph::PlanarGraph& graph)
+            Graph::PlanarEdge EndNodeQueryInserter::insert(const RoadQuery& query, Graph::PlanarGraph& graph)
             {
-                Vec2Df direction = Vec2Df::fromPolar(
-                    query.getOrientation(),
-                    query.getLength()
-                );
-
-                const Graph::PlanarNode& end = graph.addNode(
-                    query.getOriginNode().getPosition() + direction
-                );
-
-                return graph.addEdge(query.getOriginNode(), end);
+                return graph.addEdge(query.getOriginNode(), endNode_);
             }
         }
     }

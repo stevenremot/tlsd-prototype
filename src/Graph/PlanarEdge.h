@@ -71,7 +71,7 @@ namespace Graph
         /**
          * Return true if the given node is at one extremity of the edge
          */
-        bool hasNode(const PlanarNode& node);
+        bool hasNode(const PlanarNode& node) const;
 
         /**
          * Return the other extremity of the edge

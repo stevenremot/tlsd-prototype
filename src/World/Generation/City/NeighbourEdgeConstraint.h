@@ -17,10 +17,10 @@
     <http://www.gnu.org/licenses/>.
 */
 
-#include "QueryInserter.h"
-#include "RoadQuery.h"
+#ifndef WORLD_GENERATION_CITY_NEIGHBOUR_EDGE_CONSTRAINT_H
+#define WORLD_GENERATION_CITY_NEIGHBOUR_EDGE_CONSTRAINT_H
 
-using Geometry::Vec2Df;
+#include "RoadConstraintInterface.h"
 
 namespace World
 {
@@ -28,19 +28,27 @@ namespace World
     {
         namespace City
         {
-            Graph::PlanarEdge QueryInserter::insert(const RoadQuery& query, Graph::PlanarGraph& graph)
+            class NeighbourEdgeConstraint: public RoadConstraintInterface
             {
-                Vec2Df direction = Vec2Df::fromPolar(
-                    query.getOrientation(),
-                    query.getLength()
+            public:
+                NeighbourEdgeConstraint(float radius): radius_(radius)
+                {}
+
+                void insert(
+                    RoadQuery& query,
+                    const RoadNetwork& network
                 );
 
-                const Graph::PlanarNode& end = graph.addNode(
-                    query.getOriginNode().getPosition() + direction
-                );
-
-                return graph.addEdge(query.getOriginNode(), end);
-            }
+            private:
+                float radius_;
+            };
         }
     }
 }
+
+#endif
+
+// Emacs local variables
+// Local variables:
+// mode: c++
+// End:

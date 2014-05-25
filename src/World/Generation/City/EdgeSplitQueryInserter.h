@@ -42,7 +42,7 @@ namespace World
                     intersection_(intersection)
                 {}
 
-                virtual void insert(const RoadQuery& query, Graph::PlanarGraph& graph);
+                virtual Graph::PlanarEdge insert(const RoadQuery& query, Graph::PlanarGraph& graph);
 
                 virtual bool mustCreateBranch()
                 {

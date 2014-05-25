@@ -38,12 +38,21 @@ namespace World
             public:
                 virtual ~QueryInserterInterface() {};
 
-                virtual void insert(const RoadQuery& query, Graph::PlanarGraph& graph) = 0;
+
+                /**
+                 * Insert the query in the graph
+                 *
+                 * @return the node at the end of the query
+                 */
+                virtual Graph::PlanarEdge insert(
+                    const RoadQuery& query,
+                    Graph::PlanarGraph& graph
+                ) = 0;
 
                 /**
                  * Return true if a branch must be created after the insertion
                  */
-                virtual bool mustCreatedBranch();
+                virtual bool mustCreateBranch() = 0;
             };
         }
     }

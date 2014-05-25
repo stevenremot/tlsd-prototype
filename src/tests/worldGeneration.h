@@ -17,30 +17,17 @@
     <http://www.gnu.org/licenses/>.
 */
 
-#include "QueryInserter.h"
-#include "RoadQuery.h"
+#ifndef TESTS_WORLD_GENERATION_H
+#define TESTS_WORLD_GENERATION_H
 
-using Geometry::Vec2Df;
-
-namespace World
+namespace WorldGenerationTests
 {
-    namespace Generation
-    {
-        namespace City
-        {
-            Graph::PlanarEdge QueryInserter::insert(const RoadQuery& query, Graph::PlanarGraph& graph)
-            {
-                Vec2Df direction = Vec2Df::fromPolar(
-                    query.getOrientation(),
-                    query.getLength()
-                );
-
-                const Graph::PlanarNode& end = graph.addNode(
-                    query.getOriginNode().getPosition() + direction
-                );
-
-                return graph.addEdge(query.getOriginNode(), end);
-            }
-        }
-    }
+    void testRoadExpansion();
 }
+
+#endif
+
+// Emacs local variables
+// Local variables:
+// mode: c++
+// End:

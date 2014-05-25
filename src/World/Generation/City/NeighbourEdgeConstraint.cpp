@@ -17,18 +17,13 @@
     <http://www.gnu.org/licenses/>.
 */
 
-#include "IntersectionConstraint.h"
+#include "NeighbourEdgeConstraint.h"
 
-#include <cmath>
-
-#include "../../../Graph/PlanarGraph.h"
-#include "EdgeSplitQueryInserter.h"
 #include "RoadUtil.h"
+#include "EdgeSplitQueryInserter.h"
 
-using Graph::PlanarNode;
-using Graph::PlanarEdge;
-using Graph::PlanarGraph;
 using Geometry::Vec2Df;
+using Graph::PlanarEdge;
 
 namespace World
 {
@@ -36,36 +31,34 @@ namespace World
     {
         namespace City
         {
-            void IntersectionConstraint::insert(
-                RoadQuery& query,
-                const RoadNetwork& network
+            void NeighbourEdgeConstraint::insert(
+                    RoadQuery& query,
+                    const RoadNetwork& network
             ) {
-                if (query.getState() != RoadQuery::CancelledState)
+                if (query.getState() == RoadQuery::PendingState)
                 {
-                    Vec2Df intersection;
-                    PlanarEdge intersectedEdge;
+                    Vec2Df projection;
+                    PlanarEdge projectionEdge;
                     const Vec2Df& origin = query.getOriginNode().getPosition();
 
-                    if (getNearestIntersection(
+                    if (getNearestProjection(
                             query,
                             network.getGraph(),
-                            intersection,
-                            intersectedEdge
+                            projection,
+                            projectionEdge
                         ))
                     {
-                        float length = (origin - intersection).getLength();
-                        if (length < minimalLength_)
-                        {
-                            query.setState(RoadQuery::CancelledState);
-                        }
-                        else if (query.getState() != RoadQuery::DoneState)
+                        Vec2Df offset = projection - origin;
+                        if (offset.getLength() <= radius_)
                         {
                             query.setState(RoadQuery::DoneState);
-                            query.setLength(length);
+
+                            query.setLength(offset.getLength());
+                            query.setOrientation(offset.getOrientation());
                             query.setInserter(new EdgeSplitQueryInserter(
-                                                   intersectedEdge,
-                                                   intersection
-                                               ));
+                                                  projectionEdge,
+                                                  projection
+                                              ));
                         }
                     }
                 }

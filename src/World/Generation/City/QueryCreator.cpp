@@ -38,14 +38,14 @@ namespace World
                 Vec2Df direction =
                     node.getPosition() - edge.getOtherNode(node).getPosition();
 
-                float baseOrientation = direction.getOrientation() - M_PI / 4.0;
+                float baseOrientation = direction.getOrientation() - M_PI / 2.0;
 
                 QueryCollection queries;
 
                 for (unsigned int i = 0; i < 3; i++)
                 {
                     float orientation = baseOrientation +
-                        M_PI * static_cast<float>(i) / 4.0 +
+                        M_PI * static_cast<float>(i) / 2.0 +
                         numberGenerator_.getUniform(-0.25, 0.25);
 
                     float length = averageLength_ +

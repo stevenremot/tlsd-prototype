@@ -55,7 +55,7 @@ namespace Graph
             getFirstNode().getPosition();
     }
 
-    bool PlanarEdge::hasNode(const PlanarNode& node)
+    bool PlanarEdge::hasNode(const PlanarNode& node) const
     {
         return firstNode_ == node || secondNode_ == node;
     }

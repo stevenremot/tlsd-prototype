@@ -19,17 +19,111 @@
 
 #include "NeighbourNodeConstraint.h"
 
+#include "../../../Geometry/Vec2D.h"
+#include "RoadUtil.h"
+#include "EndNodeQueryInserter.h"
+
+using Geometry::Vec2Df;
+using Graph::PlanarNode;
+using Graph::PlanarEdge;
+using Graph::PlanarGraph;
+
 namespace World
 {
     namespace Generation
     {
         namespace City
         {
+            bool hasExistingEdge(
+                const PlanarNode& n1,
+                const PlanarNode& n2,
+                const PlanarGraph& graph
+            ) {
+                const PlanarGraph::EdgeCollection& edges = graph.getEdges();
+                for (unsigned int i = 0; i < edges.size(); i++)
+                {
+                    const PlanarEdge& edge = edges[i];
+                    if (edge.hasNode(n1) && edge.hasNode(n2))
+                    {
+                        return true;
+                    }
+                }
+                return false;
+            }
+
+            bool getNearestNode(
+                const PlanarNode& originNode,
+                const PlanarGraph& graph,
+                float radius,
+                PlanarNode& nearestNode
+            ) {
+                const PlanarGraph::NodeCollection& nodes = graph.getNodes();
+                const Vec2Df& origin = originNode.getPosition();
+                float distance = 0;
+                bool gotNearest = false;
+
+                for (unsigned int i = 0; i < nodes.size(); i++)
+                {
+                    const PlanarNode& node = nodes[i];
+                    const Vec2Df& position = node.getPosition();
+                    Vec2Df direction = position - origin;
+                    float currentDistance = direction.getLength();
+
+                    Vec2Df intersection;
+                    PlanarEdge intersectedEdge;
+                    RoadQuery query = RoadQuery(
+                        originNode,
+                        direction.getOrientation(),
+                        currentDistance
+                    );
+
+                    if (node == originNode ||
+                        currentDistance > radius ||
+                        hasExistingEdge(originNode, node, graph) ||
+                        getNearestIntersection(
+                            query,
+                            graph,
+                            intersection,
+                            intersectedEdge
+                        ))
+                    {
+                        continue;
+                    }
+
+                    if (!gotNearest || currentDistance < distance)
+                    {
+                        gotNearest = true;
+                        distance = currentDistance;
+                        nearestNode = node;
+                    }
+                }
+
+                return gotNearest;
+            }
+
             void NeighbourNodeConstraint::insert(
                 RoadQuery& query,
                 const RoadNetwork& network
             ) {
-                // TODO add magic here
+                if (query.getState() == RoadQuery::PendingState)
+                {
+                    PlanarNode nearestNode;
+
+                    if (getNearestNode(
+                            query.getOriginNode(),
+                            network.getGraph(),
+                            radius_,
+                            nearestNode
+                        ))
+                    {
+                        query.setState(RoadQuery::DoneState);
+                        query.setInserter(new EndNodeQueryInserter(nearestNode));
+                        Vec2Df direction =
+                            nearestNode.getPosition() - query.getOriginNode().getPosition();
+                        query.setOrientation(direction.getOrientation());
+                        query.setLength(direction.getLength());
+                    }
+                }
             }
         }
     }
