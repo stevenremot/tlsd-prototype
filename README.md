@@ -9,6 +9,7 @@ project: The Lost Souls Downfall.
 
 - pthread
 - [lemon](http://lemon.cs.elte.hu/trac/lemon)
+- [irrlicht](http://irrlicht.sourceforge.net/)
 
 If you are on a linux system, you can install lemon from sources using
 the intallation script in `dependencies` file.
