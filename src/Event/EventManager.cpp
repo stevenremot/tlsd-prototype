@@ -23,20 +23,23 @@ namespace Event
 {
     void EventManager::run()
     {
-        Event* event = NULL;
-        head_ >> event;
-
-        if (event != NULL)
+        if (!head_.isEmpty())
         {
-            const ListenerRegister::EventListenerList& listeners = listeners_.getListeners(event->getType());
+            Event* event = NULL;
+            head_ >> event;
 
-            ListenerRegister::EventListenerList::const_iterator listener;
-            for (listener = listeners.begin(); listener != listeners.end(); ++listener)
+            if (event != NULL)
             {
-                (*listener)->call(*event);
-            }
+                const ListenerRegister::EventListenerList& listeners = listeners_.getListeners(event->getType());
 
-            delete event;
+                ListenerRegister::EventListenerList::const_iterator listener;
+                for (listener = listeners.begin(); listener != listeners.end(); ++listener)
+                {
+                    (*listener)->call(*event);
+                }
+
+                delete event;
+            }
         }
     }
 }

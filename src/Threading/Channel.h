@@ -63,6 +63,11 @@ namespace Threading
             data_.pop_front();
         }
 
+        bool isEmpty() const
+        {
+            return data_.empty();
+        }
+
     private:
         std::list<T> data_;
 
@@ -141,6 +146,11 @@ namespace Threading
         void operator>>(T& data)
         {
             (*channel_) >> data;
+        }
+
+        bool isEmpty()
+        {
+            return channel_->isEmpty();
         }
 
     private:
