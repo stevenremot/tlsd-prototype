@@ -12,27 +12,46 @@
 
 namespace Input
 {
-        /**
-        *   Event provided by the Device to initialize the Scene object
-        */
-        class InitInputEvent : public Event::Event
+    /**
+    *   Event provided by the Device to initialize the Scene object
+    */
+    class InitInputEvent : public Event::Event
+    {
+    public:
+        static const Event::Type TYPE;
+
+        InitInputEvent(irr::gui::ICursorControl* cursorControl):
+            Event::Event(TYPE),
+            cursorControl_(cursorControl)
+        {}
+
+        irr::gui::ICursorControl* getCursorControl() const
         {
-        public:
-            static const Event::Type TYPE;
+            return cursorControl_;
+        }
 
-            InitInputEvent(irr::gui::ICursorControl* cursorControl):
-                Event::Event(TYPE),
-                cursorControl_(cursorControl)
-            {}
+    private:
+        irr::gui::ICursorControl* cursorControl_;
+    };
 
-            irr::gui::ICursorControl* getCursorControl() const
-            {
-                return cursorControl_;
-            }
+    class InputInitializedEvent : public Event::Event
+    {
+    public:
+        static const Event::Type TYPE;
 
-        private:
-            irr::gui::ICursorControl* cursorControl_;
-        };
+        InputInitializedEvent(irr::IEventReceiver* receiver):
+            Event::Event(TYPE),
+            receiver_(receiver)
+        {}
+
+        irr::IEventReceiver* getReceiver() const
+        {
+            return receiver_;
+        }
+
+    private:
+        irr::IEventReceiver* receiver_;
+    };
 
     class IrrlichtInputReceiver : public irr::IEventReceiver, public Event::EventListenerInterface, public Threading::ThreadableInterface
     {

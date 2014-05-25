@@ -12,6 +12,7 @@ namespace Input
     using irr::core::position2df;
 
     const Event::Event::Type InitInputEvent::TYPE = "init_input";
+    const Event::Event::Type InputInitializedEvent::TYPE = "input_initialized";
 
     IrrlichtInputReceiver::IrrlichtInputReceiver(Event::EventQueue& eventQueue):
         eventQueue_(eventQueue)
@@ -39,6 +40,8 @@ namespace Input
             cursorPos_ = centerCursor_;
 
             std::cout << "[Input]: Init done" << std::endl;
+
+            eventQueue_ << new InputInitializedEvent(dynamic_cast<irr::IEventReceiver*>(this));
         }
     }
 
@@ -48,7 +51,7 @@ namespace Input
         {
             if (cursorPos_ != centerCursor_)
             {
-                eventQueue_ << new CameraEvent(cursorPos_);
+                //eventQueue_ << new CameraEvent(cursorPos_);
 
                 // Do the fix as normal, special case below
                 // reset cursor position to the centre of the window.

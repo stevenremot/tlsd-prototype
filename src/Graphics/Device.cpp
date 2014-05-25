@@ -54,7 +54,9 @@ namespace Graphics
 
     void Device::call(const Event::Event& event)
     {
+        irrlichtDevice_->setEventReceiver(static_cast<const Input::InputInitializedEvent&>(event).getReceiver());
 
+        std::cout << "[Input]: Receiver set" << std::endl;
     }
 
     bool Device::initializeIrrlichtEngine()
@@ -76,9 +78,8 @@ namespace Graphics
         irrlichtDevice_->getCursorControl()->setVisible(false);
 
         // TODO : remove
-        irr::scene::ISceneNode* cube = irrlichtDevice_->getSceneManager()->addMeshSceneNode(irrlichtDevice_->getSceneManager()->getMesh("ninja.b3d"));
-        cube->setMaterialFlag(irr::video::EMF_LIGHTING,false);
-        irrlichtDevice_->getSceneManager()->addCameraSceneNode(0, irr::core::vector3df(0,30,-40), irr::core::vector3df(0,5,0));
+        //irrlichtDevice_->getSceneManager()->addCameraSceneNode(0, irr::core::vector3df(-10,5,-10), irr::core::vector3df(0,0,0));
+        irrlichtDevice_->getSceneManager()->addCameraSceneNodeFPS(NULL);
 
         return true;
     }

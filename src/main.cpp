@@ -39,6 +39,7 @@ int main()
 {
     RenderTest::testThread();
 
+/*
     EventTest::testEvents();
     EcsTest::testEcs();
     GeometryTest::testVectors();
@@ -46,6 +47,7 @@ int main()
     GraphTest::testPlanarGraph();
     ThreadingTest::testChannel();
     CoreTest::testSharedPtr();
+*/
 
     return 0;
 }

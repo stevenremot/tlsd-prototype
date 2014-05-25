@@ -8,18 +8,6 @@
 
 namespace Graphics
 {
-    class InitReceiverEvent : public Event::Event
-    {
-    public:
-        static const Event::Type TYPE;
-
-        InitInputEvent():
-            Event::Event(TYPE)
-        {}
-
-    private:
-    };
-
     /**
     * This class provides binding with the Irrlicht Graphics Engine's device
     * It also manages the window's initialization

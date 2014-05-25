@@ -13,6 +13,8 @@ namespace RenderTest
     };
 
     void testThread();
+
+    void testViewMesh();
 }
 
 #endif // TESTS_RENDER_H

@@ -73,6 +73,8 @@ namespace Graphics
             irr::scene::ISceneManager* irrlichtSceneManager_;
             irr::video::IVideoDriver* irrlichtVideoDriver_;
 
+            const unsigned int verticesPerMeshBuffer_;
+
             /*
             *   For direct access to scene node by its id
             */

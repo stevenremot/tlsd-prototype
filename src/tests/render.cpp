@@ -28,6 +28,7 @@ namespace RenderTest
 
         Device device(m.getEventQueue());
         Event::ListenerRegister& reg = m.getListenerRegister();
+        reg.put(Input::InputInitializedEvent::TYPE, &device);
 
         Scene scene;
         reg.put(Graphics::Render::InitSceneEvent::TYPE, &scene);
@@ -44,15 +45,14 @@ namespace RenderTest
         threadables.push_back(&receiver);
         threadables2.push_back(&m);
         Thread thread(threadables, 60);
-        Thread thread2(threadables2, 5);
+        Thread thread2(threadables2, 100);
         thread.start();
         thread2.start();
 
-        // wait for 4 seconds
-        for (int i = 0; i < 20; i++)
+        // wait for 20 seconds
+        for (int i = 0; i < 1000; i++)
         {
-           Threading::sleep(0,200);
-           std::cout << ".";
+           Threading::sleep(0,20);
         }
 
         thread.stop();
