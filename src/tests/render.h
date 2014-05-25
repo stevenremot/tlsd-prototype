@@ -14,7 +14,7 @@ namespace RenderTest
 
     void testThread();
 
-    void testViewMesh();
+    void testCamera();
 }
 
 #endif // TESTS_RENDER_H

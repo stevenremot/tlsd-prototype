@@ -79,7 +79,6 @@ namespace Graphics
 
         // TODO : remove
         //irrlichtDevice_->getSceneManager()->addCameraSceneNode(0, irr::core::vector3df(-10,5,-10), irr::core::vector3df(0,0,0));
-        irrlichtDevice_->getSceneManager()->addCameraSceneNodeFPS(NULL);
 
         return true;
     }

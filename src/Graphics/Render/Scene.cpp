@@ -6,6 +6,7 @@
 #include "MeshSceneNode.h"
 
 #include "ModelUtils.h"
+#include "../../Input/Events.h"
 
 // TODO: remove
 #include <iostream>
@@ -19,28 +20,50 @@ namespace Graphics
         Scene::Scene() :
             irrlichtSceneManager_(NULL),
             irrlichtVideoDriver_(NULL),
-            verticesPerMeshBuffer_(10000)
+            verticesPerMeshBuffer_(10000),
+            camera_(NULL)
         {
 
         }
 
         Scene::~Scene()
         {
-            // delete root scene node = delete all scene nodes
+            // delete root scene node => delete all scene nodes
             delete sceneNodes_[0];
         }
 
         void Scene::call(const Event::Event& event)
         {
-            const InitSceneEvent& e = static_cast<const InitSceneEvent&>(event);
-            irrlichtSceneManager_ = e.getManager();
-            irrlichtVideoDriver_ = e.getDriver();
+            if (event.getType() == InitSceneEvent::TYPE)
+            {
+                const InitSceneEvent& e = static_cast<const InitSceneEvent&>(event);
+                irrlichtSceneManager_ = e.getManager();
+                irrlichtVideoDriver_ = e.getDriver();
 
-            sceneNodes_.push_back(new SceneNode(NULL));
-            sceneNodes_[0]->setIrrlichtSceneNode(irrlichtSceneManager_->getRootSceneNode());
-            sceneNodes_[0]->setId(0);
+                // add root scene node
+                sceneNodes_.push_back(new SceneNode(NULL));
+                sceneNodes_[0]->setIrrlichtSceneNode(irrlichtSceneManager_->getRootSceneNode());
+                sceneNodes_[0]->setId(0);
 
-            std::cout << "[Scene]: init done" << std::endl;
+                Model3D cube = createCubeModel(Color(1.0f, 0.0f, 0.0f));
+                addMeshSceneNodeFromModel3D(sceneNodes_.back(), cube);
+
+                // init camera
+                addCameraSceneNode(sceneNodes_.back());
+                camera_ = dynamic_cast<CameraSceneNode*>(sceneNodes_.back());
+                camera_->initPositionAndTarget();
+
+                std::cout << "[Scene]: init done" << std::endl;
+            }
+            else if (event.getType() == Input::CameraEvent::TYPE)
+            {
+                if (camera_ != NULL)
+                {
+                    camera_->updateTarget(static_cast<const Input::CameraEvent&>(event).getCursorPosition());
+                }
+                std::cout << "[Scene]: camera moved" << std::endl;
+            }
+
         }
 
         void Scene::run()
@@ -174,6 +197,26 @@ namespace Graphics
             sceneNodes_.push_back(node);
             node->setId(sceneNodes_.size()-1);
             node->activateLight(false);
+
+            parent->addChild(node);
+        }
+
+        void Scene::addCameraSceneNode(SceneNode* parent)
+        {
+            irr::scene::ICameraSceneNode* irrNode = irrlichtSceneManager_->addCameraSceneNode();
+            if (parent != NULL)
+                irrNode->setParent(parent->getIrrlichtSceneNode());
+
+            CameraSceneNode* node = NULL;
+            if (parent == NULL)
+                node = new CameraSceneNode(sceneNodes_[0]);
+            else
+                node = new CameraSceneNode(parent);
+
+            node->setIrrlichtSceneNode(irrNode);
+
+            sceneNodes_.push_back(node);
+            node->setId(sceneNodes_.size()-1);
 
             parent->addChild(node);
         }

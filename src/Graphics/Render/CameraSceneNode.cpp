@@ -30,7 +30,7 @@ namespace Graphics
             irrlichtSceneNode_ = dynamic_cast<irr::scene::ISceneNode*>(node);
         }
 
-        void CameraSceneNode::updateTarget(irr::core::position2df cursorPos)
+        void CameraSceneNode::updateTarget(const irr::core::position2df& cursorPos)
         {
             irr::scene::ICameraSceneNode* cameraNode = dynamic_cast<irr::scene::ICameraSceneNode*>(irrlichtSceneNode_);
 
@@ -64,7 +64,7 @@ namespace Graphics
             vector3df charDir = parent->getRotation().rotationToDirection();
             vector3df charScale = parent->getScale();
             vector3df charDims = parent->getBoundingBox().getExtent();
-            vector3df pos = vector3df(0,charDims.Y,0) - 2.0f * vector3df(charDims.X*charDir.X,0,charDims.Z*charDir.Z);
+            vector3df pos = vector3df(0,charDims.Y*1.2f,0) - 2.0f * vector3df(charDims.X*charDir.X,0,charDims.Z*charDir.Z);
             cameraNode->setPosition(pos);
             cameraNode->updateAbsolutePosition();
 

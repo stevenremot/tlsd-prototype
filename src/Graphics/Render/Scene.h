@@ -7,7 +7,7 @@
 #include <irrlicht/ISceneManager.h>
 #include <irrlicht/IVideoDriver.h>
 
-#include "SceneNode.h"
+#include "CameraSceneNode.h"
 #include "Model3D.h"
 #include "../../Event/Event.h"
 #include "../../Event/EventListenerInterface.h"
@@ -66,6 +66,7 @@ namespace Graphics
             // Threadable
             virtual void run();
 
+            void addCameraSceneNode(SceneNode* parent);
             void addMeshSceneNodeFromModel3D(SceneNode* parent, const Model3D& model3d);
             void addMeshSceneNodeFromFile(SceneNode* parent, const string& meshFile, const string& textureFile);
         protected:
@@ -79,6 +80,7 @@ namespace Graphics
             *   For direct access to scene node by its id
             */
             vector<SceneNode*> sceneNodes_;
+            CameraSceneNode* camera_;
         };
     }
 }

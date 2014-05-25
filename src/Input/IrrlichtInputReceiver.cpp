@@ -51,7 +51,7 @@ namespace Input
         {
             if (cursorPos_ != centerCursor_)
             {
-                //eventQueue_ << new CameraEvent(cursorPos_);
+                eventQueue_ << new CameraEvent(cursorPos_);
 
                 // Do the fix as normal, special case below
                 // reset cursor position to the centre of the window.

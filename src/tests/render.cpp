@@ -62,4 +62,46 @@ namespace RenderTest
         // make sure the device object is deleted after the thread is stopped
         //Threading::sleep(1,0);
     }
+
+    void testCamera()
+    {
+        // TODO : Solve the synchronization issues where the eventManager and the other objects are in different threads
+
+        Event::EventManager m;
+
+        Device device(m.getEventQueue());
+        Event::ListenerRegister& reg = m.getListenerRegister();
+        reg.put(Input::InputInitializedEvent::TYPE, &device);
+
+        Scene scene;
+        reg.put(Graphics::Render::InitSceneEvent::TYPE, &scene);
+        reg.put(Input::CameraEvent::TYPE, &scene);
+
+        IrrlichtInputReceiver receiver(m.getEventQueue());
+        reg.put(Input::InitInputEvent::TYPE, &receiver);
+
+        DummyInputListener inputListener;
+        reg.put(Input::MoveEvent::TYPE, &inputListener);
+
+        std::vector<ThreadableInterface*> threadables, threadables2;
+        threadables.push_back(&device);
+        threadables.push_back(&scene);
+        threadables.push_back(&receiver);
+        threadables.push_back(&m);
+        Thread thread(threadables, 60);
+        //Thread thread2(threadables2, 60);
+        thread.start();
+        //thread2.start();
+
+        // wait for 20 seconds
+        for (int i = 0; i < 1000; i++)
+        {
+           Threading::sleep(0,20);
+        }
+
+        thread.stop();
+        //thread2.stop();
+        std::cout << "thread stopped" << std::endl;
+
+    }
 }

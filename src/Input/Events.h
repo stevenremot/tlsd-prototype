@@ -39,7 +39,10 @@ namespace Input
             cursorPosition_(cursorPosition)
             {}
 
-
+        const irr::core::position2df& getCursorPosition() const
+        {
+            return cursorPosition_;
+        }
 
     private:
         irr::core::position2df cursorPosition_;

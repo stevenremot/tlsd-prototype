@@ -23,7 +23,7 @@ namespace Graphics
             /*
             *   This method fixes the camera target at each step of the rendering loop
             */
-            void updateTarget(irr::core::position2df cursorPos);
+            void updateTarget(const irr::core::position2df& cursorPos);
             /*
             *   Initialize the camera position (relative to the player's)
             */
