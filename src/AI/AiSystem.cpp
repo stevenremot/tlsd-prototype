@@ -11,7 +11,6 @@ namespace AI
 
         Ecs::ComponentGroup::ComponentTypeCollection types;
         types.insert(AiComponent::Type);
-
         Ecs::ComponentGroup prototype(types);
         Ecs::World::ComponentGroupCollection groups = world.getComponents(prototype);
 

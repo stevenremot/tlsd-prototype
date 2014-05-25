@@ -7,6 +7,8 @@
 #include "Blackboard.h"
 #include "Plan/AiPlan.h"
 
+#include "../Ecs/ComponentGroup.h"
+
 namespace AI
 {
     /**
@@ -18,7 +20,9 @@ namespace AI
     class AiModule
     {
     public:
-        AiModule(Blackboard& blackboard);
+        AiModule(Ecs::ComponentGroup &components, Blackboard& blackboard);
+
+        virtual ~AiModule(){}
 
         /**
          * Give the entity the possibility to use another action.
@@ -36,7 +40,7 @@ namespace AI
 
         void cleanPlan()
         {
-            if(aiPlan_->isPlanCompleted())
+            if(aiPlan_ != NULL && aiPlan_->isPlanCompleted())
             {
                 delete aiPlan_;
                 aiPlan_ = NULL;
@@ -46,10 +50,12 @@ namespace AI
         Plan::AiPlan* getPlan() {return aiPlan_;}
 
     protected:
+        Ecs::ComponentGroup& getComponents() {return components_;}
         Blackboard& getBlackboard() {return blackboard_;}
         const std::vector<Action::Action::ActionType>& getAvailableActions() const {return availableActions_;}
 
     private:
+        Ecs::ComponentGroup& components_;
         Blackboard& blackboard_;
         std::vector<Action::Action::ActionType> availableActions_;
         Plan::AiPlan* aiPlan_;

@@ -6,9 +6,15 @@
 #include "../Action/MoveCloseToTargetAction.h"
 #include "../Action/NoAction.h"
 
+#include "../../Geometry/PositionComponent.h"
+#include "../../Physics/MovementComponent.h"
+
+#include "../../Ecs/World.h"
 
 using std::vector;
 using AI::Action::MoveCloseToTargetAction;
+using Geometry::PositionComponent;
+using Physics::MovementComponent;
 
 namespace AI
 {
@@ -20,7 +26,19 @@ namespace AI
             if(type == TargetingSubsystem::Type)
                 subSystemsList_.push_back(new TargetingSubsystem(blackboard_, memory_));
             if(type == NavigationSubSystem::Type)
-                subSystemsList_.push_back(new NavigationSubSystem(blackboard_));
+            {
+                // Get the movement and position components.
+                // If they do not exist, don't add the navigation subsystem
+                // TODO : Launch an exception ?
+                Ecs::ComponentGroup::ComponentTypeCollection types;
+                types.insert(PositionComponent::Type);
+                types.insert(MovementComponent::Type);
+                Ecs::ComponentGroup prototype(types);
+                Ecs::ComponentGroup components = world_.getEntityComponents(entity_, prototype);
+                Geometry::PositionComponent& positionComponent = static_cast<Geometry::PositionComponent&>(components.getComponent(PositionComponent::Type));
+                Physics::MovementComponent& movementComponent = static_cast<Physics::MovementComponent&>(components.getComponent(MovementComponent::Type));
+                subSystemsList_.push_back(new NavigationSubSystem(blackboard_, positionComponent, movementComponent));
+            }
         }
 
         Subsystem* SubSystemsManager::getSubsystemByType(const Subsystem::SubsystemType& type)
@@ -50,6 +68,7 @@ namespace AI
             {
                 subsystemType = NavigationSubSystem::Type;
             }
+            getSubsystemByType(subsystemType)->executeAction(action);
         }
     }
 

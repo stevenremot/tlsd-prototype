@@ -13,13 +13,13 @@ namespace AI
         /**
          * Sensor checking whether the agent can see others agents.
          */
-        class SightSensor : public PeriodicSensor
+        class SightSensor : public Sensor
         {
         public:
 
             static const Sensor::SensorType Type;
 
-            SightSensor(Ecs::World& world,WorkingMemory& memory, int updateRate = 100, int detectionRadius = 100);
+            SightSensor(Ecs::Entity entity, Ecs::World& world,WorkingMemory& memory, int detectionRadius = 100);
 
             /**
              * Check if a  ententy entered the detection area of the current entity

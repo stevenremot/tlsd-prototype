@@ -9,6 +9,9 @@
 
 #include "../Action/Action.h"
 
+#include "../../Ecs/Entity.h"
+#include "../../Ecs/World.h"
+
 namespace AI
 {
     namespace Subsystem
@@ -19,8 +22,9 @@ namespace AI
         class SubSystemsManager
         {
         public:
-            SubSystemsManager(Blackboard & blackboard, WorkingMemory& memory)
-                : blackboard_(blackboard), memory_(memory){}
+            SubSystemsManager(Ecs::Entity entity, Ecs::World& world, Blackboard & blackboard, WorkingMemory& memory)
+                : entity_(entity), world_(world),
+                  blackboard_(blackboard), memory_(memory){}
 
             void addSubsystem(const Subsystem::SubsystemType & type);
             /**
@@ -38,6 +42,8 @@ namespace AI
 
         private:
             std::vector<Subsystem*> subSystemsList_;
+            const Ecs::Entity entity_;
+            Ecs::World world_;
             Blackboard& blackboard_;
             WorkingMemory& memory_;
         };

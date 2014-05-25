@@ -75,7 +75,7 @@ namespace AI
 
     void BasicAiModule::computeNewPlan()
     {
-        if(!getPlan()->isPlanCompleted())
+        if(getPlan() != NULL && !getPlan()->isPlanCompleted())
             return;
         cleanPlan();
         vector<Action::Action*> newPlan;
@@ -92,7 +92,7 @@ namespace AI
         for(it = nextStates.begin(); it != nextStates.end(); ++it)
         {
             const Transition& transition = transitions_.at(std::make_pair(currentState, (*it)));
-            float weight = (*transition.transitionFunction_)(getBlackboard());
+            float weight = (*transition.transitionFunction_)( getComponents(), getBlackboard());
             if(weight > maxWeight)
             {
                 maxWeight = weight;

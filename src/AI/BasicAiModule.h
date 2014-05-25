@@ -54,7 +54,7 @@ namespace AI
     {
     public:
 
-        typedef float(*TransitionFunction)(const Blackboard& blackboard);
+        typedef float(*TransitionFunction)(Ecs::ComponentGroup& components, const Blackboard& blackboard);
 
         struct Transition
         {
@@ -65,8 +65,8 @@ namespace AI
             TransitionFunction transitionFunction_;
         };
 
-        BasicAiModule(Blackboard& blackboard, const BasicStateMachine::State& initialState)
-            : AiModule(blackboard), stateMachine_(initialState) {}
+        BasicAiModule(Ecs::ComponentGroup& components, Blackboard& blackboard, const BasicStateMachine::State& initialState)
+            : AiModule(components, blackboard), stateMachine_(initialState) {}
 
         /**
          * Look for the next state in the state machine and add the action related to the ttransition in the plan.
@@ -75,6 +75,8 @@ namespace AI
 
         void addState(const BasicStateMachine::State& state);
         void addTransition(const BasicStateMachine::State& state1, const BasicStateMachine::State& state2, const Transition& transition);
+
+        //BasicStateMachine& getStateMachine() {return stateMachine_;}
 
     private:
         bool hasAction(const Action::Action::ActionType& actionType);

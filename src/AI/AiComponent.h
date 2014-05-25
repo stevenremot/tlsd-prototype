@@ -19,10 +19,13 @@ namespace AI
     public:
         static const Ecs::Component::Type Type;
 
-        AiComponent(Ecs::World& world)
-            : Component(Type), memory_(), blackboard_(),
-              subsystemsManager_(blackboard_,memory_),
-              sensorsManager_(world, memory_), aiModule_(NULL) {}
+        AiComponent(Ecs::Entity entity, Ecs::World& world)
+            : Component(Type),
+              entity_(entity), memory_(), blackboard_(),
+              subsystemsManager_(entity, world, blackboard_,memory_),
+              sensorsManager_(entity, world, memory_), aiModule_(NULL) {}
+
+        ~AiComponent();
 
         void setAiModule(AiModule* aiModule) {aiModule_ = aiModule;}
         AiModule* getAiModule() {return aiModule_;}
@@ -39,11 +42,13 @@ namespace AI
         }
 
     private:
+        const Ecs::Entity entity_;
         WorkingMemory memory_;
         Blackboard blackboard_;
         Subsystem::SubSystemsManager subsystemsManager_;
         Sensor::SensorsManager sensorsManager_;
         AiModule* aiModule_;
+
     };
 }
 #endif // AICOMPONENT_H

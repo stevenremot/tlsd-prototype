@@ -4,8 +4,8 @@ using std::vector;
 
 namespace AI
 {
-    AiModule::AiModule(Blackboard &blackboard)
-        : blackboard_(blackboard), aiPlan_(NULL)
+    AiModule::AiModule(Ecs::ComponentGroup& components, Blackboard &blackboard)
+        : components_(components), blackboard_(blackboard), aiPlan_(NULL)
     {
     }
 

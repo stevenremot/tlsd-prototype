@@ -19,10 +19,9 @@ namespace AI
                 if((*sensor)->getSensorType() == sensorType)
                     return;
             }
-            // TO DO : implement a factory instead
             //if(sensorType == "sightSensor")
             if(sensorType == SightSensor::Type)
-                sensorsList_.push_back(new SightSensor(world_, memory_));
+                sensorsList_.push_back(new SightSensor(entity_, world_, memory_));
         }
 
         void SensorsManager::removeSensor(const Sensor::SensorType &sensorType)

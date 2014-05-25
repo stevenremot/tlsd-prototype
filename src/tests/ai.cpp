@@ -31,7 +31,13 @@ namespace AITest
         Ecs::World w = Ecs::World();
         // Create the unit with the ai module
         Ecs::Entity e1 = w.createEntity();
-        AI::AiComponent* aiComponent = new AI::AiComponent(w);
+
+        Geometry::PositionComponent* positionComponentE1 = new Geometry::PositionComponent(Geometry::Vec3Df(0.f,0.f,0.0f));
+        Physics::MovementComponent* movementComponentE1= new Physics::MovementComponent(Geometry::Vec3Df(0.f,0.f,0.0f));
+        w.addComponent(e1, positionComponentE1);
+        w.addComponent(e1, movementComponentE1);
+
+        AI::AiComponent* aiComponent = new AI::AiComponent(e1,w);
         w.addComponent(e1, aiComponent);
 
         // Add a sight sensor
