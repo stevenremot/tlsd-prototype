@@ -6,6 +6,12 @@
 
 namespace RenderTest
 {
+    class DummyInputListener: public Event::EventListenerInterface
+    {
+    public:
+        virtual void call(const Event::Event & event);
+    };
+
     void testThread();
 }
 

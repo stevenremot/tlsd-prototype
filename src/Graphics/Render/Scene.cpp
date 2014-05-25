@@ -44,7 +44,7 @@ namespace Graphics
                 addMeshSceneNodeFromFile(sceneNodes_.back(), "ninja.b3d", "");
                 sceneNodes_.back()->setPosition(Vec3Df(10,0,0));
 
-                std::cout << "[Scene]: " << sceneNodes_.size() << " ninjas" << std::endl;
+                //std::cout << "[Scene]: " << sceneNodes_.size() << " ninjas" << std::endl;
             }
         }
 

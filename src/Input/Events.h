@@ -1,7 +1,10 @@
 #ifndef INPUT_EVENTS_H
 #define INPUT_EVENTS_H
 
+#include <irrlicht/position2d.h>
+
 #include "../Event/Event.h"
+
 
 namespace Input
 {
@@ -31,9 +34,15 @@ namespace Input
     public:
         static const Event::Type TYPE;
 
-        CameraEvent():
-            Event::Event(TYPE)
+        CameraEvent(irr::core::position2df cursorPosition):
+            Event::Event(TYPE),
+            cursorPosition_(cursorPosition)
             {}
+
+
+
+    private:
+        irr::core::position2df cursorPosition_;
     };
 }
 

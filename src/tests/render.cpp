@@ -6,12 +6,21 @@
 #include "../Graphics/Render/Scene.h"
 #include "../Threading/Thread.h"
 
+#include "../Input/Events.h"
+#include "../Input/IrrlichtInputReceiver.h"
+
 namespace RenderTest
 {
     using Graphics::Render::Scene;
     using Graphics::Device;
     using Threading::ThreadableInterface;
     using Threading::Thread;
+    using Input::IrrlichtInputReceiver;
+
+    void DummyInputListener::call(const Event::Event& event)
+    {
+        std::cout << static_cast<const Input::MoveEvent&>(event).getDirection() << std::endl;
+    }
 
     void testThread()
     {
@@ -23,9 +32,16 @@ namespace RenderTest
         Scene scene;
         reg.put(Graphics::Render::InitSceneEvent::TYPE, &scene);
 
+        IrrlichtInputReceiver receiver(m.getEventQueue());
+        reg.put(Input::InitInputEvent::TYPE, &receiver);
+
+        DummyInputListener inputListener;
+        reg.put(Input::MoveEvent::TYPE, &inputListener);
+
         std::vector<ThreadableInterface*> threadables, threadables2;
         threadables.push_back(&device);
         threadables.push_back(&scene);
+        threadables.push_back(&receiver);
         threadables2.push_back(&m);
         Thread thread(threadables, 60);
         Thread thread2(threadables2, 5);

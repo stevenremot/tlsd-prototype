@@ -1,10 +1,17 @@
 #include "IrrlichtInputReceiver.h"
 
+// TODO : remove
+#include <iostream>
+
+#include "Events.h"
+
 namespace Input
 {
     using irr::SKeyMap;
     using irr::core::array;
     using irr::core::position2df;
+
+    const Event::Event::Type InitInputEvent::TYPE = "init_input";
 
     IrrlichtInputReceiver::IrrlichtInputReceiver(Event::EventQueue& eventQueue):
         eventQueue_(eventQueue)
@@ -30,12 +37,38 @@ namespace Input
             cursorControl_->setPosition(0.5f, 0.5f);
             centerCursor_ = cursorControl_->getRelativePosition();
             cursorPos_ = centerCursor_;
+
+            std::cout << "[Input]: Init done" << std::endl;
         }
     }
 
     void IrrlichtInputReceiver::run()
     {
+        if (cursorControl_ != NULL)
+        {
+            if (cursorPos_ != centerCursor_)
+            {
+                eventQueue_ << new CameraEvent(cursorPos_);
 
+                // Do the fix as normal, special case below
+                // reset cursor position to the centre of the window.
+                cursorControl_->setPosition(0.5f, 0.5f);
+                centerCursor_ = cursorControl_->getRelativePosition();
+
+                // needed to avoid problems when the event receiver is disabled
+                cursorPos_ = centerCursor_;
+            }
+        }
+
+        if (cursorKeys_[irr::EKA_MOVE_FORWARD])
+            eventQueue_ << new MoveEvent(Forward);
+        else if (cursorKeys_[irr::EKA_MOVE_BACKWARD])
+            eventQueue_ << new MoveEvent(Backward);
+
+        if (cursorKeys_[irr::EKA_STRAFE_LEFT])
+            eventQueue_ << new MoveEvent(Left);
+        else if (cursorKeys_[irr::EKA_STRAFE_RIGHT])
+            eventQueue_ << new MoveEvent(Right);
     }
 
     void IrrlichtInputReceiver::createKeyMap()

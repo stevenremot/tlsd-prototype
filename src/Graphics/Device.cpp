@@ -4,7 +4,11 @@
 #include <stdexcept>
 #include <irrlicht/irrlicht.h>
 
+
+#include <X11/Xlib.h>
+
 #include "Render/Scene.h"
+#include "../Input/IrrlichtInputReceiver.h"
 
 namespace Graphics
 {
@@ -13,7 +17,7 @@ namespace Graphics
         irrlichtDevice_(NULL),
         initialized_(false)
     {
-        //ctor
+        XInitThreads();
     }
 
     Device::~Device()
@@ -28,6 +32,7 @@ namespace Graphics
             initializeIrrlichtEngine();
             initialized_ = true;
             eventQueue_ << new Render::InitSceneEvent(irrlichtDevice_->getSceneManager(), irrlichtDevice_->getVideoDriver());
+            eventQueue_ << new Input::InitInputEvent(irrlichtDevice_->getCursorControl());
             std::cout << "[Device]: init done" << std::endl;
             return;
         }
@@ -45,6 +50,11 @@ namespace Graphics
         irr::core::stringw str = "FPS :";
         str += fps;
         irrlichtDevice_->setWindowCaption(str.c_str());
+    }
+
+    void Device::call(const Event::Event& event)
+    {
+
     }
 
     bool Device::initializeIrrlichtEngine()

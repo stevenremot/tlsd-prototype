@@ -14,7 +14,7 @@ libs = []
 if env['PLATFORM'] == 'win32':
 	libs = ["pthreadGC2","lemon","Irrlicht"]
 elif env['PLATFORM'] == 'posix':
-	libs = ["pthread","emon","Irrlicht"]
+	libs = ["pthread","emon","Irrlicht","X11"]
 					
 env.Program('program', Glob('src/*.cpp') + Glob('src/*/*.cpp') + Glob('src/*/*/*.cpp'), LIBS=libs)
 
