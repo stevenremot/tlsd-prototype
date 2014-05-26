@@ -39,6 +39,11 @@ namespace Input
             cursorPosition_(cursorPosition)
             {}
 
+        CameraEvent(const CameraEvent& event):
+            Event::Event(TYPE),
+            cursorPosition_(event.getCursorPosition())
+            {}
+
         const irr::core::position2df& getCursorPosition() const
         {
             return cursorPosition_;

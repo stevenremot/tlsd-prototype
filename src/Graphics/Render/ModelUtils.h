@@ -8,6 +8,7 @@ namespace Graphics
     namespace Render
     {
         Model3D createCubeModel(const Color& color);
+        void computeNormals(const Model3D& model, std::vector<Geometry::Vec3Df>& normals);
     }
 }
 

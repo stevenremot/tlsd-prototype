@@ -40,5 +40,27 @@ namespace Graphics
 
             return Model3D(vertices, faces);
         }
+
+        void computeNormals(const Model3D& model, std::vector<Vec3Df>& normals)
+        {
+            normals.resize(model.getVertices().size());
+
+            for (unsigned int i = 0; i < model.getFaces().size(); i++)
+            {
+                const Face& face = model.getFaces()[i];
+
+                Vec3Df e01 = model.getVertices()[face[1]] - model.getVertices()[face[0]];
+                Vec3Df e02 = model.getVertices()[face[2]] - model.getVertices()[face[0]];
+                Vec3Df n = e01.cross(e02);
+                n.normalize();
+
+                normals[face[0]] += n;
+                normals[face[1]] += n;
+                normals[face[2]] += n;
+            }
+
+            for (unsigned int i = 0; i < normals.size(); i++)
+                normals[i].normalize();
+        }
     }
 }

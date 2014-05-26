@@ -12,6 +12,7 @@
 #include "../../Event/Event.h"
 #include "../../Event/EventListenerInterface.h"
 #include "../../Threading/ThreadableInterface.h"
+#include "../../Threading/Channel.h"
 
 namespace Graphics
 {
@@ -81,6 +82,8 @@ namespace Graphics
             */
             vector<SceneNode*> sceneNodes_;
             CameraSceneNode* camera_;
+
+            Threading::Channel<Event::Event*> events_;
         };
     }
 }

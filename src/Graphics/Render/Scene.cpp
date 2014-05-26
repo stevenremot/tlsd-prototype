@@ -59,15 +59,16 @@ namespace Graphics
             {
                 if (camera_ != NULL)
                 {
-                    camera_->updateTarget(static_cast<const Input::CameraEvent&>(event).getCursorPosition());
+                    events_ << new Input::CameraEvent(static_cast<const Input::CameraEvent&>(event));
+                    //camera_->updateTarget(static_cast<const Input::CameraEvent&>(event).getCursorPosition());
                 }
-                std::cout << "[Scene]: camera moved" << std::endl;
             }
 
         }
 
         void Scene::run()
         {
+            std::cout << "[Scene]: running " << std::time(NULL) << std::endl;
 
             if (irrlichtSceneManager_ != NULL && irrlichtVideoDriver_ != NULL)
             {
@@ -78,7 +79,20 @@ namespace Graphics
                 sceneNodes_.back()->setPosition(Vec3Df(5,0,0));
                 //sceneNodes_.back()->setScale(Vec3Df(3,3,3));
 
-                std::cout << "[Scene]: " << sceneNodes_.size() << " ninjas" << std::endl;
+                //std::cout << "[Scene]: " << sceneNodes_.size() << " ninjas" << std::endl;
+            }
+
+            while (!events_.isEmpty())
+            {
+                Event::Event* event = NULL;
+                events_ >> event;
+
+                if (event->getType() == Input::CameraEvent::TYPE)
+                {
+                    camera_->updateTarget(dynamic_cast<Input::CameraEvent*>(event)->getCursorPosition());
+                }
+
+                delete event;
             }
 
         }
@@ -110,6 +124,11 @@ namespace Graphics
             using irr::core::vector3df;
             using irr::video::S3DVertex;
 
+            // compute the model's normals
+            std::vector<Vec3Df> normals;
+            computeNormals(model, normals);
+
+            // build the mesh
             unsigned int bufferNumber = 1 + model.getVertices().size() / verticesPerMeshBuffer_;
 
             irr::scene::SMesh* mesh = new irr::scene::SMesh();
@@ -141,10 +160,11 @@ namespace Graphics
                 for (unsigned int i = 0; i < currentVerticeNumber; i++)
                 {
                     const Vec3Df& v = model.getVertices()[(bufferNumber-1)*verticesPerMeshBuffer_+i];
+                    const Vec3Df& n = normals[(bufferNumber-1)*verticesPerMeshBuffer_+i];
 
                     S3DVertex& irrVertex = currentMeshBuffer->Vertices[i];
                     irrVertex.Pos.set(v.getX(), v.getY(), v.getZ());
-                    irrVertex.Normal.set(1,1,1);
+                    irrVertex.Normal.set(n.getX(), n.getY(), n.getZ());
                     irrVertex.TCoords.set(v.getX()/512.0f, v.getY()/512.0f);
                 }
 
@@ -180,8 +200,7 @@ namespace Graphics
             mesh->setDirty();
             mesh->recalculateBoundingBox();
 
-
-
+            // create the scene node
             irr::scene::IMeshSceneNode* irrNode = irrlichtSceneManager_->addMeshSceneNode(mesh);
             if (parent != NULL)
                 irrNode->setParent(parent->getIrrlichtSceneNode());

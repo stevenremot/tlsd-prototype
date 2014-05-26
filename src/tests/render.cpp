@@ -32,6 +32,7 @@ namespace RenderTest
 
         Scene scene;
         reg.put(Graphics::Render::InitSceneEvent::TYPE, &scene);
+        reg.put(Input::CameraEvent::TYPE, &scene);
 
         IrrlichtInputReceiver receiver(m.getEventQueue());
         reg.put(Input::InitInputEvent::TYPE, &receiver);
@@ -45,14 +46,14 @@ namespace RenderTest
         threadables.push_back(&receiver);
         threadables2.push_back(&m);
         Thread thread(threadables, 60);
-        Thread thread2(threadables2, 100);
+        Thread thread2(threadables2, 120);
         thread.start();
         thread2.start();
 
-        // wait for 20 seconds
-        for (int i = 0; i < 1000; i++)
+        // wait for 4 seconds
+        for (int i = 0; i < 200; i++)
         {
-           Threading::sleep(0,20);
+           Threading::sleep(0,40);
         }
 
         thread.stop();
@@ -89,18 +90,15 @@ namespace RenderTest
         threadables.push_back(&receiver);
         threadables.push_back(&m);
         Thread thread(threadables, 60);
-        //Thread thread2(threadables2, 60);
         thread.start();
-        //thread2.start();
 
         // wait for 20 seconds
-        for (int i = 0; i < 1000; i++)
+        for (int i = 0; i < 200; i++)
         {
            Threading::sleep(0,20);
         }
 
         thread.stop();
-        //thread2.stop();
         std::cout << "thread stopped" << std::endl;
 
     }
