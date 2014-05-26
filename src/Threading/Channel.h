@@ -63,7 +63,7 @@ namespace Threading
             data_.pop_front();
         }
 
-        bool isEmpty() const
+        bool isEmpty()
         {
             return data_.empty();
         }

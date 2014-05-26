@@ -46,7 +46,7 @@ namespace RenderTest
         threadables.push_back(&receiver);
         threadables2.push_back(&m);
         Thread thread(threadables, 60);
-        Thread thread2(threadables2, 120);
+        Thread thread2(threadables2, 200);
         thread.start();
         thread2.start();
 

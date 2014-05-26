@@ -37,7 +37,7 @@ using std::vector;
 
 int main()
 {
-    RenderTest::testCamera();
+    RenderTest::testThread();
 
 /*
     EventTest::testEvents();

@@ -68,8 +68,6 @@ namespace Graphics
 
         void Scene::run()
         {
-            std::cout << "[Scene]: running " << std::time(NULL) << std::endl;
-
             if (irrlichtSceneManager_ != NULL && irrlichtVideoDriver_ != NULL)
             {
                 Model3D cube = createCubeModel(Color(1.0f, 0.0f, 0.0f));
