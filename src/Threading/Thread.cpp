@@ -15,10 +15,25 @@ using std::vector;
 namespace Threading
 {
 
+#ifdef _WIN32
+    int win_gettime(struct timespec* time)
+    {
+        SYSTEMTIME st;
+        GetSystemTime(&st);
+
+        time->tv_sec = st.wSecond;
+        time->tv_nsec = st.wMilliseconds * 1000000L;
+
+        return 0;
+    }
+
+#endif // _WIN32
+
+
     int sleep(long seconds, long milliseconds)
     {
 #ifdef _WIN32
-        Sleep(seconds * 1000L + milliseconds)
+        Sleep(seconds * 1000L + milliseconds);
         return 0;
 #else
         struct timespec tim;
@@ -69,7 +84,11 @@ namespace Threading
         unsigned int threadablesSize = threadables.size();
 
         struct timespec lastTime;
+#ifdef _WIN32
+        win_gettime(&lastTime);
+#else
         clock_gettime(CLOCK_MONOTONIC, &lastTime);
+#endif // _WIN32
         struct timespec delay;
         delay.tv_sec = 0;
         delay.tv_nsec = 0;
@@ -80,7 +99,11 @@ namespace Threading
 
         while (thread->isRunning())
         {
+#ifdef _WIN32
+            win_gettime(&currentTime);
+#else
             clock_gettime(CLOCK_MONOTONIC, &currentTime);
+#endif // _WIN32
             struct timespec diff = difference(lastTime, currentTime);
             delay.tv_sec += diff.tv_sec;
             delay.tv_nsec += diff.tv_nsec;
@@ -99,7 +122,7 @@ namespace Threading
 
             //int ret = Threading::sleep(0, static_cast<long>(loopDelay.tv_sec - delay.tv_sec));
             struct timespec waitingTime = difference(delay, loopDelay);
-            nanosleep(&waitingTime, NULL);
+            Threading::sleep(waitingTime.tv_sec, waitingTime.tv_nsec / 1000000L);
         }
 
         return NULL;
