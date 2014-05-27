@@ -13,6 +13,7 @@
 #include "../../Event/EventListenerInterface.h"
 #include "../../Threading/ThreadableInterface.h"
 #include "../../Threading/Channel.h"
+#include "../../Ecs/Entity.h"
 
 namespace Graphics
 {
@@ -70,6 +71,13 @@ namespace Graphics
             void addCameraSceneNode(SceneNode* parent);
             void addMeshSceneNodeFromModel3D(SceneNode* parent, const Model3D& model3d);
             void addMeshSceneNodeFromFile(SceneNode* parent, const string& meshFile, const string& textureFile);
+
+            /**
+            *   @param[in] entity
+            *   @param[out] id
+            *   @return true if the entity is already drawn on the scene
+            */
+            bool getEntitySceneNodeId(Ecs::Entity entity, unsigned int& id);
         protected:
         private:
             irr::scene::ISceneManager* irrlichtSceneManager_;
@@ -82,6 +90,8 @@ namespace Graphics
             */
             vector<SceneNode*> sceneNodes_;
             CameraSceneNode* camera_;
+
+            std::map<Ecs::Entity, unsigned int> sceneNodeIdsByEntity_;
 
             Threading::Channel<Event::Event*> events_;
         };
