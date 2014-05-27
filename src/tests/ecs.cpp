@@ -28,6 +28,8 @@ using std::string;
 
 #include "../Ecs/World.h"
 
+#include "../Event/EventManager.h"
+
 namespace EcsTest
 {
     class MessageComponent: public Ecs::Component
@@ -79,7 +81,9 @@ namespace EcsTest
 
     void testEcs()
     {
-        Ecs::World w = Ecs::World();
+        Event::EventManager m = Event::EventManager();
+
+        Ecs::World w = Ecs::World(m.getEventQueue());
 
         Ecs::Entity entity1 = w.createEntity();
         w.addComponent(entity1, new MessageComponent("Hello world !"));

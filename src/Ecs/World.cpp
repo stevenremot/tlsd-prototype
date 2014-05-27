@@ -21,6 +21,8 @@
 
 #include <algorithm>
 
+#include "ComponentCreatedEvent.h"
+
 using std::map;
 
 namespace Ecs
@@ -77,6 +79,8 @@ namespace Ecs
         }
 
         components.push_back(component);
+
+        eventQueue_ << new ComponentCreatedEvent(entity, component);
     }
 
     ComponentGroup World::getEntityComponents(const Entity& entity,

@@ -28,6 +28,8 @@
 #include "Component.h"
 #include "ComponentGroup.h"
 
+#include "../Event/EventManager.h"
+
 
 namespace Ecs
 {
@@ -82,6 +84,14 @@ namespace Ecs
         };
 
         /**
+         *  Initialize the World by giving it a reference to the eventQueue
+         *
+         */
+         World(Event::EventQueue eventQueue):
+             eventQueue_(eventQueue)
+             {}
+
+        /**
          * Create a new entity with no components.
          *
          * The entity has an arbitrary value. Do not use it on the client, where
@@ -126,6 +136,8 @@ namespace Ecs
         typedef std::list<Component *> ComponentCollection;
 
         std::map< Entity, ComponentCollection > components_;
+
+        Event::EventQueue& eventQueue_;
     };
 }
 
