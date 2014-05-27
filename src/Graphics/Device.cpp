@@ -4,8 +4,10 @@
 #include <stdexcept>
 #include <irrlicht/irrlicht.h>
 
-
+#ifdef _WIN32
+#else
 #include <X11/Xlib.h>
+#endif // _WIN32
 
 #include "Render/Scene.h"
 #include "../Input/IrrlichtInputReceiver.h"
@@ -17,7 +19,10 @@ namespace Graphics
         irrlichtDevice_(NULL),
         initialized_(false)
     {
+#ifdef _WIN32
+#else
         XInitThreads();
+#endif // _WIN32
     }
 
     Device::~Device()
