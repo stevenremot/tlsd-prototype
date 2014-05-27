@@ -168,6 +168,11 @@ namespace Geometry
             return (*this) / length;
         }
 
+		bool operator<(const Vec2D& vec) const
+		{
+			return (x_ < vec.x_ || (x_ == vec.x_ && y_ < vec.y_));
+		}
+
     private:
         T x_;
         T y_;

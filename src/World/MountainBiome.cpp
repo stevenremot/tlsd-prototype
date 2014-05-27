@@ -17,18 +17,18 @@
     <http://www.gnu.org/licenses/>.
 */
 
-#ifndef WORLD_BIOME_H
-#define WORLD_BIOME_H
+#include "MountainBiome.h"
 
 namespace World
 {
-    // TODO implement
-    typedef int Biome;
+    float MountainBiome::transformCoefficient(float coefficient)
+    {
+        return (coefficient+1)*25+250;
+    }
+
+    Graphics::Color MountainBiome::getColor()
+    {
+        return Graphics::Color(0.25,0.25,0.25);
+    }
+
 }
-
-#endif
-
-// Emacs local variables
-// Local variables:
-// mode: c++
-// End:

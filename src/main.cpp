@@ -42,12 +42,14 @@ int main()
     // EcsTest::testSharedEntity();
     // CoreTest::testSharedPtr();
     // GeometryTest::testVectors();
-    GeometryTest::testPolygons();
+    // GeometryTest::testPolygons();
     // RandomTest::testNumberGenerator();
     // GraphTest::testPlanarGraph();
     // GraphTest::testIsBetween();
     // ThreadingTest::testChannel();
     // WorldTest::testRoadNetworkModel();
+    // WorldTest::testGroundCoefficients();
+    WorldTest::testGroundModel();
 
     return 0;
 }

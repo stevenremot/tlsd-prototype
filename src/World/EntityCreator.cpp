@@ -17,21 +17,19 @@
     <http://www.gnu.org/licenses/>.
 */
 
-#ifndef TESTS_WORLD_H
-#define TESTS_WORLD_H
+#include "EntityCreator.h"
+#include "../Geometry/PositionComponent.h"
 
-namespace WorldTest
+namespace World
 {
-    void testRoadNetworkModel();
 
-    void testGroundCoefficients();
+	Ecs::Entity createGround(const World& world, int i, int j, Ecs::World& ecsWorld)
+	{
+		Ecs::Entity groundEntity = ecsWorld.createEntity();
 
-    void testGroundModel();
+		ecsWorld.addComponent(groundEntity, new Geometry::PositionComponent(Geometry::Vec3Df(i*World::ChunkSize,j*World::ChunkSize, 0)));
+
+		return groundEntity;
+	}
+
 }
-
-#endif
-
-// Emacs local variables
-// Local variables:
-// mode: c++
-// End:

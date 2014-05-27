@@ -17,16 +17,34 @@
     <http://www.gnu.org/licenses/>.
 */
 
-#ifndef TESTS_WORLD_H
-#define TESTS_WORLD_H
+#ifndef WORLD_BIOME_INTERFACE_H
+#define WORLD_BIOME_INTERFACE_H
 
-namespace WorldTest
+#include "../Graphics/Color.h"
+
+namespace World
 {
-    void testRoadNetworkModel();
-
-    void testGroundCoefficients();
-
-    void testGroundModel();
+    /**
+     * Interface for a biome
+     *
+     * A biome has a transformation for the ground coefficients and a color
+     *
+     * TODO Rethink
+     */
+    class BiomeInterface
+    {
+    public:
+        /**
+         * Return the transformed base-coefficient (transformation specific for a biome)
+         *
+         */
+        virtual float transformCoefficient(float coefficient) = 0;
+        /**
+         * Return the principal color of a biome
+         *
+         */
+        virtual Graphics::Color getColor() =0;
+    };
 }
 
 #endif

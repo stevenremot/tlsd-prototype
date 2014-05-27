@@ -17,21 +17,23 @@
     <http://www.gnu.org/licenses/>.
 */
 
-#ifndef TESTS_WORLD_H
-#define TESTS_WORLD_H
+#ifndef WORLD_COEFFICIENTS_GENERATOR_H
+#define WORLD_COEFFICIENTS_GENERATOR_H
 
-namespace WorldTest
+
+#include "../../Random/NumberGenerator.h"
+#include "../GroundCoefficients.h"
+#include "../../Geometry/Vec2D.h"
+
+namespace World
 {
-    void testRoadNetworkModel();
 
-    void testGroundCoefficients();
+    namespace Generation
+    {
+        Geometry::Vec2Df generatePerlinCoefficient(Random::NumberGenerator rng);
+        GroundCoefficients generateGroundCoefficients(Random::NumberGenerator rng);
+    }
 
-    void testGroundModel();
 }
 
 #endif
-
-// Emacs local variables
-// Local variables:
-// mode: c++
-// End:

@@ -18,7 +18,7 @@ namespace Geometry
 
         PositionComponent(const Vec3Df & position): Component(Type),
             position_(position)
-            {}
+        {}
 
         virtual const std::vector<Ecs::Component::Type>& getDependentComponents()
         {

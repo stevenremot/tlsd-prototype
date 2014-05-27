@@ -17,21 +17,19 @@
     <http://www.gnu.org/licenses/>.
 */
 
-#ifndef TESTS_WORLD_H
-#define TESTS_WORLD_H
+#include "CityBiome.h"
 
-namespace WorldTest
+namespace World
 {
-    void testRoadNetworkModel();
+    float CityBiome::transformCoefficient(float coefficient)
+    {
+        return 0;
+    }
 
-    void testGroundCoefficients();
+    Graphics::Color CityBiome::getColor()
+    {
+        return Graphics::Color(0,1,0);
+    }
 
-    void testGroundModel();
+
 }
-
-#endif
-
-// Emacs local variables
-// Local variables:
-// mode: c++
-// End:

@@ -17,21 +17,16 @@
     <http://www.gnu.org/licenses/>.
 */
 
-#ifndef TESTS_WORLD_H
-#define TESTS_WORLD_H
+#include "World.h"
 
-namespace WorldTest
+namespace World
 {
-    void testRoadNetworkModel();
 
-    void testGroundCoefficients();
+    const unsigned int World::ChunkSize = 512;
 
-    void testGroundModel();
+    BiomeInterface& World::getBiome(float x, float y)
+    {
+        return biomeMap_.getBiome(Geometry::Vec2Df(x,y));
+    }
+
 }
-
-#endif
-
-// Emacs local variables
-// Local variables:
-// mode: c++
-// End:
