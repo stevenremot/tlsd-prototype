@@ -16,8 +16,10 @@
     along with The Lost Souls Downfall prototype.  If not, see
     <http://www.gnu.org/licenses/>.
 */
-
 #include "RoadUtil.h"
+
+#include <iostream>
+#include <cmath>
 
 using Graph::PlanarEdge;
 using Graph::PlanarGraph;
@@ -29,29 +31,30 @@ namespace World
     {
         namespace City
         {
+
             bool getIntersection(
                 const RoadQuery& query,
                 const PlanarEdge& e2,
                 Vec2Df& v
             ) {
-                Vec2Df d1 = Vec2Df::fromPolar(
+                const Vec2Df d1 = Vec2Df::fromPolar(
                     query.getOrientation(),
                     query.getLength()
                 );
-                Vec2Df d2 = e2.getDirection();
-                Vec2Df n2 = d2.getOrthogonal().normalize();
+                const Vec2Df d2 = e2.getDirection();
+                const Vec2Df n2 = d2.getOrthogonal().normalize();
 
-                Vec2Df offset = e2.getFirstNode().getPosition() -
+                const Vec2Df offset = e2.getFirstNode().getPosition() -
                     query.getOriginNode().getPosition();
 
-                float parallel = d1.dot(n2);
+                const float parallel = d1.dot(n2);
 
-                if (abs(parallel) < 1e-6)
+                if (std::abs(parallel / d1.getLength()) < 1e-6)
                 {
                     return false;
                 }
 
-                float t = offset.dot(n2) / parallel;
+                const float t = offset.dot(n2) / parallel;
                 if (t < 0 || t > 1)
                 {
                     return false;
@@ -59,8 +62,8 @@ namespace World
 
                 v = query.getOriginNode().getPosition() + d1 * t;
 
-                float otherStep = (v - e2.getFirstNode().getPosition()).dot(d2.normalize());
-                float t2 = otherStep / d2.getLength();
+                const float t2 =
+                    (v - e2.getFirstNode().getPosition()).dot(d2.normalize()) / d2.getLength();
                 if (t2 < 0 || t2 > 1)
                 {
                     return false;
@@ -84,6 +87,11 @@ namespace World
                 for (unsigned int i = 0; i < edges.size(); i++)
                 {
                     const PlanarEdge& edge = edges[i];
+                    if (edge.hasNode(query.getOriginNode()))
+                    {
+                        continue;
+                    }
+
                     Vec2Df currentIntersection;
                     if (getIntersection(query, edge, currentIntersection))
                     {
@@ -102,25 +110,36 @@ namespace World
                 return intersected;
             }
 
-            Vec2Df getProjection(const Vec2Df& position, const PlanarEdge& edge)
-            {
-                const Vec2Df edgeDirection = edge.getDirection().normalize();
+            Vec2Df getProjection(
+                const Vec2Df& position,
+                const Vec2Df& e1,
+                const Vec2Df& e2
+            ) {
+                const Vec2Df edgeDirection = (e2 - e1).normalize();
                 const Vec2Df edgeNormal = edgeDirection.getOrthogonal();
-                const Vec2Df& p1 = edge.getFirstNode().getPosition();
-                const Vec2Df offset = position - p1;
-                Vec2Df projection = p1 + (offset - (edgeNormal * (edgeNormal.dot(offset))));
-                float t = edgeDirection.dot(offset) / edge.getDirection().getLength();
+                const Vec2Df offset = position - e1;
+                const Vec2Df projection = e1 + (offset - (edgeNormal * (edgeNormal.dot(offset))));
+                const float t = edgeDirection.dot(offset) / (e2 - e1).getLength();
 
                 if (t < 0)
                 {
-                    projection = p1;
+                    return e1;
                 }
-                else
+                else if (t > 1)
                 {
-                    projection = edge.getSecondNode().getPosition();
+                    return e2;
                 }
 
                 return projection;
+            }
+
+            Vec2Df getProjection(const Vec2Df& position, const PlanarEdge& edge)
+            {
+                return getProjection(
+                    position,
+                    edge.getFirstNode().getPosition(),
+                    edge.getSecondNode().getPosition()
+                );
             }
 
             bool getNearestProjection(
@@ -142,30 +161,33 @@ namespace World
                 for (unsigned int i = 0; i < edges.size(); i++)
                 {
                     const PlanarEdge& edge = edges[i];
-                    Vec2Df projection = getProjection(end, edge);
-                    Vec2Df offset = projection - origin;
-                    float currentDistance = offset.getLength();
-                    RoadQuery q(
-                        query.getOriginNode(),
-                        offset.getOrientation(),
-                        offset.getLength()
-                    );
-                    Vec2Df intersection;
-                    PlanarEdge intersectionEdge;
-
-                    if ((!gotProjection ||
-                         currentDistance < distance) &&
-                        !getNearestIntersection(
-                            q,
-                            graph,
-                            intersection,
-                            intersectionEdge
-                        ))
+                    if (!edge.hasNode(query.getOriginNode()))
                     {
-                        gotProjection = true;
-                        distance = currentDistance;
-                        nearestProjection = projection;
-                        projectionEdge = edge;
+                        Vec2Df projection = getProjection(end, edge);
+                        Vec2Df offset = projection - origin;
+                        float currentDistance = offset.getLength();
+                        RoadQuery q(
+                            query.getOriginNode(),
+                            offset.getOrientation(),
+                            offset.getLength()
+                        );
+                        Vec2Df intersection;
+                        PlanarEdge intersectionEdge;
+
+                        if ((!gotProjection ||
+                             currentDistance < distance) &&
+                            !getNearestIntersection(
+                                q,
+                                graph,
+                                intersection,
+                                intersectionEdge
+                            ))
+                        {
+                            gotProjection = true;
+                            distance = currentDistance;
+                            nearestProjection = projection;
+                            projectionEdge = edge;
+                        }
                     }
                 }
 

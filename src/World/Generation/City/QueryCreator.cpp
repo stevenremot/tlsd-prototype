@@ -46,7 +46,7 @@ namespace World
                 {
                     float orientation = baseOrientation +
                         M_PI * static_cast<float>(i) / 2.0 +
-                        numberGenerator_.getUniform(-0.25, 0.25);
+                        numberGenerator_.getUniform(-deviation_, deviation_);
 
                     float length = averageLength_ +
                         numberGenerator_.getUniform(

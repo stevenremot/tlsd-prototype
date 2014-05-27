@@ -62,12 +62,12 @@ namespace GraphTest
         cout << "n3 : " << n3.getPosition() << endl;
         cout << endl;
 
-        cout << "n1 before remove" << endl;
-        PlanarGraph::EdgeCollection edges = g.getNeighbourEdges(n1);
+        cout << "n2 before remove" << endl;
+        PlanarGraph::EdgeCollection edges = g.getNeighbourEdges(n2);
         for (unsigned int i = 0; i < edges.size(); i++)
         {
             PlanarEdge& edge = edges[i];
-            const PlanarNode& otherNode = edge.getOtherNode(n1);
+            const PlanarNode& otherNode = edge.getOtherNode(n2);
             cout << "Neighbour : " << otherNode.getPosition() << endl;
         }
 
@@ -75,12 +75,12 @@ namespace GraphTest
 
         g.removeEdge(edgeToRemove);
 
-        cout << "n1 after removing (n1, n2)" << endl;
-        edges = g.getNeighbourEdges(n1);
+        cout << "n2 after removing (n1, n2)" << endl;
+        edges = g.getNeighbourEdges(n2);
         for (unsigned int i = 0; i < edges.size(); i++)
         {
             PlanarEdge& edge = edges[i];
-            const PlanarNode& otherNode = edge.getOtherNode(n1);
+            const PlanarNode& otherNode = edge.getOtherNode(n2);
             cout << "Neighbour : " << otherNode.getPosition() << endl;
         }
         cout << endl;
@@ -89,12 +89,12 @@ namespace GraphTest
 
         g.removeNode(n3);
 
-        cout << "n1 after removing n3" << endl;
-        edges = g.getNeighbourEdges(n1);
+        cout << "n2 after removing n3" << endl;
+        edges = g.getNeighbourEdges(n2);
         for (unsigned int i = 0; i < edges.size(); i++)
         {
             PlanarEdge& edge = edges[i];
-            const PlanarNode& otherNode = edge.getOtherNode(n1);
+            const PlanarNode& otherNode = edge.getOtherNode(n2);
             cout << "Neighbour : " << otherNode.getPosition() << endl;
         }
     }

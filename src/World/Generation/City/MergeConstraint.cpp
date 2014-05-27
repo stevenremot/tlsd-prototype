@@ -21,6 +21,7 @@
 
 #include <cmath>
 
+#include "RoadUtil.h"
 #include "../../../Geometry/Vec2D.h"
 
 using Geometry::Vec2Df;
@@ -34,36 +35,52 @@ namespace World
     {
         namespace City
         {
+            bool isSimilar(
+                const RoadQuery& query,
+                const PlanarEdge& edge,
+                float radius,
+                float deviation
+            ) {
+                const Vec2Df& origin = query.getOriginNode().getPosition();
+                const Vec2Df direction = Vec2Df::fromPolar(
+                    query.getOrientation(),
+                    query.getLength()
+                );
+                const Vec2Df end = origin + direction;
+
+                const Vec2Df& n1 = edge.getFirstNode().getPosition();
+                const Vec2Df& n2 = edge.getSecondNode().getPosition();
+
+                if ((origin - getProjection(origin, n1, n2)).getLength() <= radius ||
+                    (end - getProjection(end, n1, n2)).getLength() <= radius ||
+                    (n1 - getProjection(n1, origin, end)).getLength() <= radius ||
+                    (n2 - getProjection(n2, origin, end)).getLength() <= radius)
+                {
+                    const Vec2Df d = edge.getDirection().normalize();
+                    const Vec2Df normalDirection = direction.normalize();
+                    if (normalDirection.dot(d) > deviation)
+                    {
+                        return true;
+                    }
+                }
+
+                return false;
+            }
+
             void MergeConstraint::insert(
                     RoadQuery& query,
                     const RoadNetwork& network
             ) {
-                const Vec2Df& origin = query.getOriginNode().getPosition();
                 const PlanarGraph& graph = network.getGraph();
 
-                const PlanarGraph::NodeCollection& nodes = graph.getNodes();
-
-                for (unsigned int i = 0; i < nodes.size(); i++)
+                const PlanarGraph::EdgeCollection& edges = graph.getEdges();
+                for (unsigned int i = 0; i < edges.size(); i++)
                 {
-                    const PlanarNode& node = nodes[i];
-                    const Vec2Df& farPosition = node.getPosition();
-
-                    if ((origin - farPosition).getLength() <= radius_)
+                    const PlanarEdge& edge = edges[i];
+                    if (isSimilar(query, edge, radius_, deviation_))
                     {
-                        const PlanarGraph::EdgeCollection& edges =
-                            graph.getNeighbourEdges(node);
-
-                        for (unsigned int j = 0; j < edges.size(); j++)
-                        {
-                            const PlanarEdge& edge = edges[i];
-                            Vec2Df direction =
-                                edge.getOtherNode(node).getPosition() - farPosition;
-                            if ((query.getOrientation() - direction.getOrientation()) <= deviation_)
-                            {
-                                query.setState(RoadQuery::CancelledState);
-                                return;
-                            }
-                        }
+                        query.setState(RoadQuery::CancelledState);
+                        return;
                     }
                 }
             }

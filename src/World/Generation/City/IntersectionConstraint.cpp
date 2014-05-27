@@ -58,7 +58,7 @@ namespace World
                         {
                             query.setState(RoadQuery::CancelledState);
                         }
-                        else if (query.getState() != RoadQuery::DoneState)
+                        else
                         {
                             query.setState(RoadQuery::DoneState);
                             query.setLength(length);

@@ -64,13 +64,27 @@ namespace World
             );
 
             /**
-             * Project the position on the edge if possible
+             * Project the position on the edge
+             *
+             * @param[in] position
+             * @param[in] e1
+             * @param [in] e2
+             *
+             * @return the projection
+             */
+            Geometry::Vec2Df getProjection(
+                const Geometry::Vec2Df& position,
+                const Geometry::Vec2Df& e1,
+                const Geometry::Vec2Df& e2
+            );
+
+            /**
+             * Project the position on the edge
              *
              * @param[in] position
              * @param[in] edge
-             * @param[out] projection
              *
-             * @return true if a projection was possible, false otherwise
+             * @return the projection
              */
             Geometry::Vec2Df getProjection(
                 const Geometry::Vec2Df& position,

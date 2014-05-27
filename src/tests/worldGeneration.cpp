@@ -20,9 +20,13 @@
 #include "worldGeneration.h"
 
 #include <iostream>
+#include <cmath>
 
 #include "../World/Generation/City/RoadExpander.h"
 #include "../World/Generation/City/IntersectionConstraint.h"
+#include "../World/Generation/City/NeighbourNodeConstraint.h"
+#include "../World/Generation/City/NeighbourEdgeConstraint.h"
+#include "../World/Generation/City/MergeConstraint.h"
 #include "../Graph/PlanarGraph.h"
 
 using World::Generation::City::RoadExpander;
@@ -43,13 +47,17 @@ namespace WorldGenerationTests
     {
         PlanarGraph graph;
         PlanarNode n1 = graph.addNode(Vec2Df(0.0, 0.0));
-        PlanarNode n2 = graph.addNode(Vec2Df(1.0, 0.0));
+        PlanarNode n2 = graph.addNode(Vec2Df(30.0, 0.0));
         PlanarEdge e = graph.addEdge(n1, n2);
 
-        Random::NumberGenerator gen;
+        Random::NumberGenerator gen(42);
 
-        RoadExpander expander(QueryCreator(2.0, gen), RoadNetwork(graph, 0.1, Color(1.0, 1.0, 1.0)));
-        expander.addRoadConstraint(new World::Generation::City::IntersectionConstraint(0.1));
+        RoadExpander expander(QueryCreator(45.0, 0.25, gen), RoadNetwork(graph, 0.1, Color(1.0, 1.0, 1.0)));
+        expander.addRoadConstraint(new World::Generation::City::NeighbourNodeConstraint(30));
+        expander.addRoadConstraint(new World::Generation::City::NeighbourEdgeConstraint(30));
+        expander.addRoadConstraint(new World::Generation::City::IntersectionConstraint(15));
+        expander.addRoadConstraint(new World::Generation::City::MergeConstraint(15, 0.3));
+
 
         expander.addBranchRequest(BranchRequest(n2, e));
 
@@ -70,11 +78,22 @@ namespace WorldGenerationTests
             const Vec2Df& p1 = edge.getFirstNode().getPosition();
             const Vec2Df& p2 = edge.getSecondNode().getPosition();
 
-            cout << "<line x1=\"" << p1.getX() * 10
-                 << "\" y1=\"" << p1.getY() * 10
-                 << "\" x2=\"" << p2.getX() * 10
-                 << "\" y2=\"" << p2.getY() * 10
+            cout << "<line x1=\"" << p1.getX()
+                 << "\" y1=\"" << p1.getY()
+                 << "\" x2=\"" << p2.getX()
+                 << "\" y2=\"" << p2.getY()
                  << "\" stroke=\"black\" />";
+        }
+
+        const PlanarGraph::NodeCollection& nodes = newGraph.getNodes();
+        for (unsigned int i = 0; i < nodes.size(); i++)
+        {
+            const PlanarNode& node = nodes[i];
+            const Vec2Df& p = node.getPosition();
+
+            cout << "<circle cx=\"" << p.getX()
+                 << "\" cy=\"" << p.getY()
+                 << "\" r=\"1\" fill=\"red\" />";
         }
 
         cout << "</g></svg>";

@@ -41,9 +41,11 @@ namespace World
                 typedef std::vector<RoadQuery> QueryCollection;
                 QueryCreator(
                     float averageLength,
+                    float deviation,
                     const Random::NumberGenerator& numberGenerator
                 ):
                     averageLength_(averageLength),
+                    deviation_(deviation),
                     numberGenerator_(numberGenerator)
                 {}
 
@@ -51,6 +53,7 @@ namespace World
 
             private:
                 float averageLength_;
+                float deviation_;
                 Random::NumberGenerator numberGenerator_;
             };
         }
