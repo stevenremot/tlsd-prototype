@@ -1,4 +1,3 @@
-
 /*
    This file is part of The Lost Souls Downfall prototype.
 
@@ -18,39 +17,30 @@
     <http://www.gnu.org/licenses/>.
 */
 
-#include "PlanarNode.h"
+#include "QueryInserter.h"
+#include "RoadQuery.h"
 
 using Geometry::Vec2Df;
 
-namespace Graph
+namespace World
 {
-    PlanarNode::PlanarNode()
-    {}
-
-    PlanarNode::PlanarNode(const Vec2Df& position):
-        position_(position)
-    {}
-
-    PlanarNode::PlanarNode(const lemon::ListGraph::Node& node,
-                           const Geometry::Vec2Df& position):
-        node_(node),
-        position_(position)
-    {}
-
-    PlanarNode::PlanarNode(const PlanarNode& node):
-        node_(node.node_),
-        position_(node.position_)
-    {}
-
-    PlanarNode& PlanarNode::operator=(const PlanarNode& node)
+    namespace Generation
     {
-        node_ = node.node_;
-        position_ = node.position_;
-        return *this;
-    }
+        namespace City
+        {
+            Graph::PlanarEdge QueryInserter::insert(const RoadQuery& query, Graph::PlanarGraph& graph)
+            {
+                Vec2Df direction = Vec2Df::fromPolar(
+                    query.getOrientation(),
+                    query.getLength()
+                );
 
-    bool PlanarNode::operator==(const PlanarNode& node) const
-    {
-        return position_ == node.position_;
+                const Graph::PlanarNode& end = graph.addNode(
+                    query.getOriginNode().getPosition() + direction
+                );
+
+                return graph.addEdge(query.getOriginNode(), end);
+            }
+        }
     }
 }

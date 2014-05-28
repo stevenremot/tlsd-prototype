@@ -143,4 +143,21 @@ namespace Graph
 
         return edges;
     }
+
+
+    PlanarGraph::EdgeCollection PlanarGraph::getNeighbourEdges(
+        const PlanarNode& node
+    ) const
+    {
+        EdgeCollection edges;
+        lemon::ListGraph::IncEdgeIt edge(graph_, node.node_);
+        for (; edge != lemon::INVALID; ++edge)
+        {
+            const PlanarEdge& planarEdge = edges_[edge];
+            edges.push_back(planarEdge);
+        }
+
+        return edges;
+
+    }
 }

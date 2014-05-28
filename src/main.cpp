@@ -29,6 +29,7 @@
 #include "tests/threading.h"
 #include "tests/core.h"
 #include "tests/world.h"
+#include "tests/worldGeneration.h"
 
 using std::cout;
 using std::endl;
@@ -49,7 +50,8 @@ int main()
     // ThreadingTest::testChannel();
     // WorldTest::testRoadNetworkModel();
     // WorldTest::testGroundCoefficients();
-    WorldTest::testGroundModel();
+    // WorldTest::testGroundModel();
+    WorldGenerationTests::testRoadExpansion();
 
     return 0;
 }

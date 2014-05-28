@@ -1,4 +1,3 @@
-
 /*
    This file is part of The Lost Souls Downfall prototype.
 
@@ -18,39 +17,38 @@
     <http://www.gnu.org/licenses/>.
 */
 
-#include "PlanarNode.h"
+#ifndef WORLD_GENERATION_CITY_NEIGHBOUR_EDGE_CONSTRAINT_H
+#define WORLD_GENERATION_CITY_NEIGHBOUR_EDGE_CONSTRAINT_H
 
-using Geometry::Vec2Df;
+#include "RoadConstraintInterface.h"
 
-namespace Graph
+namespace World
 {
-    PlanarNode::PlanarNode()
-    {}
-
-    PlanarNode::PlanarNode(const Vec2Df& position):
-        position_(position)
-    {}
-
-    PlanarNode::PlanarNode(const lemon::ListGraph::Node& node,
-                           const Geometry::Vec2Df& position):
-        node_(node),
-        position_(position)
-    {}
-
-    PlanarNode::PlanarNode(const PlanarNode& node):
-        node_(node.node_),
-        position_(node.position_)
-    {}
-
-    PlanarNode& PlanarNode::operator=(const PlanarNode& node)
+    namespace Generation
     {
-        node_ = node.node_;
-        position_ = node.position_;
-        return *this;
-    }
+        namespace City
+        {
+            class NeighbourEdgeConstraint: public RoadConstraintInterface
+            {
+            public:
+                NeighbourEdgeConstraint(float radius): radius_(radius)
+                {}
 
-    bool PlanarNode::operator==(const PlanarNode& node) const
-    {
-        return position_ == node.position_;
+                void insert(
+                    RoadQuery& query,
+                    const RoadNetwork& network
+                );
+
+            private:
+                float radius_;
+            };
+        }
     }
 }
+
+#endif
+
+// Emacs local variables
+// Local variables:
+// mode: c++
+// End:

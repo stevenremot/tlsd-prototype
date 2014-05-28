@@ -1,4 +1,3 @@
-
 /*
    This file is part of The Lost Souls Downfall prototype.
 
@@ -18,39 +17,39 @@
     <http://www.gnu.org/licenses/>.
 */
 
-#include "PlanarNode.h"
+#ifndef WORLD_GENERATION_CITY_QUERY_INSERTER_H
+#define WORLD_GENERATION_CITY_QUERY_INSERTER_H
 
-using Geometry::Vec2Df;
+#include "QueryInserterInterface.h"
 
-namespace Graph
+namespace World
 {
-    PlanarNode::PlanarNode()
-    {}
-
-    PlanarNode::PlanarNode(const Vec2Df& position):
-        position_(position)
-    {}
-
-    PlanarNode::PlanarNode(const lemon::ListGraph::Node& node,
-                           const Geometry::Vec2Df& position):
-        node_(node),
-        position_(position)
-    {}
-
-    PlanarNode::PlanarNode(const PlanarNode& node):
-        node_(node.node_),
-        position_(node.position_)
-    {}
-
-    PlanarNode& PlanarNode::operator=(const PlanarNode& node)
+    namespace Generation
     {
-        node_ = node.node_;
-        position_ = node.position_;
-        return *this;
-    }
+        namespace City
+        {
+            /**
+             * Base road inserter
+             *
+             * Insert the road by creating a new graph node at the end.
+             */
+            class QueryInserter: public QueryInserterInterface
+            {
+            public:
+                virtual Graph::PlanarEdge insert(const RoadQuery& query, Graph::PlanarGraph& graph);
 
-    bool PlanarNode::operator==(const PlanarNode& node) const
-    {
-        return position_ == node.position_;
+                virtual bool mustCreateBranch()
+                {
+                    return true;
+                }
+            };
+        }
     }
 }
+
+#endif
+
+// Emacs local variables
+// Local variables:
+// mode: c++
+// End:

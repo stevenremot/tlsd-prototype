@@ -17,11 +17,12 @@
     <http://www.gnu.org/licenses/>.
 */
 
-// #ifndef WORLD_ROAD_NETWORK_H
-// #define WORLD_ROAD_NETWORK_H
+#ifndef WORLD_ROAD_NETWORK_H
+#define WORLD_ROAD_NETWORK_H
 
 #include "../Graphics/Render/ModelableInterface.h"
 #include "../Graph/PlanarGraph.h"
+#include "../Geometry/Polygon2D.h"
 
 namespace World
 {
@@ -63,6 +64,8 @@ namespace World
             return model_;
         }
 
+        Geometry::Polygon2D getConvexHull() const;
+
     private:
         Graph::PlanarGraph graph_;
         float roadSize_;
@@ -73,7 +76,7 @@ namespace World
     };
 }
 
-// #endif
+#endif
 
 // Emacs local variables
 // Local variables:

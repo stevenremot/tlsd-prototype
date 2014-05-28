@@ -47,6 +47,39 @@ namespace GeometryTest
         cout << -v1 << endl;
         cout << v1.getLength() << endl;
 
+        std::vector<float> orientations;
+        std::vector<float> lengths;
+
+        orientations.push_back(M_PI / 4.0);
+        lengths.push_back(5.0);
+
+        orientations.push_back(M_PI);
+        lengths.push_back(1);
+
+        orientations.push_back(0);
+        lengths.push_back(0.5);
+
+        orientations.push_back(M_PI / 6.0);
+        lengths.push_back(1.0);
+
+        orientations.push_back(-M_PI / 2.0);
+        lengths.push_back(5.0);
+
+        orientations.push_back(M_PI / 2.0);
+        lengths.push_back(5.0);
+
+        for (unsigned int i = 0; i < orientations.size(); i++)
+        {
+            Vec2Df v = Vec2Df::fromPolar(orientations[i], lengths[i]);
+            if (v.getOrientation() != orientations[i] ||
+                v.getLength() != lengths[i])
+            {
+                cout << "Vec2D : wrong polar : "
+                     << "Got (" << v.getOrientation() << ", " << v.getLength() << "), "
+                     << "Exp (" << orientations[i] << ", " << lengths[i] << ")" << endl;
+            }
+        }
+
         Vec3Df v3(1, 2, 3);
         Vec3Df v4(4, 5, 6);
 
@@ -56,6 +89,7 @@ namespace GeometryTest
         cout << v3 * 4 << endl;
         cout << -v3 << endl;
         cout << v3.getLength() << endl;
+
     }
 
     void testPolygons()
