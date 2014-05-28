@@ -12,7 +12,9 @@ namespace RenderTest
         virtual void call(const Event::Event & event);
     };
 
-    void testThread();
+    void testThread(int durationInSeconds);
+
+    void testRenderSystem(int durationInSeconds);
 
     void testCamera();
 }

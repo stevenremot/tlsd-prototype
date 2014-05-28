@@ -28,6 +28,11 @@ class ComponentCreatedEvent : public Event::Event
             return component_;
         }
 
+        const Component::Type getComponentType() const
+        {
+            return component_->getType();
+        }
+
     private:
         const Entity& entity_;
         Component* component_;

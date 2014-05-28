@@ -7,6 +7,7 @@
 
 #include "ModelUtils.h"
 #include "../../Input/Events.h"
+#include "Events.h"
 
 // TODO: remove
 #include <iostream>
@@ -45,13 +46,14 @@ namespace Graphics
                 sceneNodes_[0]->setIrrlichtSceneNode(irrlichtSceneManager_->getRootSceneNode());
                 sceneNodes_[0]->setId(0);
 
-                Model3D cube = createCubeModel(Color(1.0f, 0.0f, 0.0f));
-                addMeshSceneNodeFromModel3D(sceneNodes_.back(), cube);
+                Model3D cube = createPrettyCubeModel();
+                Vec3Df pos = Vec3Df(0,0,0);
+                addMeshSceneNodeFromModel3D(sceneNodes_.back(), cube, pos);
 
                 // init camera
-                addCameraSceneNode(sceneNodes_.back());
+                addCameraSceneNode(sceneNodes_[0]);
                 camera_ = dynamic_cast<CameraSceneNode*>(sceneNodes_.back());
-                camera_->initPositionAndTarget();
+                camera_->initStaticCamera(Vec3Df(5,5,5), Vec3Df(0,0,0));
 
                 std::cout << "[Scene]: init done" << std::endl;
             }
@@ -60,26 +62,28 @@ namespace Graphics
                 if (camera_ != NULL)
                 {
                     events_ << new Input::CameraEvent(static_cast<const Input::CameraEvent&>(event));
-                    //camera_->updateTarget(static_cast<const Input::CameraEvent&>(event).getCursorPosition());
                 }
+            }
+            else if (event.getType() == Input::MoveEvent::TYPE)
+            {
+                if (camera_ != NULL)
+                {
+                    events_ << new Input::MoveEvent(static_cast<const Input::MoveEvent&>(event));
+                }
+            }
+            else if (event.getType() == RenderMeshFileEvent::TYPE)
+            {
+                events_ << new RenderMeshFileEvent(static_cast<const RenderMeshFileEvent&>(event));
+            }
+            else if (event.getType() == RenderModel3DEvent::TYPE)
+            {
+                events_ << new RenderModel3DEvent(static_cast<const RenderModel3DEvent&>(event));
             }
 
         }
 
         void Scene::run()
         {
-            if (irrlichtSceneManager_ != NULL && irrlichtVideoDriver_ != NULL)
-            {
-                Model3D cube = createCubeModel(Color(1.0f, 0.0f, 0.0f));
-                addMeshSceneNodeFromModel3D(sceneNodes_.back(), cube);
-
-                //addMeshSceneNodeFromFile(sceneNodes_.back(), "ninja.b3d", "");
-                sceneNodes_.back()->setPosition(Vec3Df(5,0,0));
-                //sceneNodes_.back()->setScale(Vec3Df(3,3,3));
-
-                //std::cout << "[Scene]: " << sceneNodes_.size() << " ninjas" << std::endl;
-            }
-
             while (!events_.isEmpty())
             {
                 Event::Event* event = NULL;
@@ -89,13 +93,43 @@ namespace Graphics
                 {
                     camera_->updateTarget(dynamic_cast<Input::CameraEvent*>(event)->getCursorPosition());
                 }
+                else if (event->getType() == Input::MoveEvent::TYPE)
+                {
+                    Input::MoveEvent* moveEvent = dynamic_cast<Input::MoveEvent*>(event);
+
+                    if (moveEvent->getDirection() == Input::Right)
+                        sceneNodes_[1]->setRotation(sceneNodes_[1]->getRotation() + Vec3Df(0.0f, 0.0f, 0.5f));
+                    else if (moveEvent->getDirection() == Input::Left)
+                        sceneNodes_[1]->setRotation(sceneNodes_[1]->getRotation() + Vec3Df(0.0f, 0.0f, -0.5f));
+
+                    if (moveEvent->getDirection() == Input::Forward)
+                        sceneNodes_[1]->setRotation(sceneNodes_[1]->getRotation() + Vec3Df(0.5f, 0.0f, 0.0f));
+                    else if (moveEvent->getDirection() == Input::Backward)
+                        sceneNodes_[1]->setRotation(sceneNodes_[1]->getRotation() + Vec3Df(-0.5f, 0.0f, 0.0f));
+                }
+                else if (event->getType() == RenderMeshFileEvent::TYPE)
+                {
+                    if (irrlichtSceneManager_ != NULL && irrlichtVideoDriver_ != NULL)
+                    {
+                        RenderMeshFileEvent* renderEvent = dynamic_cast<RenderMeshFileEvent*>(event);
+                        addMeshSceneNodeFromFile(NULL, renderEvent->getMeshFile(), renderEvent->getTextureFile(), renderEvent->getPosition());
+                    }
+                }
+                else if (event->getType() == RenderModel3DEvent::TYPE)
+                {
+                    if (irrlichtSceneManager_ != NULL && irrlichtVideoDriver_ != NULL)
+                    {
+                        RenderModel3DEvent* renderEvent = dynamic_cast<RenderModel3DEvent*>(event);
+                        addMeshSceneNodeFromModel3D(NULL, renderEvent->getModel(), renderEvent->getPosition());
+                    }
+                }
 
                 delete event;
             }
 
         }
 
-        void Scene::addMeshSceneNodeFromFile(SceneNode* parent, const string& meshFile, const string& textureFile)
+        void Scene::addMeshSceneNodeFromFile(SceneNode* parent, const string& meshFile, const string& textureFile, const Vec3Df& position)
         {
             irr::scene::IMeshSceneNode* irrNode = irrlichtSceneManager_->addMeshSceneNode(irrlichtSceneManager_->getMesh(meshFile.c_str()));
             if (parent != NULL)
@@ -113,10 +147,15 @@ namespace Graphics
             node->setId(sceneNodes_.size()-1);
             node->activateLight(false);
 
-            parent->addChild(node);
+            if (parent == NULL)
+                sceneNodes_[0]->addChild(node);
+            else
+                parent->addChild(node);
+
+            node->setAbsolutePosition(position);
         }
 
-        void Scene::addMeshSceneNodeFromModel3D(SceneNode* parent, const Model3D& model)
+        void Scene::addMeshSceneNodeFromModel3D(SceneNode* parent, const Model3D& model, const Vec3Df& position)
         {
             using irr::scene::SMeshBuffer;
             using irr::core::vector3df;
@@ -214,8 +253,14 @@ namespace Graphics
             sceneNodes_.push_back(node);
             node->setId(sceneNodes_.size()-1);
             node->activateLight(false);
+            node->setFlatShading(true);
 
-            parent->addChild(node);
+            if (parent == NULL)
+                sceneNodes_[0]->addChild(node);
+            else
+                parent->addChild(node);
+
+            node->setAbsolutePosition(position);
         }
 
         void Scene::addCameraSceneNode(SceneNode* parent)

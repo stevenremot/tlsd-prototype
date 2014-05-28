@@ -25,6 +25,20 @@ namespace Graphics
                 textureFileName_(textureFileName)
             {}
 
+            RenderableComponent(Model3D& model3d):
+                Component(Type),
+                model3d_(model3d),
+                meshFileName_(""),
+                textureFileName_("")
+            {}
+
+            RenderableComponent(const string& meshFileName, const string& textureFileName):
+                Component(Type),
+                model3d_(Model3D()),
+                meshFileName_(meshFileName),
+                textureFileName_(textureFileName)
+            {}
+
             virtual const std::vector<Ecs::Component::Type>& getDependentComponents()
             {
                 if (Dependencies.empty())

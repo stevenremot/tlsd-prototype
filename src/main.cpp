@@ -37,8 +37,7 @@ using std::vector;
 
 int main()
 {
-    RenderTest::testThread();
-
+    RenderTest::testRenderSystem(10);
 /*
     EventTest::testEvents();
     EcsTest::testEcs();
@@ -48,6 +47,5 @@ int main()
     ThreadingTest::testChannel();
     CoreTest::testSharedPtr();
 */
-
     return 0;
 }

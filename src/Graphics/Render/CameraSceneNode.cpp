@@ -54,7 +54,7 @@ namespace Graphics
             cameraNode->setTarget(target);
         }
 
-        void CameraSceneNode::initPositionAndTarget()
+        void CameraSceneNode::initPositionAndTargetFromParent()
         {
             irr::scene::ICameraSceneNode* cameraNode = dynamic_cast<irr::scene::ICameraSceneNode*>(irrlichtSceneNode_);
 
@@ -70,6 +70,13 @@ namespace Graphics
 
             vector3df target = parent->getPosition() + vector3df(0,charScale.Y*charDims.Y,0);// + 0.2f * core::vector3df(charDims.X*charDir.X,0,10.0f*charDims.Z*charDir.Z);
             cameraNode->setTarget(target);
+        }
+
+        void CameraSceneNode::initStaticCamera(const Vec3Df& position, const Vec3Df& target)
+        {
+            setPosition(position);
+
+            dynamic_cast<irr::scene::ICameraSceneNode*>(irrlichtSceneNode_)->setTarget(vector3df(target.getX(), target.getZ(), target.getY()));
         }
     }
 }

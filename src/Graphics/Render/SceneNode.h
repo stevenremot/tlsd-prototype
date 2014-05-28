@@ -25,6 +25,7 @@ namespace Graphics
                 void addChild(SceneNode* child);
 
                 void activateLight(bool b);
+                void setFlatShading(bool b);
 
                 irr::scene::ISceneNode* getIrrlichtSceneNode() const;
                 void setIrrlichtSceneNode(irr::scene::ISceneNode* node);
@@ -32,10 +33,12 @@ namespace Graphics
                 void setPosition(const Vec3Df& pos);
                 void setRotation(const Vec3Df& rot);
                 void setScale(const Vec3Df& sca);
+                void setAbsolutePosition(const Vec3Df& pos);
 
                 Vec3Df getPosition() const;
                 Vec3Df getRotation() const;
                 Vec3Df getScale() const;
+                Vec3Df getAbsolutePosition() const;
 
                 void setId(unsigned int id);
 

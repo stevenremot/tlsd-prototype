@@ -69,8 +69,8 @@ namespace Graphics
             virtual void run();
 
             void addCameraSceneNode(SceneNode* parent);
-            void addMeshSceneNodeFromModel3D(SceneNode* parent, const Model3D& model3d);
-            void addMeshSceneNodeFromFile(SceneNode* parent, const string& meshFile, const string& textureFile);
+            void addMeshSceneNodeFromModel3D(SceneNode* parent, const Model3D& model3d, const Vec3Df& position);
+            void addMeshSceneNodeFromFile(SceneNode* parent, const string& meshFile, const string& textureFile, const Vec3Df& position);
 
             /**
             *   @param[in] entity

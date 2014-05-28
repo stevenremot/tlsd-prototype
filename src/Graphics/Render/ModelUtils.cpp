@@ -41,6 +41,68 @@ namespace Graphics
             return Model3D(vertices, faces);
         }
 
+        Model3D createPrettyCubeModel()
+        {
+            std::vector<Vec3Df> vertices;
+            std::vector<Face> faces;
+
+            vertices.push_back(Vec3Df(0.0f, 0.0f, 0.0f));
+            vertices.push_back(Vec3Df(1.0f, 0.0f, 0.0f));
+            vertices.push_back(Vec3Df(1.0f, 1.0f, 0.0f));
+            vertices.push_back(Vec3Df(0.0f, 1.0f, 0.0f));
+
+            vertices.push_back(Vec3Df(1.0f, 0.0f, 0.0f));
+            vertices.push_back(Vec3Df(1.0f, 0.0f, 1.0f));
+            vertices.push_back(Vec3Df(1.0f, 1.0f, 1.0f));
+            vertices.push_back(Vec3Df(1.0f, 1.0f, 0.0f));
+
+            vertices.push_back(Vec3Df(1.0f, 0.0f, 1.0f));
+            vertices.push_back(Vec3Df(0.0f, 0.0f, 1.0f));
+            vertices.push_back(Vec3Df(0.0f, 1.0f, 1.0f));
+            vertices.push_back(Vec3Df(1.0f, 1.0f, 1.0f));
+
+            vertices.push_back(Vec3Df(0.0f, 0.0f, 1.0f));
+            vertices.push_back(Vec3Df(0.0f, 0.0f, 0.0f));
+            vertices.push_back(Vec3Df(0.0f, 1.0f, 0.0f));
+            vertices.push_back(Vec3Df(0.0f, 1.0f, 1.0f));
+
+            vertices.push_back(Vec3Df(0.0f, 1.0f, 0.0f));
+            vertices.push_back(Vec3Df(1.0f, 1.0f, 0.0f));
+            vertices.push_back(Vec3Df(1.0f, 1.0f, 1.0f));
+            vertices.push_back(Vec3Df(0.0f, 1.0f, 1.0f));
+
+            vertices.push_back(Vec3Df(0.0f, 0.0f, 1.0f));
+            vertices.push_back(Vec3Df(1.0f, 0.0f, 1.0f));
+            vertices.push_back(Vec3Df(1.0f, 0.0f, 0.0f));
+            vertices.push_back(Vec3Df(0.0f, 0.0f, 0.0f));
+
+            Color color1(1.0f,0.0f,0.0f);
+            faces.push_back(Face(0,3,1,color1));
+            faces.push_back(Face(1,3,2,color1));
+
+            Color color2(0.0f,1.0f,0.0f);
+            faces.push_back(Face(4,7,5,color2));
+            faces.push_back(Face(5,7,6,color2));
+
+            Color color3(0.0f,0.0f,1.0f);
+            faces.push_back(Face(8,11,9,color3));
+            faces.push_back(Face(9,11,10,color3));
+
+            Color color4(1.0f,1.0f,0.0f);
+            faces.push_back(Face(13,12,15,color4));
+            faces.push_back(Face(13,15,14,color4));
+
+            Color color5(1.0f,0.0f,1.0f);
+            faces.push_back(Face(17,16,19,color5));
+            faces.push_back(Face(17,19,18,color5));
+
+            Color color6(0.0f,1.0f,1.0f);
+            faces.push_back(Face(20,23,21,color6));
+            faces.push_back(Face(21,23,22,color6));
+
+            return Model3D(vertices, faces);
+        }
+
         void computeNormals(const Model3D& model, std::vector<Vec3Df>& normals)
         {
             normals.resize(model.getVertices().size());

@@ -27,7 +27,9 @@ namespace Graphics
             /*
             *   Initialize the camera position (relative to the player's)
             */
-            void initPositionAndTarget();
+            void initPositionAndTargetFromParent();
+
+            void initStaticCamera(const Vec3Df& position, const Vec3Df& target);
         protected:
             // override
             virtual void removeIrrlichtSceneNode();

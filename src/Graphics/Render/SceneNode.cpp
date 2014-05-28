@@ -1,10 +1,13 @@
 #include "SceneNode.h"
 
+#include <irrlicht/matrix4.h>
+
 namespace Graphics
 {
     namespace Render
     {
         using irr::core::vector3df;
+        using irr::core::matrix4;
 
         SceneNode::SceneNode(const SceneNode* parent) :
             parent_(parent),
@@ -47,6 +50,12 @@ namespace Graphics
             return Vec3Df(irrScale.X, irrScale.Z, irrScale.Y);
         }
 
+        Vec3Df SceneNode::getAbsolutePosition() const
+        {
+            vector3df irrPos = irrlichtSceneNode_->getAbsolutePosition();
+            return Vec3Df(irrPos.X, irrPos.Z, irrPos.Y);
+        }
+
         void SceneNode::setPosition(const Vec3Df& pos)
         {
             vector3df irrPos = vector3df(pos.getX(), pos.getZ(), pos.getY());
@@ -65,6 +74,32 @@ namespace Graphics
         {
             vector3df irrScale = vector3df(sca.getX(), sca.getZ(), sca.getY());
             irrlichtSceneNode_->setScale(irrScale);
+        }
+
+        void SceneNode::setAbsolutePosition(const Vec3Df& pos)
+        {
+            vector3df irrPos = vector3df(pos.getX(), pos.getZ(), pos.getY());
+
+            if(getParent() != NULL)
+            {
+                // The parent is not the root scene node
+                if (getParent()->getId() != 0)
+                {
+                    // the transform matrix is initialized at identity
+                    matrix4 matr;
+                    matr.setTranslation(irrPos);
+
+                    const matrix4 w2n(irrlichtSceneNode_->getParent()->getAbsoluteTransformation(), irr::core::matrix4::EM4CONST_INVERSE);
+
+                    matr = (w2n*matr);
+
+                    irrlichtSceneNode_->setPosition(matr.getTranslation());
+                    irrlichtSceneNode_->setRotation(matr.getRotationDegrees());
+                    irrlichtSceneNode_->updateAbsolutePosition();
+                }
+                else
+                    setPosition(pos);
+            }
         }
 
         void SceneNode::setId(unsigned int id)
@@ -101,6 +136,11 @@ namespace Graphics
         void SceneNode::activateLight(bool b)
         {
             irrlichtSceneNode_->setMaterialFlag(irr::video::EMF_LIGHTING, b);
+        }
+
+        void SceneNode::setFlatShading(bool b)
+        {
+            irrlichtSceneNode_->setMaterialFlag(irr::video::EMF_GOURAUD_SHADING, !b);
         }
 
         void SceneNode::addChild(SceneNode* child)
