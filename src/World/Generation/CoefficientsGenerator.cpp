@@ -23,14 +23,14 @@ namespace World
 {
     namespace Generation
     {
-        Geometry::Vec2Df generatePerlinCoefficient(Random::NumberGenerator rng)
+        Geometry::Vec2Df generatePerlinCoefficient(Random::NumberGenerator& rng)
         {
 
             return Geometry::Vec2Df(rng.getUniform(-1, 1), rng.getUniform(-1, 1));
 
         }
 
-        GroundCoefficients generateGroundCoefficients(Random::NumberGenerator rng)
+        GroundCoefficients generateGroundCoefficients(Random::NumberGenerator& rng)
         {
 
             GroundCoefficients groundCoefficients;
@@ -49,6 +49,7 @@ namespace World
                     groundCoefficients.setCoefficient(3,i,j,rng.getUniform(-1,1));
                 }
             }
+            return groundCoefficients;
         }
     }
 }

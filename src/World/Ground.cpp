@@ -18,7 +18,6 @@
 */
 
 #include <math.h>
-#include <iostream>
 
 #include "Ground.h"
 #include "../Geometry/Vec3D.h"
@@ -55,7 +54,6 @@ namespace World
                 groundTable[static_cast<int>(i*period)][static_cast<int>(j*period)] = computeHeight(world, x*chunkSize+i, y*chunkSize+j);
             }
         }
-
         int baseIndex = 0;
 
         std::vector<Geometry::Vec3Df> vertices;
@@ -69,10 +67,9 @@ namespace World
                 vertices.push_back(Geometry::Vec3Df((i+1)/period,j/period,groundTable[static_cast<int>(i+1)][static_cast<int>(j)]));
                 vertices.push_back(Geometry::Vec3Df(i/period,(j+1)/period,groundTable[static_cast<int>(i)][static_cast<int>(j+1)]));
                 vertices.push_back(Geometry::Vec3Df((i+1)/period,(j+1)/period,groundTable[static_cast<int>(i+1)][static_cast<int>(j+1)]));
-
-                Graphics::Color color = world.getBiome(i/period,j/period).getColor();
+                Graphics::Color color = world.getBiome(x*chunkSize+i/period,y*chunkSize+j/period).getColor();
                 faces.push_back(Graphics::Render::Face(baseIndex, baseIndex+2, baseIndex+1, color));
-                color = world.getBiome((i+1)/period,(j+1)/period).getColor();
+                color = world.getBiome(x*chunkSize+(i+1)/period,y*chunkSize+(j+1)/period).getColor();
                 faces.push_back(Graphics::Render::Face(baseIndex+1, baseIndex+3, baseIndex+2, color));
 
                 baseIndex +=4;
@@ -102,7 +99,7 @@ namespace World
         }
 
         Chunk diagonalChunk;
-        if (!world.getChunk(i,j,diagonalChunk))
+        if (!world.getChunk(i+1,j+1,diagonalChunk))
         {
             throw NotPreparatedChunkException();
         }
@@ -117,24 +114,20 @@ namespace World
         float yChunk = y-static_cast<float>(j)*chunkSize;
 
         float i1, j1;
-        Chunk sideChunk;
         if (xChunk>yChunk)
         {
-            if (!world.getChunk(i,j+1,sideChunk))
-            {
-                throw NotPreparatedChunkException();
-            }
             i1 = 1;
             j1 = 0;
         }
         else
         {
-            if (!world.getChunk(i+1,j,sideChunk))
-            {
-                throw NotPreparatedChunkException();
-            }
             i1 = 0;
             j1 = 1;
+        }
+        Chunk sideChunk;
+        if (!world.getChunk(i+i1,j+j1,sideChunk))
+        {
+            throw NotPreparatedChunkException();
         }
 
         const GroundCoefficients& sideChunkGroundCoefficients = sideChunk.getCoefficients();
@@ -252,7 +245,7 @@ namespace World
         }
         else
         {
-            BiomeInterface& sideBiome = world.getBiome((floor(x/chunkSize)+i1)*chunkSize,(floor(y/chunkSize)+j1)*chunkSize);
+            BiomeInterface& sideBiome = world.getBiome((floor(x/chunkSize)+i2)*chunkSize,(floor(y/chunkSize)+j2)*chunkSize);
             if (i==0 && j==0)
             {
                 n1 = powf(ellipse1,4)*sideBiome.transformCoefficient(actualChunkGroundCoefficients.getCoefficient(2,i2,j2));
@@ -368,7 +361,7 @@ namespace World
         }
         else
         {
-            BiomeInterface& sideBiome = world.getBiome((floor(x/chunkSize)+i1)*chunkSize,(floor(y/chunkSize)+j1)*chunkSize);
+            BiomeInterface& sideBiome = world.getBiome((floor(x/chunkSize)+i2)*chunkSize,(floor(y/chunkSize)+j2)*chunkSize);
             if (j==3 && i<3)
             {
                 if (i2==0)
@@ -412,7 +405,7 @@ namespace World
 
 
 
-        return firstOctaveContribution + secondOctaveContribution + thirdOctaveContribution;
+        return firstOctaveContribution + 1.0/2.0*secondOctaveContribution + 1.0/4.0*thirdOctaveContribution;
 
     }
 }

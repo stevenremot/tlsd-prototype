@@ -119,30 +119,38 @@ namespace WorldTest
         BiomeMap biomeMap;
         World::World world;
         NumberGenerator rng(1);
-        vector<Vec2Df> points;
+        /*vector<Vec2Df> points;
         points.push_back(Vec2Df(0.0, 0.0));
         points.push_back(Vec2Df(512.0, 0.0));
         points.push_back(Vec2Df(512.0, 512.0));
         points.push_back(Vec2Df(0.0, 512.0));
 
         Polygon2D poly(points);
-        biomeMap.addCityPolygon(poly);
-        for (unsigned int i = 0; i < 9; i++)
+        biomeMap.addCityPolygon(poly);*/
+        for (unsigned int i = 0; i < 25; i++)
         {
-        biomeMap.setPerlinCoef(i/3,i%3,World::Generation::generatePerlinCoefficient(rng));
+        biomeMap.setPerlinCoef(i/5,i%5,World::Generation::generatePerlinCoefficient(rng));
         }
         world.setBiomeMap(biomeMap);
-        for (unsigned int i = 0; i<9; i++)
+        for (unsigned int i = 0; i<25; i++)
         {
             Chunk chunk;
             chunk.setState(Chunk::PreparedState);
             chunk.setCoefficients(World::Generation::generateGroundCoefficients(rng));
-            if (i == 4)
+            if (i==6 || i==7 || i==8 || i==11 || i==12 || i==13 || i==16 || i==17 || i==18)
             {
                 chunk.setState(Chunk::GeneratedState);
             }
-            world.setChunk(i/3,i%3,chunk);
+            world.setChunk(i/5,i%5,chunk);
         }
-        Model3D model = World::computeGroundModel(world, 1, 1);
+        Model3D model11 = World::computeGroundModel(world, 1, 1);
+        Model3D model21 = World::computeGroundModel(world, 2, 1);
+        Model3D model31 = World::computeGroundModel(world, 3, 1);
+        Model3D model12 = World::computeGroundModel(world, 1, 2);
+        Model3D model22 = World::computeGroundModel(world, 2, 2);
+        Model3D model32 = World::computeGroundModel(world, 3, 2);
+        Model3D model13 = World::computeGroundModel(world, 1, 3);
+        Model3D model23 = World::computeGroundModel(world, 2, 3);
+        Model3D model33 = World::computeGroundModel(world, 3, 3); 
     }
 }

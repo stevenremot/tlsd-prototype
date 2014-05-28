@@ -17,7 +17,6 @@
     <http://www.gnu.org/licenses/>.
 */
 
-
 #include "BiomeMap.h"
 #include "World.h"
 #include "../Geometry/Vec2D.h"
@@ -52,14 +51,14 @@ namespace World
         // Computing the Perlin noise interpolation
         try
         {
-        n00 = perlinCoefs_.at(Geometry::Vec2Di(i,j)).dot(Geometry::Vec2Df(x0,y0));
-        n10 = perlinCoefs_.at(Geometry::Vec2Di(i+1,j)).dot(Geometry::Vec2Df(x0-chunkSize,y0));
-        n01 = perlinCoefs_.at(Geometry::Vec2Di(i,j+1)).dot(Geometry::Vec2Df(x0,y0-chunkSize));
-        n11 = perlinCoefs_.at(Geometry::Vec2Di(i+1,j+1)).dot(Geometry::Vec2Df(x0-chunkSize,y0-chunkSize));
+            n00 = perlinCoefs_.at(Geometry::Vec2Di(i,j)).dot(Geometry::Vec2Df(x0,y0));
+            n10 = perlinCoefs_.at(Geometry::Vec2Di(i+1,j)).dot(Geometry::Vec2Df(x0-chunkSize,y0));
+            n01 = perlinCoefs_.at(Geometry::Vec2Di(i,j+1)).dot(Geometry::Vec2Df(x0,y0-chunkSize));
+            n11 = perlinCoefs_.at(Geometry::Vec2Di(i+1,j+1)).dot(Geometry::Vec2Df(x0-chunkSize,y0-chunkSize));
         }
         catch(const std::out_of_range& e)
         {
-            throw UninitializedCoefficientsException(); 
+            throw UninitializedCoefficientsException();
         }
 
         float xNorm = x0/chunkSize;

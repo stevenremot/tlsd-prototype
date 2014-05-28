@@ -30,8 +30,8 @@ namespace World
 
     namespace Generation
     {
-        Geometry::Vec2Df generatePerlinCoefficient(Random::NumberGenerator rng);
-        GroundCoefficients generateGroundCoefficients(Random::NumberGenerator rng);
+        Geometry::Vec2Df generatePerlinCoefficient(Random::NumberGenerator& rng);
+        GroundCoefficients generateGroundCoefficients(Random::NumberGenerator& rng);
     }
 
 }

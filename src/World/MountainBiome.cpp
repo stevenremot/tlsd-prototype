@@ -23,7 +23,7 @@ namespace World
 {
     float MountainBiome::transformCoefficient(float coefficient)
     {
-        return (coefficient+1)*25+250;
+        return (coefficient+1.0)*25.0+150.0;
     }
 
     Graphics::Color MountainBiome::getColor()

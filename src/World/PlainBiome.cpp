@@ -23,7 +23,7 @@ namespace World
 {
     float PlainBiome::transformCoefficient(float coefficient)
     {
-        return (coefficient+1)*15;
+        return (coefficient+1.0)*15.0;
     }
 
     Graphics::Color PlainBiome::getColor()
