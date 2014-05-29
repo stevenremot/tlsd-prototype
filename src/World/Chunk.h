@@ -27,6 +27,12 @@
 
 namespace World
 {
+    /**
+     * Class for a chunk
+     *
+     * A chunk is a square part of the world containing its entities
+     * It has a state describing its loading status
+     */
     class Chunk
     {
     public:
@@ -51,12 +57,21 @@ namespace World
             coefficients_ = coefficients;
         }
 
-        State getState() const;
+        State getState() const
+        {
+            return state_;
+        }
+
+        void setState(State state)
+        {
+            state_ = state;
+        }
 
     private:
         EntityCollection baseEntities_;
         EntityCollection finalEntities_;
         GroundCoefficients coefficients_;
+        State state_;
     };
 }
 

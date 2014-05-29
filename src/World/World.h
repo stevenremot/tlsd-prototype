@@ -37,6 +37,7 @@ namespace World
     class World
     {
     public:
+        static const unsigned int ChunkSize;
 
         /**
          * Return the chunk at indexes (x, y)
@@ -68,7 +69,17 @@ namespace World
             chunks_[Geometry::Vec2Di(x, y)] = chunk;
         }
 
-        Biome getBiome(int x, int y);
+        void setBiomeMap(const BiomeMap& biomeMap)
+        {
+            biomeMap_ = biomeMap;
+        }
+
+        /**
+         * Return the biome at the given location
+         *
+         * @throw UninitializedCoefficientsException
+         */
+        BiomeInterface& getBiome(float x, float y);
 
         BiomeMap& getBiomeMap() { return biomeMap_; };
         const BiomeMap& getBiomeMap() const { return biomeMap_; };

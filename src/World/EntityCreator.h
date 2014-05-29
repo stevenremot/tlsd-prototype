@@ -17,21 +17,22 @@
     <http://www.gnu.org/licenses/>.
 */
 
-#ifndef TESTS_WORLD_H
-#define TESTS_WORLD_H
+#ifndef WORLD_ENTITY_CREATOR_H
+#define WORLD_ENTITY_CREATOR_H
 
-namespace WorldTest
+#include "../Ecs/Entity.h"
+#include "World.h"
+#include "../Ecs/World.h"
+
+
+namespace World
 {
-    void testRoadNetworkModel();
-
-    void testGroundCoefficients();
-
-    void testGroundModel();
+    /**
+     * Returns the created ground entity for the chunk and insert it in the ecs world
+     *
+     * TODO Add renderable component
+     */
+	Ecs::Entity createGround(const World& world, int i, int j, Ecs::World& ecsWorld);
 }
 
 #endif
-
-// Emacs local variables
-// Local variables:
-// mode: c++
-// End:

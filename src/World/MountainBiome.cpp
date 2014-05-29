@@ -17,21 +17,18 @@
     <http://www.gnu.org/licenses/>.
 */
 
-#ifndef TESTS_WORLD_H
-#define TESTS_WORLD_H
+#include "MountainBiome.h"
 
-namespace WorldTest
+namespace World
 {
-    void testRoadNetworkModel();
+    float MountainBiome::transformCoefficient(float coefficient)
+    {
+        return (coefficient+1.0)*25.0+150.0;
+    }
 
-    void testGroundCoefficients();
+    Graphics::Color MountainBiome::getColor()
+    {
+        return Graphics::Color(0.25,0.25,0.25);
+    }
 
-    void testGroundModel();
 }
-
-#endif
-
-// Emacs local variables
-// Local variables:
-// mode: c++
-// End:

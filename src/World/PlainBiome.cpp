@@ -17,18 +17,18 @@
     <http://www.gnu.org/licenses/>.
 */
 
-#ifndef WORLD_BIOME_H
-#define WORLD_BIOME_H
+#include "PlainBiome.h"
 
 namespace World
 {
-    // TODO implement
-    typedef int Biome;
+    float PlainBiome::transformCoefficient(float coefficient)
+    {
+        return (coefficient+1.0)*15.0;
+    }
+
+    Graphics::Color PlainBiome::getColor()
+    {
+        return Graphics::Color(0,1,0);
+    }
+
 }
-
-#endif
-
-// Emacs local variables
-// Local variables:
-// mode: c++
-// End:

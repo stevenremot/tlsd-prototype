@@ -17,21 +17,23 @@
     <http://www.gnu.org/licenses/>.
 */
 
-#ifndef TESTS_WORLD_H
-#define TESTS_WORLD_H
+#ifndef WORLD_MOUNTAIN_BIOME_H
+#define WORLD_MOUNTAIN_BIOME_H
 
-namespace WorldTest
+#include "BiomeInterface.h"
+
+
+
+namespace World
 {
-    void testRoadNetworkModel();
+    class MountainBiome : public BiomeInterface
+    {
+    public:
+        virtual float transformCoefficient(float coefficient);
+        virtual Graphics::Color getColor();
+    };
 
-    void testGroundCoefficients();
-
-    void testGroundModel();
 }
 
-#endif
 
-// Emacs local variables
-// Local variables:
-// mode: c++
-// End:
+#endif

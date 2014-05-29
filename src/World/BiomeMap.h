@@ -22,7 +22,9 @@
 
 #include <map>
 
-#include "Biome.h"
+#include "MountainBiome.h"
+#include "CityBiome.h"
+#include "PlainBiome.h"
 #include "../Geometry/Vec2D.h"
 #include "../Geometry/Polygon2D.h"
 
@@ -31,11 +33,24 @@ namespace World
     /**
      * Handles the mapping between a position and a biome
      *
-     * TODO implement
      */
     class BiomeMap
     {
     public:
+
+        /**
+         * This exception is raised when trying to calculate the biome value
+         * when the coefficients are not initialized
+         *
+         */
+        class UninitializedCoefficientsException: public std::exception
+        {
+        public:
+            const char* what() const throw()
+            {
+                return "Trying to get the biome in a uninitialized area.";
+            }
+        };
 
         void setPerlinCoef(int x, int y, const Geometry::Vec2Df& perlinCoef)
         {
@@ -46,11 +61,19 @@ namespace World
             cityPolygons_.push_back(cityPolygon);
         }
 
-        Biome getBiome(const Geometry::Vec2Df& position) const;
+        /**
+         * Returns the biome at the given position
+         *
+         * @throw UninitializedCoefficientsException
+         */
+        BiomeInterface& getBiome(const Geometry::Vec2Df& position);
 
     private:
         std::map<Geometry::Vec2Di, Geometry::Vec2Df> perlinCoefs_;
         std::vector<Geometry::Polygon2D> cityPolygons_;
+        CityBiome cityBiome_;
+        MountainBiome mountainBiome_;
+        PlainBiome plainBiome_;
     };
 }
 

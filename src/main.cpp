@@ -52,6 +52,9 @@ int main()
     // ThreadingTest::testChannel();
     // WorldTest::testRoadNetworkModel();
     // WorldGenerationTests::testRoadExpansion();
+    // WorldTest::testGroundCoefficients();
+    // WorldTest::testGroundModel();
+    // WorldGenerationTests::testRoadExpansion();
 
     return 0;
 }
