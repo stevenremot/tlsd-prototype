@@ -28,6 +28,7 @@
 #include "../World/Generation/City/NeighbourEdgeConstraint.h"
 #include "../World/Generation/City/MergeConstraint.h"
 #include "../Graph/PlanarGraph.h"
+#include "SvgDrawer.h"
 
 using World::Generation::City::RoadExpander;
 using World::Generation::City::QueryCreator;
@@ -61,8 +62,7 @@ namespace WorldGenerationTests
 
         expander.addBranchRequest(BranchRequest(n2, e));
 
-        cout << "<?xml version=\"1.0\" encoding=\"utf-8\"?>"
-             << "<svg xmlns=\"http://www.w3.org/2000/svg\" version=\"1.1\" width=\"1000\" height=\"1000\"><g transform=\"translate(500 500)\">";
+        Test::SvgDrawer svg(1000, 1000);
 
         for (unsigned int i = 0; i < 200; i++)
         {
@@ -71,31 +71,10 @@ namespace WorldGenerationTests
 
         const PlanarGraph& newGraph = expander.getRoadNetwork().getGraph();
 
-        const PlanarGraph::EdgeCollection& edges = newGraph.getEdges();
-        for (unsigned int i = 0; i < edges.size(); i++)
-        {
-            const PlanarEdge& edge = edges[i];
-            const Vec2Df& p1 = edge.getFirstNode().getPosition();
-            const Vec2Df& p2 = edge.getSecondNode().getPosition();
+        svg.drawGraph(newGraph);
 
-            cout << "<line x1=\"" << p1.getX()
-                 << "\" y1=\"" << p1.getY()
-                 << "\" x2=\"" << p2.getX()
-                 << "\" y2=\"" << p2.getY()
-                 << "\" stroke=\"black\" />";
-        }
+        svg.end();
 
-        const PlanarGraph::NodeCollection& nodes = newGraph.getNodes();
-        for (unsigned int i = 0; i < nodes.size(); i++)
-        {
-            const PlanarNode& node = nodes[i];
-            const Vec2Df& p = node.getPosition();
-
-            cout << "<circle cx=\"" << p.getX()
-                 << "\" cy=\"" << p.getY()
-                 << "\" r=\"1\" fill=\"red\" />";
-        }
-
-        cout << "</g></svg>";
+        cout << svg.getContent().str();
     }
 }

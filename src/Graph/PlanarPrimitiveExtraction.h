@@ -38,9 +38,21 @@ namespace Graph
      *                to no cycle
      * - A cycle : A sequence of nodes that come back to its start.
      *             cycles' elements are guaranteed to be given in
-     *             counter-clockwise order
+     *             counter-clockwise order, and with edge n associated to
+     *             node n and node n + 1
      */
     PlanarPrimitiveCollection extractPrimitives(const PlanarGraph& graph);
+
+    /**
+     * Return a copy of the given graph, without the filaments contained in cycles.
+     *
+     * @param graph
+     * @param primitives the primitives of the graph, given by extractPrimitives
+     */
+    PlanarGraph extractFilamentsInCycles(
+        const PlanarGraph& graph,
+        const PlanarPrimitiveCollection& primitives
+    );
 }
 
 #endif

@@ -47,8 +47,9 @@ int main()
     // RandomTest::testNumberGenerator();
     // GraphTest::testPlanarGraph();
     // GraphTest::testIsBetween();
-    GraphTest::testPrimitiveExtraction();
+    // GraphTest::testPrimitiveExtraction();
     // GraphTest::testPlanarCopy();
+    GraphTest::testFilamentInCycleExtraction();
     // ThreadingTest::testChannel();
     // WorldTest::testRoadNetworkModel();
     // WorldGenerationTests::testRoadExpansion();

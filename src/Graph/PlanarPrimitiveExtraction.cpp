@@ -307,4 +307,118 @@ namespace Graph
 
         return primitives;
     }
+
+
+    //////////////////////////////////////////////////
+    // Filament removal                             //
+    //////////////////////////////////////////////////
+
+    bool cycleContainsFilamentStart(
+        const PlanarPrimitive& cycle,
+        const PlanarNode& node,
+        const PlanarEdge& edge
+    ) {
+
+        const PlanarGraph::NodeCollection& cylNodes = cycle.getNodes();
+        const PlanarGraph::EdgeCollection& cylEdges = cycle.getEdges();
+
+        unsigned int index;
+        bool found = false;
+
+        for (unsigned int i = 0; i < cylNodes.size(); i++)
+        {
+            if (cylNodes[i] == node)
+            {
+                found = true;
+                index = i;
+                break;
+            }
+        }
+
+        if (found)
+        {
+            const Vec2Df& firstPos = node.getPosition();
+
+            const Vec2Df firstDirection =
+                edge.getOtherNode(node).getPosition() - firstPos;
+            const PlanarEdge& edge2 = cylEdges[index];
+            const PlanarEdge& edge1 =
+                cylEdges[(index + cylEdges.size() - 1) % cylEdges.size()];
+
+            const Vec2Df dir1 =
+                firstPos - edge1.getOtherNode(node).getPosition();
+            const Vec2Df dir2 =
+                edge2.getOtherNode(node).getPosition() - firstPos;
+
+            return isBetween(dir1, dir2, firstDirection, CounterClockwiseDirection);
+        }
+
+        return false;
+    }
+
+    bool cycleContainsFilament(
+        const PlanarPrimitive& cycle,
+        const PlanarPrimitive& filament
+    ) {
+        const PlanarGraph::NodeCollection& filNodes = filament.getNodes();
+        const PlanarGraph::EdgeCollection& filEdges = filament.getEdges();
+
+        return
+            cycleContainsFilamentStart(cycle, filNodes.front(), filEdges.front()) ||
+            cycleContainsFilamentStart(cycle, filNodes.back(), filEdges.back());
+    }
+
+    PlanarGraph extractFilamentsInCycles(
+        const PlanarGraph& graph,
+        const PlanarPrimitiveCollection& primitives
+    ) {
+        PlanarGraph newGraph(graph);
+
+        PlanarPrimitiveCollection filaments;
+        PlanarPrimitiveCollection cycles;
+
+        for (unsigned int i = 0; i < primitives.size(); i++)
+        {
+            const PlanarPrimitive& prim = primitives[i];
+            switch (prim.getType())
+            {
+            case PlanarPrimitive::CycleType:
+                cycles.push_back(prim);
+                break;
+            case PlanarPrimitive::FilamentType:
+                filaments.push_back(prim);
+                break;
+            default:
+                break;
+            }
+        }
+
+        for (unsigned int i = 0; i < filaments.size(); i++)
+        {
+            const PlanarPrimitive& filament = filaments[i];
+            for (unsigned int j = 0; j < cycles.size(); j++)
+            {
+                if (cycleContainsFilament(cycles[j], filament))
+                {
+                    const PlanarGraph::EdgeCollection& edges = filament.getEdges();
+                    for (unsigned int k = 0; k < edges.size(); k++)
+                    {
+                        newGraph.removeEdge(edges[k]);
+                    }
+
+                    const PlanarGraph::NodeCollection& nodes = filament.getNodes();
+                    for (unsigned int k = 0; k < nodes.size(); k++)
+                    {
+                        const PlanarNode& node = nodes[k];
+                        if (newGraph.getNeighbourEdges(node).empty())
+                        {
+                            newGraph.removeNode(node);
+                        }
+                    }
+                }
+            }
+        }
+
+        return newGraph;
+    }
 }

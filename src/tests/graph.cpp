@@ -26,6 +26,7 @@
 #include "../Graph/PlanarGraph.h"
 #include "../Graph/PlanarUtil.h"
 #include "../Graph/PlanarPrimitiveExtraction.h"
+#include "SvgDrawer.h"
 
 using std::cout;
 using std::endl;
@@ -281,5 +282,44 @@ namespace GraphTest
 
             cout << endl;
         }
+    }
+
+    void testFilamentInCycleExtraction()
+    {
+        // +---------+
+        // |         |
+        // |         |
+        // |         |
+        // |    +----+
+        // |         |
+        // |         |
+        // +---------+-----+
+
+        PlanarGraph graph;
+
+        PlanarNode n1 = graph.addNode(Vec2Df(0, 0));
+        PlanarNode n2 = graph.addNode(Vec2Df(100, 0));
+        PlanarNode n3 = graph.addNode(Vec2Df(200, 0));
+        PlanarNode n4 = graph.addNode(Vec2Df(100, 100));
+        PlanarNode n5 = graph.addNode(Vec2Df(50, 100));
+        PlanarNode n6 = graph.addNode(Vec2Df(100, 200));
+        PlanarNode n7 = graph.addNode(Vec2Df(0, 200));
+
+        graph.addEdge(n1, n2);
+        graph.addEdge(n2, n3);
+        graph.addEdge(n2, n4);
+        graph.addEdge(n4, n5);
+        graph.addEdge(n4, n6);
+        graph.addEdge(n6, n7);
+        graph.addEdge(n1, n7);
+
+        Graph::PlanarPrimitiveCollection primitives = extractPrimitives(graph);
+
+        PlanarGraph newGraph = Graph::extractFilamentsInCycles(graph, primitives);
+
+        Test::SvgDrawer svg(400, 400);
+        svg.drawGraph(newGraph);
+        svg.end();
+        cout << svg.getContent().str();
     }
 }
