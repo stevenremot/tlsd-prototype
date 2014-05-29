@@ -17,15 +17,19 @@
     <http://www.gnu.org/licenses/>.
 */
 
-#ifndef TESTS_GRAPH_H
-#define TESTS_GRAPH_H
+#ifndef PLANAR_PRIMITIVE_EXTRACTION_H
+#define PLANAR_PRIMITIVE_EXTRACTION_H
 
-namespace GraphTest
+#include <vector>
+
+#include "PlanarPrimitive.h"
+#include "PlanarGraph.h"
+
+namespace Graph
 {
-    void testPlanarGraph();
-    void testIsBetween();
-    void testPlanarCopy();
-    void testPrimitiveExtraction();
+    typedef std::vector<PlanarPrimitive> PlanarPrimitiveCollection;
+
+    PlanarPrimitiveCollection extractPrimitives(const PlanarGraph& graph);
 }
 
 #endif

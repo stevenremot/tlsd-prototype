@@ -53,4 +53,9 @@ namespace Graph
     {
         return position_ == node.position_;
     }
+
+    bool PlanarNode::operator!=(const PlanarNode& node) const
+    {
+        return position_ != node.position_;
+    }
 }

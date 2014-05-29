@@ -63,6 +63,11 @@ namespace Graph
                      const PlanarGraph::EdgeCollection& edges,
                      Direction clockwise,
                      PlanarEdge& edge);
+
+    /**
+     * Return the first node to use for a graph walk.
+     */
+    const PlanarNode& getFirstNode(const PlanarGraph& graph);
 }
 
 #endif

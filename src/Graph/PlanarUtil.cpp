@@ -87,4 +87,30 @@ namespace Graph
 
         return true;
     }
+
+    const PlanarNode& getFirstNode(const PlanarGraph& graph)
+    {
+
+        const PlanarGraph::NodeCollection& nodes = graph.getNodes();
+
+        PlanarNode node = nodes[0];
+        Vec2Df position = node.getPosition();
+        int index = 0;
+
+        for (unsigned int i = 1; i < nodes.size(); i++)
+        {
+            const PlanarNode& currentNode = nodes[i];
+            const Vec2Df& currentPosition = currentNode.getPosition();
+            if (currentPosition.getX() < position.getX() ||
+                (currentPosition.getX() == position.getX() &&
+                 currentPosition.getY() < position.getY()))
+            {
+                node = currentNode;
+                position = currentPosition;
+                index =  i;
+            }
+        }
+
+        return nodes[index];
+    }
 }

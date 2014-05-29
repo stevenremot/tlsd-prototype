@@ -47,9 +47,11 @@ int main()
     // RandomTest::testNumberGenerator();
     // GraphTest::testPlanarGraph();
     // GraphTest::testIsBetween();
+    GraphTest::testPrimitiveExtraction();
+    // GraphTest::testPlanarCopy();
     // ThreadingTest::testChannel();
     // WorldTest::testRoadNetworkModel();
-    WorldGenerationTests::testRoadExpansion();
+    // WorldGenerationTests::testRoadExpansion();
 
     return 0;
 }

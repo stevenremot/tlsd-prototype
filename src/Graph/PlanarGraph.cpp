@@ -19,6 +19,8 @@
 
 #include "PlanarGraph.h"
 
+#include <map>
+
 using Geometry::Vec2Df;
 
 namespace Graph
@@ -50,16 +52,20 @@ namespace Graph
     void PlanarGraph::insertData(const NodeCollection& nodes,
                                  const EdgeCollection& edges)
     {
+        std::map<Vec2Df, PlanarNode> changeCache;
         for (unsigned int i = 0; i < nodes.size(); i++)
         {
             const PlanarNode& node = nodes[i];
-            addNode(node.getPosition());
+            changeCache[node.getPosition()] = addNode(node.getPosition());
         }
 
         for (unsigned int i = 0; i < edges.size(); i++)
         {
             const PlanarEdge& edge = edges[i];
-            addEdge(edge.getFirstNode(), edge.getSecondNode());
+            addEdge(
+                changeCache[edge.getFirstNode().getPosition()],
+                changeCache[edge.getSecondNode().getPosition()]
+            );
         }
     }
 
@@ -84,22 +90,14 @@ namespace Graph
 
     void PlanarGraph::removeNode(const PlanarNode& node)
     {
+        EdgeCollection neighbours = getNeighbourEdges(node);
+        for (unsigned int i = 0; i < neighbours.size(); i++)
+        {
+            removeEdge(neighbours[i]);
+        }
+
         graph_.erase(node.node_);
         nodeCache_.erase(std::find(nodeCache_.begin(), nodeCache_.end(), node));
-        EdgeCollection newEdgeCache;
-
-        for (unsigned int i = 0; i < edgeCache_.size(); i++)
-        {
-            PlanarEdge& edge = edgeCache_[i];
-            if (!edge.hasNode(node))
-            {
-                newEdgeCache.push_back(edge);
-            }
-            else
-            {
-                graph_.erase(edge.edge_);
-            }
-        }
     }
 
     PlanarEdge PlanarGraph::addEdge(const PlanarNode& firstNode,
