@@ -29,6 +29,17 @@ namespace Graph
 {
     typedef std::vector<PlanarPrimitive> PlanarPrimitiveCollection;
 
+    /**
+     * Analyze a graph and extract its primitives.
+     *
+     * Primitives can be :
+     * - A singleton : a single node linked to nothing
+     * - A filament : a sequence of nodes with only 2 neighbours, belonging
+     *                to no cycle
+     * - A cycle : A sequence of nodes that come back to its start.
+     *             cycles' elements are guaranteed to be given in
+     *             counter-clockwise order
+     */
     PlanarPrimitiveCollection extractPrimitives(const PlanarGraph& graph);
 }
 
