@@ -62,6 +62,8 @@ namespace World
             /**
              * Create lots for each cycles.
              *
+             * TODO useful ? Not used anywhere
+             *
              * @param primitives
              * @param minimumRoadLength minimal length of roads
              * @param maximumRoadLength maximal length of roads

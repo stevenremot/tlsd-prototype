@@ -31,6 +31,8 @@ namespace Graphics
          */
         class ModelableInterface
         {
+        public:
+            virtual ~ModelableInterface() {}
             virtual const Model3D& getModel() const = 0;
         };
     }

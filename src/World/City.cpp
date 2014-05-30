@@ -17,19 +17,15 @@
     <http://www.gnu.org/licenses/>.
 */
 
-#ifndef TESTS_WORLD_GENERATION_H
-#define TESTS_WORLD_GENERATION_H
+#include "City.h"
 
-namespace WorldGenerationTests
+namespace World
 {
-    void testRoadExpansion();
-    void testLotCreation();
-    void testCityCreation();
+    City::~City()
+    {
+        for (unsigned int i = 0; i < buildings_.size(); i++)
+        {
+            delete buildings_[i];
+        }
+    }
 }
-
-#endif
-
-// Emacs local variables
-// Local variables:
-// mode: c++
-// End:

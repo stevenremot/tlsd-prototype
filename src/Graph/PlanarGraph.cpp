@@ -49,6 +49,17 @@ namespace Graph
         insertData(graph.getNodes(), graph.getEdges());
     }
 
+    PlanarGraph& PlanarGraph::operator=(const PlanarGraph& graph)
+    {
+        while (!nodeCache_.empty())
+        {
+            removeNode(nodeCache_.front());
+        }
+
+        insertData(graph.getNodes(), graph.getEdges());
+        return *this;
+    }
+
     void PlanarGraph::insertData(const NodeCollection& nodes,
                                  const EdgeCollection& edges)
     {
@@ -112,9 +123,12 @@ namespace Graph
             }
         }
 
+        const PlanarNode& trueFirstNode = addNode(firstNode.getPosition());
+        const PlanarNode& trueSecondNode = addNode(secondNode.getPosition());
+
         lemon::ListGraph::Edge lemonEdge = graph_.addEdge(
-            firstNode.node_,
-            secondNode.node_
+            trueFirstNode.node_,
+            trueSecondNode.node_
         );
         edgeCache_.push_back(PlanarEdge(firstNode, secondNode, lemonEdge));
         PlanarEdge& newEdge = edgeCache_[edgeCache_.size() - 1];

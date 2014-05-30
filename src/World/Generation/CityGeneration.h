@@ -17,14 +17,31 @@
     <http://www.gnu.org/licenses/>.
 */
 
-#ifndef TESTS_WORLD_GENERATION_H
-#define TESTS_WORLD_GENERATION_H
+#ifndef WORLD_GENERATION_CITY_GENERATION_H
+#define WORLD_GENERATION_CITY_GENERATION_H
 
-namespace WorldGenerationTests
+#include <vector>
+
+#include "City/GenerationParameters.h"
+#include "../City.h"
+#include "../../Geometry/Vec2D.h"
+#include "../../Random/NumberGenerator.h"
+
+namespace World
 {
-    void testRoadExpansion();
-    void testLotCreation();
-    void testCityCreation();
+    namespace Generation
+    {
+        /**
+         * Generate a city at a given position, for given parameters.
+         *
+         * Returned as a pointer because it itself has pointers to buildings.
+         */
+        class City* generateCity(
+            const Geometry::Vec2Df& position,
+            const City::GenerationParameters& parameters,
+            Random::NumberGenerator& rng
+        );
+    }
 }
 
 #endif

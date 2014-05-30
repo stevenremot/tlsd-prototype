@@ -22,12 +22,14 @@
 #include <iostream>
 #include <cmath>
 
+#include "../World/SimpleBuilding.h"
 #include "../World/Generation/City/RoadExpander.h"
 #include "../World/Generation/City/IntersectionConstraint.h"
 #include "../World/Generation/City/NeighbourNodeConstraint.h"
 #include "../World/Generation/City/NeighbourEdgeConstraint.h"
 #include "../World/Generation/City/MergeConstraint.h"
 #include "../World/Generation/City/LotCreation.h"
+#include "../World/Generation/CityGeneration.h"
 #include "../Graph/PlanarGraph.h"
 #include "../Graph/PlanarPrimitiveExtraction.h"
 #include "SvgDrawer.h"
@@ -127,5 +129,49 @@ namespace WorldGenerationTests
         svg.end();
 
         cout << svg.getContent().str();
+    }
+
+    void testCityCreation()
+    {
+        Random::NumberGenerator rng(42);
+        World::City* city = World::Generation::generateCity(
+            Vec2Df(0, 0),
+            World::Generation::City::GenerationParameters(),
+            rng
+        );
+
+        Test::SvgDrawer svg(1000, 1000);
+
+        svg.drawGraph(city->getRoadNetwork().getGraph());
+
+        const char* colors[] = {"red", "green", "blue" };
+
+        std::vector<World::BuildingInterface*> buildings = city->getBuildings();
+
+        for (unsigned int i = 0; i < buildings.size(); i++)
+        {
+            World::BuildingInterface* b = buildings[i];
+            const Graphics::Render::Model3D& m = b->getModel();
+
+            const std::vector<Geometry::Vec3Df>& vertices = m.getVertices();
+            const std::vector<Graphics::Render::Face>& faces = m.getFaces();
+            for(unsigned int j = 0; j < faces.size(); j++)
+            {
+                const Graphics::Render::Face& face = faces[j];
+                const Geometry::Vec3Df& v1 = vertices[face[0]];
+                const Geometry::Vec3Df& v2 = vertices[face[1]];
+                const Geometry::Vec3Df& v3 = vertices[face[2]];
+
+                svg.drawLine(v1.getX(), v1.getY(), v2.getX(), v2.getY(), colors[i % 3]);
+                svg.drawLine(v1.getX(), v1.getY(), v3.getX(), v3.getY(), colors[i % 3]);
+                svg.drawLine(v3.getX(), v3.getY(), v2.getX(), v2.getY(), colors[i % 3]);
+            }
+        }
+
+        svg.end();
+
+        cout << svg.getContent().str();
+
+        delete city;
     }
 }

@@ -56,7 +56,8 @@ int main()
     // WorldTest::testGroundCoefficients();
     // WorldTest::testGroundModel();
     // WorldGenerationTests::testRoadExpansion();
-    WorldGenerationTests::testLotCreation();
+    // WorldGenerationTests::testLotCreation();
+    WorldGenerationTests::testCityCreation();
 
     return 0;
 }

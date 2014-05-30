@@ -44,6 +44,12 @@ namespace World
             updateModel();
         }
 
+        RoadNetwork(const RoadNetwork& road):
+            graph_(road.graph_),
+            roadSize_(road.roadSize_),
+            color_(road.color_)
+        {}
+
         Graph::PlanarGraph& getGraph()
         {
             return graph_;
@@ -52,6 +58,11 @@ namespace World
         const Graph::PlanarGraph& getGraph() const
         {
             return graph_;
+        }
+
+        void setGraph(const Graph::PlanarGraph graph)
+        {
+            graph_ = graph;
         }
 
         float getRoadSize() const

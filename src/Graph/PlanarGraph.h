@@ -38,6 +38,8 @@ namespace Graph
         PlanarGraph(const NodeCollection& nodes, const EdgeCollection& edges);
         PlanarGraph(const PlanarGraph& graph);
 
+        PlanarGraph& operator=(const PlanarGraph& graph);
+
         // Nodes and edges adding / removal
 
         /**

@@ -17,14 +17,41 @@
     <http://www.gnu.org/licenses/>.
 */
 
-#ifndef TESTS_WORLD_GENERATION_H
-#define TESTS_WORLD_GENERATION_H
+#ifndef WORLD_CITY_H
+#define WORLD_CITY_H
 
-namespace WorldGenerationTests
+#include <vector>
+
+#include "RoadNetwork.h"
+#include "BuildingInterface.h"
+
+namespace World
 {
-    void testRoadExpansion();
-    void testLotCreation();
-    void testCityCreation();
+    /**
+     * Class representing a city.
+     *
+     * Handles its own data
+     */
+    class City
+    {
+    public:
+        City(const RoadNetwork& road, const std::vector<BuildingInterface*>& buildings):
+            road_(road),
+            buildings_(buildings)
+        {}
+
+        ~City();
+
+        const RoadNetwork& getRoadNetwork() const { return road_; }
+        const std::vector<BuildingInterface*> getBuildings() const
+        {
+            return buildings_;
+        }
+
+    private:
+        RoadNetwork road_;
+        std::vector<BuildingInterface*> buildings_;
+    };
 }
 
 #endif

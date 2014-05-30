@@ -42,7 +42,7 @@ namespace World
         Vec2Df& leftCorner,
         Vec2Df& rightCorner
     ) {
-        PlanarGraph& graph = network.getGraph();
+        const PlanarGraph& graph = network.getGraph();
         const float roadSize = network.getRoadSize();
         PlanarGraph::EdgeCollection edges = graph.getNeighbourEdges(node);
 
