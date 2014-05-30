@@ -187,6 +187,33 @@ namespace World
                     rng
                 );
             }
+
+            LotCollection createLots(
+                const Graph::PlanarPrimitiveCollection& primitives,
+                float minimumRoadLength,
+                float maximumRoadLength,
+                Random::NumberGenerator& rng
+            ) {
+                LotCollection lots;
+
+                for (unsigned int i = 0; i < primitives.size(); i++)
+                {
+                    const PlanarPrimitive& prim = primitives[i];
+                    if (prim.getType() == PlanarPrimitive::CycleType)
+                    {
+                        const LotCollection& newLots = createLots(
+                            prim,
+                            minimumRoadLength,
+                            maximumRoadLength,
+                            rng
+                        );
+
+                        lots.insert(lots.end(), newLots.begin(), newLots.end());
+                    }
+                }
+
+                return lots;
+            }
         }
     }
 }

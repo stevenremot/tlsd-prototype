@@ -25,6 +25,7 @@
 
 #include "../../../Geometry/Polygon2D.h"
 #include "../../../Graph/PlanarPrimitive.h"
+#include "../../../Graph/PlanarPrimitiveExtraction.h"
 #include "../../../Random/NumberGenerator.h"
 
 namespace World
@@ -55,6 +56,23 @@ namespace World
              */
             LotCollection createLots(
                 const Graph::PlanarPrimitive& cycle,
+                float minimumRoadLength,
+                float maximumRoadLength,
+                Random::NumberGenerator& rng
+            );
+
+            /**
+             * Create lots for each cycles in primitives.
+             *
+             * Automatically filter non-cycle primitives.
+             *
+             * @param primitives
+             * @param minimumRoadLength minimal length of roads
+             * @param maximumRoadLength maximal length of roads
+             * @param rng number generator
+             */
+            LotCollection createLots(
+                const Graph::PlanarPrimitiveCollection& primitives,
                 float minimumRoadLength,
                 float maximumRoadLength,
                 Random::NumberGenerator& rng
