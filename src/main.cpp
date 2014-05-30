@@ -49,13 +49,14 @@ int main()
     // GraphTest::testIsBetween();
     // GraphTest::testPrimitiveExtraction();
     // GraphTest::testPlanarCopy();
-    GraphTest::testFilamentInCycleExtraction();
+    // GraphTest::testFilamentInCycleExtraction();
     // ThreadingTest::testChannel();
     // WorldTest::testRoadNetworkModel();
     // WorldGenerationTests::testRoadExpansion();
     // WorldTest::testGroundCoefficients();
     // WorldTest::testGroundModel();
     // WorldGenerationTests::testRoadExpansion();
+    WorldGenerationTests::testLotCreation();
 
     return 0;
 }

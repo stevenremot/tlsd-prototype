@@ -65,6 +65,11 @@ namespace Graph
             return edges_;
         }
 
+        PlanarGraph convertToGraph() const
+        {
+            return PlanarGraph(nodes_, edges_);
+        }
+
     private:
         Type type_;
         PlanarGraph::NodeCollection nodes_;

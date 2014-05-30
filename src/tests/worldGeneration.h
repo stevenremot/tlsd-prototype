@@ -23,6 +23,7 @@
 namespace WorldGenerationTests
 {
     void testRoadExpansion();
+    void testLotCreation();
 }
 
 #endif

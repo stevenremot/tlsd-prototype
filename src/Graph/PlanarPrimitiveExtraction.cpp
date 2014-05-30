@@ -77,7 +77,6 @@ namespace Graph
             {
                 e = edges.front();
                 graph.removeNode(n);
-                // graph.removeEdge(e); // TODO remove definitely ?
                 n = e.getOtherNode(n);
                 edges = graph.getNeighbourEdges(n);
             }
@@ -125,7 +124,6 @@ namespace Graph
                 e = edges.front();
                 primEdges.push_back(e);
                 graph.removeNode(n);
-                // graph.removeEdge(e);
                 n = e.getOtherNode(n);
                 edges = graph.getNeighbourEdges(n);
             }

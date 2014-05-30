@@ -27,7 +27,9 @@
 #include "../World/Generation/City/NeighbourNodeConstraint.h"
 #include "../World/Generation/City/NeighbourEdgeConstraint.h"
 #include "../World/Generation/City/MergeConstraint.h"
+#include "../World/Generation/City/LotCreation.h"
 #include "../Graph/PlanarGraph.h"
+#include "../Graph/PlanarPrimitiveExtraction.h"
 #include "SvgDrawer.h"
 
 using World::Generation::City::RoadExpander;
@@ -72,6 +74,63 @@ namespace WorldGenerationTests
         const PlanarGraph& newGraph = expander.getRoadNetwork().getGraph();
 
         svg.drawGraph(newGraph);
+
+        svg.end();
+
+        cout << svg.getContent().str();
+    }
+
+    void testLotCreation()
+    {
+        // +------+
+        // |      |
+        // |      |
+        // +------+
+
+        PlanarGraph graph;
+
+        PlanarNode n1 = graph.addNode(Vec2Df(0, 0));
+        PlanarNode n2 = graph.addNode(Vec2Df(100, 0));
+        PlanarNode n3 = graph.addNode(Vec2Df(100, 100));
+        PlanarNode n4 = graph.addNode(Vec2Df(0, 100));
+
+        graph.addEdge(n1, n2);
+        graph.addEdge(n3, n2);
+        graph.addEdge(n3, n4);
+        graph.addEdge(n1, n4);
+
+        Graph::PlanarPrimitiveCollection prims =
+            Graph::extractPrimitives(graph);
+
+        const Graph::PlanarPrimitive& cycle = prims.front();
+
+        Random::NumberGenerator rng(42);
+
+        World::Generation::City::LotCollection lots =
+            World::Generation::City::createLots(
+                cycle,
+                10,
+                30,
+                rng
+            );
+
+        const char* colors[] = {"red", "green", "blue"};
+
+        Test::SvgDrawer svg(200, 200);
+
+        for (unsigned int i = 0; i < lots.size(); i++)
+        {
+            const Geometry::Polygon2D& lot = lots[i];
+            const std::vector<Vec2Df>&  points = lot.getPoints();
+
+            for (unsigned int j = 0; j < points.size(); j++)
+            {
+                const Vec2Df& p1 = points[j];
+                const Vec2Df& p2 = points[(j + 1) % points.size()];
+
+                svg.drawLine(p1.getX(), p1.getY(), p2.getX(), p2.getY(), colors[i % 3]);
+            }
+        }
 
         svg.end();
 
