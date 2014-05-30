@@ -6,7 +6,7 @@
 #include "../Graphics/Render/Scene.h"
 #include "../Graphics/Render/RenderSystem.h"
 #include "../Graphics/Render/RenderableComponent.h"
-#include "../Graphics/Render/Events.h"
+#include "../Graphics/Render/RenderEvents.h"
 #include "../Graphics/Render/ModelUtils.h"
 
 #include "../Geometry/PositionComponent.h"

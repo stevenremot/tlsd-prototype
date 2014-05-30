@@ -3,11 +3,12 @@
 #include <irrlicht/SMesh.h>
 #include <irrlicht/SMeshBuffer.h>
 
-#include "MeshSceneNode.h"
+#include "AnimatedMeshSceneNode.h"
 
 #include "ModelUtils.h"
 #include "../../Input/Events.h"
-#include "Events.h"
+#include "RenderEvents.h"
+#include "AnimationEvents.h"
 
 // TODO: remove
 #include <iostream>
@@ -76,15 +77,29 @@ namespace Graphics
             {
                 events_ << new RenderMeshFileEvent(static_cast<const RenderMeshFileEvent&>(event));
             }
+            else if (event.getType() == RenderAnimatedMeshFileEvent::TYPE)
+            {
+                events_ << new RenderAnimatedMeshFileEvent(static_cast<const RenderAnimatedMeshFileEvent&>(event));
+            }
             else if (event.getType() == RenderModel3DEvent::TYPE)
             {
                 events_ << new RenderModel3DEvent(static_cast<const RenderModel3DEvent&>(event));
+            }
+            else if (event.getType() == AnimateEvent::TYPE)
+            {
+                events_ << new AnimateEvent(static_cast<const AnimateEvent&>(event));
+            }
+            else if (event.getType() == SetupAnimationEvent::TYPE)
+            {
+                events_ << new SetupAnimationEvent(static_cast<const SetupAnimationEvent&>(event));
             }
 
         }
 
         void Scene::run()
         {
+            std::vector<Event::Event*> delayedEvents;
+
             while (!events_.isEmpty())
             {
                 Event::Event* event = NULL;
@@ -110,26 +125,64 @@ namespace Graphics
                 }
                 else if (event->getType() == RenderMeshFileEvent::TYPE)
                 {
+                    RenderMeshFileEvent* renderEvent = dynamic_cast<RenderMeshFileEvent*>(event);
+
                     if (irrlichtSceneManager_ != NULL && irrlichtVideoDriver_ != NULL)
                     {
-                        RenderMeshFileEvent* renderEvent = dynamic_cast<RenderMeshFileEvent*>(event);
                         addMeshSceneNodeFromFile(NULL, renderEvent->getMeshFile(), renderEvent->getTextureFile(), renderEvent->getPosition(), renderEvent->getRotation());
                         sceneNodeIdsByEntity_[renderEvent->getEntity()] = sceneNodes_.size()-1;
                     }
+                    else
+                        delayedEvents.push_back(new RenderMeshFileEvent(*renderEvent));
+                }
+                else if (event->getType() == RenderAnimatedMeshFileEvent::TYPE)
+                {
+                    RenderAnimatedMeshFileEvent* renderEvent = dynamic_cast<RenderAnimatedMeshFileEvent*>(event);
+
+                    if (irrlichtSceneManager_ != NULL && irrlichtVideoDriver_ != NULL)
+                    {
+                        addAnimatedMeshSceneNodeFromFile(NULL, renderEvent->getMeshFile(), renderEvent->getTextureFile(), renderEvent->getPosition(), renderEvent->getRotation());
+                        sceneNodeIdsByEntity_[renderEvent->getEntity()] = sceneNodes_.size()-1;
+                    }
+                    else
+                        delayedEvents.push_back(new RenderAnimatedMeshFileEvent(*renderEvent));
                 }
                 else if (event->getType() == RenderModel3DEvent::TYPE)
                 {
+                    RenderModel3DEvent* renderEvent = dynamic_cast<RenderModel3DEvent*>(event);
                     if (irrlichtSceneManager_ != NULL && irrlichtVideoDriver_ != NULL)
                     {
-                        RenderModel3DEvent* renderEvent = dynamic_cast<RenderModel3DEvent*>(event);
                         addMeshSceneNodeFromModel3D(NULL, renderEvent->getModel(), renderEvent->getPosition(), renderEvent->getRotation());
                         sceneNodeIdsByEntity_[renderEvent->getEntity()] = sceneNodes_.size()-1;
                     }
+                    else
+                        delayedEvents.push_back(new RenderModel3DEvent(*renderEvent));
+                }
+                else if (event->getType() == SetupAnimationEvent::TYPE)
+                {
+                    SetupAnimationEvent* setupEvent = dynamic_cast<SetupAnimationEvent*>(event);
+                    // delay this event while the scene node has not been initialized
+                    if (!initializeAnimationMap(setupEvent->getEntity(), setupEvent->getAnimationMap()))
+                        delayedEvents.push_back(new SetupAnimationEvent(*setupEvent));
+                }
+                else if (event->getType() == AnimateEvent::TYPE)
+                {
+                    AnimateEvent* animEvent = dynamic_cast<AnimateEvent*>(event);
+                    unsigned int id = 0;
+                    if (getEntitySceneNodeId(animEvent->getEntity(),id))
+                        dynamic_cast<AnimatedMeshSceneNode*>(sceneNodes_[id])->applyAnimation(animEvent->getAnimation());
                 }
 
                 delete event;
             }
 
+            for (unsigned int i =0; i < delayedEvents.size(); i++)
+                events_ << delayedEvents[i];
+
+            // TODO : replace this hardcode
+            unsigned int id = 0;
+            if (getEntitySceneNodeId(0,id))
+                dynamic_cast<AnimatedMeshSceneNode*>(sceneNodes_[id])->update();
         }
 
         void Scene::addMeshSceneNodeFromFile(SceneNode* parent, const string& meshFile, const string& textureFile, const Vec3Df& position, const Vec3Df& rotation)
@@ -143,6 +196,33 @@ namespace Graphics
                 node = new MeshSceneNode(sceneNodes_[0]);
             else
                 node = new MeshSceneNode(parent);
+
+            node->setIrrlichtSceneNode(irrNode);
+
+            sceneNodes_.push_back(node);
+            node->setId(sceneNodes_.size()-1);
+            node->activateLight(false);
+
+            if (parent == NULL)
+                sceneNodes_[0]->addChild(node);
+            else
+                parent->addChild(node);
+
+            node->setAbsolutePosition(position);
+            node->setAbsoluteRotation(rotation);
+        }
+
+        void Scene::addAnimatedMeshSceneNodeFromFile(SceneNode* parent, const string& meshFile, const string& textureFile, const Vec3Df& position, const Vec3Df& rotation)
+        {
+            irr::scene::IAnimatedMeshSceneNode* irrNode = irrlichtSceneManager_->addAnimatedMeshSceneNode(irrlichtSceneManager_->getMesh(meshFile.c_str()));
+            if (parent != NULL)
+                irrNode->setParent(parent->getIrrlichtSceneNode());
+
+            AnimatedMeshSceneNode* node = NULL;
+            if (parent == NULL)
+                node = new AnimatedMeshSceneNode(sceneNodes_[0]);
+            else
+                node = new AnimatedMeshSceneNode(parent);
 
             node->setIrrlichtSceneNode(irrNode);
 
@@ -297,6 +377,18 @@ namespace Graphics
             }
             else
                 return false;
+        }
+
+        bool Scene::initializeAnimationMap(const Ecs::Entity& entity, const AnimationMap& animationMap)
+        {
+            unsigned int id = 0;
+            if (!getEntitySceneNodeId(entity, id))
+                return false;
+            else
+            {
+                dynamic_cast<AnimatedMeshSceneNode*>(sceneNodes_[id])->setAnimationMap(animationMap);
+                return true;
+            }
         }
     }
 }

@@ -1,4 +1,5 @@
 #include "RenderableComponent.h"
+
 namespace Graphics
 {
     namespace Render

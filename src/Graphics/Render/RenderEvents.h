@@ -1,5 +1,5 @@
-#ifndef GRAPHICS_RENDER_EVENTS_H
-#define GRAPHICS_RENDER_EVENTS_H
+#ifndef GRAPHICS_RENDER_RENDEREVENTS_H
+#define GRAPHICS_RENDER_RENDEREVENTS_H
 
 #include <string>
 
@@ -21,6 +21,53 @@ namespace Graphics
             static const Event::Type TYPE;
 
             RenderMeshFileEvent(const string& meshFile, const string& textureFile, const Vec3Df& position, const Vec3Df& rotation, const Ecs::Entity& entity):
+                Event::Event(TYPE),
+                meshFile_(meshFile),
+                textureFile_(textureFile),
+                position_(position),
+                rotation_(rotation),
+                entity_(entity)
+            {}
+
+            const string& getMeshFile() const
+            {
+                return meshFile_;
+            }
+
+            const string& getTextureFile() const
+            {
+                return textureFile_;
+            }
+
+            const Vec3Df& getPosition() const
+            {
+                return position_;
+            }
+
+            const Vec3Df& getRotation() const
+            {
+                return rotation_;
+            }
+
+            const Ecs::Entity& getEntity() const
+            {
+                return entity_;
+            }
+
+        private:
+            const string& meshFile_;
+            const string& textureFile_;
+            const Vec3Df& position_;
+            const Vec3Df& rotation_;
+            const Ecs::Entity& entity_;
+        };
+
+        class RenderAnimatedMeshFileEvent : public Event::Event
+        {
+        public:
+            static const Event::Type TYPE;
+
+            RenderAnimatedMeshFileEvent(const string& meshFile, const string& textureFile, const Vec3Df& position, const Vec3Df& rotation, const Ecs::Entity& entity):
                 Event::Event(TYPE),
                 meshFile_(meshFile),
                 textureFile_(textureFile),
@@ -103,4 +150,4 @@ namespace Graphics
         };
     }
 }
-#endif // GRAPHICS_RENDER_EVENTS_H
+#endif // GRAPHICS_RENDER_RENDEREVENTS_H

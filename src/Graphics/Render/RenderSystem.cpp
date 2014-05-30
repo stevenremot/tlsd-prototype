@@ -2,9 +2,10 @@
 
 #include "../../Ecs/ComponentCreatedEvent.h"
 #include "RenderableComponent.h"
+#include "AnimationComponent.h"
 #include "../../Geometry/PositionComponent.h"
 #include "../../Geometry/RotationComponent.h"
-#include "Events.h"
+#include "RenderEvents.h"
 
 using Ecs::ComponentCreatedEvent;
 using Ecs::ComponentGroup;
@@ -38,19 +39,42 @@ namespace Graphics
 
                     ComponentGroup::ComponentTypeCollection types;
                     types.insert(RenderableComponent::Type);
-                    types.insert(Geometry::PositionComponent::Type);
 
                     ComponentGroup prototype(types);
                     ComponentGroup group = getWorld().getEntityComponents(entity, prototype);
 
-                    const PositionComponent& positionComponent = static_cast<const PositionComponent&>(group.getComponent(PositionComponent::Type));
-                    const RotationComponent& rotationComponent = static_cast<const RotationComponent&>(group.getComponent(RotationComponent::Type));
-                    const RenderableComponent& renderableComponent = static_cast<const RenderableComponent&>(group.getComponent(RenderableComponent::Type));
+                    const PositionComponent& positionComponent =
+                        static_cast<const PositionComponent&>(group.getComponent(PositionComponent::Type));
+                    const RotationComponent& rotationComponent =
+                        static_cast<const RotationComponent&>(group.getComponent(RotationComponent::Type));
+                    const RenderableComponent& renderableComponent =
+                        static_cast<const RenderableComponent&>(group.getComponent(RenderableComponent::Type));
 
                     if (renderableComponent.getMeshFileName() != "")
-                        eventQueue_ << new RenderMeshFileEvent(renderableComponent.getMeshFileName(), renderableComponent.getTextureFileName(), positionComponent.getPosition(), rotationComponent.getRotation(), entity);
+                    {
+                        if (getWorld().hasComponent(entity, AnimationComponent::Type))
+                            eventQueue_ << new RenderAnimatedMeshFileEvent(
+                                            renderableComponent.getMeshFileName(),
+                                            renderableComponent.getTextureFileName(),
+                                            positionComponent.getPosition(),
+                                            rotationComponent.getRotation(), entity
+                                        );
+                        else
+                            eventQueue_ << new RenderMeshFileEvent(
+                                            renderableComponent.getMeshFileName(),
+                                            renderableComponent.getTextureFileName(),
+                                            positionComponent.getPosition(),
+                                            rotationComponent.getRotation(),
+                                            entity
+                                        );
+                    }
                     else
-                        eventQueue_ << new RenderModel3DEvent(renderableComponent.getModel3d(), positionComponent.getPosition(), rotationComponent.getRotation(), entity);
+                        eventQueue_ << new RenderModel3DEvent(
+                                        renderableComponent.getModel3d(),
+                                        positionComponent.getPosition(),
+                                        rotationComponent.getRotation(),
+                                        entity
+                                    );
                 }
             }
         }

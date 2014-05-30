@@ -118,4 +118,18 @@ namespace Ecs
 
         return groups;
     }
+
+    bool World::hasComponent(const Entity& entity, Component::Type type) const
+    {
+        const ComponentCollection& components = components_.at(entity);
+
+        ComponentCollection::const_iterator comp;
+        for (comp = components.begin(); comp != components.end(); ++comp)
+        {
+            if ((*comp)->getType() == type)
+                return true;
+        }
+
+        return false;
+    }
 }

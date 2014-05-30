@@ -21,6 +21,7 @@
 #include <iostream>
 #include <vector>
 
+#include "tests/animation.h"
 #include "tests/event.h"
 #include "tests/ecs.h"
 #include "tests/geometry.h"
@@ -37,7 +38,8 @@ using std::vector;
 
 int main()
 {
-    RenderTest::testRenderSystem(10);
+    AnimationTest::testAnimation();
+    //RenderTest::testRenderSystem(10);
 
     EventTest::testEvents();
     EcsTest::testEcs();

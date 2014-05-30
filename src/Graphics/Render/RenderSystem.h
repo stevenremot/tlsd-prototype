@@ -6,12 +6,12 @@
 
  #include "../../Event/EventManager.h"
 
+using Ecs::World;
+
 namespace Graphics
 {
     namespace Render
     {
-        using Ecs::World;
-
         class RenderSystem : public Ecs::System, public Event::EventListenerInterface
         {
         public:

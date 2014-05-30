@@ -127,6 +127,8 @@ namespace Ecs
             const ComponentGroup & prototype
         );
 
+        bool hasComponent(const Entity& entity, Component::Type type) const;
+
         /**
          * Return components groups for entities matching prototype.
          */

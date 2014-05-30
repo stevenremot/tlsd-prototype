@@ -5,7 +5,6 @@
 
 #include "../Event/Event.h"
 
-
 namespace Input
 {
     enum Direction {Forward, Backward, Left, Right};

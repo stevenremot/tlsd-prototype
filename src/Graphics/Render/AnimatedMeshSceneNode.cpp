@@ -1,0 +1,90 @@
+#include "AnimatedMeshSceneNode.h"
+
+namespace Graphics
+{
+    namespace Render
+    {
+        AnimatedMeshSceneNode::AnimatedMeshSceneNode(const SceneNode& parent):
+            MeshSceneNode(parent),
+            transitionTime_(0.5)
+        {
+            //ctor
+        }
+
+        AnimatedMeshSceneNode::~AnimatedMeshSceneNode()
+        {
+            //dtor
+        }
+
+        void AnimatedMeshSceneNode::removeIrrlichtSceneNode()
+        {
+            dynamic_cast<irr::scene::IAnimatedMeshSceneNode*>(irrlichtSceneNode_)->remove();
+        }
+
+        void AnimatedMeshSceneNode::setAnimationMap(const AnimationMap& animationMap)
+        {
+            animationMap_ = animationMap;
+            applyAnimation(Idle);
+        }
+
+        void AnimatedMeshSceneNode::setIrrlichtSceneNode(irr::scene::IAnimatedMeshSceneNode* node)
+        {
+            irrlichtSceneNode_ = dynamic_cast<irr::scene::ISceneNode*>(node);
+
+            node->setJointMode(irr::scene::EJUOR_CONTROL);
+            node->setTransitionTime(transitionTime_);
+        }
+
+        void AnimatedMeshSceneNode::applyAnimation(const AnimationType& animation)
+        {
+            currentAnimation_ = animation;
+            unsigned int start = 0, end = 0;
+
+            if (!getAnimationFrames(animation, start, end))
+                throw new NotSupportedAnimationException();
+
+            irr::scene::IAnimatedMeshSceneNode* animatedNode = dynamic_cast<irr::scene::IAnimatedMeshSceneNode*>(irrlichtSceneNode_);
+
+            animatedNode->setAnimationSpeed(animationMap_[animation].getSpeed());
+            animatedNode->setLoopMode(animationMap_[animation].getLoop());
+            animatedNode->setFrameLoop(start, end);
+            if (animationMap_[animation].getOnEndCallback() != NoAnimation)
+                animatedNode->setAnimationEndCallback(this);
+        }
+
+        bool AnimatedMeshSceneNode::getAnimationFrames(const AnimationType& animation, unsigned int& start, unsigned int& end)
+        {
+            switch (animation)
+            {
+            case Attack:
+                start = 60;
+                end = 68;
+                return true;
+            case Idle:
+                start = 206;
+                end = 300;
+                return true;
+            case Walk:
+                start = 0;
+                end = 13;
+                return true;
+            case Magic:
+                start = 69;
+                end = 72;
+                return true;
+            default:
+                return false;
+            }
+        }
+
+        void AnimatedMeshSceneNode::OnAnimationEnd(irr::scene::IAnimatedMeshSceneNode* node)
+        {
+            applyAnimation(animationMap_[currentAnimation_].getOnEndCallback());
+        }
+
+        void AnimatedMeshSceneNode::update()
+        {
+            dynamic_cast<irr::scene::IAnimatedMeshSceneNode*>(irrlichtSceneNode_)->animateJoints();
+        }
+    }
+}
