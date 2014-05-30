@@ -22,8 +22,10 @@
 #include <cmath>
 
 using Graph::PlanarEdge;
+using Graph::PlanarNode;
 using Graph::PlanarGraph;
 using Geometry::Vec2Df;
+using Geometry::Polygon2D;
 
 namespace World
 {
@@ -192,6 +194,46 @@ namespace World
                 }
 
                 return gotProjection;
+            }
+
+            PlanarGraph convertToGraph(const Polygon2D& poly)
+            {
+                PlanarGraph graph;
+
+                const std::vector<Vec2Df>& points = poly.getPoints();
+                for(unsigned int i = 0; i < points.size(); i++)
+                {
+                    graph.addNode(points[i]);
+                }
+
+                const PlanarGraph::NodeCollection& nodes = graph.getNodes();
+                for (unsigned int i = 0; i < nodes.size(); i++)
+                {
+                    const PlanarNode& n1 = nodes[i];
+                    const PlanarNode& n2 = nodes[(i + 1) % nodes.size()];
+                    graph.addEdge(n1, n2);
+                }
+
+                return graph;
+            }
+
+
+            PlanarGraph convertToGraph(const Graph::PlanarPrimitive& prim)
+            {
+                return PlanarGraph(prim.getNodes(), prim.getEdges());
+            }
+
+            Polygon2D convertToPolygon(const Graph::PlanarPrimitive& prim)
+            {
+                std::vector<Vec2Df> points;
+
+                const PlanarGraph::NodeCollection& nodes = prim.getNodes();
+                for (unsigned int i = 0; i < nodes.size(); i++)
+                {
+                    points.push_back(nodes[i].getPosition());
+                }
+
+                return Polygon2D(points);
             }
         }
     }

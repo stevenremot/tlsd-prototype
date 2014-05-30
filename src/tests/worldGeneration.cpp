@@ -83,32 +83,24 @@ namespace WorldGenerationTests
     void testLotCreation()
     {
         // +------+
-        // |      |
-        // |      |
+        // |      /
+        // |      \
         // +------+
 
-        PlanarGraph graph;
+        std::vector<Vec2Df> points;
+        points.push_back(Vec2Df(0, 0));
+        points.push_back(Vec2Df(100, 0));
+        points.push_back(Vec2Df(75, 50));
+        points.push_back(Vec2Df(100, 100));
+        points.push_back(Vec2Df(0, 100));
 
-        PlanarNode n1 = graph.addNode(Vec2Df(0, 0));
-        PlanarNode n2 = graph.addNode(Vec2Df(100, 0));
-        PlanarNode n3 = graph.addNode(Vec2Df(100, 100));
-        PlanarNode n4 = graph.addNode(Vec2Df(0, 100));
-
-        graph.addEdge(n1, n2);
-        graph.addEdge(n3, n2);
-        graph.addEdge(n3, n4);
-        graph.addEdge(n1, n4);
-
-        Graph::PlanarPrimitiveCollection prims =
-            Graph::extractPrimitives(graph);
-
-        const Graph::PlanarPrimitive& cycle = prims.front();
+        Geometry::Polygon2D poly(points);
 
         Random::NumberGenerator rng(42);
 
         World::Generation::City::LotCollection lots =
             World::Generation::City::createLots(
-                cycle,
+                poly,
                 10,
                 30,
                 rng

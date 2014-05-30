@@ -22,7 +22,10 @@
 
 #include "RoadQuery.h"
 #include "../../../Graph/PlanarGraph.h"
+#include "../../../Graph/PlanarPrimitive.h"
 #include "../../../Geometry/Vec2D.h"
+#include "../../../Geometry/Polygon2D.h"
+
 
 namespace World
 {
@@ -97,6 +100,11 @@ namespace World
                 Geometry::Vec2Df& nearestProjection,
                 Graph::PlanarEdge& projectionEdge
             );
+
+            Graph::PlanarGraph convertToGraph(const Geometry::Polygon2D& poly);
+            Graph::PlanarGraph convertToGraph(const Graph::PlanarPrimitive& prim);
+
+            Geometry::Polygon2D convertToPolygon(const Graph::PlanarPrimitive& prim);
         }
     }
 }

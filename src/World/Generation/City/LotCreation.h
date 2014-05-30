@@ -47,24 +47,20 @@ namespace World
             /**
              * Divide a cycle in a number of lots that can contain buildings.
              *
-             * Throw a WrongPrimitiveException if the provided primitive is not a cycle.
-             *
              * @param cycle cycle to split
              * @param minimumRoadLength minimal length of roads
              * @param maximumRoadLength maximum length of roads after split
              * @param rng number generator
              */
             LotCollection createLots(
-                const Graph::PlanarPrimitive& cycle,
+                const Geometry::Polygon2D& cycle,
                 float minimumRoadLength,
                 float maximumRoadLength,
                 Random::NumberGenerator& rng
             );
 
             /**
-             * Create lots for each cycles in primitives.
-             *
-             * Automatically filter non-cycle primitives.
+             * Create lots for each cycles.
              *
              * @param primitives
              * @param minimumRoadLength minimal length of roads
@@ -72,7 +68,7 @@ namespace World
              * @param rng number generator
              */
             LotCollection createLots(
-                const Graph::PlanarPrimitiveCollection& primitives,
+                const std::vector<Geometry::Polygon2D>& cycles,
                 float minimumRoadLength,
                 float maximumRoadLength,
                 Random::NumberGenerator& rng

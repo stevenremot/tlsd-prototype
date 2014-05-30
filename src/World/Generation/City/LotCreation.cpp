@@ -24,6 +24,7 @@
 #include <cmath>
 
 #include "GraphSpliter.h"
+#include "RoadUtil.h"
 #include "../../../Graph/PlanarPrimitiveExtraction.h"
 
 using std::map;
@@ -33,6 +34,7 @@ using Graph::PlanarGraph;
 using Graph::PlanarEdge;
 using Graph::PlanarNode;
 using Geometry::Vec2Df;
+using Geometry::Polygon2D;
 
 namespace World
 {
@@ -80,18 +82,12 @@ namespace World
 
 
             LotCollection createLots(
-                const PlanarPrimitive& cycle,
+                PlanarGraph& graph,
                 map<PlanarEdge, bool>& isRoad,
                 float minimumRoadLength,
                 float maximumRoadLength,
                 Random::NumberGenerator& rng
             ) {
-                if (cycle.getType() != PlanarPrimitive::CycleType)
-                {
-                    throw WrongPrimitiveException();
-                }
-
-                PlanarGraph graph = cycle.convertToGraph();
                 LotCollection lots;
 
                 PlanarEdge edgeToSplit;
@@ -122,8 +118,9 @@ namespace World
                         const PlanarPrimitive& prim = primitives[i];
                         if (prim.getType() == PlanarPrimitive::CycleType)
                         {
+                            PlanarGraph g = convertToGraph(prim);
                             const LotCollection& newLots = createLots(
-                                prim,
+                                g,
                                 isRoad,
                                 minimumRoadLength,
                                 maximumRoadLength,
@@ -166,21 +163,23 @@ namespace World
             }
 
             LotCollection createLots(
-                const PlanarPrimitive& cycle,
+                const Polygon2D& cycle,
                 float minimumRoadLength,
                 float maximumRoadLength,
                 Random::NumberGenerator& rng
             ) {
                 map<PlanarEdge, bool> isRoad;
 
-                const PlanarGraph::EdgeCollection edges = cycle.getEdges();
+                PlanarGraph g = convertToGraph(cycle);
+
+                const PlanarGraph::EdgeCollection edges = g.getEdges();
                 for (unsigned int i = 0; i < edges.size(); i++)
                 {
                     isRoad[edges[i]] = true;
                 }
 
                 return createLots(
-                    cycle,
+                    g,
                     isRoad,
                     minimumRoadLength,
                     maximumRoadLength,
@@ -189,27 +188,24 @@ namespace World
             }
 
             LotCollection createLots(
-                const Graph::PlanarPrimitiveCollection& primitives,
+                const std::vector<Polygon2D>& cycles,
                 float minimumRoadLength,
                 float maximumRoadLength,
                 Random::NumberGenerator& rng
             ) {
                 LotCollection lots;
 
-                for (unsigned int i = 0; i < primitives.size(); i++)
+                for (unsigned int i = 0; i < cycles.size(); i++)
                 {
-                    const PlanarPrimitive& prim = primitives[i];
-                    if (prim.getType() == PlanarPrimitive::CycleType)
-                    {
+                    const Polygon2D& cycle = cycles[i];
                         const LotCollection& newLots = createLots(
-                            prim,
+                            cycle,
                             minimumRoadLength,
                             maximumRoadLength,
                             rng
                         );
 
                         lots.insert(lots.end(), newLots.begin(), newLots.end());
-                    }
                 }
 
                 return lots;
