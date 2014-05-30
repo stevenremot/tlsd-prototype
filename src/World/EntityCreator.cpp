@@ -32,4 +32,27 @@ namespace World
 		return groundEntity;
 	}
 
+    Ecs::Entity createRoad(const RoadNetwork& road, Ecs::World& ecsWorld)
+    {
+        Ecs::Entity entity = ecsWorld.createEntity();
+
+        ecsWorld.addComponent(
+            entity,
+            new Geometry::PositionComponent(Geometry::Vec3Df())
+        );
+
+        return entity;
+    }
+
+    Ecs::Entity createBuilding(const BuildingInterface& building, Ecs::World& ecsWorld)
+    {
+        Ecs::Entity entity = ecsWorld.createEntity();
+
+        ecsWorld.addComponent(
+            entity,
+            new Geometry::PositionComponent(Geometry::Vec3Df())
+        );
+
+        return entity;
+    }
 }

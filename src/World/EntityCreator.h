@@ -23,6 +23,8 @@
 #include "../Ecs/Entity.h"
 #include "World.h"
 #include "../Ecs/World.h"
+#include "BuildingInterface.h"
+#include "RoadNetwork.h"
 
 
 namespace World
@@ -33,6 +35,27 @@ namespace World
      * TODO Add renderable component
      */
 	Ecs::Entity createGround(const World& world, int i, int j, Ecs::World& ecsWorld);
+
+    /**
+     * Create an entity for the road, and insert it in the ECS world
+     *
+     * TODO Add renderable component
+     */
+    Ecs::Entity createRoad(const RoadNetwork& road, Ecs::World& ecsWorld);
+
+
+    /**
+     * Create an entity for the building, and insert it in the ECS world
+     *
+     * TODO Add renderable component
+     * TODO Add physical component
+     */
+    Ecs::Entity createBuilding(const BuildingInterface& building, Ecs::World& ecsWorld);
 }
 
 #endif
+
+// Emacs local variables
+// Local variables:
+// mode: c++
+// End:
