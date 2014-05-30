@@ -69,8 +69,8 @@ namespace Graphics
             virtual void run();
 
             void addCameraSceneNode(SceneNode* parent);
-            void addMeshSceneNodeFromModel3D(SceneNode* parent, const Model3D& model3d, const Vec3Df& position);
-            void addMeshSceneNodeFromFile(SceneNode* parent, const string& meshFile, const string& textureFile, const Vec3Df& position);
+            void addMeshSceneNodeFromModel3D(SceneNode* parent, const Model3D& model3d, const Vec3Df& position, const Vec3Df& rotation);
+            void addMeshSceneNodeFromFile(SceneNode* parent, const string& meshFile, const string& textureFile, const Vec3Df& position, const Vec3Df& rotation);
 
             /**
             *   @param[in] entity
@@ -85,9 +85,6 @@ namespace Graphics
 
             const unsigned int verticesPerMeshBuffer_;
 
-            /*
-            *   For direct access to scene node by its id
-            */
             vector<SceneNode*> sceneNodes_;
             CameraSceneNode* camera_;
 

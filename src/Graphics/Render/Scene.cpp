@@ -48,7 +48,8 @@ namespace Graphics
 
                 Model3D cube = createPrettyCubeModel();
                 Vec3Df pos = Vec3Df(0,0,0);
-                addMeshSceneNodeFromModel3D(sceneNodes_.back(), cube, pos);
+                Vec3Df rot = Vec3Df(0,0,0);
+                addMeshSceneNodeFromModel3D(sceneNodes_.back(), cube, pos, rot);
 
                 // init camera
                 addCameraSceneNode(sceneNodes_[0]);
@@ -112,7 +113,8 @@ namespace Graphics
                     if (irrlichtSceneManager_ != NULL && irrlichtVideoDriver_ != NULL)
                     {
                         RenderMeshFileEvent* renderEvent = dynamic_cast<RenderMeshFileEvent*>(event);
-                        addMeshSceneNodeFromFile(NULL, renderEvent->getMeshFile(), renderEvent->getTextureFile(), renderEvent->getPosition());
+                        addMeshSceneNodeFromFile(NULL, renderEvent->getMeshFile(), renderEvent->getTextureFile(), renderEvent->getPosition(), renderEvent->getRotation());
+                        sceneNodeIdsByEntity_[renderEvent->getEntity()] = sceneNodes_.size()-1;
                     }
                 }
                 else if (event->getType() == RenderModel3DEvent::TYPE)
@@ -120,7 +122,8 @@ namespace Graphics
                     if (irrlichtSceneManager_ != NULL && irrlichtVideoDriver_ != NULL)
                     {
                         RenderModel3DEvent* renderEvent = dynamic_cast<RenderModel3DEvent*>(event);
-                        addMeshSceneNodeFromModel3D(NULL, renderEvent->getModel(), renderEvent->getPosition());
+                        addMeshSceneNodeFromModel3D(NULL, renderEvent->getModel(), renderEvent->getPosition(), renderEvent->getRotation());
+                        sceneNodeIdsByEntity_[renderEvent->getEntity()] = sceneNodes_.size()-1;
                     }
                 }
 
@@ -129,7 +132,7 @@ namespace Graphics
 
         }
 
-        void Scene::addMeshSceneNodeFromFile(SceneNode* parent, const string& meshFile, const string& textureFile, const Vec3Df& position)
+        void Scene::addMeshSceneNodeFromFile(SceneNode* parent, const string& meshFile, const string& textureFile, const Vec3Df& position, const Vec3Df& rotation)
         {
             irr::scene::IMeshSceneNode* irrNode = irrlichtSceneManager_->addMeshSceneNode(irrlichtSceneManager_->getMesh(meshFile.c_str()));
             if (parent != NULL)
@@ -153,9 +156,10 @@ namespace Graphics
                 parent->addChild(node);
 
             node->setAbsolutePosition(position);
+            node->setAbsoluteRotation(rotation);
         }
 
-        void Scene::addMeshSceneNodeFromModel3D(SceneNode* parent, const Model3D& model, const Vec3Df& position)
+        void Scene::addMeshSceneNodeFromModel3D(SceneNode* parent, const Model3D& model, const Vec3Df& position, const Vec3Df& rotation)
         {
             using irr::scene::SMeshBuffer;
             using irr::core::vector3df;
@@ -261,6 +265,7 @@ namespace Graphics
                 parent->addChild(node);
 
             node->setAbsolutePosition(position);
+            node->setAbsoluteRotation(rotation);
         }
 
         void Scene::addCameraSceneNode(SceneNode* parent)
@@ -281,6 +286,17 @@ namespace Graphics
             node->setId(sceneNodes_.size()-1);
 
             parent->addChild(node);
+        }
+
+        bool Scene::getEntitySceneNodeId(Ecs::Entity entity, unsigned int& id)
+        {
+            if (sceneNodeIdsByEntity_.find(entity) != sceneNodeIdsByEntity_.end())
+            {
+                id = sceneNodeIdsByEntity_[entity];
+                return true;
+            }
+            else
+                return false;
         }
     }
 }

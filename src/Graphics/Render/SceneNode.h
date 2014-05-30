@@ -34,11 +34,13 @@ namespace Graphics
                 void setRotation(const Vec3Df& rot);
                 void setScale(const Vec3Df& sca);
                 void setAbsolutePosition(const Vec3Df& pos);
+                void setAbsoluteRotation(const Vec3Df& rot);
 
                 Vec3Df getPosition() const;
                 Vec3Df getRotation() const;
                 Vec3Df getScale() const;
                 Vec3Df getAbsolutePosition() const;
+                Vec3Df getAbsoluteRotation() const;
 
                 void setId(unsigned int id);
 

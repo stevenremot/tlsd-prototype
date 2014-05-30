@@ -56,6 +56,17 @@ namespace Graphics
             return Vec3Df(irrPos.X, irrPos.Z, irrPos.Y);
         }
 
+        Vec3Df SceneNode::getAbsoluteRotation() const
+        {
+            if (getParent()->getId() == 0)
+                return getRotation();
+            else
+            {
+                vector3df irrRot = irrlichtSceneNode_->getAbsoluteTransformation().getRotationDegrees();
+                return Vec3Df(irrRot.X, irrRot.Z, irrRot.Y);
+            }
+        }
+
         void SceneNode::setPosition(const Vec3Df& pos)
         {
             vector3df irrPos = vector3df(pos.getX(), pos.getZ(), pos.getY());
@@ -99,6 +110,32 @@ namespace Graphics
                 }
                 else
                     setPosition(pos);
+            }
+        }
+
+        void SceneNode::setAbsoluteRotation(const Vec3Df& rot)
+        {
+            vector3df irrRot = vector3df(rot.getX(), rot.getZ(), rot.getY());
+
+            if(getParent() != NULL)
+            {
+                // The parent is not the root scene node
+                if (getParent()->getId() != 0)
+                {
+                    // the transform matrix is initialized at identity
+                    matrix4 matr;
+                    matr.setRotationDegrees(irrRot);
+
+                    const matrix4 w2n(irrlichtSceneNode_->getParent()->getAbsoluteTransformation(), irr::core::matrix4::EM4CONST_INVERSE);
+
+                    matr = (w2n*matr);
+
+                    irrlichtSceneNode_->setPosition(matr.getTranslation());
+                    irrlichtSceneNode_->setRotation(matr.getRotationDegrees());
+                    irrlichtSceneNode_->updateAbsolutePosition();
+                }
+                else
+                    setRotation(rot);
             }
         }
 

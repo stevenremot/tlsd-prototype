@@ -38,14 +38,14 @@ using std::vector;
 int main()
 {
     RenderTest::testRenderSystem(10);
-/*
+
     EventTest::testEvents();
     EcsTest::testEcs();
     GeometryTest::testVectors();
     RandomTest::testNumberGenerator();
-    GraphTest::testPlanarGraph();
+    //GraphTest::testPlanarGraph();
     ThreadingTest::testChannel();
     CoreTest::testSharedPtr();
-*/
+
     return 0;
 }

@@ -5,6 +5,7 @@
 
 #include "../../Ecs/Component.h"
 #include "../../Geometry/PositionComponent.h"
+#include "../../Geometry/RotationComponent.h"
 #include "Model3D.h"
 
 namespace Graphics
@@ -44,6 +45,7 @@ namespace Graphics
                 if (Dependencies.empty())
                 {
                     Dependencies.push_back(Geometry::PositionComponent::Type);
+                    Dependencies.push_back(Geometry::RotationComponent::Type);
                 }
                 return Dependencies;
             }

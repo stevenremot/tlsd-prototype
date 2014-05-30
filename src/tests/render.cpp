@@ -10,6 +10,7 @@
 #include "../Graphics/Render/ModelUtils.h"
 
 #include "../Geometry/PositionComponent.h"
+#include "../Geometry/RotationComponent.h"
 
 #include "../Threading/Thread.h"
 
@@ -26,6 +27,7 @@ using Threading::ThreadableInterface;
 using Threading::Thread;
 using Input::IrrlichtInputReceiver;
 using Geometry::PositionComponent;
+using Geometry::RotationComponent;
 using Graphics::Render::RenderableComponent;
 using Graphics::Render::RenderSystem;
 
@@ -122,6 +124,7 @@ namespace RenderTest
         {
             Ecs::Entity e = w.createEntity(i);
             w.addComponent(e, new PositionComponent(Vec3Df(rng.getUniform(-5, 5), rng.getUniform(-5, 5), 0)));
+            w.addComponent(e, new RotationComponent(Vec3Df(0, 0, rng.getUniform(0, 360))));
             if (i % 2)
                 w.addComponent(e, new RenderableComponent(meshFile, ""));
             else

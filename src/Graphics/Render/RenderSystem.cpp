@@ -3,11 +3,13 @@
 #include "../../Ecs/ComponentCreatedEvent.h"
 #include "RenderableComponent.h"
 #include "../../Geometry/PositionComponent.h"
+#include "../../Geometry/RotationComponent.h"
 #include "Events.h"
 
 using Ecs::ComponentCreatedEvent;
 using Ecs::ComponentGroup;
 using Geometry::PositionComponent;
+using Geometry::RotationComponent;
 
 namespace Graphics
 {
@@ -32,20 +34,23 @@ namespace Graphics
 
                 if (componentEvent.getComponentType() == RenderableComponent::Type)
                 {
+                    const Ecs::Entity& entity = componentEvent.getEntity();
+
                     ComponentGroup::ComponentTypeCollection types;
                     types.insert(RenderableComponent::Type);
                     types.insert(Geometry::PositionComponent::Type);
 
                     ComponentGroup prototype(types);
-                    ComponentGroup group = getWorld().getEntityComponents(componentEvent.getEntity(), prototype);
+                    ComponentGroup group = getWorld().getEntityComponents(entity, prototype);
 
                     const PositionComponent& positionComponent = static_cast<const PositionComponent&>(group.getComponent(PositionComponent::Type));
+                    const RotationComponent& rotationComponent = static_cast<const RotationComponent&>(group.getComponent(RotationComponent::Type));
                     const RenderableComponent& renderableComponent = static_cast<const RenderableComponent&>(group.getComponent(RenderableComponent::Type));
 
                     if (renderableComponent.getMeshFileName() != "")
-                        eventQueue_ << new RenderMeshFileEvent(renderableComponent.getMeshFileName(), renderableComponent.getTextureFileName(), positionComponent.getPosition());
+                        eventQueue_ << new RenderMeshFileEvent(renderableComponent.getMeshFileName(), renderableComponent.getTextureFileName(), positionComponent.getPosition(), rotationComponent.getRotation(), entity);
                     else
-                        eventQueue_ << new RenderModel3DEvent(renderableComponent.getModel3d(), positionComponent.getPosition());
+                        eventQueue_ << new RenderModel3DEvent(renderableComponent.getModel3d(), positionComponent.getPosition(), rotationComponent.getRotation(), entity);
                 }
             }
         }
