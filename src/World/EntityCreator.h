@@ -20,7 +20,7 @@
 #ifndef WORLD_ENTITY_CREATOR_H
 #define WORLD_ENTITY_CREATOR_H
 
-#include "../Ecs/Entity.h"
+#include "../Ecs/SharedEntity.h"
 #include "World.h"
 #include "../Ecs/World.h"
 #include "BuildingInterface.h"
@@ -34,7 +34,7 @@ namespace World
      *
      * TODO Add renderable component
      */
-	Ecs::Entity createGround(const World& world, int i, int j, Ecs::World& ecsWorld);
+	Ecs::SharedEntity createGround(const World& world, int i, int j, Ecs::World& ecsWorld);
 
     /**
      * Create an entity for the road, and insert it in the ECS world

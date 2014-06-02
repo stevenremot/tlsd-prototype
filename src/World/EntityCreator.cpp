@@ -23,11 +23,11 @@
 namespace World
 {
 
-	Ecs::Entity createGround(const World& world, int i, int j, Ecs::World& ecsWorld)
+	Ecs::SharedEntity createGround(const World& world, int i, int j, Ecs::World& ecsWorld)
 	{
-		Ecs::Entity groundEntity = ecsWorld.createEntity();
+		Ecs::SharedEntity groundEntity = ecsWorld.createSharedEntity();
 
-		ecsWorld.addComponent(groundEntity, new Geometry::PositionComponent(Geometry::Vec3Df(i*World::ChunkSize,j*World::ChunkSize, 0)));
+		ecsWorld.addComponent(groundEntity.getEntity(), new Geometry::PositionComponent(Geometry::Vec3Df(i*World::ChunkSize,j*World::ChunkSize, 0)));
 
 		return groundEntity;
 	}
