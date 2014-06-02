@@ -146,6 +146,11 @@ namespace Geometry
             return x_ * vec.x_ + y_ * vec.y_ + z_ * vec.z_;
         }
 
+        inline Vec3D cross(const Vec3D& vec) const
+        {
+            return Vec3D(y_*vec.z_ - z_* vec.y_, z_*vec.x_ - x_*vec.z_, x_*vec.y_ - y_*vec.x_);
+        }
+
         // Vector function
         inline T getSquaredLength() const
         {
@@ -155,6 +160,15 @@ namespace Geometry
         inline T getLength() const
         {
             return std::sqrt(getSquaredLength());
+        }
+
+        inline void normalize()
+        {
+            T length = this->getLength();
+
+            x_ /= length;
+            y_ /= length;
+            z_ /= length;
         }
 
     private:

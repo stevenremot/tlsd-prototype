@@ -21,6 +21,8 @@
 
 #include <algorithm>
 
+#include "ComponentCreatedEvent.h"
+
 using std::map;
 
 namespace Ecs
@@ -92,6 +94,8 @@ namespace Ecs
         }
 
         components.push_back(component);
+
+        eventQueue_ << new ComponentCreatedEvent(entity, component);
     }
 
     ComponentGroup World::getEntityComponents(const Entity& entity,
@@ -133,5 +137,19 @@ namespace Ecs
     void World::removeEntity(const Entity& entity)
     {
         components_.erase(entity);
+    }
+
+    bool World::hasComponent(const Entity& entity, Component::Type type) const
+    {
+        const ComponentCollection& components = components_.at(entity);
+
+        ComponentCollection::const_iterator comp;
+        for (comp = components.begin(); comp != components.end(); ++comp)
+        {
+            if ((*comp)->getType() == type)
+                return true;
+        }
+
+        return false;
     }
 }

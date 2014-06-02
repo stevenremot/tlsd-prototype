@@ -12,9 +12,9 @@ if ARGUMENTS.get("clang", 0):
 
 libs = []
 if env['PLATFORM'] == 'win32':
-	libs = ["pthreadGC2","lemon"]
+	libs = ["pthreadGC2","lemon","Irrlicht"]
 elif env['PLATFORM'] == 'posix':
-    libs = ["pthread","emon"]
+	libs = ["pthread","emon","Irrlicht","X11"]
 
 env.Append(CPPPATH=['libs'])
 

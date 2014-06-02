@@ -21,12 +21,14 @@
 #include <iostream>
 #include <vector>
 
+#include "tests/animation.h"
 #include "tests/event.h"
 #include "tests/ecs.h"
 #include "tests/geometry.h"
 #include "tests/random.h"
 #include "tests/graph.h"
 #include "tests/threading.h"
+#include "tests/render.h"
 #include "tests/core.h"
 #include "tests/world.h"
 #include "tests/worldGeneration.h"
@@ -57,7 +59,9 @@ int main()
     // WorldTest::testGroundModel();
     // WorldGenerationTests::testRoadExpansion();
     // WorldGenerationTests::testLotCreation();
-    WorldGenerationTests::testCityCreation();
+    // WorldGenerationTests::testCityCreation();
+    AnimationTest::testAnimation();
+    //RenderTest::testRenderSystem(10);
 
     return 0;
 }
