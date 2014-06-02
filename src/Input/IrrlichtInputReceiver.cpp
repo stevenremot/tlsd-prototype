@@ -47,6 +47,16 @@ namespace Input
 
     void IrrlichtInputReceiver::run()
     {
+        if (cursorKeys_[irr::EKA_MOVE_FORWARD])
+            eventQueue_ << new MoveEvent(Forward);
+        else if (cursorKeys_[irr::EKA_MOVE_BACKWARD])
+            eventQueue_ << new MoveEvent(Backward);
+
+        if (cursorKeys_[irr::EKA_STRAFE_LEFT])
+            eventQueue_ << new MoveEvent(Left);
+        else if (cursorKeys_[irr::EKA_STRAFE_RIGHT])
+            eventQueue_ << new MoveEvent(Right);
+
         if (cursorControl_ != NULL)
         {
             if (cursorPos_ != centerCursor_)
@@ -62,16 +72,6 @@ namespace Input
                 cursorPos_ = centerCursor_;
             }
         }
-
-        if (cursorKeys_[irr::EKA_MOVE_FORWARD])
-            eventQueue_ << new MoveEvent(Forward);
-        else if (cursorKeys_[irr::EKA_MOVE_BACKWARD])
-            eventQueue_ << new MoveEvent(Backward);
-
-        if (cursorKeys_[irr::EKA_STRAFE_LEFT])
-            eventQueue_ << new MoveEvent(Left);
-        else if (cursorKeys_[irr::EKA_STRAFE_RIGHT])
-            eventQueue_ << new MoveEvent(Right);
     }
 
     void IrrlichtInputReceiver::createKeyMap()

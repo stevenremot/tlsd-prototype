@@ -13,7 +13,7 @@ namespace Graphics
         {
         public:
             AnimationParameters():
-                speed_(1.0f),
+                speed_(5.0f),
                 loop_(false),
                 onEndCallback_(NoAnimation)
                 {}

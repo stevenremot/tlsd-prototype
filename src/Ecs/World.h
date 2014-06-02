@@ -87,7 +87,7 @@ namespace Ecs
          *  Initialize the World by giving it a reference to the eventQueue
          *
          */
-         World(Event::EventQueue eventQueue):
+         World(Event::EventQueue& eventQueue):
              eventQueue_(eventQueue)
              {}
 

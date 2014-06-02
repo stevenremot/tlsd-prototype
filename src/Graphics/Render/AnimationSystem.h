@@ -3,6 +3,7 @@
 
 #include "../../Ecs/System.h"
 #include "../../Event/EventListenerInterface.h"
+#include "../../Threading/Thread.h"
 
 #include "../../Event/EventManager.h"
 
@@ -40,7 +41,7 @@ namespace Graphics
             unsigned int action_;
         };
 
-        class AnimationSystem : public Ecs::System, public Event::EventListenerInterface
+        class AnimationSystem : public Ecs::System, public Event::EventListenerInterface, public Threading::ThreadableInterface
         {
         public:
             AnimationSystem(World& world, Event::EventQueue& eventQueue);
@@ -48,6 +49,9 @@ namespace Graphics
 
             // EventListenerInterface
             virtual void call(const Event::Event& event);
+
+            // ThreadableInterface
+            virtual void run();
         private:
             Event::EventQueue& eventQueue_;
         };

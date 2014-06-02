@@ -60,8 +60,26 @@ namespace Graphics
 
         private:
             const AnimationType& animation_;
-            const Entity& entity_;
+            Entity entity_;
+        };
 
+        class UpdateAnimationEvent : public Event::Event
+        {
+        public:
+            static const Event::Type TYPE;
+
+            UpdateAnimationEvent(const Entity& entity):
+                Event::Event(TYPE),
+                entity_(entity)
+                {}
+
+            const Entity& getEntity() const
+            {
+                return entity_;
+            }
+
+        private:
+            Entity entity_;
         };
     }
 }
