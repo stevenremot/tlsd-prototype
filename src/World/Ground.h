@@ -67,3 +67,8 @@ namespace World
 }
 
 #endif
+
+// Emacs local variables
+// Local variables:
+// mode: c++
+// End:

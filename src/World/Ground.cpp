@@ -81,6 +81,12 @@ namespace World
 
     }
 
+    float computeEllipse(float x, float y, float squareChunk)
+    {
+        return 1 - (x + y) * (x + y) * 2.0 / (2.0 * 3.0 * squareChunk) - (x - y) * (x - y) * 2.0 / (2.0 * squareChunk);
+    }
+
+
     float computeHeight(World& world, float x, float y)
     {
         float chunkSize = World::ChunkSize;
@@ -136,10 +142,11 @@ namespace World
         float y1 = yChunk-j1*chunkSize;
         float x2 = xChunk-chunkSize;
         float y2 = yChunk-chunkSize;
+        float squareChunk = powf(chunkSize, 2);
 
-        float ellipse0 = 1 - (xChunk+yChunk)*(xChunk+yChunk)*2.0/(2.0*3.0*powf(chunkSize,2))-(xChunk-yChunk)*(xChunk-yChunk)*2.0/(2.0*powf(chunkSize,2));
-        float ellipse1 = 1 - (x1+y1)*(x1+y1)*2.0/(2.0*3.0*powf(chunkSize,2))-(x1-y1)*(x1-y1)*2.0/(2.0*powf(chunkSize,2));
-        float ellipse2 = 1 - (x2+y2)*(x2+y2)*2.0/(2.0*3.0*powf(chunkSize,2))-(x2-y2)*(x2-y2)*2.0/(2.0*powf(chunkSize,2));
+        float ellipse0 = computeEllipse(xChunk, yChunk, squareChunk);
+        float ellipse1 = computeEllipse(x1, y1, squareChunk);
+        float ellipse2 = computeEllipse(x2, y2, squareChunk);
         float n0,n1,n2;
 
 
@@ -199,10 +206,11 @@ namespace World
         y1 = y0-j2*chunkSize;
         x2 = x0-chunkSize;
         y2 = y0-chunkSize;
+        squareChunk = powf(chunkSize, 2);
 
-        ellipse0 = 1 - (x0+y0)*(x0+y0)*2.0/(2.0*3.0*powf(chunkSize,2))-(x0-y0)*(x0-y0)*2.0/(2.0*powf(chunkSize,2));
-        ellipse1 = 1 - (x1+y1)*(x1+y1)*2.0/(2.0*3.0*powf(chunkSize,2))-(x1-y1)*(x1-y1)*2.0/(2.0*powf(chunkSize,2));
-        ellipse2 = 1 - (x2+y2)*(x2+y2)*2.0/(2.0*3.0*powf(chunkSize,2))-(x2-y2)*(x2-y2)*2.0/(2.0*powf(chunkSize,2));
+        ellipse0 = computeEllipse(x0, y0, squareChunk);
+        ellipse1 = computeEllipse(x1, y1, squareChunk);
+        ellipse2 = computeEllipse(x2, y2, squareChunk);
 
 
         if (ellipse0 < 0)
