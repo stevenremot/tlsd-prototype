@@ -8,6 +8,9 @@
 #include "SubSystems/SubsystemsManager.h"
 #include "AiModule.h"
 
+#include "../Geometry/PositionComponent.h"
+#include "../Physics/MovementComponent.h"
+
 
 namespace AI
 {
@@ -27,6 +30,16 @@ namespace AI
 
         ~AiComponent();
 
+        virtual const std::vector<Ecs::Component::Type>& getDependentComponents()
+        {
+            if(Dependencies.empty())
+            {
+                Dependencies.push_back(Geometry::PositionComponent::Type);
+                Dependencies.push_back(Physics::MovementComponent::Type);
+            }
+            return Dependencies;
+        }
+
         void setAiModule(AiModule* aiModule) {aiModule_ = aiModule;}
         AiModule* getAiModule() {return aiModule_;}
 
@@ -42,6 +55,8 @@ namespace AI
         }
 
     private:
+	static std::vector<Ecs::Component::Type> Dependencies;
+
         const Ecs::Entity entity_;
         WorkingMemory memory_;
         Blackboard blackboard_;
