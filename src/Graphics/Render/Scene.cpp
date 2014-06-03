@@ -249,7 +249,7 @@ namespace Graphics
             node->setAbsoluteRotation(rotation);
         }
 
-        void Scene::addMeshSceneNodeFromModel3D(SceneNode* parent, const Model3D& model, const Vec3Df& position, const Vec3Df& rotation)
+       void Scene::addMeshSceneNodeFromModel3D(SceneNode* parent, const Model3D& model, const Vec3Df& position, const Vec3Df& rotation)
         {
             using irr::scene::SMeshBuffer;
             using irr::core::vector3df;
@@ -261,6 +261,7 @@ namespace Graphics
 
             // build the mesh
             unsigned int bufferNumber = 1 + model.getVertices().size() / verticesPerMeshBuffer_;
+            unsigned int trianglesPerMeshBuffer = verticesPerMeshBuffer_/2;
 
             irr::scene::SMesh* mesh = new irr::scene::SMesh();
             irr::scene::SMeshBuffer* currentMeshBuffer = NULL;
@@ -290,30 +291,30 @@ namespace Graphics
 
                 for (unsigned int i = 0; i < currentVerticeNumber; i++)
                 {
-                    const Vec3Df& v = model.getVertices()[(bufferNumber-1)*verticesPerMeshBuffer_+i];
-                    const Vec3Df& n = normals[(bufferNumber-1)*verticesPerMeshBuffer_+i];
+                    const Vec3Df& v = model.getVertices()[buffer*verticesPerMeshBuffer_+i];
+                    const Vec3Df& n = normals[buffer*verticesPerMeshBuffer_+i];
 
                     S3DVertex& irrVertex = currentMeshBuffer->Vertices[i];
-                    irrVertex.Pos.set(v.getX(), v.getY(), v.getZ());
-                    irrVertex.Normal.set(n.getX(), n.getY(), n.getZ());
+                    irrVertex.Pos.set(v.getX(), v.getZ(), v.getY());
+                    irrVertex.Normal.set(n.getX(), n.getZ(), n.getY());
                     irrVertex.TCoords.set(v.getX()/512.0f, v.getY()/512.0f);
                 }
 
                 for (unsigned int t = 0; t < currentTriangleNumber; t++)
                 {
-                    const Face& face = model.getFaces()[t];
+                    const Face& face = model.getFaces()[buffer*trianglesPerMeshBuffer + t];
 
-                    currentMeshBuffer->Indices[3*t] = face[0];
-                    currentMeshBuffer->Indices[3*t+1] = face[1];
-                    currentMeshBuffer->Indices[3*t+2] = face[2];
+                    currentMeshBuffer->Indices[3*t] = face[0] - buffer*verticesPerMeshBuffer_;
+                    currentMeshBuffer->Indices[3*t+1] = face[1] - buffer*verticesPerMeshBuffer_;
+                    currentMeshBuffer->Indices[3*t+2] = face[2] - buffer*verticesPerMeshBuffer_;
 
                     unsigned int r = static_cast<unsigned int>(255.0f*face.getColor().getX());
                     unsigned int g = static_cast<unsigned int>(255.0f*face.getColor().getY());
                     unsigned int b = static_cast<unsigned int>(255.0f*face.getColor().getZ());
 
-                    currentMeshBuffer->Vertices[(bufferNumber-1)*verticesPerMeshBuffer_+face[0]].Color.set(255, r, g, b);
-                    currentMeshBuffer->Vertices[(bufferNumber-1)*verticesPerMeshBuffer_+face[1]].Color.set(255, r, g, b);
-                    currentMeshBuffer->Vertices[(bufferNumber-1)*verticesPerMeshBuffer_+face[2]].Color.set(255, r, g, b);
+                    currentMeshBuffer->Vertices[-buffer*verticesPerMeshBuffer_+face[0]].Color.set(255, r, g, b);
+                    currentMeshBuffer->Vertices[-buffer*verticesPerMeshBuffer_+face[1]].Color.set(255, r, g, b);
+                    currentMeshBuffer->Vertices[-buffer*verticesPerMeshBuffer_+face[2]].Color.set(255, r, g, b);
                 }
 
                 currentMeshBuffer->recalculateBoundingBox();
