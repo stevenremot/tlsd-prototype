@@ -70,7 +70,7 @@ namespace World
                 Graphics::Color color = world.getBiome(x*chunkSize+i/period,y*chunkSize+j/period).getColor();
                 faces.push_back(Graphics::Render::Face(baseIndex, baseIndex+2, baseIndex+1, color));
                 color = world.getBiome(x*chunkSize+(i+1)/period,y*chunkSize+(j+1)/period).getColor();
-                faces.push_back(Graphics::Render::Face(baseIndex+1, baseIndex+3, baseIndex+2, color));
+                faces.push_back(Graphics::Render::Face(baseIndex+3, baseIndex+1, baseIndex+2, color));
 
                 baseIndex +=4;
 
