@@ -16,15 +16,41 @@
     along with The Lost Souls Downfall prototype.  If not, see
     <http://www.gnu.org/licenses/>.
 */
-#include "SynchroApplier.h"
-namespace Network{
-SynchroApplier::SynchroApplier(World world, EventQueue eventqueue)
+#include "Listener.h"
+
+using std::cout;
+using std::endl;
+namespace Network
 {
-    //ctor
+Listener::Listener(vector<string>* ListeEvent, TCPSocket* client)
+{
+    this->ListeEvent_=ListeEvent;
+    this->client_=client;
 }
 
-SynchroApplier::~SynchroApplier()
+Listener::~Listener()
 {
-    //dtor
+    this->ListeEvent_=NULL;
+    this->client_=NULL;
+}
+
+void Listener::run(void)
+{
+    if(this->client_!=NULL )
+    {
+
+        try{
+        int recvMsgSize=0;
+        char* buffer;
+        while ((recvMsgSize = client_->recv(buffer, 2000)) > 0)   // Zero means
+        {
+            cout<<"Message recu "<<buffer<<endl;
+        }
+        }catch(SocketException &e)
+        {
+            //cerr <<" Impossible d'ecouter" << endl;
+        }
+    }
+
 }
 }

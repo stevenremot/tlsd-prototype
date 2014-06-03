@@ -16,15 +16,34 @@
     along with The Lost Souls Downfall prototype.  If not, see
     <http://www.gnu.org/licenses/>.
 */
-#include "SynchroApplier.h"
-namespace Network{
-SynchroApplier::SynchroApplier(World world, EventQueue eventqueue)
-{
-    //ctor
-}
+#ifndef DEMULTIPLEXEUR_H
+#define DEMULTIPLEXEUR_H
+#include <vector>
+#include <string>
+#include "PracticalSocket.h"
+#include "../Threading/ThreadableInterface.h"
+#include "../Threading/Thread.h"
+#include "SendEvent.h"
+#include <iostream>
 
-SynchroApplier::~SynchroApplier()
+using Threading::ThreadableInterface;
+using Threading::Thread;
+using std::cout;
+using std::endl;
+
+namespace Network {
+class Demultiplexeur :public ThreadableInterface
 {
-    //dtor
+    public:
+        Demultiplexeur(std::vector<TCPSocket*> *ListeClient,std::vector<string>* ListeEvent,TCPServerSocket* ServerSocket);
+        virtual ~Demultiplexeur();
+        void run(void);
+    protected:
+    private:
+        std::vector<TCPSocket*>* ListeClient_;
+        std::vector<string>* ListeEvent_;
+        TCPServerSocket* ServerSocket_;
+};
+
 }
-}
+#endif // DEMULTIPLEXEUR_H

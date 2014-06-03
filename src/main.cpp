@@ -37,14 +37,13 @@ using std::vector;
 
 int main()
 {
-  /*  EventTest::testEvents();
+    EventTest::testEvents();
     EcsTest::testEcs();
     GeometryTest::testVectors();
     RandomTest::testNumberGenerator();
     GraphTest::testPlanarGraph();
     ThreadingTest::testChannel();
     CoreTest::testSharedPtr();
-*/
-NetworkTest::TestNetwork();
+    NetworkTest::TestNetwork();
     return 0;
 }
