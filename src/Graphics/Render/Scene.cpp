@@ -93,6 +93,10 @@ namespace Graphics
             {
                 events_ << new SetupAnimationEvent(static_cast<const SetupAnimationEvent&>(event));
             }
+            else if (event.getType() == UpdateAnimationEvent::TYPE)
+            {
+                events_ << new UpdateAnimationEvent(static_cast<const UpdateAnimationEvent&>(event));
+            }
 
         }
 
@@ -170,7 +174,18 @@ namespace Graphics
                     AnimateEvent* animEvent = dynamic_cast<AnimateEvent*>(event);
                     unsigned int id = 0;
                     if (getEntitySceneNodeId(animEvent->getEntity(),id))
+                    {
                         dynamic_cast<AnimatedMeshSceneNode*>(sceneNodes_[id])->applyAnimation(animEvent->getAnimation());
+                    }
+                }
+                else if (event->getType() == UpdateAnimationEvent::TYPE)
+                {
+                    UpdateAnimationEvent* animEvent = dynamic_cast<UpdateAnimationEvent*>(event);
+                    unsigned int id = 0;
+                    if (getEntitySceneNodeId(animEvent->getEntity(),id))
+                    {
+                        dynamic_cast<AnimatedMeshSceneNode*>(sceneNodes_[id])->update();
+                    }
                 }
 
                 delete event;
@@ -234,7 +249,7 @@ namespace Graphics
             node->setAbsoluteRotation(rotation);
         }
 
-        void Scene::addMeshSceneNodeFromModel3D(SceneNode* parent, const Model3D& model, const Vec3Df& position, const Vec3Df& rotation)
+       void Scene::addMeshSceneNodeFromModel3D(SceneNode* parent, const Model3D& model, const Vec3Df& position, const Vec3Df& rotation)
         {
             using irr::scene::SMeshBuffer;
             using irr::core::vector3df;

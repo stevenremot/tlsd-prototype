@@ -95,7 +95,13 @@ namespace Application
     {
         World::Generation::ChunkGenerator generator(world_, ecsWorld_, 42);
 
-        generator.generateChunk(0, 0);
+        for (int i = -1; i <= 1; i++)
+        {
+            for (int j = -1; j <= 1; j++)
+            {
+                generator.generateChunk(i, j);
+            }
+        }
 
         // TODO Change world seed at each run :-)
         World::Generation::ChunkGenerationSystem* generation =
