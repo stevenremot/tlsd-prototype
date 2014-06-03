@@ -4,6 +4,8 @@
 #include "AnimationComponent.h"
 #include "AnimationEvents.h"
 
+#include <iostream>
+
 using Ecs::ComponentCreatedEvent;
 using Ecs::ComponentGroup;
 
@@ -59,6 +61,25 @@ namespace Graphics
                 AnimationComponent& animComponent = static_cast<AnimationComponent&>(group.getComponent(AnimationComponent::Type));
 
                 eventQueue_ << new AnimateEvent(animComponent.getAnimationByAction(actionEvent.getAction()), entity);
+            }
+        }
+
+        void AnimationSystem::run()
+        {
+            World& world = getWorld();
+
+            // Get all the entities with movement and position components
+            Ecs::ComponentGroup::ComponentTypeCollection types;
+            types.insert(AnimationComponent::Type);
+
+            Ecs::ComponentGroup prototype(types);
+            Ecs::World::ComponentGroupCollection groups = world.getComponents(prototype);
+
+            // Send UpdateAnimationEvents
+            Ecs::World::ComponentGroupCollection::iterator group;
+            for (group = groups.begin(); group != groups.end(); ++group)
+            {
+                eventQueue_ << new UpdateAnimationEvent(group->getEntity());
             }
         }
     }

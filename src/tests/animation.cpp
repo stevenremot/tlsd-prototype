@@ -41,7 +41,9 @@ namespace AnimationTest
             const Input::MoveEvent& me = static_cast<const Input::MoveEvent&>(event);
 
             if (me.getDirection() == Input::Forward)
+            {
                 eventQueue_ << new DummyActionEvent(0,1); // entity 0, action 1
+            }
         }
     }
 
@@ -65,6 +67,7 @@ namespace AnimationTest
         reg.put(Graphics::Render::RenderAnimatedMeshFileEvent::TYPE, &scene);
         reg.put(Graphics::Render::SetupAnimationEvent::TYPE, &scene);
         reg.put(Graphics::Render::AnimateEvent::TYPE, &scene);
+        reg.put(Graphics::Render::UpdateAnimationEvent::TYPE, &scene);
 
         IrrlichtInputReceiver receiver(m.getEventQueue());
         reg.put(Input::InitInputEvent::TYPE, &receiver);
@@ -82,6 +85,7 @@ namespace AnimationTest
         threadables.push_back(&device);
         threadables.push_back(&scene);
         threadables.push_back(&receiver);
+        threadables.push_back(&as);
         Thread thread(threadables, 60);
 
         threadables2.push_back(&m);
@@ -91,8 +95,8 @@ namespace AnimationTest
         thread2.start();
 
         AnimationMap animMap;
-        animMap[Graphics::Render::Idle] = AnimationParameters(1.0f, true, Graphics::Render::NoAnimation);
-        animMap[Graphics::Render::Walk] = AnimationParameters(1.0f, true, Graphics::Render::NoAnimation);
+        animMap[Graphics::Render::Idle] = AnimationParameters(5.0f, true, Graphics::Render::NoAnimation);
+        animMap[Graphics::Render::Walk] = AnimationParameters(5.0f, true, Graphics::Render::NoAnimation);
 
         std::map<unsigned int, AnimationType> animByAction;
         animByAction[0] = Graphics::Render::Idle;
@@ -105,7 +109,7 @@ namespace AnimationTest
         w.addComponent(e, new RenderableComponent(meshFile, ""));
         w.addComponent(e, new AnimationComponent(animMap, animByAction));
 
-        int imax = 10 * 1;
+        int imax = 20 * 1;
         for (int i = 0; i < imax; i++)
         {
             Threading::sleep(1,0);

@@ -50,6 +50,7 @@ namespace Graphics
             AnimationMap animationMap_;
             AnimationType currentAnimation_;
             float transitionTime_;
+            unsigned int framesWithoutAnimationOrder_;
         };
     }
 }

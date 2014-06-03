@@ -1,12 +1,16 @@
 #include "AnimatedMeshSceneNode.h"
 
+#include <iostream>
+
 namespace Graphics
 {
     namespace Render
     {
         AnimatedMeshSceneNode::AnimatedMeshSceneNode(const SceneNode& parent):
             MeshSceneNode(parent),
-            transitionTime_(0.5)
+            currentAnimation_(NoAnimation),
+            transitionTime_(0.5),
+            framesWithoutAnimationOrder_(0)
         {
             //ctor
         }
@@ -37,19 +41,30 @@ namespace Graphics
 
         void AnimatedMeshSceneNode::applyAnimation(const AnimationType& animation)
         {
-            currentAnimation_ = animation;
-            unsigned int start = 0, end = 0;
+            if (currentAnimation_ == animation)
+            {
+                framesWithoutAnimationOrder_ = 0;
+            }
 
-            if (!getAnimationFrames(animation, start, end))
-                throw new NotSupportedAnimationException();
+            if (currentAnimation_ == NoAnimation ||
+                (currentAnimation_ != animation && animationMap_[currentAnimation_].getOnEndCallback() == NoAnimation))
+            {
+                currentAnimation_ = animation;
+                unsigned int start = 0, end = 0;
 
-            irr::scene::IAnimatedMeshSceneNode* animatedNode = dynamic_cast<irr::scene::IAnimatedMeshSceneNode*>(irrlichtSceneNode_);
+                if (!getAnimationFrames(animation, start, end))
+                    throw new NotSupportedAnimationException();
 
-            animatedNode->setAnimationSpeed(animationMap_[animation].getSpeed());
-            animatedNode->setLoopMode(animationMap_[animation].getLoop());
-            animatedNode->setFrameLoop(start, end);
-            if (animationMap_[animation].getOnEndCallback() != NoAnimation)
-                animatedNode->setAnimationEndCallback(this);
+                irr::scene::IAnimatedMeshSceneNode* animatedNode = dynamic_cast<irr::scene::IAnimatedMeshSceneNode*>(irrlichtSceneNode_);
+
+                animatedNode->setAnimationSpeed(animationMap_[animation].getSpeed());
+                animatedNode->setLoopMode(animationMap_[animation].getLoop());
+                animatedNode->setFrameLoop(start, end);
+                if (animationMap_[animation].getOnEndCallback() != NoAnimation)
+                    animatedNode->setAnimationEndCallback(this);
+
+                framesWithoutAnimationOrder_ = 0;
+            }
         }
 
         bool AnimatedMeshSceneNode::getAnimationFrames(const AnimationType& animation, unsigned int& start, unsigned int& end)
@@ -85,6 +100,12 @@ namespace Graphics
         void AnimatedMeshSceneNode::update()
         {
             dynamic_cast<irr::scene::IAnimatedMeshSceneNode*>(irrlichtSceneNode_)->animateJoints();
+
+            framesWithoutAnimationOrder_++;
+
+            if (framesWithoutAnimationOrder_ > 20)
+                applyAnimation(Idle);
         }
+
     }
 }
