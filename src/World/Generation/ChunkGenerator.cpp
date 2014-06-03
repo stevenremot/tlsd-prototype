@@ -35,7 +35,6 @@ namespace World
         void ChunkGenerator::generateChunk(int x, int y)
         {
             Chunk currentChunk;
-
             if (world_.getChunk(x, y, currentChunk) &&
                 currentChunk.getState() == Chunk::GeneratedState) {
                 return;

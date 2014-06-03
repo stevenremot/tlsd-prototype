@@ -34,7 +34,11 @@ namespace World
 		ecsWorld.addComponent(
             groundEntity.getEntity(),
             new Geometry::PositionComponent(
-                Geometry::Vec3Df(i*World::ChunkSize,j*World::ChunkSize, 0)
+                Geometry::Vec3Df(
+                    i*static_cast<int>(World::ChunkSize),
+                    j*static_cast<int>(World::ChunkSize),
+                    0
+                )
             )
         );
 
