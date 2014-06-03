@@ -97,7 +97,7 @@ namespace Application
 
         generator.generateChunk(0, 0);
 
-        // TODO CHange world seed at each run :-)
+        // TODO Change world seed at each run :-)
         World::Generation::ChunkGenerationSystem* generation =
             new World::Generation::ChunkGenerationSystem(
                 ecsWorld_,

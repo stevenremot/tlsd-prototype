@@ -178,11 +178,6 @@ namespace Graphics
 
             for (unsigned int i =0; i < delayedEvents.size(); i++)
                 events_ << delayedEvents[i];
-
-            // TODO : replace this hardcode
-            // unsigned int id = 0;
-            // if (getEntitySceneNodeId(0,id))
-            //     dynamic_cast<AnimatedMeshSceneNode*>(sceneNodes_[id])->update();
         }
 
         void Scene::addMeshSceneNodeFromFile(SceneNode* parent, const string& meshFile, const string& textureFile, const Vec3Df& position, const Vec3Df& rotation)
@@ -321,6 +316,8 @@ namespace Graphics
             // buffer are also updated, see IMesh::setHardwareMappingHint
             mesh->setDirty();
             mesh->recalculateBoundingBox();
+
+            mesh->setHardwareMappingHint(irr::scene::EHM_STATIC, irr::scene::EBT_VERTEX_AND_INDEX);
 
             // create the scene node
             irr::scene::IMeshSceneNode* irrNode = irrlichtSceneManager_->addMeshSceneNode(mesh);
