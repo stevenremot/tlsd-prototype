@@ -41,22 +41,23 @@ namespace World
                 return;
             }
 
-            for (int i = -1; i < 1; i++)
+            for (int i = -1; i <= 1; i++)
             {
-                for (int j = -1; j < 1; j++)
+                for (int j = -1; j <= 1; j++)
                 {
                     prepareChunk(x + i, y + j);
                 }
             }
 
             world_.getChunk(x, y, currentChunk);
+            currentChunk.setState(Chunk::GeneratedState);
+            world_.setChunk(x, y, currentChunk);
 
             Chunk::EntityCollection finalEntities;
 
             finalEntities.push_back(createGround(world_, x, y, ecsWorld_));
 
             currentChunk.setFinalEntities(finalEntities);
-            currentChunk.setState(Chunk::GeneratedState);
             world_.setChunk(x, y, currentChunk);
         }
 

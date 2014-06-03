@@ -34,7 +34,7 @@ class ComponentCreatedEvent : public Event::Event
         }
 
     private:
-        const Entity& entity_;
+        Entity entity_;
         Component* component_;
 };
 }

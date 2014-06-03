@@ -32,6 +32,7 @@
 #include "tests/core.h"
 #include "tests/world.h"
 #include "tests/worldGeneration.h"
+#include "Application/Application.h"
 
 using std::cout;
 using std::endl;
@@ -60,8 +61,10 @@ int main()
     // WorldGenerationTests::testRoadExpansion();
     // WorldGenerationTests::testLotCreation();
     // WorldGenerationTests::testCityCreation();
-    AnimationTest::testAnimation();
-    //RenderTest::testRenderSystem(10);
+    // AnimationTest::testAnimation();
+    // RenderTest::testRenderSystem(10);
+    Application::Application app;
+    app.start();
 
     return 0;
 }

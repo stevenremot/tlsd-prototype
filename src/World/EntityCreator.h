@@ -26,15 +26,14 @@
 #include "BuildingInterface.h"
 #include "RoadNetwork.h"
 
-
 namespace World
 {
     /**
      * Returns the created ground entity for the chunk and insert it in the ecs world
      *
-     * TODO Add renderable component
+     * TODO : Add "const" to world
      */
-	Ecs::SharedEntity createGround(const World& world, int i, int j, Ecs::World& ecsWorld);
+	Ecs::SharedEntity createGround(World& world, int i, int j, Ecs::World& ecsWorld);
 
     /**
      * Create an entity for the road, and insert it in the ECS world

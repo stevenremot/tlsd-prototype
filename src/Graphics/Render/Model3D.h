@@ -43,6 +43,11 @@ namespace Graphics
                 faces_(faces)
             {}
 
+            Model3D(const Model3D& model):
+                vertices_(model.vertices_),
+                faces_(model.faces_)
+            {}
+
             size_t getVerticesNumber() const
             {
                 return vertices_.size();

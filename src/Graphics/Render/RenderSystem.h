@@ -4,9 +4,7 @@
 #include "../../Ecs/System.h"
 #include "../../Event/EventListenerInterface.h"
 
- #include "../../Event/EventManager.h"
-
-using Ecs::World;
+#include "../../Event/EventManager.h"
 
 namespace Graphics
 {
@@ -15,7 +13,7 @@ namespace Graphics
         class RenderSystem : public Ecs::System, public Event::EventListenerInterface
         {
         public:
-            RenderSystem(World& world, Event::EventQueue& eventQueue);
+            RenderSystem(Ecs::World& world, Event::EventQueue& eventQueue);
             virtual ~RenderSystem();
 
             // EventListenerInterface

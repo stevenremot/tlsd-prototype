@@ -180,9 +180,9 @@ namespace Graphics
                 events_ << delayedEvents[i];
 
             // TODO : replace this hardcode
-            unsigned int id = 0;
-            if (getEntitySceneNodeId(0,id))
-                dynamic_cast<AnimatedMeshSceneNode*>(sceneNodes_[id])->update();
+            // unsigned int id = 0;
+            // if (getEntitySceneNodeId(0,id))
+            //     dynamic_cast<AnimatedMeshSceneNode*>(sceneNodes_[id])->update();
         }
 
         void Scene::addMeshSceneNodeFromFile(SceneNode* parent, const string& meshFile, const string& textureFile, const Vec3Df& position, const Vec3Df& rotation)

@@ -101,19 +101,19 @@ namespace Ecs
     ComponentGroup World::getEntityComponents(const Entity& entity,
                                               const ComponentGroup& prototype)
     {
-        ComponentCollection & components = components_.at(entity);
+        ComponentCollection& components = components_.at(entity);
 
         try
         {
             return prototype.clone(entity, components);
         }
-        catch (const ComponentGroup::DoesNotSatisfyException & e)
+        catch (const ComponentGroup::DoesNotSatisfyException& e)
         {
             throw DoesNotSatisfyException();
         }
     }
 
-    World::ComponentGroupCollection World::getComponents(const ComponentGroup & prototype)
+    World::ComponentGroupCollection World::getComponents(const ComponentGroup& prototype)
     {
         ComponentGroupCollection groups;
 

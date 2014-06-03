@@ -32,6 +32,7 @@
 #include "../Graphics/Render/Model3D.h"
 #include "../World/Generation/CoefficientsGenerator.h"
 #include "../World/Ground.h"
+#include "SvgDrawer.h"
 
 using std::cout;
 using std::endl;
@@ -143,14 +144,30 @@ namespace WorldTest
             }
             world.setChunk(i/5,i%5,chunk);
         }
-        Model3D model11 = World::computeGroundModel(world, 1, 1);
-        Model3D model21 = World::computeGroundModel(world, 2, 1);
-        Model3D model31 = World::computeGroundModel(world, 3, 1);
-        Model3D model12 = World::computeGroundModel(world, 1, 2);
+        // Model3D model11 = World::computeGroundModel(world, 1, 1);
+        // Model3D model21 = World::computeGroundModel(world, 2, 1);
+        // Model3D model31 = World::computeGroundModel(world, 3, 1);
+        // Model3D model12 = World::computeGroundModel(world, 1, 2);
         Model3D model22 = World::computeGroundModel(world, 2, 2);
-        Model3D model32 = World::computeGroundModel(world, 3, 2);
-        Model3D model13 = World::computeGroundModel(world, 1, 3);
-        Model3D model23 = World::computeGroundModel(world, 2, 3);
-        Model3D model33 = World::computeGroundModel(world, 3, 3); 
+        // Model3D model32 = World::computeGroundModel(world, 3, 2);
+        // Model3D model13 = World::computeGroundModel(world, 1, 3);
+        // Model3D model23 = World::computeGroundModel(world, 2, 3);
+        // Model3D model33 = World::computeGroundModel(world, 3, 3);
+
+        Test::SvgDrawer svg(128, 512);
+
+        for (unsigned int i = 0; i < model22.getVertices().size(); i++)
+        {
+            const Geometry::Vec3Df& vertex = model22.getVertices()[i];
+
+            if (vertex.getX() < 128 && vertex.getY() < 128)
+            {
+                svg.drawCircle(vertex.getX() - 64, vertex.getZ() - 256, 1, "red");
+            }
+        }
+
+        svg.end();
+
+        std::cout << svg.getContent().str();
     }
 }

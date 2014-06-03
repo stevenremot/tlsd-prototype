@@ -19,14 +19,14 @@ namespace Graphics
         public:
             static const Ecs::Component::Type Type;
 
-            RenderableComponent(Model3D& model3d, const string& meshFileName, const string& textureFileName):
+            RenderableComponent(const Model3D& model3d, const string& meshFileName, const string& textureFileName):
                 Component(Type),
                 model3d_(model3d),
                 meshFileName_(meshFileName),
                 textureFileName_(textureFileName)
             {}
 
-            RenderableComponent(Model3D& model3d):
+            RenderableComponent(const Model3D& model3d):
                 Component(Type),
                 model3d_(model3d),
                 meshFileName_(""),

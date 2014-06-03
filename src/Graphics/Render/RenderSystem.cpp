@@ -16,7 +16,7 @@ namespace Graphics
 {
     namespace Render
     {
-        RenderSystem::RenderSystem(World& world, Event::EventQueue& eventQueue) :
+        RenderSystem::RenderSystem(Ecs::World& world, Event::EventQueue& eventQueue) :
             System(world),
             eventQueue_(eventQueue)
         {

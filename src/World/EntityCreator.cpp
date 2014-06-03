@@ -19,15 +19,36 @@
 
 #include "EntityCreator.h"
 #include "../Geometry/PositionComponent.h"
+#include "../Geometry/RotationComponent.h"
+#include "../Graphics/Render/RenderableComponent.h"
+#include "Ground.h"
+
+#include <iostream>
 
 namespace World
 {
-
-	Ecs::SharedEntity createGround(const World& world, int i, int j, Ecs::World& ecsWorld)
+	Ecs::SharedEntity createGround(World& world, int i, int j, Ecs::World& ecsWorld)
 	{
 		Ecs::SharedEntity groundEntity = ecsWorld.createSharedEntity();
 
-		ecsWorld.addComponent(groundEntity.getEntity(), new Geometry::PositionComponent(Geometry::Vec3Df(i*World::ChunkSize,j*World::ChunkSize, 0)));
+		ecsWorld.addComponent(
+            groundEntity.getEntity(),
+            new Geometry::PositionComponent(
+                Geometry::Vec3Df(i*World::ChunkSize,j*World::ChunkSize, 0)
+            )
+        );
+
+        ecsWorld.addComponent(
+            groundEntity.getEntity(),
+            new Geometry::RotationComponent(
+                Geometry::Vec3Df(0, 0, 0)
+            )
+        );
+
+        ecsWorld.addComponent(
+            groundEntity.getEntity(),
+            new Graphics::Render::RenderableComponent(computeGroundModel(world, i, j))
+        );
 
 		return groundEntity;
 	}

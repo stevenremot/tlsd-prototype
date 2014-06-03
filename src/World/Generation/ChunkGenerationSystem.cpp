@@ -24,7 +24,7 @@ namespace World
 {
     namespace Generation
     {
-        void ChunkGenerationSystem::call()
+        void ChunkGenerationSystem::run()
         {
             while (!channelOutput_.isEmpty())
             {

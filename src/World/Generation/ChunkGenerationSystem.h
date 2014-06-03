@@ -57,7 +57,7 @@ namespace World
 
             void registerListeners(Event::ListenerRegister& reg);
 
-            virtual void call();
+            virtual void run();
 
         private:
             CommandQueue channelInput_;
