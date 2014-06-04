@@ -3,6 +3,7 @@
 #include <iostream>
 
 #include "../Graphics/Device.h"
+#include "../Graphics/CloseDeviceEvent.h"
 #include "../Graphics/Render/Scene.h"
 #include "../Graphics/Render/RenderSystem.h"
 #include "../Graphics/Render/RenderableComponent.h"
@@ -36,6 +37,11 @@ namespace RenderTest
     void DummyInputListener::call(const Event::Event& event)
     {
         std::cout << static_cast<const Input::MoveEvent&>(event).getDirection() << std::endl;
+    }
+
+    void CloseDeviceListener::call(const Event::Event& event)
+    {
+        closed_ = true;
     }
 
     void testThread(int durationInSeconds)
@@ -102,6 +108,9 @@ namespace RenderTest
         RenderSystem rs(w, m.getEventQueue());
         reg.put(Ecs::ComponentCreatedEvent::TYPE, &rs);
 
+        CloseDeviceListener cdl;
+        reg.put(Graphics::CloseDeviceEvent::TYPE, &cdl);
+
         std::vector<ThreadableInterface*> threadables, threadables2;
 
         // Device, Scene and InputReceiver use irrlicht engine, so they should be in the same thread
@@ -120,7 +129,7 @@ namespace RenderTest
         std::string meshFile = "ninja.b3d";
 
         int imax = durationInSeconds * 1;
-        for (int i = 0; i < imax; i++)
+        for (int i = 0; i < imax && !cdl.closed_; i++)
         {
             Ecs::Entity e = w.createEntity(i);
             w.addComponent(e, new PositionComponent(Vec3Df(rng.getUniform(-5, 5), rng.getUniform(-5, 5), 0)));

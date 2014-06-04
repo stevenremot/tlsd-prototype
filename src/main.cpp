@@ -38,9 +38,10 @@ using std::vector;
 
 int main()
 {
-    AnimationTest::testAnimation();
-    //RenderTest::testRenderSystem(10);
+    //AnimationTest::testAnimation();
+    RenderTest::testRenderSystem(30);
 
+    /*
     EventTest::testEvents();
     EcsTest::testEcs();
     GeometryTest::testVectors();
@@ -48,6 +49,7 @@ int main()
     //GraphTest::testPlanarGraph();
     ThreadingTest::testChannel();
     CoreTest::testSharedPtr();
+    */
 
     return 0;
 }

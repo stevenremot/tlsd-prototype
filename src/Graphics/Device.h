@@ -30,7 +30,7 @@ namespace Graphics
         Event::EventQueue& eventQueue_;
 
         irr::IrrlichtDevice* irrlichtDevice_;
-        bool initialized_;
+        bool initialized_, closed_;
     };
 }
 

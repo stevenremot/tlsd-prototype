@@ -6,6 +6,17 @@
 
 namespace RenderTest
 {
+    class CloseDeviceListener: public Event::EventListenerInterface
+    {
+    public:
+        CloseDeviceListener():
+            closed_(false)
+            {}
+
+        virtual void call(const Event::Event &event);
+        bool closed_;
+    };
+
     class DummyInputListener: public Event::EventListenerInterface
     {
     public:
