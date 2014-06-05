@@ -34,6 +34,19 @@ namespace Graphics
             delete sceneNodes_[0];
         }
 
+        void Scene::registerListeners(Event::ListenerRegister& reg)
+        {
+            reg.put(Graphics::Render::InitSceneEvent::TYPE, this);
+            reg.put(Input::CameraEvent::TYPE, this);
+            reg.put(Input::MoveEvent::TYPE, this);
+            reg.put(Graphics::Render::RenderMeshFileEvent::TYPE, this);
+            reg.put(Graphics::Render::RenderModel3DEvent::TYPE, this);
+            reg.put(Graphics::Render::RenderAnimatedMeshFileEvent::TYPE, this);
+            reg.put(Graphics::Render::SetupAnimationEvent::TYPE, this);
+            reg.put(Graphics::Render::AnimateEvent::TYPE, this);
+            reg.put(Graphics::Render::UpdateAnimationEvent::TYPE, this);
+        }
+
         void Scene::call(const Event::Event& event)
         {
             if (event.getType() == InitSceneEvent::TYPE)
@@ -249,7 +262,7 @@ namespace Graphics
             node->setAbsoluteRotation(rotation);
         }
 
-       void Scene::addMeshSceneNodeFromModel3D(SceneNode* parent, const Model3D& model, const Vec3Df& position, const Vec3Df& rotation)
+        void Scene::addMeshSceneNodeFromModel3D(SceneNode* parent, const Model3D& model, const Vec3Df& position, const Vec3Df& rotation)
         {
             using irr::scene::SMeshBuffer;
             using irr::core::vector3df;

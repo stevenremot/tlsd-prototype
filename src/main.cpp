@@ -38,8 +38,8 @@ using std::vector;
 
 int main()
 {
-    //AnimationTest::testAnimation();
-    RenderTest::testRenderSystem(30);
+    AnimationTest::testAnimation();
+    //RenderTest::testRenderSystem(30);
 
     /*
     EventTest::testEvents();

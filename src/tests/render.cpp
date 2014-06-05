@@ -53,9 +53,7 @@ namespace RenderTest
         reg.put(Input::InputInitializedEvent::TYPE, &device);
 
         Scene scene;
-        reg.put(Graphics::Render::InitSceneEvent::TYPE, &scene);
-        reg.put(Input::CameraEvent::TYPE, &scene);
-        reg.put(Input::MoveEvent::TYPE, &scene);
+        scene.registerListeners(reg);
 
         IrrlichtInputReceiver receiver(m.getEventQueue());
         reg.put(Input::InitInputEvent::TYPE, &receiver);
@@ -96,11 +94,7 @@ namespace RenderTest
         reg.put(Input::InputInitializedEvent::TYPE, &device);
 
         Scene scene;
-        reg.put(Graphics::Render::InitSceneEvent::TYPE, &scene);
-        reg.put(Input::CameraEvent::TYPE, &scene);
-        reg.put(Input::MoveEvent::TYPE, &scene);
-        reg.put(Graphics::Render::RenderMeshFileEvent::TYPE, &scene);
-        reg.put(Graphics::Render::RenderModel3DEvent::TYPE, &scene);
+        scene.registerListeners(reg);
 
         IrrlichtInputReceiver receiver(m.getEventQueue());
         reg.put(Input::InitInputEvent::TYPE, &receiver);
