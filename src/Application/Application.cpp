@@ -20,6 +20,7 @@
 #include "Application.h"
 
 #include "../Graphics/Device.h"
+#include "../Graphics/CloseDeviceEvent.h"
 #include "../Graphics/Render/Scene.h"
 #include "../Graphics/Render/RenderSystem.h"
 #include "../Graphics/Render/RenderEvents.h"
@@ -42,7 +43,8 @@ namespace Application
         graphicsThread_->start();
         generationThread_->start();
 
-        for (unsigned int i = 0; i < 1000000; i++)
+        running_ = true;
+        while (running_)
         {
             Threading::sleep(1, 0);
         }
@@ -64,20 +66,17 @@ namespace Application
         Event::ListenerRegister& reg = eventManager_.getListenerRegister();
         Event::EventQueue& queue = eventManager_.getEventQueue();
 
+        reg.put(Graphics::CloseDeviceEvent::TYPE, this);
+
         Graphics::Device* dev = new Graphics::Device(queue);
         reg.put(Input::InputInitializedEvent::TYPE, dev);
 
         Graphics::Render::Scene* scene = new Graphics::Render::Scene;
-        reg.put(Graphics::Render::InitSceneEvent::TYPE, scene);
-        reg.put(Input::CameraEvent::TYPE, scene);
-        reg.put(Input::MoveEvent::TYPE, scene);
-        reg.put(Graphics::Render::RenderModel3DEvent::TYPE, scene);
-
+        scene->registerListeners(reg);
 
         Input::IrrlichtInputReceiver* receiver =
             new Input::IrrlichtInputReceiver(queue);
         reg.put(Input::InitInputEvent::TYPE, receiver);
-
 
         std::vector<Threading::ThreadableInterface*> graphicsThreadables;
         graphicsThreadables.push_back(dev);
@@ -116,5 +115,10 @@ namespace Application
         threadables.push_back(generation);
 
         generationThread_ = new Threading::Thread(threadables, 1);
+    }
+
+    void Application::call(const Event::Event& event)
+    {
+        running_ = false;
     }
 }

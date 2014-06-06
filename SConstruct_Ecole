@@ -14,17 +14,19 @@ libs = []
 if env['PLATFORM'] == 'win32':
 	libs = ["pthreadGC2","lemon"]
 elif env['PLATFORM'] == 'posix':
-    libs = ["pthread","emon"]
+    libs = ["pthread","emon", "Irrlicht", "X11", "GL"]
 
 pathToLemonBuild = '/cal/homes/mariotti/libs'
+pathToIrrlicht = '/cal/homes/mariotti/Irrlicht'
 
-env.Append(CPPPATH=['libs', pathToLemonBuild + '/include'])
+env.Append(CPPPATH=['libs', pathToLemonBuild + '/include',
+					pathToIrrlicht + '/include'])
 
-sources = Glob('src/*/*.cpp') + Glob('src/*/*/*.cpp')
+sources = Glob('src/*/*.cpp') + Glob('src/*/*/*.cpp') + Glob('src/*/*/*/*.cpp')
 includedLibs = Glob('libs/*.cpp')
 main = Glob('src/main.cpp')
 
-env.Program('program', sources + includedLibs + main, LIBS=libs, LIBPATH=[pathToLemonBuild + '/lib'])
+env.Program('program', sources + includedLibs + main, LIBS=libs, LIBPATH=[pathToLemonBuild + '/lib', pathToIrrlicht + '/lib'])
 
 # Emacs local variables
 # Local variables:

@@ -5,3 +5,4 @@ program
 # code::blocks crap
 *.cbp
 *.layout
+*.exe

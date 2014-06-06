@@ -12,6 +12,7 @@
 #include "Animation.h"
 #include "../../Event/Event.h"
 #include "../../Event/EventListenerInterface.h"
+#include "../../Event/ListenerRegister.h"
 #include "../../Threading/ThreadableInterface.h"
 #include "../../Threading/Channel.h"
 #include "../../Ecs/Entity.h"
@@ -68,6 +69,8 @@ namespace Graphics
 
             // Threadable
             virtual void run();
+
+            void registerListeners(Event::ListenerRegister& reg);
 
             bool initializeAnimationMap(const Ecs::Entity& entity, const AnimationMap& animationMap);
 
