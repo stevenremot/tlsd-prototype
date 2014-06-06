@@ -55,7 +55,7 @@ namespace World
         }
     };
 
-    const float Resolution = 1;
+    const float Resolution = 2;
     /**
      * Returns the 3D model of the ground for the chunk
      * at the given position
