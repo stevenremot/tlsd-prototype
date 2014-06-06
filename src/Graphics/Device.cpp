@@ -11,13 +11,15 @@
 
 #include "Render/Scene.h"
 #include "../Input/IrrlichtInputReceiver.h"
+#include "CloseDeviceEvent.h"
 
 namespace Graphics
 {
     Device::Device(Event::EventQueue& eventQueue) :
         eventQueue_(eventQueue),
         irrlichtDevice_(NULL),
-        initialized_(false)
+        initialized_(false),
+        closed_(false)
     {
 #ifdef _WIN32
 #else
@@ -42,19 +44,29 @@ namespace Graphics
             return;
         }
 
-        // TODO : render loop
-        irrlichtDevice_->run();
-        getIrrlichtVideoDriver()->beginScene(true, true, irr::video::SColor(255, 0, 0, 0));
+        if (!closed_)
+        {
+            if (!irrlichtDevice_->run())
+            {
+                closed_ = true;
+                eventQueue_ << new CloseDeviceEvent();
+            }
 
-        irrlichtDevice_->getSceneManager()->drawAll();
+            if (irrlichtDevice_->isWindowFocused())
+            {
+                getIrrlichtVideoDriver()->beginScene(true, true, irr::video::SColor(255, 0, 0, 0));
 
-        getIrrlichtVideoDriver()->endScene();
+                irrlichtDevice_->getSceneManager()->drawAll();
 
-        // display frames per second in window title
-        int fps = getIrrlichtVideoDriver()->getFPS();
-        irr::core::stringw str = "FPS :";
-        str += fps;
-        irrlichtDevice_->setWindowCaption(str.c_str());
+                getIrrlichtVideoDriver()->endScene();
+
+                // display frames per second in window title
+                int fps = getIrrlichtVideoDriver()->getFPS();
+                irr::core::stringw str = "FPS :";
+                str += fps;
+                irrlichtDevice_->setWindowCaption(str.c_str());
+            }
+        }
     }
 
     void Device::call(const Event::Event& event)
@@ -81,9 +93,6 @@ namespace Graphics
 
         // disable mouse cursor
         irrlichtDevice_->getCursorControl()->setVisible(false);
-
-        // TODO : remove
-        //irrlichtDevice_->getSceneManager()->addCameraSceneNode(0, irr::core::vector3df(-10,5,-10), irr::core::vector3df(0,0,0));
 
         return true;
     }

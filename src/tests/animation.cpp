@@ -60,14 +60,7 @@ namespace AnimationTest
         reg.put(Input::MoveEvent::TYPE, &l);
 
         Scene scene;
-        reg.put(Graphics::Render::InitSceneEvent::TYPE, &scene);
-        reg.put(Input::CameraEvent::TYPE, &scene);
-        reg.put(Graphics::Render::RenderMeshFileEvent::TYPE, &scene);
-        reg.put(Graphics::Render::RenderModel3DEvent::TYPE, &scene);
-        reg.put(Graphics::Render::RenderAnimatedMeshFileEvent::TYPE, &scene);
-        reg.put(Graphics::Render::SetupAnimationEvent::TYPE, &scene);
-        reg.put(Graphics::Render::AnimateEvent::TYPE, &scene);
-        reg.put(Graphics::Render::UpdateAnimationEvent::TYPE, &scene);
+        scene.registerListeners(reg);
 
         IrrlichtInputReceiver receiver(m.getEventQueue());
         reg.put(Input::InitInputEvent::TYPE, &receiver);
