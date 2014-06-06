@@ -47,7 +47,7 @@ namespace Graphics
         getIrrlichtVideoDriver()->beginScene(true, true, irr::video::SColor(255, 0, 0, 0));
 
         irrlichtDevice_->getSceneManager()->drawAll();
-
+        irrlichtDevice_->getGUIEnvironment()->drawAll();
         getIrrlichtVideoDriver()->endScene();
 
         // display frames per second in window title
