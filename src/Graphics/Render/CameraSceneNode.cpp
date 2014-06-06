@@ -22,17 +22,17 @@ namespace Graphics
 
         void CameraSceneNode::removeIrrlichtSceneNode()
         {
-            dynamic_cast<irr::scene::ICameraSceneNode*>(irrlichtSceneNode_)->remove();
+            static_cast<irr::scene::ICameraSceneNode*>(irrlichtSceneNode_)->remove();
         }
 
         void CameraSceneNode::setIrrlichtSceneNode(irr::scene::ICameraSceneNode* node)
         {
-            irrlichtSceneNode_ = dynamic_cast<irr::scene::ISceneNode*>(node);
+            irrlichtSceneNode_ = static_cast<irr::scene::ISceneNode*>(node);
         }
 
         void CameraSceneNode::updateTarget(const irr::core::position2df& cursorPos)
         {
-            irr::scene::ICameraSceneNode* cameraNode = dynamic_cast<irr::scene::ICameraSceneNode*>(irrlichtSceneNode_);
+            irr::scene::ICameraSceneNode* cameraNode = static_cast<irr::scene::ICameraSceneNode*>(irrlichtSceneNode_);
 
             const irr::scene::SViewFrustum* frustum = cameraNode->getViewFrustum();
 
@@ -76,7 +76,7 @@ namespace Graphics
         {
             setPosition(position);
 
-            dynamic_cast<irr::scene::ICameraSceneNode*>(irrlichtSceneNode_)->setTarget(vector3df(target.getX(), target.getZ(), target.getY()));
+            static_cast<irr::scene::ICameraSceneNode*>(irrlichtSceneNode_)->setTarget(vector3df(target.getX(), target.getZ(), target.getY()));
         }
     }
 }

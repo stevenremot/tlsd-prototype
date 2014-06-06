@@ -3,6 +3,7 @@
 #include <iostream>
 
 #include "../Graphics/Device.h"
+#include "../Graphics/CloseDeviceEvent.h"
 #include "../Graphics/Render/Scene.h"
 #include "../Graphics/Render/RenderSystem.h"
 #include "../Graphics/Render/RenderableComponent.h"
@@ -38,6 +39,11 @@ namespace RenderTest
         std::cout << static_cast<const Input::MoveEvent&>(event).getDirection() << std::endl;
     }
 
+    void CloseDeviceListener::call(const Event::Event& event)
+    {
+        closed_ = true;
+    }
+
     void testThread(int durationInSeconds)
     {
         Event::EventManager m;
@@ -47,9 +53,7 @@ namespace RenderTest
         reg.put(Input::InputInitializedEvent::TYPE, &device);
 
         Scene scene;
-        reg.put(Graphics::Render::InitSceneEvent::TYPE, &scene);
-        reg.put(Input::CameraEvent::TYPE, &scene);
-        reg.put(Input::MoveEvent::TYPE, &scene);
+        scene.registerListeners(reg);
 
         IrrlichtInputReceiver receiver(m.getEventQueue());
         reg.put(Input::InitInputEvent::TYPE, &receiver);
@@ -90,17 +94,16 @@ namespace RenderTest
         reg.put(Input::InputInitializedEvent::TYPE, &device);
 
         Scene scene;
-        reg.put(Graphics::Render::InitSceneEvent::TYPE, &scene);
-        reg.put(Input::CameraEvent::TYPE, &scene);
-        reg.put(Input::MoveEvent::TYPE, &scene);
-        reg.put(Graphics::Render::RenderMeshFileEvent::TYPE, &scene);
-        reg.put(Graphics::Render::RenderModel3DEvent::TYPE, &scene);
+        scene.registerListeners(reg);
 
         IrrlichtInputReceiver receiver(m.getEventQueue());
         reg.put(Input::InitInputEvent::TYPE, &receiver);
 
         RenderSystem rs(w, m.getEventQueue());
         reg.put(Ecs::ComponentCreatedEvent::TYPE, &rs);
+
+        CloseDeviceListener cdl;
+        reg.put(Graphics::CloseDeviceEvent::TYPE, &cdl);
 
         std::vector<ThreadableInterface*> threadables, threadables2;
 
@@ -120,7 +123,7 @@ namespace RenderTest
         std::string meshFile = "ninja.b3d";
 
         int imax = durationInSeconds * 1;
-        for (int i = 0; i < imax; i++)
+        for (int i = 0; i < imax && !cdl.closed_; i++)
         {
             Ecs::Entity e = w.createEntity(i);
             w.addComponent(e, new PositionComponent(Vec3Df(rng.getUniform(-5, 5), rng.getUniform(-5, 5), 0)));

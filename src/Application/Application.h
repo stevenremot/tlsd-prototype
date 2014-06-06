@@ -22,6 +22,7 @@
 
 #include "../Threading/Thread.h"
 #include "../Event/EventManager.h"
+#include "../Event/EventListenerInterface.h"
 #include "../Ecs/World.h"
 #include "../World/World.h"
 
@@ -30,7 +31,7 @@ namespace Application
     /**
      * Class in charge of launching the game
      */
-    class Application
+    class Application : public Event::EventListenerInterface
     {
     public:
         Application():
@@ -39,7 +40,8 @@ namespace Application
             generationThread_(NULL),
             eventManager_(),
             ecsWorld_(eventManager_.getEventQueue()),
-            world_()
+            world_(),
+            running_(false)
         {}
 
         ~Application()
@@ -54,6 +56,8 @@ namespace Application
 
         void start();
 
+        virtual void call(const Event::Event& event);
+
     private:
         Threading::Thread* eventThread_;
         Threading::Thread* graphicsThread_;
@@ -61,6 +65,7 @@ namespace Application
         Event::EventManager eventManager_;
         Ecs::World ecsWorld_;
         World::World world_;
+        bool running_;
 
         void setupEventThread();
         void setupGraphicsThread();

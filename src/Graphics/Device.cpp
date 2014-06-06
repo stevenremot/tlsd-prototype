@@ -11,13 +11,15 @@
 
 #include "Render/Scene.h"
 #include "../Input/IrrlichtInputReceiver.h"
+#include "CloseDeviceEvent.h"
 
 namespace Graphics
 {
     Device::Device(Event::EventQueue& eventQueue) :
         eventQueue_(eventQueue),
         irrlichtDevice_(NULL),
-        initialized_(false)
+        initialized_(false),
+        closed_(false)
     {
 #ifdef _WIN32
 #else
@@ -42,19 +44,31 @@ namespace Graphics
             return;
         }
 
-        // TODO : render loop
-        irrlichtDevice_->run();
-        getIrrlichtVideoDriver()->beginScene(true, true, irr::video::SColor(255, 0, 0, 0));
 
-        irrlichtDevice_->getSceneManager()->drawAll();
-        irrlichtDevice_->getGUIEnvironment()->drawAll();
-        getIrrlichtVideoDriver()->endScene();
+        if (!closed_)
+        {
+            if (!irrlichtDevice_->run())
+            {
+                closed_ = true;
+                eventQueue_ << new CloseDeviceEvent();
+            }
 
-        // display frames per second in window title
-        int fps = getIrrlichtVideoDriver()->getFPS();
-        irr::core::stringw str = "FPS :";
-        str += fps;
-        irrlichtDevice_->setWindowCaption(str.c_str());
+            if (irrlichtDevice_->isWindowFocused())
+            {
+                getIrrlichtVideoDriver()->beginScene(true, true, irr::video::SColor(255, 0, 0, 0));
+
+                irrlichtDevice_->getSceneManager()->drawAll();
+
+                getIrrlichtVideoDriver()->endScene();
+
+                // display frames per second in window title
+                int fps = getIrrlichtVideoDriver()->getFPS();
+                irr::core::stringw str = "FPS :";
+                str += fps;
+                irrlichtDevice_->setWindowCaption(str.c_str());
+            }
+        }
+
     }
 
     void Device::call(const Event::Event& event)
@@ -81,9 +95,6 @@ namespace Graphics
 
         // disable mouse cursor
         irrlichtDevice_->getCursorControl()->setVisible(false);
-
-        // TODO : remove
-        //irrlichtDevice_->getSceneManager()->addCameraSceneNode(0, irr::core::vector3df(-10,5,-10), irr::core::vector3df(0,0,0));
 
         return true;
     }
