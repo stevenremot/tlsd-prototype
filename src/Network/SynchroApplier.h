@@ -24,13 +24,12 @@
 using Threading::ThreadableInterface;
 
 
-typedef int World;
 typedef int EventQueue;
 namespace Network{
 class SynchroApplier : public ThreadableInterface
 {
     public:
-        SynchroApplier(World world, EventQueue eventqueue);
+        SynchroApplier();
         virtual ~SynchroApplier();
 
     protected:

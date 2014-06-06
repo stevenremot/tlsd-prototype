@@ -66,6 +66,16 @@ namespace Geometry
             return x_ == vec.x_ && y_ == vec.y_;
         }
 
+        inline bool operator!=(const Vec2D& vec) const
+        {
+            return x_ != vec.x_ && y_ != vec.y_;
+        }
+
+        inline bool operator<(const Vec2D& vec) const
+        {
+            return x_ < vec.x_ || (x_ == vec.x_ && y_ < vec.y_);
+        }
+
         inline Vec2D operator+(const Vec2D& vec) const
         {
             return Vec2D(x_ + vec.x_,
@@ -118,6 +128,19 @@ namespace Geometry
             return *this;
         }
 
+        inline Vec2D operator/(T t) const
+        {
+            return Vec2D(x_ / t,
+                         y_ / t);
+        }
+
+        inline Vec2D& operator /=(T t)
+        {
+            x_ /= t;
+            y_ /= t;
+            return *this;
+        }
+
         inline Vec2D operator-() const
         {
             return Vec2D(-x_, -y_);
@@ -137,6 +160,44 @@ namespace Geometry
         inline T getLength() const
         {
             return std::sqrt(getSquaredLength());
+        }
+
+        inline float getOrientation() const
+        {
+            if (x_ == 0)
+            {
+                if (y_ < 0)
+                {
+                    return -M_PI / 2.0;
+                }
+                else
+                {
+                    return M_PI / 2.0;
+                }
+            }
+
+            return std::atan2(y_, x_);
+        }
+
+        inline Vec2D getOrthogonal() const
+        {
+            return Vec2D(-y_, x_);
+        }
+
+        inline Vec2D normalize() const
+        {
+            const float length = getLength();
+            if (length == 0.0)
+            {
+                return *this;
+            }
+
+            return (*this) / length;
+        }
+
+        static inline Vec2D fromPolar(float orientation, float length)
+        {
+            return Vec2D(cos(orientation) * length, sin(orientation) * length);
         }
 
     private:

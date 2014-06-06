@@ -51,6 +51,7 @@ namespace Graph
         PlanarEdge& operator=(const PlanarEdge& edge);
 
         bool operator==(const PlanarEdge& edge) const;
+        bool operator!=(const PlanarEdge& edge) const;
 
         // Getters and setters
         PlanarNode& getFirstNode() { return firstNode_; }
@@ -62,9 +63,16 @@ namespace Graph
         void setSecondNode(const PlanarNode& node) { secondNode_ = node; }
 
         /**
+         * Return the direction vector of the edge
+         *
+         * It is the difference between the second and the first node
+         */
+        Geometry::Vec2Df getDirection() const;
+
+        /**
          * Return true if the given node is at one extremity of the edge
          */
-        bool hasNode(const PlanarNode& node);
+        bool hasNode(const PlanarNode& node) const;
 
         /**
          * Return the other extremity of the edge
@@ -84,10 +92,19 @@ namespace Graph
          */
         const PlanarNode& getOtherNode(const PlanarNode& node) const;
 
+        bool operator<(const PlanarEdge& edge) const
+        {
+            const Geometry::Vec2Df& p11 = firstNode_.getPosition();
+            const Geometry::Vec2Df& p12 = secondNode_.getPosition();
+            const Geometry::Vec2Df& p21 = edge.firstNode_.getPosition();
+            const Geometry::Vec2Df& p22 = edge.secondNode_.getPosition();
+
+            return (p11 < p21) || (p11 == p21 && p12 < p22);
+        }
+
         // In order to hide lemon edge from the outside of the code,
         // but to let the graph implementation get it.
         friend class PlanarGraph;
-
 
     private:
         PlanarNode firstNode_;

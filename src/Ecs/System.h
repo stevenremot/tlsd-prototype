@@ -35,21 +35,21 @@ namespace Ecs
     class System
     {
     public:
-        System(World & world): world_(world)
+        System(World& world): world_(world)
         {}
 
-        World & getWorld()
+        World& getWorld()
         {
             return world_;
         }
 
-        const World & getWorld() const
+        const World& getWorld() const
         {
             return world_;
         }
 
     private:
-        World & world_;
+        World& world_;
     };
 }
 

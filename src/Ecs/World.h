@@ -27,6 +27,9 @@
 #include "Entity.h"
 #include "Component.h"
 #include "ComponentGroup.h"
+#include "SharedEntity.h"
+
+#include "../Event/EventManager.h"
 
 
 namespace Ecs
@@ -82,6 +85,14 @@ namespace Ecs
         };
 
         /**
+         *  Initialize the World by giving it a reference to the eventQueue
+         *
+         */
+         World(Event::EventQueue& eventQueue):
+             eventQueue_(eventQueue)
+             {}
+
+        /**
          * Create a new entity with no components.
          *
          * The entity has an arbitrary value. Do not use it on the client, where
@@ -96,7 +107,19 @@ namespace Ecs
          *
          * Use it for synchronizations with the server.
          */
-        Entity createEntity(const Entity & entity);
+        Entity createEntity(const Entity& entity);
+
+        /**
+         * Create a shared entity with no components.
+         */
+        SharedEntity createSharedEntity();
+
+        /**
+         * Register a new entity in the database.
+         *
+         * Return it as a shared entity.
+         */
+        SharedEntity createSharedEntity(const Entity& entity);
 
         /**
          * Add an association between an entity and a component.
@@ -104,7 +127,7 @@ namespace Ecs
          * @throw AlreadySetComponentException when entity is already associated
          *                                     with a component of the same type
          */
-        void addComponent(const Entity & entity, Component * component);
+        void addComponent(const Entity& entity, Component* component);
 
         /**
          * Return a ComponentGroup filled with entity and matching components.
@@ -113,19 +136,28 @@ namespace Ecs
          *                                prototype.
          */
         ComponentGroup getEntityComponents(
-            const Entity & entity,
-            const ComponentGroup & prototype
+            const Entity& entity,
+            const ComponentGroup& prototype
         );
+
+        bool hasComponent(const Entity& entity, Component::Type type) const;
 
         /**
          * Return components groups for entities matching prototype.
          */
-        ComponentGroupCollection getComponents(const ComponentGroup & prototypes);
+        ComponentGroupCollection getComponents(const ComponentGroup& prototypes);
+
+        /**
+         * Remove an entity from the world.
+         */
+        void removeEntity(const Entity& entity);
 
     private:
-        typedef std::list<Component *> ComponentCollection;
+        typedef std::list<Component*> ComponentCollection;
 
         std::map< Entity, ComponentCollection > components_;
+
+        Event::EventQueue& eventQueue_;
     };
 }
 

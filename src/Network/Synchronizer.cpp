@@ -18,7 +18,7 @@
 */
 #include "Synchronizer.h"
 namespace Network{
-Synchronizer::Synchronizer(World world, EventQueue eventqueue)
+Synchronizer::Synchronizer()
 {
     //ctor
 }

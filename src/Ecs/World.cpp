@@ -21,10 +21,17 @@
 
 #include <algorithm>
 
+#include "ComponentCreatedEvent.h"
+
 using std::map;
 
 namespace Ecs
 {
+    void removeEntity(World& world, Entity entity)
+    {
+        world.removeEntity(entity);
+    }
+
     Entity World::createEntity()
     {
         Entity currentId = 0;
@@ -45,6 +52,16 @@ namespace Ecs
     {
         components_[entity] = ComponentCollection();
         return entity;
+    }
+
+    SharedEntity World::createSharedEntity()
+    {
+        return SharedEntity(*this, createEntity(), &Ecs::removeEntity);
+    }
+
+    SharedEntity World::createSharedEntity(const Entity& entity)
+    {
+        return SharedEntity(*this, createEntity(entity), &Ecs::removeEntity);
     }
 
     void World::addComponent(const Entity& entity, Component* component)
@@ -77,24 +94,26 @@ namespace Ecs
         }
 
         components.push_back(component);
+
+        eventQueue_ << new ComponentCreatedEvent(entity, component);
     }
 
     ComponentGroup World::getEntityComponents(const Entity& entity,
                                               const ComponentGroup& prototype)
     {
-        ComponentCollection & components = components_.at(entity);
+        ComponentCollection& components = components_.at(entity);
 
         try
         {
             return prototype.clone(entity, components);
         }
-        catch (const ComponentGroup::DoesNotSatisfyException & e)
+        catch (const ComponentGroup::DoesNotSatisfyException& e)
         {
             throw DoesNotSatisfyException();
         }
     }
 
-    World::ComponentGroupCollection World::getComponents(const ComponentGroup & prototype)
+    World::ComponentGroupCollection World::getComponents(const ComponentGroup& prototype)
     {
         ComponentGroupCollection groups;
 
@@ -113,5 +132,24 @@ namespace Ecs
         }
 
         return groups;
+    }
+
+    void World::removeEntity(const Entity& entity)
+    {
+        components_.erase(entity);
+    }
+
+    bool World::hasComponent(const Entity& entity, Component::Type type) const
+    {
+        const ComponentCollection& components = components_.at(entity);
+
+        ComponentCollection::const_iterator comp;
+        for (comp = components.begin(); comp != components.end(); ++comp)
+        {
+            if ((*comp)->getType() == type)
+                return true;
+        }
+
+        return false;
     }
 }

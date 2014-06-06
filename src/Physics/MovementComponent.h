@@ -10,8 +10,8 @@ namespace Physics
   using Geometry::Vec3Df;
 
   /**
-   * Component for moving entities
-   */
+* Component for moving entities
+*/
   class MovementComponent : public Ecs::Component
   {
   public:

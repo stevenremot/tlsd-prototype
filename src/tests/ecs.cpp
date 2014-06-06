@@ -28,6 +28,8 @@ using std::string;
 
 #include "../Ecs/World.h"
 
+#include "../Event/EventManager.h"
+
 namespace EcsTest
 {
     class MessageComponent: public Ecs::Component
@@ -79,7 +81,9 @@ namespace EcsTest
 
     void testEcs()
     {
-        Ecs::World w = Ecs::World();
+        Event::EventManager m = Event::EventManager();
+
+        Ecs::World w = Ecs::World(m.getEventQueue());
 
         Ecs::Entity entity1 = w.createEntity();
         w.addComponent(entity1, new MessageComponent("Hello world !"));
@@ -97,6 +101,56 @@ namespace EcsTest
         {
             cout << group->getEntity() << " says ";
             cout << static_cast<MessageComponent &>(group->getComponent(MessageComponent::Type)).getMessage() << endl;
+        }
+    }
+
+    void testSharedEntity()
+    {
+        bool failed = false;
+
+        Event::EventManager em;
+        Ecs::World world(em.getEventQueue());
+
+        Ecs::ComponentGroup::ComponentTypeCollection types;
+        types.insert(MessageComponent::Type);
+
+        Ecs::ComponentGroup prototype(types);
+        Ecs::World::ComponentGroupCollection groups =
+            world.getComponents(prototype);
+
+        if (!groups.empty())
+        {
+            cout << "SharedEntity : wtf ?!" << endl;
+            failed = true;
+        }
+
+
+        {
+            Ecs::SharedEntity entity = world.createSharedEntity();
+            world.addComponent(entity.getEntity(), new MessageComponent("yo"));
+            Ecs::World::ComponentGroupCollection groups =
+                world.getComponents(prototype);
+
+            if (groups.size() != 1)
+            {
+                cout << "SharedEntity : expected to be 1, is " << groups.size()
+                     << endl;
+                failed = true;
+            }
+        }
+
+        groups = world.getComponents(prototype);
+
+        if (!groups.empty())
+        {
+            cout << "SharedEntity : expected to be empty, is " << groups.size()
+                 << endl;
+            failed = true;
+        }
+
+        if (!failed)
+        {
+            cout << "SharedEntity : All tests passed." << endl;
         }
     }
 }

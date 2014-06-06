@@ -21,14 +21,19 @@
 #include <iostream>
 #include <vector>
 
+#include "tests/animation.h"
 #include "tests/event.h"
 #include "tests/ecs.h"
 #include "tests/geometry.h"
 #include "tests/random.h"
 #include "tests/graph.h"
 #include "tests/threading.h"
+#include "tests/render.h"
 #include "tests/core.h"
 #include "tests/network.h"
+#include "tests/world.h"
+#include "tests/worldGeneration.h"
+#include "Application/Application.h"
 
 using std::cout;
 using std::endl;
@@ -37,13 +42,31 @@ using std::vector;
 
 int main()
 {
-    EventTest::testEvents();
-    EcsTest::testEcs();
-    GeometryTest::testVectors();
-    RandomTest::testNumberGenerator();
-    GraphTest::testPlanarGraph();
-    ThreadingTest::testChannel();
-    CoreTest::testSharedPtr();
-    NetworkTest::TestNetwork();
+
+    // EventTest::testEvents();
+    // EcsTest::testEcs();
+    // EcsTest::testSharedEntity();
+    // CoreTest::testSharedPtr();
+    // GeometryTest::testVectors();
+    // GeometryTest::testPolygons();
+    // RandomTest::testNumberGenerator();
+    // GraphTest::testPlanarGraph();
+    // GraphTest::testIsBetween();
+    // GraphTest::testPrimitiveExtraction();
+    // GraphTest::testPlanarCopy();
+    // GraphTest::testFilamentInCycleExtraction();
+    // ThreadingTest::testChannel();
+    // WorldTest::testRoadNetworkModel();
+    // WorldGenerationTests::testRoadExpansion();
+    // WorldTest::testGroundCoefficients();
+    // WorldTest::testGroundModel();
+    // WorldGenerationTests::testRoadExpansion();
+    // WorldGenerationTests::testLotCreation();
+    // WorldGenerationTests::testCityCreation();
+    // AnimationTest::testAnimation();
+    // RenderTest::testRenderSystem(10);
+    Application::Application app;
+    app.start();
+    //NetworkTest::TestNetwork();
     return 0;
 }
