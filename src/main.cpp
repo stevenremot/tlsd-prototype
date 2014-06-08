@@ -30,6 +30,7 @@
 #include "tests/threading.h"
 #include "tests/render.h"
 #include "tests/core.h"
+#include "tests/network.h"
 #include "tests/world.h"
 #include "tests/worldGeneration.h"
 #include "Application/Application.h"
@@ -41,6 +42,7 @@ using std::vector;
 
 int main()
 {
+
     // EventTest::testEvents();
     // EcsTest::testEcs();
     // EcsTest::testSharedEntity();
@@ -65,6 +67,6 @@ int main()
     // RenderTest::testRenderSystem(10);
     Application::Application app;
     app.start();
-
+    //NetworkTest::TestNetwork();
     return 0;
 }

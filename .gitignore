@@ -2,7 +2,8 @@ program
 *.o
 *~
 .sconsign.dblite
-# code::blocks crap
+
 *.cbp
 *.layout
 *.exe
+
