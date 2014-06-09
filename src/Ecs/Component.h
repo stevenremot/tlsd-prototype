@@ -64,7 +64,7 @@ namespace Ecs
         /**
          * Returns component's type
          */
-        const Type & getType() const
+        const Type& getType() const
         {
             return type_;
         }
