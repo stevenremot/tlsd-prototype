@@ -22,11 +22,16 @@
 #include "MovementComponent.h"
 #include "../Geometry/PositionComponent.h"
 #include "../Threading/Thread.h"
+#include "GravityComponent.h"
 
 using Geometry::PositionComponent;
+using Ecs::World;
+using Ecs::Entity;
 
 namespace Physics
 {
+    const Geometry::Vec3Df GravityVec(0.0, 0.0, -9.81);
+
     void MovementSystem::run()
     {
         World& world = getWorld();
@@ -50,18 +55,42 @@ namespace Physics
             for (group = groups.begin(); group != groups.end(); ++group)
             {
                 PositionComponent& positionComponent =
-                    static_cast<PositionComponent&>(group->getComponent(PositionComponent::Type));
-                MovementComponent& movementComponent =
-                    static_cast<MovementComponent&>(group->getComponent(MovementComponent::Type));
-                Vec3Df offset =
-                    movementComponent.getVelocity() *
-                    (static_cast<float>(delay) / 1000.0);
+                    dynamic_cast<PositionComponent&>(group->getComponent(PositionComponent::Type));
+                Vec3Df movement = getMovement(*group, delay);
 
-                positionComponent.setPosition(positionComponent.getPosition() + offset);
+                positionComponent.setPosition(positionComponent.getPosition() + movement);
             }
         }
 
         lastTime_ = currentTime;
+    }
+
+    Geometry::Vec3Df MovementSystem::getMovement(
+        Ecs::ComponentGroup& group,
+        unsigned long delay
+    ) {
+        World& world = getWorld();
+
+        MovementComponent& movementComponent =
+            dynamic_cast<MovementComponent&>(group.getComponent(MovementComponent::Type));
+        const float factor = (static_cast<float>(delay) / 1000.0);
+
+        const Entity& entity = group.getEntity();
+
+        if (world.hasComponent(entity, GravityComponent::Type))
+        {
+            const GravityComponent& gravity = dynamic_cast<GravityComponent&>(
+                world.getEntityComponent(entity, GravityComponent::Type)
+            );
+
+            const Vec3Df& baseVelocity = movementComponent.getVelocity();
+            movementComponent.setVelocity(
+                baseVelocity +
+                GravityVec * gravity.getWeight() * factor
+            );
+        }
+
+        return movementComponent.getVelocity() * factor;
     }
 
     unsigned long MovementSystem::getCurrentTime()

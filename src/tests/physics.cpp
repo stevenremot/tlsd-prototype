@@ -23,8 +23,10 @@
 
 #include "../Geometry/PositionComponent.h"
 #include "../Physics/MovementComponent.h"
+#include "../Physics/GravityComponent.h"
 #include "../Physics/MovementSystem.h"
 #include "../Threading/Thread.h"
+#include "SvgDrawer.h"
 
 namespace PhysicsTest
 {
@@ -41,8 +43,12 @@ namespace PhysicsTest
         world.addComponent(
             entity,
             new Physics::MovementComponent(
-                Geometry::Vec3Df(1.0, 0.0, 0.0)
+                Geometry::Vec3Df(1.0, 0.0, 10.0)
             )
+        );
+        world.addComponent(
+            entity,
+            new Physics::GravityComponent(1)
         );
 
         Physics::MovementSystem movementSystem(world);
@@ -51,16 +57,30 @@ namespace PhysicsTest
         threadables.push_back(&em);
         threadables.push_back(&movementSystem);
 
-        Threading::Thread t(threadables, 60);
+        Threading::Thread t(threadables, 80);
         t.start();
 
-        std::cout << pos->getPosition() << std::endl;
-        for (unsigned int i = 0; i < 5; i++)
+        Test::SvgDrawer svg(500, 500);
+        svg.drawCircle(
+            pos->getPosition().getX() * 10,
+            -pos->getPosition().getZ() * 10,
+            1,
+            "red"
+        );
+        for (unsigned int i = 0; i < 20; i++)
         {
-            Threading::sleep(1, 0);
-            std::cout << pos->getPosition() << std::endl;
+            Threading::sleep(0, 250);
+            svg.drawCircle(
+                pos->getPosition().getX() * 10,
+                -pos->getPosition().getZ() * 10,
+                1,
+                "red"
+            );
         }
 
         t.stop();
+
+        svg.end();
+        std::cout << svg.getContent().str();
     }
 }
