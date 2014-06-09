@@ -9,12 +9,17 @@ using Ecs::World;
 
 namespace Physics
 {
-  class MovementSystem : public System, public Threading:: ThreadableInterface
+    class MovementSystem : public System, public Threading::ThreadableInterface
     {
     public:
-    MovementSystem(World& world) : System(world){}
+        MovementSystem(World& world): System(world), lastTime_(0)
+        {
+        }
 
-      virtual void run();
+        virtual void run();
+    private:
+        unsigned long lastTime_;
+        unsigned long getCurrentTime();
     };
 }
 #endif // MOVEMENTSYSTEM_H
