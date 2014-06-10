@@ -130,7 +130,7 @@ namespace Application
     void Application::setupUpdateThread()
     {
         Physics::MovementSystem* movementSystem =
-            new Physics::MovementSystem(ecsWorld_);
+            new Physics::MovementSystem(ecsWorld_, eventManager_.getEventQueue());
 
         std::vector<Threading::ThreadableInterface*> threadables;
         threadables.push_back(movementSystem);

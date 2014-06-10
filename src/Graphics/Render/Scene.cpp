@@ -45,6 +45,7 @@ namespace Graphics
             reg.put(Graphics::Render::SetupAnimationEvent::TYPE, this);
             reg.put(Graphics::Render::AnimateEvent::TYPE, this);
             reg.put(Graphics::Render::UpdateAnimationEvent::TYPE, this);
+            reg.put(Physics::EntityPositionChangedEvent::TYPE, this);
         }
 
         void Scene::call(const Event::Event& event)
