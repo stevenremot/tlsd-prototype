@@ -59,7 +59,7 @@ namespace Ecs
         public:
             const char* what() const throw()
             {
-                return "Entity's components does not satisfy group requirements.";
+                return "Entity's components does not satisfy requirements.";
             }
         };
 
@@ -138,6 +138,16 @@ namespace Ecs
         ComponentGroup getEntityComponents(
             const Entity& entity,
             const ComponentGroup& prototype
+        );
+
+        /**
+         * Return the component of type type associated to entity
+         *
+         * @throw DoesNotSatisfyException when entity has no such component
+         */
+        Component& getEntityComponent(
+            const Entity& entity,
+            const Component::Type& type
         );
 
         bool hasComponent(const Entity& entity, Component::Type type) const;

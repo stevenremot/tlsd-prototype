@@ -113,6 +113,24 @@ namespace Ecs
         }
     }
 
+    Component& World::getEntityComponent(
+        const Entity& entity,
+        const Component::Type& type
+    ) {
+        ComponentCollection& components = components_.at(entity);
+
+        ComponentCollection::iterator component;
+        for (component = components.begin(); component != components.end(); ++component)
+        {
+            if ((*component)->getType() == type)
+            {
+                return **component;
+            }
+        }
+
+        throw DoesNotSatisfyException();
+    }
+
     World::ComponentGroupCollection World::getComponents(const ComponentGroup& prototype)
     {
         ComponentGroupCollection groups;
