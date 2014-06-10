@@ -37,7 +37,7 @@ namespace Network
 class Server
 {
 public:
-    Server(string port, EventQueue *eventqueue);
+    Server(string port, EventQueue* eventqueue);
     virtual ~Server();
     void SetSerializer(Serializer* serializer);
     Serializer* GetSerializer();

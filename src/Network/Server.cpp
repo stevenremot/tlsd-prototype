@@ -22,7 +22,7 @@ using Threading::ThreadableInterface;
 using Threading::Thread;
 namespace Network
 {
-Server::Server(string  port, EventQueue *eventqueue)
+Server::Server(string  port, EventQueue* eventqueue)
 {
 
 ///Initialisation des pointeurs

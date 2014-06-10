@@ -39,7 +39,7 @@ namespace Network{
 class Client
 {
     public:
-        Client(Ip ip, string port, EventQueue eventqueue);
+        Client(Ip ip, string port, EventQueue* eventqueue);
         virtual ~Client();
         void SetSerializer(Serializer *serializer);
         Serializer *GetSerializer();

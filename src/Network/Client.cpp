@@ -19,7 +19,7 @@
 #include "Client.h"
 namespace Network
 {
-Client::Client(Ip ip, string port, EventQueue eventqueue)
+Client::Client(Ip ip, string port, EventQueue* eventqueue)
 {
 
     connected_ = false;

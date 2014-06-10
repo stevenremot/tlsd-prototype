@@ -36,7 +36,8 @@ void AcceptClient::run(void)
 
     TCPSocket *clntSock;
     // Create separate memory for client argument
-    if(clntSock = this->Server_->accept())
+    clntSock = this->Server_->accept();
+    if(clntSock!=NULL)
     {
         /// Ajouter des sémaphores
         this->ListeClient_->push_back(clntSock);
