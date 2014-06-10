@@ -211,7 +211,12 @@ namespace Graphics
                 events_ << delayedEvents[i];
         }
 
-        void Scene::addMeshSceneNodeFromFile(SceneNode* parent, const string& meshFile, const string& textureFile, const Vec3Df& position, const Vec3Df& rotation)
+        void Scene::addMeshSceneNodeFromFile(
+            SceneNode* parent,
+            const string& meshFile,
+            const string& textureFile,
+            const Vec3Df& position,
+            const Vec3Df& rotation)
         {
             irr::scene::IMeshSceneNode* irrNode = irrlichtSceneManager_->addMeshSceneNode(irrlichtSceneManager_->getMesh(meshFile.c_str()));
             if (parent != NULL)
@@ -237,7 +242,12 @@ namespace Graphics
             node->setAbsoluteRotation(rotation);
         }
 
-        void Scene::addAnimatedMeshSceneNodeFromFile(SceneNode* parent, const string& meshFile, const string& textureFile, const Vec3Df& position, const Vec3Df& rotation)
+        void Scene::addAnimatedMeshSceneNodeFromFile(
+            SceneNode* parent,
+            const string& meshFile,
+            const string& textureFile,
+            const Vec3Df& position,
+            const Vec3Df& rotation)
         {
             irr::scene::IAnimatedMeshSceneNode* irrNode = irrlichtSceneManager_->addAnimatedMeshSceneNode(irrlichtSceneManager_->getMesh(meshFile.c_str()));
             if (parent != NULL)
@@ -263,7 +273,11 @@ namespace Graphics
             node->setAbsoluteRotation(rotation);
         }
 
-        void Scene::addMeshSceneNodeFromModel3D(SceneNode* parent, const Model3D& model, const Vec3Df& position, const Vec3Df& rotation)
+        void Scene::addMeshSceneNodeFromModel3D(
+            SceneNode* parent,
+            const Model3D& model,
+            const Vec3Df& position,
+            const Vec3Df& rotation)
         {
             using irr::scene::SMeshBuffer;
             using irr::core::vector3df;
