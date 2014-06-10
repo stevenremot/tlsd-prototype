@@ -146,7 +146,7 @@ namespace Graphics
             const Model3D& model_;
             const Vec3Df& position_;
             const Vec3Df& rotation_;
-            const Ecs::Entity& entity_;
+            Ecs::Entity entity_;
         };
     }
 }

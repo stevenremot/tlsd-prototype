@@ -147,7 +147,7 @@ namespace Graphics
                     if (irrlichtSceneManager_ != NULL && irrlichtVideoDriver_ != NULL)
                     {
                         addMeshSceneNodeFromFile(NULL, renderEvent->getMeshFile(), renderEvent->getTextureFile(), renderEvent->getPosition(), renderEvent->getRotation());
-                        sceneNodeIdsByEntity_[renderEvent->getEntity()] = sceneNodes_.size()-1;
+                        sceneNodeIdsByEntity_[renderEvent->getEntity()] = sceneNodes_.back()->getId();;
                     }
                     else
                         delayedEvents.push_back(new RenderMeshFileEvent(*renderEvent));
@@ -159,7 +159,7 @@ namespace Graphics
                     if (irrlichtSceneManager_ != NULL && irrlichtVideoDriver_ != NULL)
                     {
                         addAnimatedMeshSceneNodeFromFile(NULL, renderEvent->getMeshFile(), renderEvent->getTextureFile(), renderEvent->getPosition(), renderEvent->getRotation());
-                        sceneNodeIdsByEntity_[renderEvent->getEntity()] = sceneNodes_.size()-1;
+                        sceneNodeIdsByEntity_[renderEvent->getEntity()] = sceneNodes_.back()->getId();
                     }
                     else
                         delayedEvents.push_back(new RenderAnimatedMeshFileEvent(*renderEvent));
@@ -170,7 +170,7 @@ namespace Graphics
                     if (irrlichtSceneManager_ != NULL && irrlichtVideoDriver_ != NULL)
                     {
                         addMeshSceneNodeFromModel3D(NULL, renderEvent->getModel(), renderEvent->getPosition(), renderEvent->getRotation());
-                        sceneNodeIdsByEntity_[renderEvent->getEntity()] = sceneNodes_.size()-1;
+                        sceneNodeIdsByEntity_[renderEvent->getEntity()] = sceneNodes_.back()->getId();
                     }
                     else
                         delayedEvents.push_back(new RenderModel3DEvent(*renderEvent));
