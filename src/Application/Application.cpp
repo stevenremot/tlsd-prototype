@@ -30,6 +30,7 @@
 #include "../World/Generation/ChunkGenerationSystem.h"
 #include "../Input/PlayerPositionChangedEvent.h"
 #include "../Ecs/ComponentCreatedEvent.h"
+#include "../Physics/MovementSystem.h"
 
 // TODO includes for createMovingCube, remove later
 #include "../Geometry/PositionComponent.h"
@@ -68,10 +69,12 @@ namespace Application
     {
         setupEventThread();
         setupGraphicsThread();
+        setupUpdateThread();
         setupGenerationThread();
 
         eventThread_->start();
         graphicsThread_->start();
+        updateThread_->start();
         generationThread_->start();
 
         createMovingCube(ecsWorld_);
@@ -84,6 +87,7 @@ namespace Application
 
         eventThread_->stop();
         graphicsThread_->stop();
+        updateThread_->stop();
         generationThread_->stop();
     }
 
@@ -121,6 +125,17 @@ namespace Application
         reg.put(Ecs::ComponentCreatedEvent::TYPE, rs);
 
         graphicsThread_ = new Threading::Thread(graphicsThreadables, 60);
+    }
+
+    void Application::setupUpdateThread()
+    {
+        Physics::MovementSystem* movementSystem =
+            new Physics::MovementSystem(ecsWorld_);
+
+        std::vector<Threading::ThreadableInterface*> threadables;
+        threadables.push_back(movementSystem);
+
+        updateThread_ = new Threading::Thread(threadables, 80);
     }
 
     void Application::setupGenerationThread()
