@@ -61,6 +61,7 @@ namespace Application
     private:
         Threading::Thread* eventThread_;
         Threading::Thread* graphicsThread_;
+        Threading::Thread* updateThread_;
         Threading::Thread* generationThread_;
         Event::EventManager eventManager_;
         Ecs::World ecsWorld_;
@@ -69,6 +70,7 @@ namespace Application
 
         void setupEventThread();
         void setupGraphicsThread();
+        void setupUpdateThread();
         void setupGenerationThread();
     };
 }
