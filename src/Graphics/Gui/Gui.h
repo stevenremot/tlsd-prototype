@@ -1,7 +1,7 @@
 #ifndef GUI_H
 #define GUI_H
-#include <irrlicht.h>
-#include <IrrlichtDevice.h>
+#include <irrlicht/irrlicht.h>
+#include <irrlicht/IrrlichtDevice.h>
 #include "../../Threading/ThreadableInterface.h"
 #ifdef _IRR_WINDOWS_
 #pragma comment(lib, "Irrlicht.lib")

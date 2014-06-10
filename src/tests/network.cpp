@@ -1,5 +1,6 @@
 #include "network.h"
 
+#include "../Threading/Thread.h"
 
 using std::cout;
 using std::endl;
@@ -20,7 +21,7 @@ void TestNetwork()
 int i=0;
     while(i<3)
     {
-        Sleep(1000);
+        Threading::sleep(1, 0);
         client1->SendEvent("Client1");
         client2->SendEvent("Client2");
         server->SendEvent("Server");

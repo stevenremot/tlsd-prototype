@@ -1,8 +1,8 @@
 #ifndef MYEVENTRECEIVER_H
 #define MYEVENTRECEIVER_H
-#include <irrlicht.h>
-#include <IEventReceiver.h>
-#include <IrrlichtDevice.h>
+#include <irrlicht/irrlicht.h>
+#include <irrlicht/IEventReceiver.h>
+#include <irrlicht/IrrlichtDevice.h>
 #include <stdlib.h>
 #include <iostream>
 
@@ -26,6 +26,7 @@ enum
     GUI_ID_TRANSPARENCY_SCROLL_BAR
 };
 
+// TODO Unused function, remove ?
 static irr::video::E_DRIVER_TYPE driverChoiceConsole(bool allDrivers=true)
 {
     const char* const names[] = {"NullDriver","Software Renderer","Burning's Video","Direct3D 8.1","Direct3D 9.0c","OpenGL 1.x/2.x/3.x"};
