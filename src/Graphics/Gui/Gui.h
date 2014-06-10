@@ -1,22 +1,26 @@
 #ifndef GUI_H
 #define GUI_H
-#include<irrlicht.h>
+#include <irrlicht.h>
+#include <IrrlichtDevice.h>
 #include "../../Threading/ThreadableInterface.h"
 #ifdef _IRR_WINDOWS_
 #pragma comment(lib, "Irrlicht.lib")
 #endif
+
+
 namespace Graphics
 {
-    class Gui :
-    {
+
+
+class Gui
+{
     public:
         Gui();
         virtual ~Gui();
-        void Call(void);
+        int Call(void);
     protected:
     private:
-        irr::gui::IGUIEnvironment *environment_;
 
-    };
+};
 }
 #endif // GUI_H

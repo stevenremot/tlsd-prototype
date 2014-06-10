@@ -15,32 +15,16 @@
     You should have received a copy of the GNU General Public License
     along with The Lost Souls Downfall prototype.  If not, see
     <http://www.gnu.org/licenses/>.
-*/
-#ifndef ACCEPTCLIENT_H
-#define ACCEPTCLIENT_H
+*/#include "MyEventReceiver.h"
+namespace Graphics{
 
-#include "PracticalSocket.h"
-#include <vector>
-#include <iostream>
-#include "Listener.h"
-#include "../Threading/Channel.h"
-#include "../Threading/Thread.h"
-
-using Threading::ThreadableInterface;
-using Threading::Thread;
-namespace Network
-{
-class AcceptClient : public ThreadableInterface
-{
-public:
-    AcceptClient(TCPServerSocket *Server,std::vector<TCPSocket*> *ListeClient);
-    virtual ~AcceptClient();
-    void run(void);
-protected:
-private:
-    TCPServerSocket *Server_;
-    vector<TCPSocket*> *ListeClient_;
-    Thread* thread_;
-};
+void setSkinTransparency(irr::s32 alpha, irr::gui::IGUISkin * skin)
+    {
+        for (irr::s32 i=0; i<irr::gui::EGDC_COUNT ; ++i)
+        {
+            irr::video::SColor col = skin->getColor((irr::gui::EGUI_DEFAULT_COLOR)i);
+            col.setAlpha(alpha);
+            skin->setColor((irr::gui::EGUI_DEFAULT_COLOR)i, col);
+        }
+    }
 }
-#endif // ACCEPTCLIENT_H
