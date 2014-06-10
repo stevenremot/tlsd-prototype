@@ -5,7 +5,7 @@
 #include <irrlicht/IrrlichtDevice.h>
 #include <stdlib.h>
 #include <iostream>
-
+#include "GuiId.h"
 namespace Graphics
 {
 
@@ -17,13 +17,6 @@ struct SAppContext
     irr::IrrlichtDevice *device;
     irr::s32             counter;
     irr::gui::IGUIListBox*    listbox;
-};
-enum
-{
-    GUI_ID_QUIT_BUTTON = 101,
-    GUI_ID_NEW_WINDOW_BUTTON,
-    GUI_ID_FILE_OPEN_BUTTON,
-    GUI_ID_TRANSPARENCY_SCROLL_BAR
 };
 
 // TODO Unused function, remove ?
