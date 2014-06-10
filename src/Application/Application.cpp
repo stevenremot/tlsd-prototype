@@ -38,6 +38,7 @@
 #include "../Graphics/Render/RenderableComponent.h"
 #include "../Graphics/Render/ModelUtils.h"
 #include "../Physics/MovementComponent.h"
+#include "../Physics/GravityComponent.h"
 
 namespace Application
 {
@@ -61,7 +62,11 @@ namespace Application
         );
         world.addComponent(
             entity,
-            new Physics::MovementComponent(Geometry::Vec3Df(1.0, 0.0, 1.0))
+            new Physics::MovementComponent(Geometry::Vec3Df(0.0, -5.0, 10.0))
+        );
+        world.addComponent(
+            entity,
+            new Physics::GravityComponent(1)
         );
     }
 
