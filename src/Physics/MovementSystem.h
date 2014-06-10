@@ -23,17 +23,22 @@
 #include "../Ecs/System.h"
 #include "../Threading/ThreadableInterface.h"
 #include "../Geometry/Vec3D.h"
+#include "../Event/EventManager.h"
 
 namespace Physics
 {
     class MovementSystem : public Ecs::System, public Threading::ThreadableInterface
     {
     public:
-        MovementSystem(Ecs::World& world): System(world), lastTime_(0)
+        MovementSystem(Ecs::World& world, Event::EventQueue& eventQueue):
+            System(world),
+            eventQueue_(eventQueue),
+            lastTime_(0)
         {}
 
         virtual void run();
     private:
+        Event::EventQueue& eventQueue_;
         unsigned long lastTime_;
         unsigned long getCurrentTime();
         Geometry::Vec3Df getMovement(

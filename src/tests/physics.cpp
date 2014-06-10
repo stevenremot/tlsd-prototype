@@ -51,7 +51,7 @@ namespace PhysicsTest
             new Physics::GravityComponent(1)
         );
 
-        Physics::MovementSystem movementSystem(world);
+        Physics::MovementSystem movementSystem(world, em.getEventQueue());
 
         std::vector<Threading::ThreadableInterface*> threadables;
         threadables.push_back(&em);

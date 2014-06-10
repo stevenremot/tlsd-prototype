@@ -23,6 +23,7 @@
 #include "../Geometry/PositionComponent.h"
 #include "../Threading/Thread.h"
 #include "GravityComponent.h"
+#include "EntityPositionChangedEvent.h"
 
 using Geometry::PositionComponent;
 using Ecs::World;
@@ -59,6 +60,9 @@ namespace Physics
                 Vec3Df movement = getMovement(*group, delay);
 
                 positionComponent.setPosition(positionComponent.getPosition() + movement);
+
+                if (movement != Geometry::Vec3Df(0,0,0))
+                    eventQueue_ << new EntityPositionChangedEvent(group->getEntity(), positionComponent.getPosition());
             }
         }
 
