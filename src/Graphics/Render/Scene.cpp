@@ -9,6 +9,7 @@
 #include "../../Input/Events.h"
 #include "RenderEvents.h"
 #include "AnimationEvents.h"
+#include "../../Physics/EntityPositionChangedEvent.h"
 
 // TODO: remove
 #include <iostream>
@@ -109,6 +110,10 @@ namespace Graphics
             {
                 events_ << new UpdateAnimationEvent(static_cast<const UpdateAnimationEvent&>(event));
             }
+            else if (event.getType() == Physics::EntityPositionChangedEvent::TYPE)
+            {
+                events_ << new Physics::EntityPositionChangedEvent(static_cast<const Physics::EntityPositionChangedEvent&>(event));
+            }
 
         }
 
@@ -197,6 +202,15 @@ namespace Graphics
                     if (getEntitySceneNodeId(animEvent->getEntity(),id))
                     {
                         dynamic_cast<AnimatedMeshSceneNode*>(sceneNodes_[id])->update();
+                    }
+                }
+                else if (event->getType() == Physics::EntityPositionChangedEvent::TYPE)
+                {
+                    Physics::EntityPositionChangedEvent* posChangedEvent = dynamic_cast<Physics::EntityPositionChangedEvent*>(event);
+                    unsigned int id = 0;
+                    if (getEntitySceneNodeId(posChangedEvent->getEntity(),id))
+                    {
+                        sceneNodes_[id]->setAbsolutePosition(posChangedEvent->getPosition());
                     }
                 }
 
