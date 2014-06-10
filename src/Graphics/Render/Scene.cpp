@@ -61,11 +61,6 @@ namespace Graphics
                 sceneNodes_[0]->setIrrlichtSceneNode(irrlichtSceneManager_->getRootSceneNode());
                 sceneNodes_[0]->setId(0);
 
-                Model3D cube = createPrettyCubeModel();
-                Vec3Df pos = Vec3Df(0,0,0);
-                Vec3Df rot = Vec3Df(0,0,0);
-                addMeshSceneNodeFromModel3D(sceneNodes_.back(), cube, pos, rot);
-
                 // init camera
                 addCameraSceneNode(sceneNodes_[0]);
                 camera_ = dynamic_cast<CameraSceneNode*>(sceneNodes_.back());

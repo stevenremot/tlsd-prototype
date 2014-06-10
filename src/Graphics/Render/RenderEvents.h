@@ -59,7 +59,7 @@ namespace Graphics
             const string& textureFile_;
             const Vec3Df& position_;
             const Vec3Df& rotation_;
-            const Ecs::Entity& entity_;
+            Ecs::Entity entity_;
         };
 
         class RenderAnimatedMeshFileEvent : public Event::Event
@@ -106,7 +106,7 @@ namespace Graphics
             const string& textureFile_;
             const Vec3Df& position_;
             const Vec3Df& rotation_;
-            const Ecs::Entity& entity_;
+            Ecs::Entity entity_;
         };
 
         class RenderModel3DEvent : public Event::Event
