@@ -64,10 +64,10 @@ int main()
     // WorldGenerationTests::testCityCreation();
     // AnimationTest::testAnimation();
     // RenderTest::testRenderSystem(10);
-    PhysicsTest::testMovementSystem();
+    // PhysicsTest::testMovementSystem();
 
-    // Application::Application app;
-    // app.start();
+    Application::Application app;
+    app.start();
 
     return 0;
 }

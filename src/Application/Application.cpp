@@ -31,8 +31,39 @@
 #include "../Input/PlayerPositionChangedEvent.h"
 #include "../Ecs/ComponentCreatedEvent.h"
 
+// TODO includes for createMovingCube, remove later
+#include "../Geometry/PositionComponent.h"
+#include "../Geometry/RotationComponent.h"
+#include "../Graphics/Render/RenderableComponent.h"
+#include "../Graphics/Render/ModelUtils.h"
+#include "../Physics/MovementComponent.h"
+
 namespace Application
 {
+    // TODO method for tests, to be removed
+    void createMovingCube(Ecs::World& world)
+    {
+        const Ecs::Entity& entity = world.createEntity();
+        world.addComponent(
+            entity,
+            new Geometry::PositionComponent(Geometry::Vec3Df(145.0, 145.0, 145.0))
+        );
+        world.addComponent(
+            entity,
+            new Geometry::RotationComponent(Geometry::Vec3Df())
+        );
+        world.addComponent(
+            entity,
+            new Graphics::Render::RenderableComponent(
+                Graphics::Render::createPrettyCubeModel()
+            )
+        );
+        world.addComponent(
+            entity,
+            new Physics::MovementComponent(Geometry::Vec3Df(1.0, 0.0, 1.0))
+        );
+    }
+
     void Application::start()
     {
         setupEventThread();
@@ -42,6 +73,8 @@ namespace Application
         eventThread_->start();
         graphicsThread_->start();
         generationThread_->start();
+
+        createMovingCube(ecsWorld_);
 
         running_ = true;
         while (running_)
