@@ -17,33 +17,52 @@
     <http://www.gnu.org/licenses/>.
 */
 
-#ifndef PHYSICS_COLLISION_BODY_H
-#define PHYSICS_COLLISION_BODY_H
+#ifndef GEOMETRY_AXIS_ALIGNED_BOUNDING_BOX_H
+#define GEOMETRY_AXIS_ALIGNED_BOUNDING_BOX_H
 
-#include <string>
+#include "Vec3D.h"
 
-namespace Physics
+namespace Geometry
 {
     /**
-     * Base class for collision bodies.
+     * A simple bounding box class.
      */
-    class CollisionBody
+    class AxisAlignedBoundingBox
     {
     public:
-        typedef std::string Type;
-
-        CollisionBody(const Type& type): type_(type)
+        AxisAlignedBoundingBox(const Vec3Df& origin, const Vec3Df& offset):
+            origin_(origin),
+            offset_(offset)
         {}
 
-        virtual ~CollisionBody() {}
+        AxisAlignedBoundingBox(const AxisAlignedBoundingBox& bbox):
+            origin_(bbox.origin_),
+            offset_(bbox.offset_)
+        {}
 
-        const Type& getType() const
+        const Vec3Df& getOrigin() const
         {
-            return type_;
+            return origin_;
+        }
+
+        const Vec3Df& getOffset() const
+        {
+            return offset_;
+        }
+
+        void setOrigin(const Vec3Df& origin)
+        {
+            origin_ = origin;
+        }
+
+        void setOffset(const Vec3Df& offset)
+        {
+            offset_ = offset;
         }
 
     private:
-        Type type_;
+        Vec3Df origin_;
+        Vec3Df offset_;
     };
 }
 

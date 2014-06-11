@@ -1,7 +1,25 @@
+# Executable
+############
+
 program
-*.o
+
+# Backup
+#########
 *~
+
+# Tags db
+##########
+
+TAGS
+
+# Build junk
+############
+
 .sconsign.dblite
+*.o
+
 # code::blocks crap
+###################
+
 *.cbp
 *.layout

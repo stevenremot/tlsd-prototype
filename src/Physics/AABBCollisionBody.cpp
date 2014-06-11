@@ -17,39 +17,9 @@
     <http://www.gnu.org/licenses/>.
 */
 
-#ifndef PHYSICS_COLLISION_BODY_H
-#define PHYSICS_COLLISION_BODY_H
-
-#include <string>
+#include "AABBCollisionBody.h"
 
 namespace Physics
 {
-    /**
-     * Base class for collision bodies.
-     */
-    class CollisionBody
-    {
-    public:
-        typedef std::string Type;
-
-        CollisionBody(const Type& type): type_(type)
-        {}
-
-        virtual ~CollisionBody() {}
-
-        const Type& getType() const
-        {
-            return type_;
-        }
-
-    private:
-        Type type_;
-    };
+    const CollisionBody::Type AABBCollisionBody::Type = "axis-aligned-bounding-box";
 }
-
-#endif
-
-// Emacs local variables
-// Local variables:
-// mode: c++
-// End:

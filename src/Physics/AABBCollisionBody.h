@@ -17,33 +17,31 @@
     <http://www.gnu.org/licenses/>.
 */
 
-#ifndef PHYSICS_COLLISION_BODY_H
-#define PHYSICS_COLLISION_BODY_H
+#ifndef PHYSICS_AABB_COLLISION_BODY_H
+#define PHYSICS_AABB_COLLISION_BODY_H
 
-#include <string>
+#include "CollisionBody.h"
+#include "../Geometry/AxisAlignedBoundingBox.h"
 
 namespace Physics
 {
-    /**
-     * Base class for collision bodies.
-     */
-    class CollisionBody
+    class AABBCollisionBody: public CollisionBody
     {
     public:
-        typedef std::string Type;
+        static const Type Type;
 
-        CollisionBody(const Type& type): type_(type)
+        AABBCollisionBody(const Geometry::AxisAlignedBoundingBox& bbox):
+            CollisionBody(Type),
+            boundingBox_(bbox)
         {}
 
-        virtual ~CollisionBody() {}
-
-        const Type& getType() const
+        const Geometry::AxisAlignedBoundingBox& getBoundingBox() const
         {
-            return type_;
+            return boundingBox_;
         }
 
     private:
-        Type type_;
+        Geometry::AxisAlignedBoundingBox boundingBox_;
     };
 }
 

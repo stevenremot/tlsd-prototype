@@ -17,33 +17,20 @@
     <http://www.gnu.org/licenses/>.
 */
 
-#ifndef PHYSICS_COLLISION_BODY_H
-#define PHYSICS_COLLISION_BODY_H
+#ifndef PHYSICS_GROUND_COLLISION_BODY_H
+#define PHYSICS_GROUND_COLLISION_BODY_H
 
-#include <string>
+#include "CollisionBody.h"
 
 namespace Physics
 {
-    /**
-     * Base class for collision bodies.
-     */
-    class CollisionBody
+    class GroundCollisionBody: public CollisionBody
     {
     public:
-        typedef std::string Type;
+        static const Type Type;
 
-        CollisionBody(const Type& type): type_(type)
+        GroundCollisionBody(): CollisionBody(Type)
         {}
-
-        virtual ~CollisionBody() {}
-
-        const Type& getType() const
-        {
-            return type_;
-        }
-
-    private:
-        Type type_;
     };
 }
 
