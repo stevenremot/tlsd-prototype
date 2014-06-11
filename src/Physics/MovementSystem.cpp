@@ -46,11 +46,11 @@ namespace Physics
         Ecs::World::ComponentGroupCollection groups = world.getComponents(prototype);
 
         // Update their positions
-        unsigned long currentTime = getCurrentTime();
+        timer_->updateCurrentTime();
 
-        if (lastTime_ > 0)
+        if (timer_->getLastTime() > 0)
         {
-            unsigned long delay = currentTime - lastTime_;
+            unsigned long delay = timer_->getDelay();
 
             Ecs::World::ComponentGroupCollection::iterator group;
             for (group = groups.begin(); group != groups.end(); ++group)
@@ -61,12 +61,12 @@ namespace Physics
 
                 positionComponent.setPosition(positionComponent.getPosition() + movement);
 
-                if (movement != Geometry::Vec3Df(0,0,0))
+              if (movement != Geometry::Vec3Df(0,0,0))
                     eventQueue_ << new EntityPositionChangedEvent(group->getEntity(), positionComponent.getPosition());
             }
         }
 
-        lastTime_ = currentTime;
+        timer_->updateLastTime();
     }
 
     Geometry::Vec3Df MovementSystem::getMovement(
@@ -95,12 +95,5 @@ namespace Physics
         }
 
         return movementComponent.getVelocity() * factor;
-    }
-
-    unsigned long MovementSystem::getCurrentTime()
-    {
-        struct timespec time;
-        Threading::getTime(time);
-        return time.tv_sec * 1000L + time.tv_nsec / 1000000L;
     }
 }
