@@ -17,6 +17,7 @@ namespace Graphics
 
             void setIrrlichtSceneNode(irr::scene::IMeshSceneNode* node);
 
+            irr::scene::IMesh* getIrrlichtMesh() const;
         protected:
             // override
             virtual void removeIrrlichtSceneNode();

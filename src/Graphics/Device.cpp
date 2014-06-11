@@ -12,6 +12,7 @@
 #include "Render/Scene.h"
 #include "../Input/IrrlichtInputReceiver.h"
 #include "CloseDeviceEvent.h"
+#include "../Physics/InitCollisionEngineEvent.h"
 
 namespace Graphics
 {
@@ -40,6 +41,7 @@ namespace Graphics
             initialized_ = true;
             eventQueue_ << new Render::InitSceneEvent(irrlichtDevice_->getSceneManager(), irrlichtDevice_->getVideoDriver());
             eventQueue_ << new Input::InitInputEvent(irrlichtDevice_->getCursorControl());
+            eventQueue_ << new Physics::InitCollisionEngineEvent(irrlichtDevice_->getSceneManager());
             std::cout << "[Device]: init done" << std::endl;
             return;
         }
