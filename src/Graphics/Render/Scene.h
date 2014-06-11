@@ -10,6 +10,7 @@
 #include "CameraSceneNode.h"
 #include "Model3D.h"
 #include "Animation.h"
+#include "SceneData.h"
 #include "../../Event/Event.h"
 #include "../../Event/EventListenerInterface.h"
 #include "../../Event/ListenerRegister.h"
@@ -78,24 +79,14 @@ namespace Graphics
             void addMeshSceneNodeFromModel3D(SceneNode* parent, const Model3D& model3d, const Vec3Df& position, const Vec3Df& rotation);
             void addMeshSceneNodeFromFile(SceneNode* parent, const string& meshFile, const string& textureFile, const Vec3Df& position, const Vec3Df& rotation);
             void addAnimatedMeshSceneNodeFromFile(SceneNode* parent, const string& meshFile, const string& textureFile, const Vec3Df& position, const Vec3Df& rotation);
-
-            /**
-            *   @param[in] entity
-            *   @param[out] id
-            *   @return true if the entity is already drawn on the scene
-            */
-            bool getEntitySceneNodeId(Ecs::Entity entity, unsigned int& id);
         protected:
         private:
             irr::scene::ISceneManager* irrlichtSceneManager_;
             irr::video::IVideoDriver* irrlichtVideoDriver_;
 
             const unsigned int verticesPerMeshBuffer_;
-
-            vector<SceneNode*> sceneNodes_;
+            SceneData data_;
             CameraSceneNode* camera_;
-
-            std::map<Ecs::Entity, unsigned int> sceneNodeIdsByEntity_;
 
             Threading::Channel<Event::Event*> events_;
         };
