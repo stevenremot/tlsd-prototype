@@ -17,37 +17,34 @@
     <http://www.gnu.org/licenses/>.
 */
 
-#ifndef WORLD_ENTITY_CREATOR_H
-#define WORLD_ENTITY_CREATOR_H
+#ifndef PHYSICS_COLLISION_BODY_H
+#define PHYSICS_COLLISION_BODY_H
 
-#include "../Ecs/EntityDescriptor.h"
-#include "World.h"
-#include "../Ecs/World.h"
-#include "../Core/SharedPtr.h"
-#include "BuildingInterface.h"
-#include "RoadNetwork.h"
+#include <string>
 
-namespace World
+namespace Physics
 {
     /**
-     * Returns the created ground entity for the chunk and insert it in the ecs world
-     *
-     * TODO : Add "const" to world
+     * Base class for collision bodies.
      */
-    Core::SharedPtr<Ecs::EntityDescriptor> createGround(World& world, int i, int j);
+    class CollisionBody
+    {
+    public:
+        typedef std::string Type;
 
-    /**
-     * Create an entity for the road, and insert it in the ECS world
-     */
-    Core::SharedPtr<Ecs::EntityDescriptor> createRoad(const RoadNetwork& road);
+        CollisionBody(const Type& type): type_(type)
+        {}
 
+        virtual ~CollisionBody() {}
 
-    /**
-     * Create an entity for the building, and insert it in the ECS world
-     *
-     * TODO Add physical component
-     */
-    Core::SharedPtr<Ecs::EntityDescriptor> createBuilding(const BuildingInterface& building);
+        const Type& getType() const
+        {
+            return type_;
+        }
+
+    private:
+        Type type_;
+    };
 }
 
 #endif

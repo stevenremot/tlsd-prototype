@@ -17,37 +17,12 @@
     <http://www.gnu.org/licenses/>.
 */
 
-#ifndef WORLD_ENTITY_CREATOR_H
-#define WORLD_ENTITY_CREATOR_H
+#ifndef TESTS_PHYSICS_H
+#define TESTS_PHYSICS_H
 
-#include "../Ecs/EntityDescriptor.h"
-#include "World.h"
-#include "../Ecs/World.h"
-#include "../Core/SharedPtr.h"
-#include "BuildingInterface.h"
-#include "RoadNetwork.h"
-
-namespace World
+namespace PhysicsTest
 {
-    /**
-     * Returns the created ground entity for the chunk and insert it in the ecs world
-     *
-     * TODO : Add "const" to world
-     */
-    Core::SharedPtr<Ecs::EntityDescriptor> createGround(World& world, int i, int j);
-
-    /**
-     * Create an entity for the road, and insert it in the ECS world
-     */
-    Core::SharedPtr<Ecs::EntityDescriptor> createRoad(const RoadNetwork& road);
-
-
-    /**
-     * Create an entity for the building, and insert it in the ECS world
-     *
-     * TODO Add physical component
-     */
-    Core::SharedPtr<Ecs::EntityDescriptor> createBuilding(const BuildingInterface& building);
+    void testMovementSystem();
 }
 
 #endif

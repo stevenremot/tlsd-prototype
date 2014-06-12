@@ -32,6 +32,7 @@
 #include "tests/core.h"
 #include "tests/world.h"
 #include "tests/worldGeneration.h"
+#include "tests/physics.h"
 #include "Application/Application.h"
 
 using std::cout;
@@ -61,8 +62,10 @@ int main()
     // WorldGenerationTests::testRoadExpansion();
     // WorldGenerationTests::testLotCreation();
     // WorldGenerationTests::testCityCreation();
-    // AnimationTest::testAnimation();
+    //AnimationTest::testAnimation();
     // RenderTest::testRenderSystem(10);
+    // PhysicsTest::testMovementSystem();
+
     Application::Application app;
     app.start();
 

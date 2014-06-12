@@ -23,16 +23,13 @@
 #include "../Graphics/Render/RenderableComponent.h"
 #include "Ground.h"
 
-#include <iostream>
-
 namespace World
 {
-	Ecs::SharedEntity createGround(World& world, int i, int j, Ecs::World& ecsWorld)
+    Core::SharedPtr<Ecs::EntityDescriptor> createGround(World& world, int i, int j)
 	{
-		Ecs::SharedEntity groundEntity = ecsWorld.createSharedEntity();
+        Core::SharedPtr<Ecs::EntityDescriptor> groundEntity(new Ecs::EntityDescriptor);
 
-		ecsWorld.addComponent(
-            groundEntity.getEntity(),
+		groundEntity->addComponent(
             new Geometry::PositionComponent(
                 Geometry::Vec3Df(
                     i*static_cast<int>(World::ChunkSize),
@@ -42,40 +39,52 @@ namespace World
             )
         );
 
-        ecsWorld.addComponent(
-            groundEntity.getEntity(),
+        groundEntity->addComponent(
             new Geometry::RotationComponent(
                 Geometry::Vec3Df(0, 0, 0)
             )
         );
 
-        ecsWorld.addComponent(
-            groundEntity.getEntity(),
+        groundEntity->addComponent(
             new Graphics::Render::RenderableComponent(computeGroundModel(world, i, j))
         );
 
 		return groundEntity;
 	}
 
-    Ecs::Entity createRoad(const RoadNetwork& road, Ecs::World& ecsWorld)
+    Core::SharedPtr<Ecs::EntityDescriptor> createRoad(const RoadNetwork& road)
     {
-        Ecs::Entity entity = ecsWorld.createEntity();
+        Core::SharedPtr<Ecs::EntityDescriptor> entity(new Ecs::EntityDescriptor);
 
-        ecsWorld.addComponent(
-            entity,
-            new Geometry::PositionComponent(Geometry::Vec3Df())
+        entity->addComponent(
+            new Geometry::PositionComponent(Geometry::Vec3Df(0.0, 0.0, 0.1))
+        );
+
+        entity->addComponent(
+            new Geometry::RotationComponent(Geometry::Vec3Df())
+        );
+
+        entity->addComponent(
+            new Graphics::Render::RenderableComponent(road.getModel())
         );
 
         return entity;
     }
 
-    Ecs::Entity createBuilding(const BuildingInterface& building, Ecs::World& ecsWorld)
+    Core::SharedPtr<Ecs::EntityDescriptor> createBuilding(const BuildingInterface& building)
     {
-        Ecs::Entity entity = ecsWorld.createEntity();
+        Core::SharedPtr<Ecs::EntityDescriptor> entity(new Ecs::EntityDescriptor);
 
-        ecsWorld.addComponent(
-            entity,
-            new Geometry::PositionComponent(Geometry::Vec3Df())
+        entity->addComponent(
+            new Geometry::PositionComponent(Geometry::Vec3Df(0.0, 0.0, 0.1))
+        );
+
+        entity->addComponent(
+            new Geometry::RotationComponent(Geometry::Vec3Df())
+        );
+
+        entity->addComponent(
+            new Graphics::Render::RenderableComponent(building.getModel())
         );
 
         return entity;

@@ -62,7 +62,7 @@ namespace World
             {
                 return false;
             }
-        };
+        }
 
         void setChunk(int x, int y, const Chunk& chunk)
         {

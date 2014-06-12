@@ -17,37 +17,40 @@
     <http://www.gnu.org/licenses/>.
 */
 
-#ifndef WORLD_ENTITY_CREATOR_H
-#define WORLD_ENTITY_CREATOR_H
+#ifndef PHYSICS_GRAVITY_COMPONENT_H
+#define PHYSICS_GRAVITY_COMPONENT_H
 
-#include "../Ecs/EntityDescriptor.h"
-#include "World.h"
-#include "../Ecs/World.h"
-#include "../Core/SharedPtr.h"
-#include "BuildingInterface.h"
-#include "RoadNetwork.h"
+#include "../Ecs/Component.h"
 
-namespace World
+namespace Physics
 {
     /**
-     * Returns the created ground entity for the chunk and insert it in the ecs world
-     *
-     * TODO : Add "const" to world
+     * Component for entities sensibles to gravity
      */
-    Core::SharedPtr<Ecs::EntityDescriptor> createGround(World& world, int i, int j);
+    class GravityComponent: public Ecs::Component
+    {
+    public:
+        static const Ecs::Component::Type Type;
 
-    /**
-     * Create an entity for the road, and insert it in the ECS world
-     */
-    Core::SharedPtr<Ecs::EntityDescriptor> createRoad(const RoadNetwork& road);
+        GravityComponent(float weight): Component(Type), weight_(weight)
+        {}
 
+        virtual const std::vector<Ecs::Component::Type>& getDependentComponents();
 
-    /**
-     * Create an entity for the building, and insert it in the ECS world
-     *
-     * TODO Add physical component
-     */
-    Core::SharedPtr<Ecs::EntityDescriptor> createBuilding(const BuildingInterface& building);
+        float getWeight() const
+        {
+            return weight_;
+        }
+
+        void setWeight(float weight)
+        {
+            weight_ = weight;
+        }
+
+    private:
+        static std::vector<Ecs::Component::Type> dependentTypes_;
+        float weight_;
+    };
 }
 
 #endif
