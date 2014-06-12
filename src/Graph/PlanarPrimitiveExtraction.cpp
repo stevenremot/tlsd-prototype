@@ -299,7 +299,11 @@ namespace Graph
             }
             else
             {
-                primitives.push_back(extractPrimitive(g, isCycle, node));
+                PlanarPrimitive prim = extractPrimitive(g, isCycle, node);
+                if (!prim.getNodes().empty())
+                {
+                    primitives.push_back(prim);
+                }
             }
         }
 
