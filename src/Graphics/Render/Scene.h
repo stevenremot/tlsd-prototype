@@ -14,6 +14,7 @@
 #include "../../Event/Event.h"
 #include "../../Event/EventListenerInterface.h"
 #include "../../Event/ListenerRegister.h"
+#include "../../Event/EventManager.h"
 #include "../../Threading/ThreadableInterface.h"
 #include "../../Threading/Channel.h"
 #include "../../Ecs/Entity.h"
@@ -62,7 +63,7 @@ namespace Graphics
         class Scene : public Event::EventListenerInterface, public Threading::ThreadableInterface
         {
         public:
-            Scene();
+            Scene(Event::EventQueue& eventQueue);
             virtual ~Scene();
 
             // EventListener
@@ -89,6 +90,7 @@ namespace Graphics
             CameraSceneNode* camera_;
 
             Threading::Channel<Event::Event*> events_;
+            Event::EventQueue& eventQueue_;
         };
     }
 }

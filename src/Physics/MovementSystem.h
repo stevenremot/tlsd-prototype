@@ -24,6 +24,7 @@
 #include "../Threading/ThreadableInterface.h"
 #include "../Geometry/Vec3D.h"
 #include "../Event/EventManager.h"
+#include "MovementTimer.h"
 
 namespace Physics
 {
@@ -32,15 +33,20 @@ namespace Physics
     public:
         MovementSystem(Ecs::World& world, Event::EventQueue& eventQueue):
             System(world),
-            eventQueue_(eventQueue),
-            lastTime_(0)
-        {}
+            eventQueue_(eventQueue)
+        {
+            timer_ = new MovementTimer();
+        }
 
         virtual void run();
+
+        const MovementTimer& getTimer()
+        {
+            return *timer_;
+        }
     private:
         Event::EventQueue& eventQueue_;
-        unsigned long lastTime_;
-        unsigned long getCurrentTime();
+        MovementTimer* timer_;
         Geometry::Vec3Df getMovement(
             Ecs::ComponentGroup& group,
             unsigned long delay

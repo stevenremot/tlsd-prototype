@@ -22,6 +22,8 @@
 #include "../Geometry/RotationComponent.h"
 #include "../Graphics/Render/RenderableComponent.h"
 #include "Ground.h"
+#include "../Physics/GroundCollisionBody.h"
+#include "../Physics/CollisionComponent.h"
 
 namespace World
 {
@@ -49,8 +51,12 @@ namespace World
             new Graphics::Render::RenderableComponent(computeGroundModel(world, i, j))
         );
 
-		return groundEntity;
-	}
+        groundEntity->addComponent(
+            new Physics::CollisionComponent(Physics::GroundCollisionBody())
+        );
+
+        return groundEntity;
+    }
 
     Core::SharedPtr<Ecs::EntityDescriptor> createRoad(const RoadNetwork& road)
     {
