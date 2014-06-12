@@ -138,9 +138,9 @@ namespace Geometry
 
         inline Vec3D operator/(T t) const
         {
-            return Vec3D(t / x_,
-                         t / y_,
-                         t / z_);
+            return Vec3D(x_ / t,
+                         y_ / t,
+                         z_ / t);
         }
 
         inline Vec3D& operator /=(T t)
