@@ -51,6 +51,11 @@ namespace World
             model_(road.model_)
         {}
 
+        /**
+         * Return a mutable version of the graph.
+         *
+         * Be careful, it desynchronizes the model
+         */
         Graph::PlanarGraph& getGraph()
         {
             return graph_;
@@ -64,6 +69,7 @@ namespace World
         void setGraph(const Graph::PlanarGraph graph)
         {
             graph_ = graph;
+            updateModel();
         }
 
         float getRoadSize() const

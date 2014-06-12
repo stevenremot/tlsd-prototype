@@ -80,10 +80,10 @@ namespace World
             );
 
             const Vec2Df leftDirection =
-                leftEdge.getOtherNode(node).getPosition() - p1;
+                leftEdge.getOtherNode(node).getPosition() - p2;
 
             const Vec2Df rightDirection =
-                rightEdge.getOtherNode(node).getPosition() - p1;
+                rightEdge.getOtherNode(node).getPosition() - p2;
 
             leftCorner = p2 + Geometry::getMedian(direction, leftDirection) * roadSize;
             rightCorner = p2 - Geometry::getMedian(direction, rightDirection) * roadSize;
@@ -117,7 +117,7 @@ namespace World
             vertices.push_back(Vec3Df(v4.getX(), v4.getY(), 0));
 
             faces.push_back(Face(baseIndex, baseIndex + 1, baseIndex + 2, color_));
-            faces.push_back(Face(baseIndex, baseIndex + 3, baseIndex + 2, color_));
+            faces.push_back(Face(baseIndex + 1, baseIndex + 3, baseIndex + 2, color_));
 
             baseIndex += 4;
         }
@@ -132,49 +132,60 @@ namespace World
 
             if (neighbourEdges.size() > 2)
             {
-                PlanarEdge& edge = neighbourEdges[0];
+                PlanarEdge edge = neighbourEdges[0];
                 for (unsigned int j = 0; j < neighbourEdges.size(); j++)
                 {
-                    neighbourEdges.erase(std::find(
-                                             neighbourEdges.begin(),
-                                             neighbourEdges.end(),
-                                             edge
-                                         ));
+                    neighbourEdges.erase(
+                        std::find(
+                            neighbourEdges.begin(),
+                            neighbourEdges.end(),
+                            edge
+                        )
+                    );
                     Vec2Df leftCorner, rightCorner;
                     createCornersForEdge(
                         node,
                         edge,
                         *this,
                         leftCorner,
-                        rightCorner);
+                        rightCorner
+                    );
 
-                    vertices.push_back(Vec3Df(
-                                           leftCorner.getX(),
-                                           leftCorner.getY(),
-                                           0
-                                       ));
+                    vertices.push_back(
+                        Vec3Df(
+                            leftCorner.getX(),
+                            leftCorner.getY(),
+                            0
+                        )
+                    );
 
-                    neighbourEdges.push_back(edge);
+                    PlanarEdge oldEdge = edge;
 
                     getNextEdge(
                         node,
                         node.getPosition() -
                         edge.getOtherNode(node).getPosition(),
-                        edges,
+                        neighbourEdges,
                         Graph::ClockwiseDirection,
                         edge
                     );
+
+                    neighbourEdges.push_back(oldEdge);
                 }
 
                 for (unsigned int index = 1; index < neighbourEdges.size() - 1; index++)
                 {
-                    faces.push_back(Face(
-                                        baseIndex,
-                                        baseIndex + index,
-                                        baseIndex + index + 1,
-                                        color_
-                                    ));
+                    faces.push_back(
+                        Face(
+                            baseIndex,
+                            baseIndex + index + 1,
+                            baseIndex + index,
+                            color_
+                        )
+                    );
                 }
+
+                baseIndex += neighbourEdges.size();
             }
         }
 
