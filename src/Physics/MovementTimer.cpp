@@ -8,6 +8,7 @@ namespace Physics
         struct timespec time;
         Threading::getTime(time);
         currentTime_ = time.tv_sec * 1000L + time.tv_nsec / 1000000L;
+        delay_ = currentTime_ - lastTime_;
     }
 
     void MovementTimer::updateLastTime()
@@ -22,6 +23,6 @@ namespace Physics
 
     unsigned long MovementTimer::getDelay() const
     {
-        return currentTime_ - lastTime_;
+        return delay_;
     }
 }

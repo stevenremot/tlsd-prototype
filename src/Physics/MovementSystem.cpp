@@ -23,6 +23,7 @@
 #include "../Geometry/PositionComponent.h"
 #include "../Threading/Thread.h"
 #include "GravityComponent.h"
+#include "CollisionComponent.h"
 #include "EntityPositionChangedEvent.h"
 
 using Geometry::PositionComponent;
@@ -61,8 +62,9 @@ namespace Physics
 
                 positionComponent.setPosition(positionComponent.getPosition() + movement);
 
-              if (movement != Geometry::Vec3Df(0,0,0))
-                    eventQueue_ << new EntityPositionChangedEvent(group->getEntity(), positionComponent.getPosition());
+                if (!world.hasComponent(group->getEntity(), CollisionComponent::Type))
+                    if (movement != Geometry::Vec3Df(0,0,0))
+                        eventQueue_ << new EntityPositionChangedEvent(group->getEntity(), positionComponent.getPosition());
             }
         }
 
@@ -72,7 +74,8 @@ namespace Physics
     Geometry::Vec3Df MovementSystem::getMovement(
         Ecs::ComponentGroup& group,
         unsigned long delay
-    ) {
+    )
+    {
         World& world = getWorld();
 
         MovementComponent& movementComponent =
@@ -84,8 +87,8 @@ namespace Physics
         if (world.hasComponent(entity, GravityComponent::Type))
         {
             const GravityComponent& gravity = dynamic_cast<GravityComponent&>(
-                world.getEntityComponent(entity, GravityComponent::Type)
-            );
+                                                  world.getEntityComponent(entity, GravityComponent::Type)
+                                              );
 
             const Vec3Df& baseVelocity = movementComponent.getVelocity();
             movementComponent.setVelocity(

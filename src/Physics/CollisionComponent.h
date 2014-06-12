@@ -18,6 +18,11 @@ namespace Physics
 
         virtual const std::vector<Ecs::Component::Type>& getDependentComponents();
 
+        const CollisionBody& getCollisionBody() const
+        {
+            return collisionBody_;
+        }
+
     private:
         static std::vector<Ecs::Component::Type> dependentTypes_;
         CollisionBody collisionBody_;

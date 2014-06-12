@@ -10,6 +10,7 @@
 #include "RenderEvents.h"
 #include "AnimationEvents.h"
 #include "../../Physics/EntityPositionChangedEvent.h"
+#include "../../Physics/InitCollisionEngineEvent.h"
 
 // TODO: remove
 #include <iostream>
@@ -20,11 +21,12 @@ namespace Graphics
     {
         const Event::Event::Type InitSceneEvent::TYPE = "init_scene";
 
-        Scene::Scene() :
+        Scene::Scene(Event::EventQueue& eventQueue) :
             irrlichtSceneManager_(NULL),
             irrlichtVideoDriver_(NULL),
             verticesPerMeshBuffer_(10000),
-            camera_(NULL)
+            camera_(NULL),
+            eventQueue_(eventQueue)
         {
 
         }
@@ -63,6 +65,8 @@ namespace Graphics
                 addCameraSceneNode(data_.getRootSceneNode());
                 camera_ = dynamic_cast<CameraSceneNode*>(data_.getLastSceneNode());
                 camera_->initStaticCamera(Vec3Df(150,150,150), Vec3Df(0,0,0));
+
+                eventQueue_ << new Physics::InitCollisionEngineEvent(irrlichtSceneManager_, &data_);
 
                 std::cout << "[Scene]: init done" << std::endl;
             }

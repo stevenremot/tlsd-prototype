@@ -8,7 +8,8 @@ namespace Physics
         public:
             MovementTimer():
                 lastTime_(0),
-                currentTime_(0)
+                currentTime_(0),
+                delay_(0)
                 {}
 
             void updateCurrentTime();
@@ -18,7 +19,7 @@ namespace Physics
             unsigned long getDelay() const;
 
         private:
-            unsigned long lastTime_, currentTime_;
+            unsigned long lastTime_, currentTime_, delay_;
     };
 }
 

@@ -3,6 +3,7 @@
 
 #include <irrlicht/ISceneManager.h>
 #include "../Event/Event.h"
+#include "../Graphics/Render/SceneData.h"
 
 namespace Physics
 {
@@ -11,9 +12,10 @@ namespace Physics
         public:
             static const Event::Type TYPE;
 
-            InitCollisionEngineEvent(irr::scene::ISceneManager* manager):
+            InitCollisionEngineEvent(irr::scene::ISceneManager* manager, Graphics::Render::SceneData* data):
                 Event::Event(TYPE),
-                manager_(manager)
+                manager_(manager),
+                data_(data)
                 {}
 
             irr::scene::ISceneManager* getManager() const
@@ -21,8 +23,14 @@ namespace Physics
                 return manager_;
             }
 
+            Graphics::Render::SceneData* getData() const
+            {
+                return data_;
+            }
+
         private:
             irr::scene::ISceneManager* manager_;
+            Graphics::Render::SceneData* data_;
     };
 }
 

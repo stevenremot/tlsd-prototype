@@ -22,16 +22,18 @@
 #include "../Geometry/RotationComponent.h"
 #include "../Graphics/Render/RenderableComponent.h"
 #include "Ground.h"
+#include "../Physics/GroundCollisionBody.h"
+#include "../Physics/CollisionComponent.h"
 
 #include <iostream>
 
 namespace World
 {
-	Ecs::SharedEntity createGround(World& world, int i, int j, Ecs::World& ecsWorld)
-	{
-		Ecs::SharedEntity groundEntity = ecsWorld.createSharedEntity();
+    Ecs::SharedEntity createGround(World& world, int i, int j, Ecs::World& ecsWorld)
+    {
+        Ecs::SharedEntity groundEntity = ecsWorld.createSharedEntity();
 
-		ecsWorld.addComponent(
+        ecsWorld.addComponent(
             groundEntity.getEntity(),
             new Geometry::PositionComponent(
                 Geometry::Vec3Df(
@@ -54,8 +56,13 @@ namespace World
             new Graphics::Render::RenderableComponent(computeGroundModel(world, i, j))
         );
 
-		return groundEntity;
-	}
+        ecsWorld.addComponent(
+            groundEntity.getEntity(),
+            new Physics::CollisionComponent(Physics::GroundCollisionBody())
+        );
+
+        return groundEntity;
+    }
 
     Ecs::Entity createRoad(const RoadNetwork& road, Ecs::World& ecsWorld)
     {

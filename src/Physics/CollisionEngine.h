@@ -15,14 +15,13 @@ namespace Physics
     /**
     *   Simple collision engine using Irrlicht's CollisionManager
     */
-    class CollisionEngine : public Event::EventListenerInterface, Threading::ThreadableInterface
+    class CollisionEngine : public Event::EventListenerInterface, public Threading::ThreadableInterface
     {
     public:
-        CollisionEngine(Graphics::Render::SceneData& data):
+        CollisionEngine():
             irrlichtSceneManager_(NULL),
-            data_(data)
+            data_(NULL)
             {}
-        virtual ~CollisionEngine();
 
         virtual void call(const Event::Event& event);
 
@@ -41,13 +40,18 @@ namespace Physics
         );
 
         void addSelectorCreationCommand(const Ecs::Entity& entity);
+
+        bool isInitialized() const
+        {
+            return data_ != NULL;
+        }
     private:
         bool addSelector(const Ecs::Entity& groundEntity);
 
         irr::scene::ISceneManager* irrlichtSceneManager_;
         std::map<Ecs::Entity, irr::scene::ITriangleSelector*> selectors_;
 
-        Graphics::Render::SceneData& data_;
+        Graphics::Render::SceneData* data_;
 
         Threading::Channel<Ecs::Entity> selectorCreationCommands_;
     };

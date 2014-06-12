@@ -52,7 +52,7 @@ namespace RenderTest
         Event::ListenerRegister& reg = m.getListenerRegister();
         reg.put(Input::InputInitializedEvent::TYPE, &device);
 
-        Scene scene;
+        Scene scene(m.getEventQueue());
         scene.registerListeners(reg);
 
         IrrlichtInputReceiver receiver(m.getEventQueue());
@@ -93,7 +93,7 @@ namespace RenderTest
         Event::ListenerRegister& reg = m.getListenerRegister();
         reg.put(Input::InputInitializedEvent::TYPE, &device);
 
-        Scene scene;
+        Scene scene(m.getEventQueue());
         scene.registerListeners(reg);
 
         IrrlichtInputReceiver receiver(m.getEventQueue());
@@ -153,7 +153,7 @@ namespace RenderTest
         Event::ListenerRegister& reg = m.getListenerRegister();
         reg.put(Input::InputInitializedEvent::TYPE, &device);
 
-        Scene scene;
+        Scene scene(m.getEventQueue());
         reg.put(Graphics::Render::InitSceneEvent::TYPE, &scene);
         reg.put(Input::CameraEvent::TYPE, &scene);
 
