@@ -30,11 +30,12 @@
 #include "tests/threading.h"
 #include "tests/render.h"
 #include "tests/core.h"
+#include "tests/network.h"
 #include "tests/world.h"
 #include "tests/worldGeneration.h"
-#include "tests/physics.h"
 #include "Application/Application.h"
 
+#include "tests/GuiTest.h"
 using std::cout;
 using std::endl;
 using std::string;
@@ -42,6 +43,7 @@ using std::vector;
 
 int main()
 {
+
     // EventTest::testEvents();
     // EcsTest::testEcs();
     // EcsTest::testSharedEntity();
@@ -62,12 +64,12 @@ int main()
     // WorldGenerationTests::testRoadExpansion();
     // WorldGenerationTests::testLotCreation();
     // WorldGenerationTests::testCityCreation();
-    //AnimationTest::testAnimation();
+    // AnimationTest::testAnimation();
     // RenderTest::testRenderSystem(10);
-    // PhysicsTest::testMovementSystem();
+    GraphicsTest::GuiTest();
 
-    Application::Application app;
-    app.start();
-
+    //Application::Application app;
+    //app.start();
+    //NetworkTest::TestNetwork();
     return 0;
 }
