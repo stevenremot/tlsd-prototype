@@ -57,6 +57,12 @@ namespace World
 
             void prepareChunk(int x, int y);
             Random::Seed getChunkSeed(int x, int y);
+
+            void insertDescriptor(
+                Core::SharedPtr<Ecs::EntityDescriptor>& descriptor,
+                int defaultI,
+                int defaultJ
+            );
         };
     }
 }

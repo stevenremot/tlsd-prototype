@@ -22,7 +22,8 @@
 
 #include <vector>
 
-#include "../Ecs/SharedEntity.h"
+#include "../Ecs/EntityDescriptor.h"
+#include "../Core/SharedPtr.h"
 #include "GroundCoefficients.h"
 
 namespace World
@@ -36,8 +37,11 @@ namespace World
     class Chunk
     {
     public:
-        typedef std::vector<Ecs::SharedEntity> EntityCollection;
+        typedef std::vector< Core::SharedPtr<Ecs::EntityDescriptor> > EntityCollection;
         enum State { NotLoadedState, PreparedState, GeneratedState };
+
+        Chunk(): coefficients_(), state_(NotLoadedState)
+        {}
 
         const EntityCollection& getBaseEntities() const { return baseEntities_; }
         const EntityCollection& getFinalEntities() const { return finalEntities_; }

@@ -20,9 +20,10 @@
 #ifndef WORLD_ENTITY_CREATOR_H
 #define WORLD_ENTITY_CREATOR_H
 
-#include "../Ecs/SharedEntity.h"
+#include "../Ecs/EntityDescriptor.h"
 #include "World.h"
 #include "../Ecs/World.h"
+#include "../Core/SharedPtr.h"
 #include "BuildingInterface.h"
 #include "RoadNetwork.h"
 
@@ -33,23 +34,20 @@ namespace World
      *
      * TODO : Add "const" to world
      */
-	Ecs::SharedEntity createGround(World& world, int i, int j, Ecs::World& ecsWorld);
+    Core::SharedPtr<Ecs::EntityDescriptor> createGround(World& world, int i, int j);
 
     /**
      * Create an entity for the road, and insert it in the ECS world
-     *
-     * TODO Add renderable component
      */
-    Ecs::Entity createRoad(const RoadNetwork& road, Ecs::World& ecsWorld);
+    Core::SharedPtr<Ecs::EntityDescriptor> createRoad(const RoadNetwork& road);
 
 
     /**
      * Create an entity for the building, and insert it in the ECS world
      *
-     * TODO Add renderable component
      * TODO Add physical component
      */
-    Ecs::Entity createBuilding(const BuildingInterface& building, Ecs::World& ecsWorld);
+    Core::SharedPtr<Ecs::EntityDescriptor> createBuilding(const BuildingInterface& building);
 }
 
 #endif
