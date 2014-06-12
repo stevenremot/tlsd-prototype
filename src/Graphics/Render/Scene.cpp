@@ -64,7 +64,7 @@ namespace Graphics
                 // init static camera
                 addCameraSceneNode(data_.getRootSceneNode());
                 camera_ = dynamic_cast<CameraSceneNode*>(data_.getLastSceneNode());
-                camera_->initStaticCamera(Vec3Df(150,150,150), Vec3Df(0,0,0));
+                camera_->initStaticCamera(Vec3Df(150,150,20), Vec3Df(0,0,0));
 
                 eventQueue_ << new Physics::InitCollisionEngineEvent(irrlichtSceneManager_, &data_);
 

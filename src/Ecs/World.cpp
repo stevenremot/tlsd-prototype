@@ -56,12 +56,46 @@ namespace Ecs
 
     SharedEntity World::createSharedEntity()
     {
-        return SharedEntity(*this, createEntity(), &Ecs::removeEntity);
+        return shareEntity(createEntity());
     }
 
     SharedEntity World::createSharedEntity(const Entity& entity)
     {
-        return SharedEntity(*this, createEntity(entity), &Ecs::removeEntity);
+        return shareEntity(createEntity(entity));
+    }
+
+    SharedEntity World::shareEntity(const Entity& entity)
+    {
+        return SharedEntity(*this, entity, &Ecs::removeEntity);
+    }
+
+    Entity World::loadDescriptor(EntityDescriptor& descriptor)
+    {
+        if (descriptor.references_ == 0)
+        {
+            const Entity& entity = createEntity();
+
+            for (unsigned int i = 0; i < descriptor.getComponents().size(); i++)
+            {
+                addComponent(entity, descriptor.getComponents()[i]);
+            }
+
+            descriptor.entity_ = entity;
+        }
+
+        descriptor.references_ += 1;
+
+        return descriptor.entity_;
+    }
+
+    void World::unloadDescriptor(EntityDescriptor& descriptor)
+    {
+        descriptor.references_ -= 1;
+
+        if (descriptor.references_ == 0)
+        {
+            components_.erase(descriptor.entity_);
+        }
     }
 
     void World::addComponent(const Entity& entity, Component* component)

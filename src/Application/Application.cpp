@@ -52,12 +52,12 @@ namespace Application
     void createMovingCube(Ecs::World& world)
     {
         // TODO: method AABB from model 3d
-        Geometry::AxisAlignedBoundingBox bbox(Geometry::Vec3Df(145.0, 145.0, 145.0), Geometry::Vec3Df(150.0, 150.0, 150.0));
+        Geometry::AxisAlignedBoundingBox bbox(Geometry::Vec3Df(50.0, 50.0, 145.0), Geometry::Vec3Df(55.0, 55.0, 150.0));
 
         const Ecs::Entity& entity = world.createEntity();
         world.addComponent(
             entity,
-            new Geometry::PositionComponent(Geometry::Vec3Df(145.0, 145.0, 145.0))
+            new Geometry::PositionComponent(Geometry::Vec3Df(50.0, 50.0, 145.0))
         );
         world.addComponent(
             entity,
@@ -71,7 +71,7 @@ namespace Application
         );
         world.addComponent(
             entity,
-            new Physics::MovementComponent(Geometry::Vec3Df(0.0, -1.0, 20.0))
+            new Physics::MovementComponent(Geometry::Vec3Df(1.0, 1.0, 20.0))
         );
         world.addComponent(
             entity,

@@ -41,9 +41,9 @@ namespace World
                     expansionNumber_(100),
                     minRoadLength_(5),
                     maxRoadLength_(15),
-                    minBuildingHeight_(2.0),
-                    maxBuildingHeight_(3.0),
-                    roadColor_(0.7, 0.7, 0.7),
+                    minBuildingHeight_(4.0),
+                    maxBuildingHeight_(6.0),
+                    roadColor_(0.3, 0.3, 0.3),
                     wallColor_(0.9, 0.9, 0.9),
                     roofColor_(0.8, 0.2, 0.2)
                 {}

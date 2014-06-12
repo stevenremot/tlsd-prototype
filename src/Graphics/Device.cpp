@@ -44,6 +44,7 @@ namespace Graphics
             return;
         }
 
+
         if (!closed_)
         {
             if (!irrlichtDevice_->run())
@@ -68,6 +69,7 @@ namespace Graphics
                 irrlichtDevice_->setWindowCaption(str.c_str());
             }
         }
+
     }
 
     void Device::call(const Event::Event& event)

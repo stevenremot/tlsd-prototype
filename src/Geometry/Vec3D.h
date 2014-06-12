@@ -136,6 +136,21 @@ namespace Geometry
             return *this;
         }
 
+        inline Vec3D operator/(T t) const
+        {
+            return Vec3D(x_ / t,
+                         y_ / t,
+                         z_ / t);
+        }
+
+        inline Vec3D& operator /=(T t)
+        {
+            x_ /= t;
+            y_ /= t;
+            z_ /= t;
+            return *this;
+        }
+
         inline Vec3D operator-() const
         {
             return Vec3D(-x_, -y_, -z_);

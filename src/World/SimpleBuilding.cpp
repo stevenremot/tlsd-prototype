@@ -48,8 +48,8 @@ namespace World
             vertices.push_back(Vec3Df(p2.getX(), p2.getY(), wallHeight_));
             vertices.push_back(Vec3Df(p1.getX(), p1.getY(), wallHeight_));
 
-            faces.push_back(Face(baseIndex, baseIndex + 1, baseIndex + 2, wallColor_));
-            faces.push_back(Face(baseIndex, baseIndex + 2, baseIndex + 3, wallColor_));
+            faces.push_back(Face(baseIndex, baseIndex + 2, baseIndex + 1, wallColor_));
+            faces.push_back(Face(baseIndex, baseIndex + 3, baseIndex + 2, wallColor_));
             baseIndex += 4;
         }
 
@@ -74,8 +74,8 @@ namespace World
         {
             faces.push_back(Face(
                                 baseIndex,
-                                baseIndex + currentIndex,
                                 baseIndex + currentIndex + 1,
+                                baseIndex + currentIndex,
                                 roofColor_
                             ));
         }

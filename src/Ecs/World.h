@@ -28,6 +28,7 @@
 #include "Component.h"
 #include "ComponentGroup.h"
 #include "SharedEntity.h"
+#include "EntityDescriptor.h"
 
 #include "../Event/EventManager.h"
 
@@ -120,6 +121,24 @@ namespace Ecs
          * Return it as a shared entity.
          */
         SharedEntity createSharedEntity(const Entity& entity);
+
+        /**
+         * Transform an entity into a shared entity.
+         */
+        SharedEntity shareEntity(const Entity& entity);
+
+        /**
+         * Create an entity based on the descriptor if necesary
+         *
+         * If an entity based on this descriptor has already been loaded,
+         * return it.
+         */
+        Entity loadDescriptor(EntityDescriptor& descriptor);
+
+        /**
+         * Delete the entity in the descriptor if nobody else needs it.
+         */
+        void unloadDescriptor(EntityDescriptor& descriptor);
 
         /**
          * Add an association between an entity and a component.
