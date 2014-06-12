@@ -23,8 +23,6 @@
 #include "../Graphics/Render/RenderableComponent.h"
 #include "Ground.h"
 
-#include <iostream>
-
 namespace World
 {
     Core::SharedPtr<Ecs::EntityDescriptor> createGround(World& world, int i, int j)
@@ -59,7 +57,7 @@ namespace World
         Core::SharedPtr<Ecs::EntityDescriptor> entity(new Ecs::EntityDescriptor);
 
         entity->addComponent(
-            new Geometry::PositionComponent(Geometry::Vec3Df())
+            new Geometry::PositionComponent(Geometry::Vec3Df(0.0, 0.0, 0.1))
         );
 
         entity->addComponent(
@@ -78,7 +76,7 @@ namespace World
         Core::SharedPtr<Ecs::EntityDescriptor> entity(new Ecs::EntityDescriptor);
 
         entity->addComponent(
-            new Geometry::PositionComponent(Geometry::Vec3Df())
+            new Geometry::PositionComponent(Geometry::Vec3Df(0.0, 0.0, 0.1))
         );
 
         entity->addComponent(

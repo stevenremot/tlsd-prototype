@@ -56,6 +56,11 @@ namespace World
             Random::Seed worldSeed_;
 
             void prepareChunk(int x, int y);
+
+            /**
+             * Generate a city in the chunk (x, y)
+             */
+            void generateCity(int x, int y, Random::NumberGenerator& rng);
             Random::Seed getChunkSeed(int x, int y);
 
             void insertDescriptor(

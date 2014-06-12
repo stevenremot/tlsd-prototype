@@ -33,6 +33,9 @@ namespace World
      *
      * A chunk is a square part of the world containing its entities
      * It has a state describing its loading status
+     *
+     * TODO : Find something more elegant than base entities - final entities
+     *        separation. It dusplicates data.
      */
     class Chunk
     {
