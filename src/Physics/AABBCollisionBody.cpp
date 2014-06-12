@@ -16,34 +16,10 @@
     along with The Lost Souls Downfall prototype.  If not, see
     <http://www.gnu.org/licenses/>.
 */
-#ifndef DEMULTIPLEXEUR_H
-#define DEMULTIPLEXEUR_H
-#include <vector>
-#include <string>
-#include "PracticalSocket.h"
-#include "../Threading/ThreadableInterface.h"
-#include "../Threading/Thread.h"
-#include "SendEvent.h"
-#include <iostream>
 
-using Threading::ThreadableInterface;
-using Threading::Thread;
-using std::cout;
-using std::endl;
+#include "AABBCollisionBody.h"
 
-namespace Network {
-class Demultiplexeur :public ThreadableInterface
+namespace Physics
 {
-    public:
-        Demultiplexeur(std::vector<TCPSocket*> *ListeClient,std::vector<string>* ListeEvent,TCPServerSocket* ServerSocket);
-        virtual ~Demultiplexeur();
-        void run(void);
-    protected:
-    private:
-        std::vector<TCPSocket*>* ListeClient_;
-        std::vector<string>* ListeEvent_;
-        TCPServerSocket* ServerSocket_;
-};
-
+    const CollisionBody::Type AABBCollisionBody::Type = "axis-aligned-bounding-box";
 }
-#endif // DEMULTIPLEXEUR_H

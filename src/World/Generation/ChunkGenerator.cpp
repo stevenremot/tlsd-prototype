@@ -18,8 +18,16 @@
 */
 
 #include "ChunkGenerator.h"
+
+#include <cmath>
+
 #include "../EntityCreator.h"
 #include "CoefficientsGenerator.h"
+#include "../../Graphics/Render/RenderableComponent.h"
+#include "CityGeneration.h"
+
+using Graphics::Render::RenderableComponent;
+using Geometry::Vec3Df;
 
 namespace World
 {
@@ -53,10 +61,23 @@ namespace World
             world_.setChunk(x, y, currentChunk);
 
             Chunk::EntityCollection finalEntities;
+            const Chunk::EntityCollection& baseEntities =
+                currentChunk.getBaseEntities();
 
-            finalEntities.push_back(createGround(world_, x, y, ecsWorld_));
+            for (unsigned int i = 0; i < baseEntities.size(); i++)
+            {
+                finalEntities.push_back(baseEntities[i]);
+            }
+
+            finalEntities.push_back(createGround(world_, x, y));
 
             currentChunk.setFinalEntities(finalEntities);
+
+            for (unsigned int i = 0; i < finalEntities.size(); i++)
+            {
+                ecsWorld_.loadDescriptor(*(finalEntities[i]));
+            }
+
             world_.setChunk(x, y, currentChunk);
         }
 
@@ -78,6 +99,158 @@ namespace World
 
             currentChunk.setState(Chunk::PreparedState);
             world_.setChunk(x, y, currentChunk);
+
+            if ((x == 0 && y == 0) || rng.getUniform(0, 50) < 1)
+            {
+                generateCity(x, y, rng);
+            }
+        }
+
+        void ChunkGenerator::generateCity(int x, int y, Random::NumberGenerator& rng)
+        {
+            const float chunkSize = World::ChunkSize;
+            const float floatX = x, floatY = y;
+
+            const float centerX = rng.getUniform(
+                floatX * chunkSize,
+                (floatX + 1) * chunkSize
+            );
+            const float centerY = rng.getUniform(
+                floatY * chunkSize,
+                (floatY + 1) * chunkSize
+            );
+
+            const Geometry::Vec2Df position(centerX, centerY);
+            const City::GenerationParameters parameters;
+
+            class City* city = Generation::generateCity(position, parameters, rng);
+
+
+            Core::SharedPtr<Ecs::EntityDescriptor> roadPtr =
+                createRoad(city->getRoadNetwork());
+            insertDescriptor(roadPtr, x, y);
+
+            const std::vector<BuildingInterface*>& buildings = city->getBuildings();
+            for (unsigned int i = 0; i < buildings.size(); i++)
+            {
+                Core::SharedPtr<Ecs::EntityDescriptor> buildingPtr =
+                    createBuilding(*(buildings[i]));
+                insertDescriptor(buildingPtr, x, y);
+            }
+
+            BiomeMap& biomeMap = world_.getBiomeMap();
+            biomeMap.addCityPolygon(
+                city->getRoadNetwork().getConvexHull().offset(
+                    chunkSize / std::sqrt(2.0)
+                )[0]
+            );
+
+            delete city;
+        }
+
+
+        void ChunkGenerator::insertDescriptor(
+            Core::SharedPtr<Ecs::EntityDescriptor>& descriptor,
+            int defaultI,
+            int defaultJ
+        ) {
+            const std::vector<Ecs::Component*>& components = descriptor->getComponents();
+
+            Geometry::Vec3Df min, max, offset;
+            bool isRenderable = false;
+
+            for (unsigned int i = 0; i < components.size(); i++)
+            {
+                Ecs::Component& component = *(components[i]);
+                if (component.getType() == RenderableComponent::Type)
+                {
+                    RenderableComponent& renderable =
+                        dynamic_cast<RenderableComponent&>(component);
+
+                    if (renderable.getMeshFileName().empty())
+                    {
+                        const Graphics::Render::Model3D& model =
+                            renderable.getModel3d();
+
+                        const std::vector<Geometry::Vec3Df>& vertices =
+                            model.getVertices();
+
+                        // We can assume the model has vertices,
+                        // otherwise it must be an error
+                        min = max = vertices[0];
+
+                        for (unsigned int i = 1; i < vertices.size(); i++)
+                        {
+                            const Geometry::Vec3Df& vertex = vertices[i];
+                            if (vertex.getX() < min.getX())
+                            {
+                                min.setX(vertex.getX());
+                            }
+                            if (vertex.getX() > max.getX())
+                            {
+                                max.setX(vertex.getX());
+                            }
+
+                            if (vertex.getY() < min.getY())
+                            {
+                                min.setY(vertex.getY());
+                            }
+                            if (vertex.getY() > max.getY())
+                            {
+                                max.setY(vertex.getY());
+                            }
+                        }
+
+                        isRenderable = true;
+                    }
+                }
+                else if(component.getType() == Geometry::PositionComponent::Type)
+                {
+                    Geometry::PositionComponent& posComp =
+                        dynamic_cast<Geometry::PositionComponent&>(component);
+                    offset = posComp.getPosition();
+                }
+            }
+
+            if (isRenderable)
+            {
+                const Vec3Df offsetMin = (offset + min) / static_cast<float>(World::ChunkSize);
+                const Vec3Df offsetMax = (offset + max) / static_cast<float>(World::ChunkSize);
+                const Geometry::Vec2Di planMin(
+                    floor(offsetMin.getX()),
+                    floor(offsetMin.getY())
+                );
+                const Geometry::Vec2Di planMax(
+                    ceil(offsetMax.getX()),
+                    ceil(offsetMax.getY())
+                );
+
+                for (int i = planMin.getX(); i <= planMax.getX(); i++)
+                {
+                    for (int j = planMin.getY(); j <= planMax.getY(); j++)
+                    {
+                        Chunk chunk;
+                        world_.getChunk(i, j, chunk); // Don't care if it fails
+
+                        Chunk::EntityCollection entities = chunk.getBaseEntities();
+                        entities.push_back(descriptor);
+                        chunk.setBaseEntities(entities);
+
+                        world_.setChunk(i, j, chunk);
+                    }
+                }
+            }
+            else
+            {
+                Chunk chunk;
+                world_.getChunk(defaultI, defaultJ, chunk); // Don't care if it fails
+
+                Chunk::EntityCollection entities = chunk.getBaseEntities();
+                entities.push_back(descriptor);
+                chunk.setBaseEntities(entities);
+
+                world_.setChunk(defaultI, defaultJ, chunk);
+            }
         }
     }
 }

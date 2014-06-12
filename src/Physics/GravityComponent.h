@@ -16,24 +16,46 @@
     along with The Lost Souls Downfall prototype.  If not, see
     <http://www.gnu.org/licenses/>.
 */
-#ifndef SYNCHROAPPLIER_H
-#define SYNCHROAPPLIER_H
 
-#include "../Threading/Channel.h"
-#include "../Threading/Thread.h"
-using Threading::ThreadableInterface;
+#ifndef PHYSICS_GRAVITY_COMPONENT_H
+#define PHYSICS_GRAVITY_COMPONENT_H
 
+#include "../Ecs/Component.h"
 
-typedef int EventQueue;
-namespace Network{
-class SynchroApplier : public ThreadableInterface
+namespace Physics
 {
+    /**
+     * Component for entities sensibles to gravity
+     */
+    class GravityComponent: public Ecs::Component
+    {
     public:
-        SynchroApplier();
-        virtual ~SynchroApplier();
+        static const Ecs::Component::Type Type;
 
-    protected:
+        GravityComponent(float weight): Component(Type), weight_(weight)
+        {}
+
+        virtual const std::vector<Ecs::Component::Type>& getDependentComponents();
+
+        float getWeight() const
+        {
+            return weight_;
+        }
+
+        void setWeight(float weight)
+        {
+            weight_ = weight;
+        }
+
     private:
-};
+        static std::vector<Ecs::Component::Type> dependentTypes_;
+        float weight_;
+    };
 }
-#endif // SYNCHROAPPLIER_H
+
+#endif
+
+// Emacs local variables
+// Local variables:
+// mode: c++
+// End:

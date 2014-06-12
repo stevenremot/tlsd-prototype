@@ -50,14 +50,14 @@ namespace Test
 
         const std::stringstream& getContent() const { return content_; };
 
-        void drawLine(int x1, int y1, int x2, int y2, const char* color)
+        void drawLine(float x1, float y1, float x2, float y2, const char* color)
         {
             content_ << "<line x1=\"" << x1 << "\" y1=\"" << y1
                      << "\" x2=\"" << x2 << "\" y2=\"" << y2
                      << "\" stroke=\"" << color << "\" />";
         }
 
-        void drawCircle(int x, int y, int r, const char* color)
+        void drawCircle(float x, float y, float r, const char* color)
         {
             content_ << "<circle cx=\"" << x << "\" cy=\"" << y
                      << "\" r=\"" << r << "\" fill=\"" << color << "\" />";

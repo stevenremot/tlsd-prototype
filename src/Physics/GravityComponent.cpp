@@ -15,16 +15,24 @@
     You should have received a copy of the GNU General Public License
     along with The Lost Souls Downfall prototype.  If not, see
     <http://www.gnu.org/licenses/>.
-*/#include "Button.h"
-namespace Graphics
-{
+*/
 
-namespace Gui
-{
+#include "GravityComponent.h"
+#include "MovementComponent.h"
 
-Button::~Button()
+using Ecs::Component;
+
+namespace Physics
 {
-    //dtor
-}
-}
+    const Component::Type GravityComponent::Type = "gravity";
+    std::vector<Component::Type> GravityComponent::dependentTypes_;
+
+    const std::vector<Component::Type>& GravityComponent::getDependentComponents()
+    {
+        if (dependentTypes_.empty())
+        {
+            dependentTypes_.push_back(MovementComponent::Type);
+        }
+        return dependentTypes_;
+    }
 }

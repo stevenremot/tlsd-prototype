@@ -68,7 +68,7 @@ namespace Geometry
 
         inline bool operator!=(const Vec2D& vec) const
         {
-            return x_ != vec.x_ && y_ != vec.y_;
+            return x_ != vec.x_ || y_ != vec.y_;
         }
 
         inline bool operator<(const Vec2D& vec) const

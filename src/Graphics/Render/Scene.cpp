@@ -9,6 +9,7 @@
 #include "../../Input/Events.h"
 #include "RenderEvents.h"
 #include "AnimationEvents.h"
+#include "../../Physics/EntityPositionChangedEvent.h"
 
 // TODO: remove
 #include <iostream>
@@ -30,8 +31,6 @@ namespace Graphics
 
         Scene::~Scene()
         {
-            // delete root scene node => delete all scene nodes
-            delete sceneNodes_[0];
         }
 
         void Scene::registerListeners(Event::ListenerRegister& reg)
@@ -44,6 +43,7 @@ namespace Graphics
             reg.put(Graphics::Render::SetupAnimationEvent::TYPE, this);
             reg.put(Graphics::Render::AnimateEvent::TYPE, this);
             reg.put(Graphics::Render::UpdateAnimationEvent::TYPE, this);
+            reg.put(Physics::EntityPositionChangedEvent::TYPE, this);
         }
 
         void Scene::call(const Event::Event& event)
@@ -55,18 +55,13 @@ namespace Graphics
                 irrlichtVideoDriver_ = e.getDriver();
 
                 // add root scene node
-                sceneNodes_.push_back(new SceneNode(NULL));
-                sceneNodes_[0]->setIrrlichtSceneNode(irrlichtSceneManager_->getRootSceneNode());
-                sceneNodes_[0]->setId(0);
+                SceneNode* root = new SceneNode(NULL);
+                root->setIrrlichtSceneNode(irrlichtSceneManager_->getRootSceneNode());
+                data_.addSceneNode(root);
 
-                Model3D cube = createPrettyCubeModel();
-                Vec3Df pos = Vec3Df(0,0,0);
-                Vec3Df rot = Vec3Df(0,0,0);
-                addMeshSceneNodeFromModel3D(sceneNodes_.back(), cube, pos, rot);
-
-                // init camera
-                addCameraSceneNode(sceneNodes_[0]);
-                camera_ = dynamic_cast<CameraSceneNode*>(sceneNodes_.back());
+                // init static camera
+                addCameraSceneNode(data_.getRootSceneNode());
+                camera_ = dynamic_cast<CameraSceneNode*>(data_.getLastSceneNode());
                 camera_->initStaticCamera(Vec3Df(150,150,150), Vec3Df(0,0,0));
 
                 std::cout << "[Scene]: init done" << std::endl;
@@ -76,13 +71,6 @@ namespace Graphics
                 if (camera_ != NULL)
                 {
                     events_ << new Input::CameraEvent(static_cast<const Input::CameraEvent&>(event));
-                }
-            }
-            else if (event.getType() == Input::MoveEvent::TYPE)
-            {
-                if (camera_ != NULL)
-                {
-                    events_ << new Input::MoveEvent(static_cast<const Input::MoveEvent&>(event));
                 }
             }
             else if (event.getType() == RenderMeshFileEvent::TYPE)
@@ -109,6 +97,10 @@ namespace Graphics
             {
                 events_ << new UpdateAnimationEvent(static_cast<const UpdateAnimationEvent&>(event));
             }
+            else if (event.getType() == Physics::EntityPositionChangedEvent::TYPE)
+            {
+                events_ << new Physics::EntityPositionChangedEvent(static_cast<const Physics::EntityPositionChangedEvent&>(event));
+            }
 
         }
 
@@ -125,28 +117,20 @@ namespace Graphics
                 {
                     camera_->updateTarget(dynamic_cast<Input::CameraEvent*>(event)->getCursorPosition());
                 }
-                else if (event->getType() == Input::MoveEvent::TYPE)
-                {
-                    Input::MoveEvent* moveEvent = dynamic_cast<Input::MoveEvent*>(event);
-
-                    if (moveEvent->getDirection() == Input::Right)
-                        sceneNodes_[1]->setRotation(sceneNodes_[1]->getRotation() + Vec3Df(0.0f, 0.0f, 0.5f));
-                    else if (moveEvent->getDirection() == Input::Left)
-                        sceneNodes_[1]->setRotation(sceneNodes_[1]->getRotation() + Vec3Df(0.0f, 0.0f, -0.5f));
-
-                    if (moveEvent->getDirection() == Input::Forward)
-                        sceneNodes_[1]->setRotation(sceneNodes_[1]->getRotation() + Vec3Df(0.5f, 0.0f, 0.0f));
-                    else if (moveEvent->getDirection() == Input::Backward)
-                        sceneNodes_[1]->setRotation(sceneNodes_[1]->getRotation() + Vec3Df(-0.5f, 0.0f, 0.0f));
-                }
                 else if (event->getType() == RenderMeshFileEvent::TYPE)
                 {
                     RenderMeshFileEvent* renderEvent = dynamic_cast<RenderMeshFileEvent*>(event);
 
                     if (irrlichtSceneManager_ != NULL && irrlichtVideoDriver_ != NULL)
                     {
-                        addMeshSceneNodeFromFile(NULL, renderEvent->getMeshFile(), renderEvent->getTextureFile(), renderEvent->getPosition(), renderEvent->getRotation());
-                        sceneNodeIdsByEntity_[renderEvent->getEntity()] = sceneNodes_.size()-1;
+                        addMeshSceneNodeFromFile(
+                            NULL,
+                            renderEvent->getMeshFile(),
+                            renderEvent->getTextureFile(),
+                            renderEvent->getPosition(),
+                            renderEvent->getRotation()
+                        );
+                        data_.setLastSceneNodeEntity(renderEvent->getEntity());
                     }
                     else
                         delayedEvents.push_back(new RenderMeshFileEvent(*renderEvent));
@@ -157,8 +141,14 @@ namespace Graphics
 
                     if (irrlichtSceneManager_ != NULL && irrlichtVideoDriver_ != NULL)
                     {
-                        addAnimatedMeshSceneNodeFromFile(NULL, renderEvent->getMeshFile(), renderEvent->getTextureFile(), renderEvent->getPosition(), renderEvent->getRotation());
-                        sceneNodeIdsByEntity_[renderEvent->getEntity()] = sceneNodes_.size()-1;
+                        addAnimatedMeshSceneNodeFromFile(
+                            NULL,
+                            renderEvent->getMeshFile(),
+                            renderEvent->getTextureFile(),
+                            renderEvent->getPosition(),
+                            renderEvent->getRotation()
+                        );
+                        data_.setLastSceneNodeEntity(renderEvent->getEntity());
                     }
                     else
                         delayedEvents.push_back(new RenderAnimatedMeshFileEvent(*renderEvent));
@@ -168,8 +158,13 @@ namespace Graphics
                     RenderModel3DEvent* renderEvent = dynamic_cast<RenderModel3DEvent*>(event);
                     if (irrlichtSceneManager_ != NULL && irrlichtVideoDriver_ != NULL)
                     {
-                        addMeshSceneNodeFromModel3D(NULL, renderEvent->getModel(), renderEvent->getPosition(), renderEvent->getRotation());
-                        sceneNodeIdsByEntity_[renderEvent->getEntity()] = sceneNodes_.size()-1;
+                        addMeshSceneNodeFromModel3D(
+                            NULL,
+                            renderEvent->getModel(),
+                            renderEvent->getPosition(),
+                            renderEvent->getRotation()
+                        );
+                        data_.setLastSceneNodeEntity(renderEvent->getEntity());
                     }
                     else
                         delayedEvents.push_back(new RenderModel3DEvent(*renderEvent));
@@ -184,19 +179,28 @@ namespace Graphics
                 else if (event->getType() == AnimateEvent::TYPE)
                 {
                     AnimateEvent* animEvent = dynamic_cast<AnimateEvent*>(event);
-                    unsigned int id = 0;
-                    if (getEntitySceneNodeId(animEvent->getEntity(),id))
+                    SceneNode* entityNode = data_.getEntitySceneNode(animEvent->getEntity());
+                    if (entityNode != NULL)
                     {
-                        dynamic_cast<AnimatedMeshSceneNode*>(sceneNodes_[id])->applyAnimation(animEvent->getAnimation());
+                        dynamic_cast<AnimatedMeshSceneNode*>(entityNode)->applyAnimation(animEvent->getAnimation());
                     }
                 }
                 else if (event->getType() == UpdateAnimationEvent::TYPE)
                 {
                     UpdateAnimationEvent* animEvent = dynamic_cast<UpdateAnimationEvent*>(event);
-                    unsigned int id = 0;
-                    if (getEntitySceneNodeId(animEvent->getEntity(),id))
+                    SceneNode* entityNode = data_.getEntitySceneNode(animEvent->getEntity());
+                    if (entityNode != NULL)
                     {
-                        dynamic_cast<AnimatedMeshSceneNode*>(sceneNodes_[id])->update();
+                        dynamic_cast<AnimatedMeshSceneNode*>(entityNode)->update();
+                    }
+                }
+                else if (event->getType() == Physics::EntityPositionChangedEvent::TYPE)
+                {
+                    Physics::EntityPositionChangedEvent* posChangedEvent = dynamic_cast<Physics::EntityPositionChangedEvent*>(event);
+                    SceneNode* entityNode = data_.getEntitySceneNode(posChangedEvent->getEntity());
+                    if (entityNode != NULL)
+                    {
+                        entityNode->setAbsolutePosition(posChangedEvent->getPosition());
                     }
                 }
 
@@ -215,18 +219,17 @@ namespace Graphics
 
             MeshSceneNode* node = NULL;
             if (parent == NULL)
-                node = new MeshSceneNode(sceneNodes_[0]);
+                node = new MeshSceneNode(data_.getRootSceneNode());
             else
                 node = new MeshSceneNode(parent);
 
             node->setIrrlichtSceneNode(irrNode);
 
-            sceneNodes_.push_back(node);
-            node->setId(sceneNodes_.size()-1);
+            data_.addSceneNode(node);
             node->activateLight(false);
 
             if (parent == NULL)
-                sceneNodes_[0]->addChild(node);
+                data_.getRootSceneNode()->addChild(node);
             else
                 parent->addChild(node);
 
@@ -242,18 +245,17 @@ namespace Graphics
 
             AnimatedMeshSceneNode* node = NULL;
             if (parent == NULL)
-                node = new AnimatedMeshSceneNode(sceneNodes_[0]);
+                node = new AnimatedMeshSceneNode(data_.getRootSceneNode());
             else
                 node = new AnimatedMeshSceneNode(parent);
 
             node->setIrrlichtSceneNode(irrNode);
 
-            sceneNodes_.push_back(node);
-            node->setId(sceneNodes_.size()-1);
+            data_.addSceneNode(node);
             node->activateLight(false);
 
             if (parent == NULL)
-                sceneNodes_[0]->addChild(node);
+                data_.getRootSceneNode()->addChild(node);
             else
                 parent->addChild(node);
 
@@ -353,19 +355,18 @@ namespace Graphics
 
             MeshSceneNode* node = NULL;
             if (parent == NULL)
-                node = new MeshSceneNode(sceneNodes_[0]);
+                node = new MeshSceneNode(data_.getRootSceneNode());
             else
                 node = new MeshSceneNode(parent);
 
             node->setIrrlichtSceneNode(irrNode);
 
-            sceneNodes_.push_back(node);
-            node->setId(sceneNodes_.size()-1);
+            data_.addSceneNode(node);
             node->activateLight(false);
             node->setFlatShading(true);
 
             if (parent == NULL)
-                sceneNodes_[0]->addChild(node);
+                data_.getRootSceneNode()->addChild(node);
             else
                 parent->addChild(node);
 
@@ -381,37 +382,25 @@ namespace Graphics
 
             CameraSceneNode* node = NULL;
             if (parent == NULL)
-                node = new CameraSceneNode(sceneNodes_[0]);
+                node = new CameraSceneNode(data_.getRootSceneNode());
             else
                 node = new CameraSceneNode(parent);
 
             node->setIrrlichtSceneNode(irrNode);
 
-            sceneNodes_.push_back(node);
-            node->setId(sceneNodes_.size()-1);
+            data_.addSceneNode(node);
 
             parent->addChild(node);
         }
 
-        bool Scene::getEntitySceneNodeId(Ecs::Entity entity, unsigned int& id)
-        {
-            if (sceneNodeIdsByEntity_.find(entity) != sceneNodeIdsByEntity_.end())
-            {
-                id = sceneNodeIdsByEntity_[entity];
-                return true;
-            }
-            else
-                return false;
-        }
-
         bool Scene::initializeAnimationMap(const Ecs::Entity& entity, const AnimationMap& animationMap)
         {
-            unsigned int id = 0;
-            if (!getEntitySceneNodeId(entity, id))
+            SceneNode* entityNode = data_.getEntitySceneNode(entity);
+            if (entityNode == NULL)
                 return false;
             else
             {
-                dynamic_cast<AnimatedMeshSceneNode*>(sceneNodes_[id])->setAnimationMap(animationMap);
+                dynamic_cast<AnimatedMeshSceneNode*>(entityNode)->setAnimationMap(animationMap);
                 return true;
             }
         }

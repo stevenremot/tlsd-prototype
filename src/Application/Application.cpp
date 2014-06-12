@@ -30,18 +30,59 @@
 #include "../World/Generation/ChunkGenerationSystem.h"
 #include "../Input/PlayerPositionChangedEvent.h"
 #include "../Ecs/ComponentCreatedEvent.h"
+#include "../Physics/MovementSystem.h"
+
+// TODO includes for createMovingCube, remove later
+#include "../Geometry/PositionComponent.h"
+#include "../Geometry/RotationComponent.h"
+#include "../Graphics/Render/RenderableComponent.h"
+#include "../Graphics/Render/ModelUtils.h"
+#include "../Physics/MovementComponent.h"
+#include "../Physics/GravityComponent.h"
 
 namespace Application
 {
+    // TODO method for tests, to be removed
+    void createMovingCube(Ecs::World& world)
+    {
+        const Ecs::Entity& entity = world.createEntity();
+        world.addComponent(
+            entity,
+            new Geometry::PositionComponent(Geometry::Vec3Df(145.0, 145.0, 145.0))
+        );
+        world.addComponent(
+            entity,
+            new Geometry::RotationComponent(Geometry::Vec3Df())
+        );
+        world.addComponent(
+            entity,
+            new Graphics::Render::RenderableComponent(
+                Graphics::Render::createPrettyCubeModel()
+            )
+        );
+        world.addComponent(
+            entity,
+            new Physics::MovementComponent(Geometry::Vec3Df(0.0, -5.0, 10.0))
+        );
+        world.addComponent(
+            entity,
+            new Physics::GravityComponent(1)
+        );
+    }
+
     void Application::start()
     {
         setupEventThread();
         setupGraphicsThread();
+        setupUpdateThread();
         setupGenerationThread();
 
         eventThread_->start();
         graphicsThread_->start();
+        updateThread_->start();
         generationThread_->start();
+
+        createMovingCube(ecsWorld_);
 
         running_ = true;
         while (running_)
@@ -51,6 +92,7 @@ namespace Application
 
         eventThread_->stop();
         graphicsThread_->stop();
+        updateThread_->stop();
         generationThread_->stop();
     }
 
@@ -88,6 +130,17 @@ namespace Application
         reg.put(Ecs::ComponentCreatedEvent::TYPE, rs);
 
         graphicsThread_ = new Threading::Thread(graphicsThreadables, 60);
+    }
+
+    void Application::setupUpdateThread()
+    {
+        Physics::MovementSystem* movementSystem =
+            new Physics::MovementSystem(ecsWorld_, eventManager_.getEventQueue());
+
+        std::vector<Threading::ThreadableInterface*> threadables;
+        threadables.push_back(movementSystem);
+
+        updateThread_ = new Threading::Thread(threadables, 80);
     }
 
     void Application::setupGenerationThread()

@@ -86,53 +86,56 @@ namespace World
         return 1 - (x + y) * (x + y) * 2.0 / (2.0 * 3.0 * squareChunk) - (x - y) * (x - y) * 2.0 / (2.0 * squareChunk);
     }
 
-
-    float computeHeight(World& world, float x, float y)
+    /**
+     * @param[in] xChunk
+     * @param[in] yChunk
+     * @param[out] i
+     * @param[out] j
+     */
+    void computeOffsets(float x, float y, float& i, float& j)
     {
-        float chunkSize = World::ChunkSize;
-
-        int i0 = floor(x/chunkSize);
-        int j0 = floor(y/chunkSize);
-
-        Chunk actualChunk;
-        if (!world.getChunk(i0,j0,actualChunk))
+        if (x > y)
         {
-            throw NotGeneratedChunkException();
-        }
-        if (i0!=x/chunkSize && j0!=y/chunkSize && actualChunk.getState() != Chunk::GeneratedState)
-        {
-            throw NotGeneratedChunkException();
-        }
-
-        const GroundCoefficients& actualChunkGroundCoefficients = actualChunk.getCoefficients();
-
-        float xChunk = x-static_cast<float>(i0)*chunkSize;
-        float yChunk = y-static_cast<float>(j0)*chunkSize;
-
-        float i1, j1;
-        if (xChunk>yChunk)
-        {
-            i1 = 1;
-            j1 = 0;
+            i = 1;
+            j = 0;
         }
         else
         {
-            i1 = 0;
-            j1 = 1;
+            i = 0;
+            j = 1;
         }
+    }
 
-        float x1 = xChunk-i1*chunkSize;
-        float y1 = yChunk-j1*chunkSize;
-        float x2 = xChunk-chunkSize;
-        float y2 = yChunk-chunkSize;
-        float squareChunk = powf(chunkSize, 2);
+    /**
+     * @param[in] x
+     * @param[in] y
+     * @param[in] i
+     * @param[in] j
+     * @param[in] chunkSize
+     * @param[out] x1
+     * @param[out] y1
+     * @param[out] x2
+     * @param[out] y2
+     */
+    void computeInTriangleCoordinates(float x, float y, float i, float j, float chunkSize,
+                                      float& x1, float& y1, float& x2, float& y2)
+    {
+        x1 = x - i*chunkSize;
+        y1 = y - j*chunkSize;
+        x2 = x - chunkSize;
+        y2 = y - chunkSize;
+    }
 
-        float ellipse0 = computeEllipse(xChunk, yChunk, squareChunk);
-        float ellipse1 = computeEllipse(x1, y1, squareChunk);
-        float ellipse2 = computeEllipse(x2, y2, squareChunk);
+    float computeFirstOctaveContribution(World& world, float ellipse0, float ellipse1, float ellipse2,
+                                         float i0, float j0, float i1, float j1, float chunkSize)
+    {
         float n0,n1,n2;
 
         Chunk sideChunk, diagonalChunk;
+        Chunk actualChunk;
+
+        // Does not break because this have been checked before
+        world.getChunk(i0, j0, actualChunk);
 
         if (ellipse0 <= 0)
         {
@@ -140,7 +143,7 @@ namespace World
         }
         else
         {
-            n0 = powf(ellipse0,4)*world.getBiome(i0*chunkSize,j0*chunkSize).transformCoefficient(actualChunkGroundCoefficients.getCoefficient(1,0,0));
+            n0 = powf(ellipse0,4)*world.getBiome(i0*chunkSize,j0*chunkSize).transformCoefficient(actualChunk.getCoefficients().getCoefficient(1,0,0));
         }
         if (ellipse1 <= 0)
         {
@@ -167,43 +170,21 @@ namespace World
             n2 = powf(ellipse2,4)*world.getBiome((i0+1)*chunkSize,(j0+1)*chunkSize).transformCoefficient(diagonalChunk.getCoefficients().getCoefficient(1,0,0));
         }
 
-        float firstOctaveContribution = n0 + n1 + n2;
+        return n0 + n1 + n2;
+    }
 
+    float computeSecondOctaveContribution(World& world, float ellipse0, float ellipse1, float ellipse2,
+                                          float i0, float j0, float i1, float j1,
+                                          float i2, float j2, float i, float j,
+                                          float x, float y, float chunkSize)
+    {
+        float n0, n1, n2;
 
+        Chunk sideChunk, diagonalChunk;
+        Chunk actualChunk;
 
-
-
-        // Computing the second octave contribution
-        chunkSize = chunkSize/2;
-
-        int i = floor(xChunk/chunkSize);
-        int j = floor(yChunk/chunkSize);
-
-        float x0 = xChunk-static_cast<float>(i)*chunkSize;
-        float y0 = yChunk-static_cast<float>(j)*chunkSize;
-
-        float i2, j2;
-        if (x0>y0)
-        {
-            i2 = 1;
-            j2 = 0;
-        }
-        else
-        {
-            i2 = 0;
-            j2 = 1;
-        }
-
-        x1 = x0-i2*chunkSize;
-        y1 = y0-j2*chunkSize;
-        x2 = x0-chunkSize;
-        y2 = y0-chunkSize;
-        squareChunk = powf(chunkSize, 2);
-
-        ellipse0 = computeEllipse(x0, y0, squareChunk);
-        ellipse1 = computeEllipse(x1, y1, squareChunk);
-        ellipse2 = computeEllipse(x2, y2, squareChunk);
-
+        // Does not break because this have been checked before
+        world.getChunk(i0, j0, actualChunk);
 
         if (ellipse0 <= 0)
         {
@@ -211,7 +192,7 @@ namespace World
         }
         else
         {
-            n0 = powf(ellipse0,4)*world.getBiome(floor(x/chunkSize)*chunkSize,floor(y/chunkSize)*chunkSize).transformCoefficient(actualChunkGroundCoefficients.getCoefficient(2,i,j));
+            n0 = powf(ellipse0,4)*world.getBiome(floor(x/chunkSize)*chunkSize,floor(y/chunkSize)*chunkSize).transformCoefficient(actualChunk.getCoefficients().getCoefficient(2,i,j));
         }
 
         if (ellipse2 <= 0)
@@ -247,7 +228,7 @@ namespace World
             }
             else
             {
-                n2 = powf(ellipse2,4)*diagonalBiome.transformCoefficient(actualChunkGroundCoefficients.getCoefficient(2,i+1,j+1));
+                n2 = powf(ellipse2,4)*diagonalBiome.transformCoefficient(actualChunk.getCoefficients().getCoefficient(2,i+1,j+1));
             }
         }
 
@@ -260,7 +241,7 @@ namespace World
             BiomeInterface& sideBiome = world.getBiome((floor(x/chunkSize)+i2)*chunkSize,(floor(y/chunkSize)+j2)*chunkSize);
             if (i==0 && j==0)
             {
-                n1 = powf(ellipse1,4)*sideBiome.transformCoefficient(actualChunkGroundCoefficients.getCoefficient(2,i2,j2));
+                n1 = powf(ellipse1,4)*sideBiome.transformCoefficient(actualChunk.getCoefficients().getCoefficient(2,i2,j2));
             }
             else if (i==0 && j==1)
             {
@@ -274,14 +255,14 @@ namespace World
                 }
                 else
                 {
-                    n1 = powf(ellipse1,4)*sideBiome.transformCoefficient(actualChunkGroundCoefficients.getCoefficient(2,1,1));
+                    n1 = powf(ellipse1,4)*sideBiome.transformCoefficient(actualChunk.getCoefficients().getCoefficient(2,1,1));
                 }
             }
             else if (i==1 && j==0)
             {
                 if (i2==0)
                 {
-                    n1 = powf(ellipse1,4)*sideBiome.transformCoefficient(actualChunkGroundCoefficients.getCoefficient(2,1,1));
+                    n1 = powf(ellipse1,4)*sideBiome.transformCoefficient(actualChunk.getCoefficients().getCoefficient(2,1,1));
                 }
                 else
                 {
@@ -309,42 +290,21 @@ namespace World
             }
         }
 
-        float secondOctaveContribution = n0 + n1 + n2;
+        return n0 + n1 + n2;
+    }
 
+    float computeThirdOctaveContribution(World& world, float ellipse0, float ellipse1, float ellipse2,
+                                         float i0, float j0, float i1, float j1,
+                                         float i2, float j2, float i, float j,
+                                         float x, float y, float chunkSize)
+    {
+        float n0, n1, n2;
 
+        Chunk sideChunk, diagonalChunk;
+        Chunk actualChunk;
 
-
-
-        // Computing the third octave contribution
-        chunkSize = chunkSize/2;
-
-        i = floor(xChunk/chunkSize);
-        j = floor(yChunk/chunkSize);
-
-        x0 = xChunk-static_cast<float>(i)*chunkSize;
-        y0 = yChunk-static_cast<float>(j)*chunkSize;
-
-        if (x0>y0)
-        {
-            i2 = 1;
-            j2 = 0;
-        }
-        else
-        {
-            i2 = 0;
-            j2 = 1;
-        }
-
-        x1 = x0-i2*chunkSize;
-        y1 = y0-j2*chunkSize;
-        x2 = x0-chunkSize;
-        y2 = y0-chunkSize;
-        squareChunk = powf(chunkSize, 2);
-
-        ellipse0 = computeEllipse(x0,y0,squareChunk);
-        ellipse1 = computeEllipse(x1,y1,squareChunk);
-        ellipse2 = computeEllipse(x2,y2,squareChunk);
-
+        // Does not break because this have been checked before
+        world.getChunk(i0, j0, actualChunk);
 
         if (ellipse0 <= 0)
         {
@@ -352,7 +312,7 @@ namespace World
         }
         else
         {
-            n0 = powf(ellipse0,4)*world.getBiome(floor(x/chunkSize)*chunkSize,floor(y/chunkSize)*chunkSize).transformCoefficient(actualChunkGroundCoefficients.getCoefficient(3,i,j));
+            n0 = powf(ellipse0,4)*world.getBiome(floor(x/chunkSize)*chunkSize,floor(y/chunkSize)*chunkSize).transformCoefficient(actualChunk.getCoefficients().getCoefficient(3,i,j));
         }
 
         if (ellipse2 <= 0)
@@ -388,7 +348,7 @@ namespace World
             }
             else
             {
-                n2 = powf(ellipse2,4)*diagonalBiome.transformCoefficient(actualChunkGroundCoefficients.getCoefficient(3,i+1,j+1));
+                n2 = powf(ellipse2,4)*diagonalBiome.transformCoefficient(actualChunk.getCoefficients().getCoefficient(3,i+1,j+1));
             }
         }
 
@@ -411,14 +371,14 @@ namespace World
                 }
                 else
                 {
-                    n1 = powf(ellipse1,4)*sideBiome.transformCoefficient(actualChunkGroundCoefficients.getCoefficient(3,i+1,3));
+                    n1 = powf(ellipse1,4)*sideBiome.transformCoefficient(actualChunk.getCoefficients().getCoefficient(3,i+1,3));
                 }
             }
             else if (i==3 && j<3)
             {
                 if (i2==0)
                 {
-                    n1 = powf(ellipse1,4)*sideBiome.transformCoefficient(actualChunkGroundCoefficients.getCoefficient(3,3,j+1));
+                    n1 = powf(ellipse1,4)*sideBiome.transformCoefficient(actualChunk.getCoefficients().getCoefficient(3,3,j+1));
                 }
                 else
                 {
@@ -450,13 +410,109 @@ namespace World
             }
             else
             {
-                n1 = powf(ellipse1,4)*sideBiome.transformCoefficient(actualChunkGroundCoefficients.getCoefficient(3,i+i2,j+j2));
+                n1 = powf(ellipse1,4)*sideBiome.transformCoefficient(actualChunk.getCoefficients().getCoefficient(3,i+i2,j+j2));
             }
         }
 
-        float thirdOctaveContribution = n0 + n1 + n2;
+        return n0 + n1 + n2;
+    }
 
+    float computeHeight(World& world, float x, float y)
+    {
+        float chunkSize = World::ChunkSize;
 
+        int i0 = floor(x/chunkSize);
+        int j0 = floor(y/chunkSize);
+
+        Chunk actualChunk;
+        if (!world.getChunk(i0,j0,actualChunk))
+        {
+            throw NotGeneratedChunkException();
+        }
+        if (i0!=x/chunkSize && j0!=y/chunkSize && actualChunk.getState() != Chunk::GeneratedState)
+        {
+            throw NotGeneratedChunkException();
+        }
+
+        float xChunk = x-static_cast<float>(i0)*chunkSize;
+        float yChunk = y-static_cast<float>(j0)*chunkSize;
+
+        float i1, j1;
+        computeOffsets(xChunk, yChunk, i1, j1);
+
+        float x1, y1, x2, y2;
+        computeInTriangleCoordinates(
+            xChunk, yChunk, i1, j1, chunkSize,
+            x1, y1, x2, y2
+        );
+
+        float squareChunk = powf(chunkSize, 2);
+
+        float ellipse0 = computeEllipse(xChunk, yChunk, squareChunk);
+        float ellipse1 = computeEllipse(x1, y1, squareChunk);
+        float ellipse2 = computeEllipse(x2, y2, squareChunk);
+
+        float firstOctaveContribution = computeFirstOctaveContribution(
+            world, ellipse0, ellipse1, ellipse2,
+            i0, j0, i1, j1, chunkSize
+        );
+
+        // Computing the second octave contribution
+        chunkSize = chunkSize/2;
+
+        int i = floor(xChunk/chunkSize);
+        int j = floor(yChunk/chunkSize);
+
+        float x0 = xChunk-static_cast<float>(i)*chunkSize;
+        float y0 = yChunk-static_cast<float>(j)*chunkSize;
+
+        float i2, j2;
+        computeOffsets(x0, y0, i2, j2);
+
+        computeInTriangleCoordinates(
+            x0, y0, i2, j2, chunkSize,
+            x1, y1, x2, y2
+        );
+        squareChunk = powf(chunkSize, 2);
+
+        ellipse0 = computeEllipse(x0, y0, squareChunk);
+        ellipse1 = computeEllipse(x1, y1, squareChunk);
+        ellipse2 = computeEllipse(x2, y2, squareChunk);
+
+        float secondOctaveContribution = computeSecondOctaveContribution(
+            world, ellipse0, ellipse1, ellipse2,
+            i0, j0, i1, j1,
+            i2, j2, i, j,
+            x, y, chunkSize
+        );
+
+        // Computing the third octave contribution
+        chunkSize = chunkSize/2;
+
+        i = floor(xChunk/chunkSize);
+        j = floor(yChunk/chunkSize);
+
+        x0 = xChunk-static_cast<float>(i)*chunkSize;
+        y0 = yChunk-static_cast<float>(j)*chunkSize;
+
+        computeOffsets(x0, y0, i2, j2);
+
+        computeInTriangleCoordinates(
+            x0, y0, i2, j2, chunkSize,
+            x1, y1, x2, y2
+        );
+        squareChunk = powf(chunkSize, 2);
+
+        ellipse0 = computeEllipse(x0,y0,squareChunk);
+        ellipse1 = computeEllipse(x1,y1,squareChunk);
+        ellipse2 = computeEllipse(x2,y2,squareChunk);
+
+        float thirdOctaveContribution = computeThirdOctaveContribution(
+            world, ellipse0, ellipse1, ellipse2,
+            i0, j0, i1, j1,
+            i2, j2, i, j,
+            x, y, chunkSize
+        );
 
         return firstOctaveContribution + 1.0/2.0*secondOctaveContribution + 1.0/4.0*thirdOctaveContribution;
 

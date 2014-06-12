@@ -14,22 +14,6 @@ using std::vector;
 
 namespace Threading
 {
-
-#ifdef _WIN32
-    int win_gettime(struct timespec* time)
-    {
-        SYSTEMTIME st;
-        GetSystemTime(&st);
-
-        time->tv_sec = st.wSecond;
-        time->tv_nsec = st.wMilliseconds * 1000000L;
-
-        return 0;
-    }
-
-#endif // _WIN32
-
-
     int sleep(long seconds, long milliseconds)
     {
 #ifdef _WIN32
@@ -40,6 +24,21 @@ namespace Threading
         tim.tv_sec = seconds;
         tim.tv_nsec = milliseconds * 1000000L;
         return nanosleep(&tim, NULL);
+#endif
+    }
+
+    int getTime(struct timespec& time)
+    {
+#ifdef _WIN32
+        SYSTEMTIME st;
+        GetSystemTime(&st);
+
+        time.tv_sec = st.wSecond;
+        time.tv_nsec = st.wMilliseconds * 1000000L;
+
+        return 0;
+#else
+        return clock_gettime(CLOCK_MONOTONIC, &time);
 #endif
     }
 
@@ -84,11 +83,8 @@ namespace Threading
         unsigned int threadablesSize = threadables.size();
 
         struct timespec lastTime;
-#ifdef _WIN32
-        win_gettime(&lastTime);
-#else
-        clock_gettime(CLOCK_MONOTONIC, &lastTime);
-#endif // _WIN32
+        getTime(lastTime);
+
         struct timespec delay;
         delay.tv_sec = 0;
         delay.tv_nsec = 0;
@@ -99,11 +95,7 @@ namespace Threading
 
         while (thread->isRunning())
         {
-#ifdef _WIN32
-            win_gettime(&currentTime);
-#else
-            clock_gettime(CLOCK_MONOTONIC, &currentTime);
-#endif // _WIN32
+            getTime(currentTime);
             struct timespec diff = difference(lastTime, currentTime);
             delay.tv_sec += diff.tv_sec;
             delay.tv_nsec += diff.tv_nsec;
@@ -120,7 +112,6 @@ namespace Threading
                 diffDelays = difference(loopDelay, delay);
             }
 
-            //int ret = Threading::sleep(0, static_cast<long>(loopDelay.tv_sec - delay.tv_sec));
             struct timespec waitingTime = difference(delay, loopDelay);
             Threading::sleep(waitingTime.tv_sec, waitingTime.tv_nsec / 1000000L);
         }

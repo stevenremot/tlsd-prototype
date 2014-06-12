@@ -28,6 +28,7 @@
 #include "Component.h"
 #include "ComponentGroup.h"
 #include "SharedEntity.h"
+#include "EntityDescriptor.h"
 
 #include "../Event/EventManager.h"
 
@@ -59,7 +60,7 @@ namespace Ecs
         public:
             const char* what() const throw()
             {
-                return "Entity's components does not satisfy group requirements.";
+                return "Entity's components does not satisfy requirements.";
             }
         };
 
@@ -122,6 +123,24 @@ namespace Ecs
         SharedEntity createSharedEntity(const Entity& entity);
 
         /**
+         * Transform an entity into a shared entity.
+         */
+        SharedEntity shareEntity(const Entity& entity);
+
+        /**
+         * Create an entity based on the descriptor if necesary
+         *
+         * If an entity based on this descriptor has already been loaded,
+         * return it.
+         */
+        Entity loadDescriptor(EntityDescriptor& descriptor);
+
+        /**
+         * Delete the entity in the descriptor if nobody else needs it.
+         */
+        void unloadDescriptor(EntityDescriptor& descriptor);
+
+        /**
          * Add an association between an entity and a component.
          *
          * @throw AlreadySetComponentException when entity is already associated
@@ -138,6 +157,16 @@ namespace Ecs
         ComponentGroup getEntityComponents(
             const Entity& entity,
             const ComponentGroup& prototype
+        );
+
+        /**
+         * Return the component of type type associated to entity
+         *
+         * @throw DoesNotSatisfyException when entity has no such component
+         */
+        Component& getEntityComponent(
+            const Entity& entity,
+            const Component::Type& type
         );
 
         bool hasComponent(const Entity& entity, Component::Type type) const;

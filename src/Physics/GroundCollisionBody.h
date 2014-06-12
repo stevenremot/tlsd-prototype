@@ -15,18 +15,28 @@
     You should have received a copy of the GNU General Public License
     along with The Lost Souls Downfall prototype.  If not, see
     <http://www.gnu.org/licenses/>.
-*/#include "Image.h"
-namespace Graphics
-{
+*/
 
-    namespace Gui{
-Image::Image()
+#ifndef PHYSICS_GROUND_COLLISION_BODY_H
+#define PHYSICS_GROUND_COLLISION_BODY_H
+
+#include "CollisionBody.h"
+
+namespace Physics
 {
-    //ctor
+    class GroundCollisionBody: public CollisionBody
+    {
+    public:
+        static const Type Type;
+
+        GroundCollisionBody(): CollisionBody(Type)
+        {}
+    };
 }
 
-Image::~Image()
-{
-    //dtor
-}
-    }}
+#endif
+
+// Emacs local variables
+// Local variables:
+// mode: c++
+// End:

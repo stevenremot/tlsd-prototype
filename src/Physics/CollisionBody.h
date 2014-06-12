@@ -16,15 +16,40 @@
     along with The Lost Souls Downfall prototype.  If not, see
     <http://www.gnu.org/licenses/>.
 */
-#include "Synchronizer.h"
-namespace Network{
-Synchronizer::Synchronizer()
+
+#ifndef PHYSICS_COLLISION_BODY_H
+#define PHYSICS_COLLISION_BODY_H
+
+#include <string>
+
+namespace Physics
 {
-    //ctor
+    /**
+     * Base class for collision bodies.
+     */
+    class CollisionBody
+    {
+    public:
+        typedef std::string Type;
+
+        CollisionBody(const Type& type): type_(type)
+        {}
+
+        virtual ~CollisionBody() {}
+
+        const Type& getType() const
+        {
+            return type_;
+        }
+
+    private:
+        Type type_;
+    };
 }
 
-Synchronizer::~Synchronizer()
-{
-    //dtor
-}
-}
+#endif
+
+// Emacs local variables
+// Local variables:
+// mode: c++
+// End:

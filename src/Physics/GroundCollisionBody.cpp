@@ -16,20 +16,10 @@
     along with The Lost Souls Downfall prototype.  If not, see
     <http://www.gnu.org/licenses/>.
 */
-#ifndef LISTENERSERVER_H
-#define LISTENERSERVER_H
 
-#include "../Threading/Channel.h"
-#include "../Threading/Thread.h"
-using Threading::ThreadableInterface;
-namespace Network{
-class ListenerServer : public ThreadableInterface
+#include "GroundCollisionBody.h"
+
+namespace Physics
 {
-    public:
-        ListenerServer();
-        virtual ~ListenerServer();
-    protected:
-    private:
-};
+    const CollisionBody::Type GroundCollisionBody::Type = "ground";
 }
-#endif // LISTENERSERVER_H

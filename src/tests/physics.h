@@ -16,17 +16,18 @@
     along with The Lost Souls Downfall prototype.  If not, see
     <http://www.gnu.org/licenses/>.
 */
-#include "GuiTest.h"
 
-namespace GraphicsTest{
-GuiTest::GuiTest()
+#ifndef TESTS_PHYSICS_H
+#define TESTS_PHYSICS_H
+
+namespace PhysicsTest
 {
-WindowsManager winman;
-
+    void testMovementSystem();
 }
 
-GuiTest::~GuiTest()
-{
-    //dtor
-}
-}
+#endif
+
+// Emacs local variables
+// Local variables:
+// mode: c++
+// End:

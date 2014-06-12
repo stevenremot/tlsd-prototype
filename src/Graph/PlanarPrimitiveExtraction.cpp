@@ -258,11 +258,11 @@ namespace Graph
             {
                 if (neighbours[0] != nextEdge)
                 {
-                    nextEdge = neighbours[1];
+                    nextEdge = neighbours[0];
                 }
                 else
                 {
-                    nextEdge = neighbours[0];
+                    nextEdge = neighbours[1];
                 }
 
                 currentNode = nextEdge.getOtherNode(currentNode);

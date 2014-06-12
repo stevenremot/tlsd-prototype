@@ -16,15 +16,38 @@
     along with The Lost Souls Downfall prototype.  If not, see
     <http://www.gnu.org/licenses/>.
 */
-#include "ListenerClient.h"
-namespace Network{
-ListenerClient::ListenerClient()
+
+#ifndef PHYSICS_AABB_COLLISION_BODY_H
+#define PHYSICS_AABB_COLLISION_BODY_H
+
+#include "CollisionBody.h"
+#include "../Geometry/AxisAlignedBoundingBox.h"
+
+namespace Physics
 {
-    //ctor
+    class AABBCollisionBody: public CollisionBody
+    {
+    public:
+        static const Type Type;
+
+        AABBCollisionBody(const Geometry::AxisAlignedBoundingBox& bbox):
+            CollisionBody(Type),
+            boundingBox_(bbox)
+        {}
+
+        const Geometry::AxisAlignedBoundingBox& getBoundingBox() const
+        {
+            return boundingBox_;
+        }
+
+    private:
+        Geometry::AxisAlignedBoundingBox boundingBox_;
+    };
 }
 
-ListenerClient::~ListenerClient()
-{
-    //dtor
-}
-}
+#endif
+
+// Emacs local variables
+// Local variables:
+// mode: c++
+// End:
