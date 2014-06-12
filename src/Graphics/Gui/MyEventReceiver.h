@@ -6,9 +6,10 @@
 #include <stdlib.h>
 #include <iostream>
 #include "GuiId.h"
+#pragma once
 namespace Graphics
 {
-
+    namespace Gui{
 void setSkinTransparency(irr::s32 alpha, irr::gui::IGUISkin * skin);
 
 struct SAppContext
@@ -129,5 +130,6 @@ public:
 private:
     SAppContext & Context;
 };
+    }
 }
 #endif // MYEVENTRECEIVER_H

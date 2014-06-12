@@ -6,12 +6,12 @@
 #ifdef _IRR_WINDOWS_
 #pragma comment(lib, "Irrlicht.lib")
 #endif
-
+#include "MyEventReceiver.h"
 
 namespace Graphics
 {
 
-
+    namespace Gui{
 class Gui
 {
     public:
@@ -22,5 +22,6 @@ class Gui
     private:
 
 };
+    }
 }
 #endif // GUI_H

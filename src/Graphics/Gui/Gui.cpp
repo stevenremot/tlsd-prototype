@@ -16,11 +16,11 @@
     along with The Lost Souls Downfall prototype.  If not, see
     <http://www.gnu.org/licenses/>.
 */
-#include "MyEventReceiver.h"
+
 #include "Gui.h"
 namespace Graphics
 {
-
+    namespace Gui{
 Gui::Gui()
 {
 }
@@ -46,11 +46,11 @@ int Gui::Call()
     irr::gui::IGUISkin* skin = env->getSkin();
     irr::gui::IGUIFont* font = env->getFont("media/fonthaettenschweiler.bmp");
 
-    if (font)
-        skin->setFont(font);
+
 
     skin->setFont(env->getBuiltInFont(),irr::gui::EGDF_TOOLTIP);
 // ajout de bouton
+
     env->addButton(irr::core::rect<irr::s32>(10,240,110,240 + 32), 0, GUI_ID_QUIT_BUTTON,
                    L"Quit", L"Exits Program");
 
@@ -74,6 +74,8 @@ int Gui::Call()
 
     env->addStaticText(L"Logging ListBox:", irr::core::rect<irr::s32>(50,110,250,130), true);
     irr::gui::IGUIListBox * listbox = env->addListBox(irr::core::rect<irr::s32>(50, 140, 250, 210));
+
+    //EditBox
     env->addEditBox(L"Editable Text", irr::core::rect<irr::s32>(350, 80, 550, 100));
 
     // Store the appropriate data in a context structure.
@@ -84,11 +86,11 @@ int Gui::Call()
 
     // Then create the event receiver, giving it that context structure.
     MyEventReceiver receiver(context);
-
-    // And tell the device to use our custom event receiver.
     device->setEventReceiver(&receiver);
-    env->addImage(driver->getTexture("media/irrlichtlogo2.png"), irr::core::position2d<int>(10,10));
+    // And tell the device to use our custom event receiver.
 
+    env->addImage(driver->getTexture("media/irrlichtlogo2.png"), irr::core::position2d<int>(10,10));
+//env->clear();
 
 
     // Affichage de la fenêtre!
@@ -106,5 +108,6 @@ int Gui::Call()
 
     return 0;
 }
+    }
 }
 

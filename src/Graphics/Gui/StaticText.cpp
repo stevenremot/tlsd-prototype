@@ -15,17 +15,17 @@
     You should have received a copy of the GNU General Public License
     along with The Lost Souls Downfall prototype.  If not, see
     <http://www.gnu.org/licenses/>.
-*/#include "MyEventReceiver.h"
+*/#include "StaticText.h"
 namespace Graphics{
     namespace Gui{
-void setSkinTransparency(irr::s32 alpha, irr::gui::IGUISkin * skin)
-    {
-        for (irr::s32 i=0; i<irr::gui::EGDC_COUNT ; ++i)
-        {
-            irr::video::SColor col = skin->getColor((irr::gui::EGUI_DEFAULT_COLOR)i);
-            col.setAlpha(alpha);
-            skin->setColor((irr::gui::EGUI_DEFAULT_COLOR)i, col);
-        }
-    }
+StaticText::StaticText()
+{
+    //ctor
+}
+
+StaticText::~StaticText()
+{
+    //dtor
+}
     }
 }

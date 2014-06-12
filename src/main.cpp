@@ -35,7 +35,7 @@
 #include "tests/worldGeneration.h"
 #include "Application/Application.h"
 
-#include "Graphics/Gui/Gui.h"
+#include "tests/GuiTest.h"
 using std::cout;
 using std::endl;
 using std::string;
@@ -66,8 +66,7 @@ int main()
     // WorldGenerationTests::testCityCreation();
     // AnimationTest::testAnimation();
     // RenderTest::testRenderSystem(10);
-    Graphics::Gui gui;
-    gui.Call();
+    GraphicsTest::GuiTest();
 
     //Application::Application app;
     //app.start();
