@@ -6,15 +6,8 @@
 
 namespace Geometry
 {
-    Vec3Df fromIrrVector3df(const irr::core::vector3df& vec)
-    {
-        return Vec3Df(vec.X, vec.Z, vec.Y);
-    }
-
-    irr::core::vector3df fromVec3Df(const Vec3Df& vec)
-    {
-        return irr::core::vector3df(vec.getX(), vec.getZ(), vec.getY());
-    }
+    Vec3Df fromIrrVector3df(const irr::core::vector3df& vec);
+    irr::core::vector3df fromVec3Df(const Vec3Df& vec);
 }
 
 #endif // GEOMETRY_IRRLICHTCONVERSIONS_H

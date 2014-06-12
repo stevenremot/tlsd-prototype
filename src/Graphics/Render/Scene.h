@@ -77,6 +77,7 @@ namespace Graphics
             bool initializeAnimationMap(const Ecs::Entity& entity, const AnimationMap& animationMap);
 
             void addCameraSceneNode(SceneNode* parent);
+            void addLightSceneNode(SceneNode* parent, const Vec3Df& position, float radiusOfInfluence);
             void addMeshSceneNodeFromModel3D(SceneNode* parent, const Model3D& model3d, const Vec3Df& position, const Vec3Df& rotation);
             void addMeshSceneNodeFromFile(SceneNode* parent, const string& meshFile, const string& textureFile, const Vec3Df& position, const Vec3Df& rotation);
             void addAnimatedMeshSceneNodeFromFile(SceneNode* parent, const string& meshFile, const string& textureFile, const Vec3Df& position, const Vec3Df& rotation);
