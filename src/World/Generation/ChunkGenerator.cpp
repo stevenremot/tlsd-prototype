@@ -110,15 +110,23 @@ namespace World
         {
             const float chunkSize = World::ChunkSize;
             const float floatX = x, floatY = y;
+            float centerX, centerY;
 
-            const float centerX = rng.getUniform(
-                floatX * chunkSize,
-                (floatX + 1) * chunkSize
-            );
-            const float centerY = rng.getUniform(
-                floatY * chunkSize,
-                (floatY + 1) * chunkSize
-            );
+            if (x == 0 && y == 0)
+            {
+                centerX = centerY = 0;
+            }
+            else
+            {
+                centerX = rng.getUniform(
+                    floatX * chunkSize,
+                    (floatX + 1) * chunkSize
+                );
+                centerY = rng.getUniform(
+                    floatY * chunkSize,
+                    (floatY + 1) * chunkSize
+                );
+            }
 
             const Geometry::Vec2Df position(centerX, centerY);
             const City::GenerationParameters parameters;
