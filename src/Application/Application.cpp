@@ -113,7 +113,7 @@ namespace Application
     {
         std::vector<Threading::ThreadableInterface*> eventThreadables;
         eventThreadables.push_back(&eventManager_);
-        eventThread_ = new Threading::Thread(eventThreadables, 240);
+        eventThread_ = new Threading::Thread(eventThreadables, 300);
     }
 
     void Application::setupGraphicsThread()
