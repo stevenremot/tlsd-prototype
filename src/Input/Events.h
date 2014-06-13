@@ -2,30 +2,29 @@
 #define INPUT_EVENTS_H
 
 #include <irrlicht/position2d.h>
+#include "../Geometry/Vec2D.h"
 
 #include "../Event/Event.h"
 
 namespace Input
 {
-    enum Direction {Forward, Backward, Left, Right, ForwardLeft, ForwardRight, BackwardLeft, BackwardRight};
-
     class MoveEvent : public Event::Event
     {
     public:
         static const Event::Type TYPE;
 
-        MoveEvent(Direction dir):
+        MoveEvent(const Geometry::Vec2Df& dir):
             Event::Event(TYPE),
             direction_(dir)
             {}
 
-        Direction getDirection() const
+        const Geometry::Vec2Df& getDirection() const
         {
             return direction_;
         }
 
     private:
-        Direction direction_;
+        Geometry::Vec2Df direction_;
     };
 
     class CameraEvent : public Event::Event

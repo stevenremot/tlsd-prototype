@@ -40,7 +40,7 @@ namespace AnimationTest
         {
             const Input::MoveEvent& me = static_cast<const Input::MoveEvent&>(event);
 
-            if (me.getDirection() == Input::Forward)
+            if (me.getDirection() == Geometry::Vec2Df(1,0))
             {
                 eventQueue_ << new DummyActionEvent(0,1); // entity 0, action 1
             }

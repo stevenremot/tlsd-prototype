@@ -5,12 +5,13 @@
 
 #include "Events.h"
 
+using irr::SKeyMap;
+using irr::core::array;
+using irr::core::position2df;
+using Geometry::Vec2Df;
+
 namespace Input
 {
-    using irr::SKeyMap;
-    using irr::core::array;
-    using irr::core::position2df;
-
     const Event::Event::Type InitInputEvent::TYPE = "init_input";
     const Event::Event::Type InputInitializedEvent::TYPE = "input_initialized";
 
@@ -47,31 +48,19 @@ namespace Input
 
     void IrrlichtInputReceiver::run()
     {
+        Vec2Df direction(0,0);
+
         if (cursorKeys_[irr::EKA_MOVE_FORWARD])
-        {
-            if (cursorKeys_[irr::EKA_STRAFE_LEFT])
-                eventQueue_ << new MoveEvent(ForwardLeft);
-            else if (cursorKeys_[irr::EKA_STRAFE_RIGHT])
-                eventQueue_ << new MoveEvent(ForwardRight);
-            else
-                eventQueue_ << new MoveEvent(Forward);
-        }
-        else if (cursorKeys_[irr::EKA_MOVE_BACKWARD])
-        {
-            if (cursorKeys_[irr::EKA_STRAFE_LEFT])
-                eventQueue_ << new MoveEvent(BackwardLeft);
-            else if (cursorKeys_[irr::EKA_STRAFE_RIGHT])
-                eventQueue_ << new MoveEvent(BackwardRight);
-            else
-                eventQueue_ << new MoveEvent(Backward);
-        }
-        else
-        {
-            if (cursorKeys_[irr::EKA_STRAFE_LEFT])
-                eventQueue_ << new MoveEvent(Left);
-            else if (cursorKeys_[irr::EKA_STRAFE_RIGHT])
-                eventQueue_ << new MoveEvent(Right);
-        }
+            direction += Vec2Df(1,0);
+        if (cursorKeys_[irr::EKA_MOVE_BACKWARD])
+            direction += Vec2Df(-1,0);
+        if (cursorKeys_[irr::EKA_STRAFE_LEFT])
+            direction += Vec2Df(0,-1);
+        if (cursorKeys_[irr::EKA_STRAFE_RIGHT])
+            direction += Vec2Df(0,1);
+
+        if (direction != Vec2Df(0,0))
+            eventQueue_ << new MoveEvent(direction);
 
         if (cursorControl_ != NULL)
         {
