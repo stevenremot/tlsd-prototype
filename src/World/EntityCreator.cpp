@@ -22,6 +22,7 @@
 #include "../Geometry/RotationComponent.h"
 #include "../Graphics/Render/RenderableComponent.h"
 #include "Ground.h"
+#include "Tree.h"
 
 namespace World
 {
@@ -85,6 +86,25 @@ namespace World
 
         entity->addComponent(
             new Graphics::Render::RenderableComponent(building.getModel())
+        );
+
+        return entity;
+    }
+
+    Core::SharedPtr<Ecs::EntityDescriptor> createTree(const Geometry::Vec3Df position, const TreeInterface& tree)
+    {
+        Core::SharedPtr<Ecs::EntityDescriptor> entity(new Ecs::EntityDescriptor);
+
+        entity->addComponent(
+            new Geometry::PositionComponent(position)
+        );
+
+        entity->addComponent(
+            new Geometry::RotationComponent(Geometry::Vec3Df())
+        );
+
+        entity->addComponent(
+            new Graphics::Render::RenderableComponent(tree.getModel())
         );
 
         return entity;

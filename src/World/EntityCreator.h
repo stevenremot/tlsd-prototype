@@ -48,6 +48,12 @@ namespace World
      * TODO Add physical component
      */
     Core::SharedPtr<Ecs::EntityDescriptor> createBuilding(const BuildingInterface& building);
+
+    /**
+     *
+     *
+     */
+    Core::SharedPtr<Ecs::EntityDescriptor> createTree(const Geometry::Vec3Df position, const TreeInterface& tree);
 }
 
 #endif
