@@ -29,7 +29,7 @@ namespace Graphics
 
         irr::scene::IMesh* MeshSceneNode::getIrrlichtMesh() const
         {
-            return dynamic_cast<irr::scene::IMeshSceneNode*>(irrlichtSceneNode_)->getMesh();
+            return static_cast<irr::scene::IMeshSceneNode*>(irrlichtSceneNode_)->getMesh();
         }
     }
 }
