@@ -36,7 +36,7 @@ namespace AnimationTest
 {
     void DummyInputListener::call(const Event::Event& event)
     {
-        if (event.getType() == Input::MoveEvent::TYPE)
+        if (event.getType() == Input::MoveEvent::Type)
         {
             const Input::MoveEvent& me = static_cast<const Input::MoveEvent&>(event);
 
@@ -57,7 +57,7 @@ namespace AnimationTest
         reg.put(Input::InputInitializedEvent::TYPE, &device);
 
         DummyInputListener l(m.getEventQueue());
-        reg.put(Input::MoveEvent::TYPE, &l);
+        reg.put(Input::MoveEvent::Type, &l);
 
         Scene scene(m.getEventQueue());
         scene.registerListeners(reg);

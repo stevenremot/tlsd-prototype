@@ -17,27 +17,47 @@
     <http://www.gnu.org/licenses/>.
 */
 
-#ifndef INPUT_PLAYER_COMPONENT_H
-#define INPUT_PLAYER_COMPONENT_H
+#ifndef CHARACTER_ACTION_PERFORMED_EVENT_H
+#define CHARACTER_ACTION_PERFORMED_EVENT_H
 
-#include "../Ecs/Component.h"
+#include "../Event/Event.h"
+#include "../Ecs/Entity.h"
+#include "Action.h"
 
-namespace Input
+namespace Character
 {
     /**
-     * Component tagging an entity as the player.
+     * Dispatched when an entity wants to perform an action.
      */
-    class PlayerComponent: public Ecs::Component
+    class ActionPerformedEvent: public Event::Event
     {
     public:
         static const Type Type;
-        PlayerComponent(): Component(Type)
+
+        ActionPerformedEvent(const Ecs::Entity& entity, Action* action):
+            Event(Type),
+            entity_(entity),
+            action_(action)
         {}
 
-        virtual const std::vector<Component::Type>& getDependentComponents();
+        ~ActionPerformedEvent()
+        {
+            delete action_;
+        }
+
+        const Ecs::Entity& getEntity() const
+        {
+            return entity_;
+        }
+
+        const Action& getAction() const
+        {
+            return *action_;
+        }
 
     private:
-        static std::vector<Component::Type> dependantComponents_;
+        Ecs::Entity entity_;
+        Action* action_;
     };
 }
 

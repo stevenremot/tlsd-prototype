@@ -155,13 +155,13 @@ namespace RenderTest
 
         Scene scene(m.getEventQueue());
         reg.put(Graphics::Render::InitSceneEvent::TYPE, &scene);
-        reg.put(Input::CameraEvent::TYPE, &scene);
+        reg.put(Input::CameraEvent::Type, &scene);
 
         IrrlichtInputReceiver receiver(m.getEventQueue());
         reg.put(Input::InitInputEvent::TYPE, &receiver);
 
         DummyInputListener inputListener;
-        reg.put(Input::MoveEvent::TYPE, &inputListener);
+        reg.put(Input::MoveEvent::Type, &inputListener);
 
         std::vector<ThreadableInterface*> threadables, threadables2;
         threadables.push_back(&device);

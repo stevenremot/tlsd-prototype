@@ -27,7 +27,7 @@ namespace Input
     const Ecs::Component::Type PlayerComponent::Type = "player";
     std::vector<Ecs::Component::Type> PlayerComponent::dependantComponents_;
 
-    const std::vector<Ecs::Component::Type>& PlayerComponent::getDependantComponents()
+    const std::vector<Ecs::Component::Type>& PlayerComponent::getDependentComponents()
     {
         if (dependantComponents_.empty())
         {

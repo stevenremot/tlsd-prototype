@@ -17,28 +17,12 @@
     <http://www.gnu.org/licenses/>.
 */
 
-#ifndef INPUT_PLAYER_COMPONENT_H
-#define INPUT_PLAYER_COMPONENT_H
+#ifndef TESTS_INPUT_H
+#define TESTS_INPUT_H
 
-#include "../Ecs/Component.h"
-
-namespace Input
+namespace InputTest
 {
-    /**
-     * Component tagging an entity as the player.
-     */
-    class PlayerComponent: public Ecs::Component
-    {
-    public:
-        static const Type Type;
-        PlayerComponent(): Component(Type)
-        {}
-
-        virtual const std::vector<Component::Type>& getDependentComponents();
-
-    private:
-        static std::vector<Component::Type> dependantComponents_;
-    };
+    void testPlayerSystem();
 }
 
 #endif

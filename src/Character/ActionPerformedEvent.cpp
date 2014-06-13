@@ -17,33 +17,9 @@
     <http://www.gnu.org/licenses/>.
 */
 
-#ifndef INPUT_PLAYER_COMPONENT_H
-#define INPUT_PLAYER_COMPONENT_H
+#include "ActionPerformedEvent.h"
 
-#include "../Ecs/Component.h"
-
-namespace Input
+namespace Character
 {
-    /**
-     * Component tagging an entity as the player.
-     */
-    class PlayerComponent: public Ecs::Component
-    {
-    public:
-        static const Type Type;
-        PlayerComponent(): Component(Type)
-        {}
-
-        virtual const std::vector<Component::Type>& getDependentComponents();
-
-    private:
-        static std::vector<Component::Type> dependantComponents_;
-    };
+    const Event::Event::Type ActionPerformedEvent::Type = "action-performed-event";
 }
-
-#endif
-
-// Emacs local variables
-// Local variables:
-// mode: c++
-// End:
