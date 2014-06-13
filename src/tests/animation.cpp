@@ -59,7 +59,7 @@ namespace AnimationTest
         DummyInputListener l(m.getEventQueue());
         reg.put(Input::MoveEvent::TYPE, &l);
 
-        Scene scene;
+        Scene scene(m.getEventQueue());
         scene.registerListeners(reg);
 
         IrrlichtInputReceiver receiver(m.getEventQueue());

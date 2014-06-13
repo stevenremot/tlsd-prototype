@@ -22,7 +22,8 @@
 #include "../Geometry/RotationComponent.h"
 #include "../Graphics/Render/RenderableComponent.h"
 #include "Ground.h"
-#include "Tree.h"
+#include "../Physics/GroundCollisionBody.h"
+#include "../Physics/CollisionComponent.h"
 
 namespace World
 {
@@ -50,8 +51,12 @@ namespace World
             new Graphics::Render::RenderableComponent(computeGroundModel(world, i, j))
         );
 
-		return groundEntity;
-	}
+        groundEntity->addComponent(
+            new Physics::CollisionComponent(Physics::GroundCollisionBody())
+        );
+
+        return groundEntity;
+    }
 
     Core::SharedPtr<Ecs::EntityDescriptor> createRoad(const RoadNetwork& road)
     {
@@ -86,25 +91,6 @@ namespace World
 
         entity->addComponent(
             new Graphics::Render::RenderableComponent(building.getModel())
-        );
-
-        return entity;
-    }
-
-    Core::SharedPtr<Ecs::EntityDescriptor> createTree(const Geometry::Vec3Df position, const TreeInterface& tree)
-    {
-        Core::SharedPtr<Ecs::EntityDescriptor> entity(new Ecs::EntityDescriptor);
-
-        entity->addComponent(
-            new Geometry::PositionComponent(position)
-        );
-
-        entity->addComponent(
-            new Geometry::RotationComponent(Geometry::Vec3Df())
-        );
-
-        entity->addComponent(
-            new Graphics::Render::RenderableComponent(tree.getModel())
         );
 
         return entity;

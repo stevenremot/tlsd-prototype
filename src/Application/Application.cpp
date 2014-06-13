@@ -31,6 +31,9 @@
 #include "../Input/PlayerPositionChangedEvent.h"
 #include "../Ecs/ComponentCreatedEvent.h"
 #include "../Physics/MovementSystem.h"
+#include "../Physics/CollisionSystem.h"
+#include "../Physics/CollisionEngine.h"
+#include "../Physics/InitCollisionEngineEvent.h"
 
 // TODO includes for createMovingCube, remove later
 #include "../Geometry/PositionComponent.h"
@@ -39,16 +42,22 @@
 #include "../Graphics/Render/ModelUtils.h"
 #include "../Physics/MovementComponent.h"
 #include "../Physics/GravityComponent.h"
+#include "../Physics/CollisionComponent.h"
+#include "../Physics/AABBCollisionBody.h"
+#include "../Geometry/AxisAlignedBoundingBox.h"
 
 namespace Application
 {
     // TODO method for tests, to be removed
     void createMovingCube(Ecs::World& world)
     {
+        // TODO: method AABB from model 3d
+        Geometry::AxisAlignedBoundingBox bbox(Geometry::Vec3Df(50.0, 50.0, 145.0), Geometry::Vec3Df(55.0, 55.0, 150.0));
+
         const Ecs::Entity& entity = world.createEntity();
         world.addComponent(
             entity,
-            new Geometry::PositionComponent(Geometry::Vec3Df(145.0, 145.0, 145.0))
+            new Geometry::PositionComponent(Geometry::Vec3Df(50.0, 50.0, 145.0))
         );
         world.addComponent(
             entity,
@@ -62,11 +71,15 @@ namespace Application
         );
         world.addComponent(
             entity,
-            new Physics::MovementComponent(Geometry::Vec3Df(0.0, -5.0, 10.0))
+            new Physics::MovementComponent(Geometry::Vec3Df(1.0, 1.0, 20.0))
         );
         world.addComponent(
             entity,
             new Physics::GravityComponent(1)
+        );
+        world.addComponent(
+            entity,
+            new Physics::CollisionComponent(Physics::AABBCollisionBody(bbox))
         );
     }
 
@@ -100,7 +113,7 @@ namespace Application
     {
         std::vector<Threading::ThreadableInterface*> eventThreadables;
         eventThreadables.push_back(&eventManager_);
-        eventThread_ = new Threading::Thread(eventThreadables, 120);
+        eventThread_ = new Threading::Thread(eventThreadables, 300);
     }
 
     void Application::setupGraphicsThread()
@@ -113,7 +126,7 @@ namespace Application
         Graphics::Device* dev = new Graphics::Device(queue);
         reg.put(Input::InputInitializedEvent::TYPE, dev);
 
-        Graphics::Render::Scene* scene = new Graphics::Render::Scene;
+        Graphics::Render::Scene* scene = new Graphics::Render::Scene(queue);
         scene->registerListeners(reg);
 
         Input::IrrlichtInputReceiver* receiver =
@@ -134,11 +147,24 @@ namespace Application
 
     void Application::setupUpdateThread()
     {
+        Event::ListenerRegister& reg = eventManager_.getListenerRegister();
+
         Physics::MovementSystem* movementSystem =
             new Physics::MovementSystem(ecsWorld_, eventManager_.getEventQueue());
 
+        Physics::CollisionEngine* collisionEngine =
+            new Physics::CollisionEngine();
+
+        Physics::CollisionSystem* collisionSystem =
+            new Physics::CollisionSystem(ecsWorld_, eventManager_.getEventQueue(), movementSystem->getTimer(), *collisionEngine);
+
+        reg.put(Physics::InitCollisionEngineEvent::TYPE, collisionEngine);
+        reg.put(Ecs::ComponentCreatedEvent::TYPE, collisionSystem);
+
         std::vector<Threading::ThreadableInterface*> threadables;
         threadables.push_back(movementSystem);
+        threadables.push_back(collisionEngine);
+        threadables.push_back(collisionSystem);
 
         updateThread_ = new Threading::Thread(threadables, 80);
     }

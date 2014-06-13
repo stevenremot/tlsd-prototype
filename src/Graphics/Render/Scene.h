@@ -14,6 +14,7 @@
 #include "../../Event/Event.h"
 #include "../../Event/EventListenerInterface.h"
 #include "../../Event/ListenerRegister.h"
+#include "../../Event/EventManager.h"
 #include "../../Threading/ThreadableInterface.h"
 #include "../../Threading/Channel.h"
 #include "../../Ecs/Entity.h"
@@ -62,7 +63,7 @@ namespace Graphics
         class Scene : public Event::EventListenerInterface, public Threading::ThreadableInterface
         {
         public:
-            Scene();
+            Scene(Event::EventQueue& eventQueue);
             virtual ~Scene();
 
             // EventListener
@@ -76,6 +77,7 @@ namespace Graphics
             bool initializeAnimationMap(const Ecs::Entity& entity, const AnimationMap& animationMap);
 
             void addCameraSceneNode(SceneNode* parent);
+            void addLightSceneNode(SceneNode* parent, const Vec3Df& position, float radiusOfInfluence);
             void addMeshSceneNodeFromModel3D(SceneNode* parent, const Model3D& model3d, const Vec3Df& position, const Vec3Df& rotation);
             void addMeshSceneNodeFromFile(SceneNode* parent, const string& meshFile, const string& textureFile, const Vec3Df& position, const Vec3Df& rotation);
             void addAnimatedMeshSceneNodeFromFile(SceneNode* parent, const string& meshFile, const string& textureFile, const Vec3Df& position, const Vec3Df& rotation);
@@ -89,6 +91,7 @@ namespace Graphics
             CameraSceneNode* camera_;
 
             Threading::Channel<Event::Event*> events_;
+            Event::EventQueue& eventQueue_;
         };
     }
 }

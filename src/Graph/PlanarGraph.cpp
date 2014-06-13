@@ -51,10 +51,9 @@ namespace Graph
 
     PlanarGraph& PlanarGraph::operator=(const PlanarGraph& graph)
     {
-        while (!nodeCache_.empty())
-        {
-            removeNode(nodeCache_.front());
-        }
+        graph_.clear();
+        nodeCache_.clear();
+        edgeCache_.clear();
 
         insertData(graph.getNodes(), graph.getEdges());
         return *this;

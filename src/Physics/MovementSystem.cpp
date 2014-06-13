@@ -23,6 +23,7 @@
 #include "../Geometry/PositionComponent.h"
 #include "../Threading/Thread.h"
 #include "GravityComponent.h"
+#include "CollisionComponent.h"
 #include "EntityPositionChangedEvent.h"
 
 using Geometry::PositionComponent;
@@ -46,11 +47,11 @@ namespace Physics
         Ecs::World::ComponentGroupCollection groups = world.getComponents(prototype);
 
         // Update their positions
-        unsigned long currentTime = getCurrentTime();
+        timer_->updateCurrentTime();
 
-        if (lastTime_ > 0)
+        if (timer_->getLastTime() > 0)
         {
-            unsigned long delay = currentTime - lastTime_;
+            unsigned long delay = timer_->getDelay();
 
             Ecs::World::ComponentGroupCollection::iterator group;
             for (group = groups.begin(); group != groups.end(); ++group)
@@ -61,18 +62,20 @@ namespace Physics
 
                 positionComponent.setPosition(positionComponent.getPosition() + movement);
 
-                if (movement != Geometry::Vec3Df(0,0,0))
-                    eventQueue_ << new EntityPositionChangedEvent(group->getEntity(), positionComponent.getPosition());
+                if (!world.hasComponent(group->getEntity(), CollisionComponent::Type))
+                    if (movement != Geometry::Vec3Df(0,0,0))
+                        eventQueue_ << new EntityPositionChangedEvent(group->getEntity(), positionComponent.getPosition());
             }
         }
 
-        lastTime_ = currentTime;
+        timer_->updateLastTime();
     }
 
     Geometry::Vec3Df MovementSystem::getMovement(
         Ecs::ComponentGroup& group,
         unsigned long delay
-    ) {
+    )
+    {
         World& world = getWorld();
 
         MovementComponent& movementComponent =
@@ -84,8 +87,8 @@ namespace Physics
         if (world.hasComponent(entity, GravityComponent::Type))
         {
             const GravityComponent& gravity = dynamic_cast<GravityComponent&>(
-                world.getEntityComponent(entity, GravityComponent::Type)
-            );
+                                                  world.getEntityComponent(entity, GravityComponent::Type)
+                                              );
 
             const Vec3Df& baseVelocity = movementComponent.getVelocity();
             movementComponent.setVelocity(
@@ -95,12 +98,5 @@ namespace Physics
         }
 
         return movementComponent.getVelocity() * factor;
-    }
-
-    unsigned long MovementSystem::getCurrentTime()
-    {
-        struct timespec time;
-        Threading::getTime(time);
-        return time.tv_sec * 1000L + time.tv_nsec / 1000000L;
     }
 }
