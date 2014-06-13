@@ -102,7 +102,7 @@ namespace Threading
             lastTime = currentTime;
 
             struct timespec diffDelays = difference(loopDelay, delay);
-            while (diffDelays.tv_sec >= 0 && diffDelays.tv_nsec >= 1000)
+            while (diffDelays.tv_sec >= 0 && diffDelays.tv_nsec >= 1000 && thread->isRunning())
             {
                 for (unsigned int i = 0; i < threadablesSize; i++)
                 {

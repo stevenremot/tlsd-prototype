@@ -14,9 +14,12 @@ namespace Physics
 {
     void CollisionEngine::call(const Event::Event& event)
     {
-        const InitCollisionEngineEvent& initEvent = static_cast<const InitCollisionEngineEvent&>(event);
-        irrlichtSceneManager_= initEvent.getManager();
-        data_ = initEvent.getData();
+        if (event.getType() == InitCollisionEngineEvent::TYPE)
+        {
+            const InitCollisionEngineEvent& initEvent = static_cast<const InitCollisionEngineEvent&>(event);
+            irrlichtSceneManager_= initEvent.getManager();
+            data_ = initEvent.getData();
+        }
     }
 
     void CollisionEngine::run()
