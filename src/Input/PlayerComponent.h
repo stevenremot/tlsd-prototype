@@ -34,7 +34,7 @@ namespace Input
         PlayerComponent(): Component(Type)
         {}
 
-        const std::vector<Component::Type>& getDependantComponents();
+        virtual const std::vector<Component::Type>& getDependentComponents();
 
     private:
         static std::vector<Component::Type> dependantComponents_;
