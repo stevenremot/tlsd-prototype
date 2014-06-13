@@ -104,8 +104,8 @@ namespace Application
         }
 
         eventThread_->stop();
-        graphicsThread_->stop();
         updateThread_->stop();
+        graphicsThread_->stop();
         generationThread_->stop();
     }
 

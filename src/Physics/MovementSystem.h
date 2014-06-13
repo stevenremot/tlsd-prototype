@@ -38,6 +38,11 @@ namespace Physics
             timer_ = new MovementTimer();
         }
 
+        ~MovementSystem()
+        {
+            delete timer_;
+        }
+
         virtual void run();
 
         const MovementTimer& getTimer()

@@ -54,25 +54,7 @@ namespace Graphics
         {
             if (event.getType() == InitSceneEvent::TYPE)
             {
-                const InitSceneEvent& e = static_cast<const InitSceneEvent&>(event);
-                irrlichtSceneManager_ = e.getManager();
-                irrlichtVideoDriver_ = e.getDriver();
-
-                // add root scene node
-                SceneNode* root = new SceneNode(NULL);
-                root->setIrrlichtSceneNode(irrlichtSceneManager_->getRootSceneNode());
-                data_.addSceneNode(root);
-
-                // init static camera
-                addCameraSceneNode(data_.getRootSceneNode());
-                camera_ = dynamic_cast<CameraSceneNode*>(data_.getLastSceneNode());
-                camera_->initStaticCamera(Vec3Df(150,150,20), Vec3Df(0,0,0));
-
-                addLightSceneNode(data_.getRootSceneNode(), Vec3Df(100,100,200), 500);
-
-                eventQueue_ << new Physics::InitCollisionEngineEvent(irrlichtSceneManager_, &data_);
-
-                std::cout << "[Scene]: init done" << std::endl;
+                events_ << new InitSceneEvent(static_cast<const InitSceneEvent&>(event));
             }
             else if (event.getType() == Input::CameraEvent::TYPE)
             {
@@ -121,7 +103,29 @@ namespace Graphics
                 Event::Event* event = NULL;
                 events_ >> event;
 
-                if (event->getType() == Input::CameraEvent::TYPE)
+                if (event->getType() == InitSceneEvent::TYPE)
+                {
+                    const InitSceneEvent& e = static_cast<const InitSceneEvent&>(*event);
+                    irrlichtSceneManager_ = e.getManager();
+                    irrlichtVideoDriver_ = e.getDriver();
+
+                    // add root scene node
+                    SceneNode* root = new SceneNode(NULL);
+                    root->setIrrlichtSceneNode(irrlichtSceneManager_->getRootSceneNode());
+                    data_.addSceneNode(root);
+
+                    // init static camera
+                    addCameraSceneNode(data_.getRootSceneNode());
+                    camera_ = dynamic_cast<CameraSceneNode*>(data_.getLastSceneNode());
+                    camera_->initStaticCamera(Vec3Df(150,150,20), Vec3Df(0,0,0));
+
+                    addLightSceneNode(data_.getRootSceneNode(), Vec3Df(100,100,200), 500);
+
+                    eventQueue_ << new Physics::InitCollisionEngineEvent(irrlichtSceneManager_, &data_);
+
+                    std::cout << "[Scene]: init done" << std::endl;
+                }
+                else if (event->getType() == Input::CameraEvent::TYPE)
                 {
                     camera_->updateTarget(dynamic_cast<Input::CameraEvent*>(event)->getCursorPosition());
                 }
@@ -422,7 +426,7 @@ namespace Graphics
                     Geometry::fromVec3Df(position),
                     irr::video::SColorf(1.0f,1.0f,1.0f),
                     radiusOfInfluence
-            );
+                                                   );
 
             if (parent != NULL)
                 irrNode->setParent(parent->getIrrlichtSceneNode());
