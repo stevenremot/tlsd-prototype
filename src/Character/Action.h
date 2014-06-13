@@ -38,6 +38,11 @@ namespace Character
 
         virtual ~Action() {}
 
+        const Type& getType() const
+        {
+            return type_;
+        }
+
     private:
         Type type_;
     };
