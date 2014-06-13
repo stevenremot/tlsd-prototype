@@ -14,18 +14,22 @@ namespace Character
     class CharacterSystem : public Event::EventListenerInterface, public Ecs::System, public Threading::ThreadableInterface
     {
         public:
-            CharacterSystem(Ecs::World& world, Event::EventQueue& eventQueue):
+            CharacterSystem(Ecs::World& world, Event::EventQueue& outsideQueue):
                 Ecs::System(world),
-                eventQueue_(eventQueue)
-                {}
+                outsideQueue_(outsideQueue)
+                {
+                    Threading::createChannel(eventQueue_, eventHead_);
+                }
 
             virtual void call(const Event::Event& event);
 
             virtual void run();
 
         private:
-            Event::EventQueue& eventQueue_;
-            Threading::Channel<Event::Event*> events_;
+            Event::EventQueue eventQueue_;
+            Event::EventHead eventHead_;
+
+            Event::EventQueue& outsideQueue_;
     };
 }
 

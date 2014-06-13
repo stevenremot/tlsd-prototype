@@ -84,9 +84,9 @@ namespace InputTest
             Graphics::Render::AnimationParameters(5.0f, true, Graphics::Render::NoAnimation);
         animMap[Graphics::Render::Walk] =
             Graphics::Render::AnimationParameters(5.0f, true, Graphics::Render::NoAnimation);
-        std::map<unsigned int, Graphics::Render::AnimationType> animByAction;
-        animByAction[0] = Graphics::Render::Idle;
-        animByAction[1] = Graphics::Render::Walk;
+        std::map<Character::Action::Type, Graphics::Render::AnimationType> animByAction;
+ //       animByAction[0] = Graphics::Render::Idle;
+        animByAction[Character::MoveAction::Type] = Graphics::Render::Walk;
 
         w.addComponent(
             entity,

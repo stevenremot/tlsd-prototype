@@ -63,7 +63,7 @@ int main()
     // WorldGenerationTests::testRoadExpansion();
     // WorldGenerationTests::testLotCreation();
     // WorldGenerationTests::testCityCreation();
-    //AnimationTest::testAnimation();
+    // AnimationTest::testAnimation();
     // RenderTest::testRenderSystem(10);
     // PhysicsTest::testMovementSystem();
     InputTest::testPlayerSystem();

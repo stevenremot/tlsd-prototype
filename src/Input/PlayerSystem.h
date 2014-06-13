@@ -37,7 +37,7 @@ namespace Input
                         public Threading::ThreadableInterface
     {
     public:
-        PlayerSystem(Ecs::World& world, Event::EventQueue outsideQueue):
+        PlayerSystem(Ecs::World& world, Event::EventQueue& outsideQueue):
             System(world),
             outsideQueue_(outsideQueue)
         {
@@ -54,7 +54,7 @@ namespace Input
         Event::EventQueue eventQueue_;
         Event::EventHead eventHead_;
 
-        Event::EventQueue outsideQueue_;
+        Event::EventQueue& outsideQueue_;
     };
 }
 

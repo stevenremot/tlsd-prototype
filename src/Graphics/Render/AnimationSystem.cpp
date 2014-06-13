@@ -3,6 +3,7 @@
 #include "../../Ecs/ComponentCreatedEvent.h"
 #include "AnimationComponent.h"
 #include "AnimationEvents.h"
+#include "AnimateActionEvent.h"
 
 #include <iostream>
 
@@ -13,8 +14,6 @@ namespace Graphics
 {
     namespace Render
     {
-        const Event::Event::Type DummyActionEvent::TYPE = "dummy_action";
-
         AnimationSystem::AnimationSystem(World& world, Event::EventQueue& eventQueue):
             System(world),
             eventQueue_(eventQueue)
@@ -47,9 +46,9 @@ namespace Graphics
                     eventQueue_ << new SetupAnimationEvent(animComponent.getAnimationMap(), entity);
                 }
             }
-            else if (event.getType() == DummyActionEvent::TYPE)
+            else if (event.getType() == AnimateActionEvent::TYPE)
             {
-                const DummyActionEvent& actionEvent = static_cast<const DummyActionEvent&>(event);
+                const AnimateActionEvent& actionEvent = static_cast<const AnimateActionEvent&>(event);
                 const Ecs::Entity& entity = actionEvent.getEntity();
 
                 ComponentGroup::ComponentTypeCollection types;

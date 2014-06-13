@@ -15,8 +15,10 @@
 #include "../Geometry/RotationComponent.h"
 #include "../Graphics/Render/RenderableComponent.h"
 #include "../Graphics/Render/AnimationComponent.h"
+#include "../Graphics/Render/AnimateActionEvent.h"
+#include "../Character/MoveAction.h"
 
-using Graphics::Render::DummyActionEvent;
+using Graphics::Render::AnimateActionEvent;
 using Graphics::Render::Scene;
 using Graphics::Device;
 using Graphics::Render::RenderSystem;
@@ -42,7 +44,7 @@ namespace AnimationTest
 
             if (me.getDirection() == Geometry::Vec2Df(1,0))
             {
-                eventQueue_ << new DummyActionEvent(0,1); // entity 0, action 1
+                eventQueue_ << new AnimateActionEvent(0,Character::MoveAction::Type); // entity 0, action 1
             }
         }
     }
@@ -70,7 +72,7 @@ namespace AnimationTest
 
         AnimationSystem as(w, m.getEventQueue());
         reg.put(Ecs::ComponentCreatedEvent::TYPE, &as);
-        reg.put(Graphics::Render::DummyActionEvent::TYPE, &as);
+        reg.put(Graphics::Render::AnimateActionEvent::TYPE, &as);
 
         std::vector<ThreadableInterface*> threadables, threadables2;
 
@@ -91,9 +93,8 @@ namespace AnimationTest
         animMap[Graphics::Render::Idle] = AnimationParameters(5.0f, true, Graphics::Render::NoAnimation);
         animMap[Graphics::Render::Walk] = AnimationParameters(5.0f, true, Graphics::Render::NoAnimation);
 
-        std::map<unsigned int, AnimationType> animByAction;
-        animByAction[0] = Graphics::Render::Idle;
-        animByAction[1] = Graphics::Render::Walk;
+        std::map<Character::Action::Type, AnimationType> animByAction;
+        animByAction[Character::MoveAction::Type] = Graphics::Render::Walk;
 
         std::string meshFile = "ninja.b3d";
         Ecs::Entity e = w.createEntity(0);
