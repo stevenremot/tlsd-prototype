@@ -48,14 +48,30 @@ namespace Input
     void IrrlichtInputReceiver::run()
     {
         if (cursorKeys_[irr::EKA_MOVE_FORWARD])
-            eventQueue_ << new MoveEvent(Forward);
+        {
+            if (cursorKeys_[irr::EKA_STRAFE_LEFT])
+                eventQueue_ << new MoveEvent(ForwardLeft);
+            else if (cursorKeys_[irr::EKA_STRAFE_RIGHT])
+                eventQueue_ << new MoveEvent(ForwardRight);
+            else
+                eventQueue_ << new MoveEvent(Forward);
+        }
         else if (cursorKeys_[irr::EKA_MOVE_BACKWARD])
-            eventQueue_ << new MoveEvent(Backward);
-
-        if (cursorKeys_[irr::EKA_STRAFE_LEFT])
-            eventQueue_ << new MoveEvent(Left);
-        else if (cursorKeys_[irr::EKA_STRAFE_RIGHT])
-            eventQueue_ << new MoveEvent(Right);
+        {
+            if (cursorKeys_[irr::EKA_STRAFE_LEFT])
+                eventQueue_ << new MoveEvent(BackwardLeft);
+            else if (cursorKeys_[irr::EKA_STRAFE_RIGHT])
+                eventQueue_ << new MoveEvent(BackwardRight);
+            else
+                eventQueue_ << new MoveEvent(Backward);
+        }
+        else
+        {
+            if (cursorKeys_[irr::EKA_STRAFE_LEFT])
+                eventQueue_ << new MoveEvent(Left);
+            else if (cursorKeys_[irr::EKA_STRAFE_RIGHT])
+                eventQueue_ << new MoveEvent(Right);
+        }
 
         if (cursorControl_ != NULL)
         {

@@ -7,7 +7,7 @@
 
 namespace Input
 {
-    enum Direction {Forward, Backward, Left, Right};
+    enum Direction {Forward, Backward, Left, Right, ForwardLeft, ForwardRight, BackwardLeft, BackwardRight};
 
     class MoveEvent : public Event::Event
     {
