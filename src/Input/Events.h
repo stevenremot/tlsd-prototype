@@ -11,10 +11,10 @@ namespace Input
     class MoveEvent : public Event::Event
     {
     public:
-        static const Event::Type TYPE;
+        static const Event::Type Type;
 
         MoveEvent(const Geometry::Vec2Df& dir):
-            Event::Event(TYPE),
+            Event::Event(Type),
             direction_(dir)
             {}
 
@@ -30,15 +30,15 @@ namespace Input
     class CameraEvent : public Event::Event
     {
     public:
-        static const Event::Type TYPE;
+        static const Event::Type Type;
 
         CameraEvent(irr::core::position2df cursorPosition):
-            Event::Event(TYPE),
+            Event::Event(Type),
             cursorPosition_(cursorPosition)
             {}
 
         CameraEvent(const CameraEvent& event):
-            Event::Event(TYPE),
+            Event::Event(Type),
             cursorPosition_(event.getCursorPosition())
             {}
 

@@ -40,7 +40,7 @@ namespace Graphics
         void Scene::registerListeners(Event::ListenerRegister& reg)
         {
             reg.put(Graphics::Render::InitSceneEvent::TYPE, this);
-            reg.put(Input::CameraEvent::TYPE, this);
+            reg.put(Input::CameraEvent::Type, this);
             reg.put(Graphics::Render::RenderMeshFileEvent::TYPE, this);
             reg.put(Graphics::Render::RenderModel3DEvent::TYPE, this);
             reg.put(Graphics::Render::RenderAnimatedMeshFileEvent::TYPE, this);
@@ -56,7 +56,7 @@ namespace Graphics
             {
                 events_ << new InitSceneEvent(static_cast<const InitSceneEvent&>(event));
             }
-            else if (event.getType() == Input::CameraEvent::TYPE)
+            else if (event.getType() == Input::CameraEvent::Type)
             {
                 if (camera_ != NULL)
                 {
@@ -125,7 +125,7 @@ namespace Graphics
 
                     std::cout << "[Scene]: init done" << std::endl;
                 }
-                else if (event->getType() == Input::CameraEvent::TYPE)
+                else if (event->getType() == Input::CameraEvent::Type)
                 {
                     camera_->updateTarget(dynamic_cast<Input::CameraEvent*>(event)->getCursorPosition());
                 }
