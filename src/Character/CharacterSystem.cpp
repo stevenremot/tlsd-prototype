@@ -1,6 +1,7 @@
 #include "CharacterSystem.h"
 
 #include "MoveAction.h"
+#include "StopAction.h"
 #include "ActionPerformedEvent.h"
 #include "CharacterComponent.h"
 #include "../Physics/MovementComponent.h"
@@ -55,6 +56,17 @@ namespace Character
                     movementComponent.setVelocity(velocity);
 
                     outsideQueue_ << new Graphics::Render::AnimateActionEvent(entity, MoveAction::Type);
+                }
+                else if (action.getType() == StopAction::Type)
+                {
+                    Physics::MovementComponent& movementComponent =
+                        dynamic_cast<Physics::MovementComponent&>(
+                            world.getEntityComponent(entity, Physics::MovementComponent::Type)
+                        );
+
+                    movementComponent.setVelocity(Vec3Df(0,0,0));
+
+                    outsideQueue_ << new Graphics::Render::AnimateActionEvent(entity, StopAction::Type);
                 }
             }
         }

@@ -40,7 +40,9 @@
 #include "../Input/PlayerSystem.h"
 #include "../Input/PlayerComponent.h"
 
+// TODO: includes for createPlayer, remove later
 #include "../Character/MoveAction.h"
+#include "../Character/StopAction.h"
 
 // TODO includes for createMovingCube, remove later
 #include "../Geometry/PositionComponent.h"
@@ -103,6 +105,7 @@ namespace Application
 
         std::map<Character::Action::Type, Graphics::Render::AnimationType> animByAction;
         animByAction[Character::MoveAction::Type] = Graphics::Render::Walk;
+        animByAction[Character::StopAction::Type] = Graphics::Render::Idle;
 
         const Ecs::Entity& entity = world.createEntity();
         world.addComponent(

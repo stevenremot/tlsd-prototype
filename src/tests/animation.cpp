@@ -17,6 +17,7 @@
 #include "../Graphics/Render/AnimationComponent.h"
 #include "../Graphics/Render/AnimateActionEvent.h"
 #include "../Character/MoveAction.h"
+#include "../Character/StopAction.h"
 
 using Graphics::Render::AnimateActionEvent;
 using Graphics::Render::Scene;
@@ -44,7 +45,11 @@ namespace AnimationTest
 
             if (me.getDirection() == Geometry::Vec2Df(1,0))
             {
-                eventQueue_ << new AnimateActionEvent(0,Character::MoveAction::Type); // entity 0, action 1
+                eventQueue_ << new AnimateActionEvent(0,Character::MoveAction::Type);
+            }
+            else if (me.getDirection() == Geometry::Vec2Df(0,0))
+            {
+                eventQueue_ << new AnimateActionEvent(0,Character::StopAction::Type);
             }
         }
     }
@@ -97,6 +102,7 @@ namespace AnimationTest
 
         std::map<Character::Action::Type, AnimationType> animByAction;
         animByAction[Character::MoveAction::Type] = Graphics::Render::Walk;
+        animByAction[Character::StopAction::Type] = Graphics::Render::Idle;
 
         std::string meshFile = "ninja.b3d";
 

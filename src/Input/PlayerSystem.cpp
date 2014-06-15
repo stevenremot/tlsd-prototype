@@ -23,6 +23,7 @@
 
 #include "Events.h"
 #include "../Character/MoveAction.h"
+#include "../Character/StopAction.h"
 #include "../Character/ActionPerformedEvent.h"
 #include "PlayerComponent.h"
 #include "../Geometry/RotationComponent.h"
@@ -34,8 +35,8 @@ namespace Input
         if (event.getType() == MoveEvent::Type)
         {
             eventQueue_ << new MoveEvent(
-                dynamic_cast<const MoveEvent&>(event)
-            );
+                            dynamic_cast<const MoveEvent&>(event)
+                        );
         }
     }
 
@@ -73,23 +74,28 @@ namespace Input
                         const MoveEvent& evt =
                             dynamic_cast<const MoveEvent&>(*event);
 
-                        const float orientation =
-                            evt.getDirection().getOrientation();
+                        if (evt.getDirection() == Geometry::Vec2Df(0,0))
+                            action = new Character::StopAction();
+                        else
+                        {
+                            const float orientation =
+                                evt.getDirection().getOrientation();
 
-                        const Geometry::Vec2Df v = Geometry::Vec2Df::fromPolar(
-                            orientation + camOrientation,
-                            1.0
-                        );
+                            const Geometry::Vec2Df v = Geometry::Vec2Df::fromPolar(
+                                                           orientation + camOrientation,
+                                                           1.0
+                                                       );
 
-                        action = new Character::MoveAction(v);
+                            action = new Character::MoveAction(v);
+                        }
                     }
 
                     if (action != NULL)
                     {
                         outsideQueue_ << new Character::ActionPerformedEvent(
-                            entity,
-                            action
-                        );
+                                          entity,
+                                          action
+                                      );
                     }
                 }
                 delete event;

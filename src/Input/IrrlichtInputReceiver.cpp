@@ -60,7 +60,7 @@ namespace Input
         if (cursorKeys_[irr::EKA_STRAFE_RIGHT])
             direction += Vec2Df(-1,0);
 
-        if (direction != Vec2Df(0,0))
+        if (direction != lastDirection_)
             eventQueue_ << new MoveEvent(direction);
 
         lastDirection_ = direction;
