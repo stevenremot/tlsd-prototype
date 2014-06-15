@@ -103,7 +103,7 @@ namespace Graphics
 
             framesWithoutAnimationOrder_++;
 
-            if (framesWithoutAnimationOrder_ > 5)
+            if (framesWithoutAnimationOrder_ > 10)
                 applyAnimation(Idle);
         }
 

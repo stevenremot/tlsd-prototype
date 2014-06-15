@@ -42,7 +42,6 @@ namespace Character
 
         ~ActionPerformedEvent()
         {
-            delete action_;
         }
 
         const Ecs::Entity& getEntity() const

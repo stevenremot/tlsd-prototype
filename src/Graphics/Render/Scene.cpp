@@ -117,7 +117,7 @@ namespace Graphics
                     // init static camera
                     addCameraSceneNode(data_.getRootSceneNode());
                     camera_ = dynamic_cast<CameraSceneNode*>(data_.getLastSceneNode());
-                    camera_->initStaticCamera(Vec3Df(150,150,20), Vec3Df(0,0,0));
+                    camera_->initStaticCamera(Vec3Df(160,160,10), Vec3Df(150,150,0));
 
                     addLightSceneNode(data_.getRootSceneNode(), Vec3Df(100,100,200), 500);
 

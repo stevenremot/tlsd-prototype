@@ -16,6 +16,7 @@ namespace Input
     const Event::Event::Type InputInitializedEvent::TYPE = "input_initialized";
 
     IrrlichtInputReceiver::IrrlichtInputReceiver(Event::EventQueue& eventQueue):
+        lastDirection_(Vec2Df(0,0)),
         eventQueue_(eventQueue)
     {
         createKeyMap();
@@ -51,16 +52,18 @@ namespace Input
         Vec2Df direction(0,0);
 
         if (cursorKeys_[irr::EKA_MOVE_FORWARD])
-            direction += Vec2Df(1,0);
-        if (cursorKeys_[irr::EKA_MOVE_BACKWARD])
-            direction += Vec2Df(-1,0);
-        if (cursorKeys_[irr::EKA_STRAFE_LEFT])
             direction += Vec2Df(0,-1);
-        if (cursorKeys_[irr::EKA_STRAFE_RIGHT])
+        if (cursorKeys_[irr::EKA_MOVE_BACKWARD])
             direction += Vec2Df(0,1);
+        if (cursorKeys_[irr::EKA_STRAFE_LEFT])
+            direction += Vec2Df(1,0);
+        if (cursorKeys_[irr::EKA_STRAFE_RIGHT])
+            direction += Vec2Df(-1,0);
 
         if (direction != Vec2Df(0,0))
             eventQueue_ << new MoveEvent(direction);
+
+        lastDirection_ = direction;
 
         if (cursorControl_ != NULL)
         {

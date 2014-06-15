@@ -66,10 +66,10 @@ int main()
     // AnimationTest::testAnimation();
     // RenderTest::testRenderSystem(10);
     // PhysicsTest::testMovementSystem();
-    InputTest::testPlayerSystem();
+    //InputTest::testPlayerSystem();
 
-    // Application::Application app;
-    // app.start();
+    Application::Application app;
+    app.start();
 
     return 0;
 }

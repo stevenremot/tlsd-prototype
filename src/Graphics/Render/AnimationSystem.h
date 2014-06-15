@@ -7,8 +7,6 @@
 
 #include "../../Event/EventManager.h"
 
-using Ecs::World;
-
 namespace Graphics
 {
     namespace Render
@@ -16,7 +14,7 @@ namespace Graphics
         class AnimationSystem : public Ecs::System, public Event::EventListenerInterface, public Threading::ThreadableInterface
         {
         public:
-            AnimationSystem(World& world, Event::EventQueue& eventQueue);
+            AnimationSystem(Ecs::World& world, Event::EventQueue& outsideQueue);
             virtual ~AnimationSystem();
 
             // EventListenerInterface
@@ -24,8 +22,13 @@ namespace Graphics
 
             // ThreadableInterface
             virtual void run();
+
+            void registerListeners(Event::ListenerRegister& reg);
         private:
-            Event::EventQueue& eventQueue_;
+            Event::EventQueue eventQueue_;
+            Event::EventHead eventHead_;
+
+            Event::EventQueue& outsideQueue_;
         };
     }
 }

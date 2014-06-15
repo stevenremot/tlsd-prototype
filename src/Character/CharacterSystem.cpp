@@ -59,4 +59,9 @@ namespace Character
             }
         }
     }
+
+    void CharacterSystem::registerListeners(Event::ListenerRegister& reg)
+    {
+        reg.put(ActionPerformedEvent::Type, this);
+    }
 }

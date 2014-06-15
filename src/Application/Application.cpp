@@ -24,6 +24,7 @@
 #include "../Graphics/Render/Scene.h"
 #include "../Graphics/Render/RenderSystem.h"
 #include "../Graphics/Render/RenderEvents.h"
+#include "../Graphics/Render/AnimationSystem.h"
 #include "../Input/IrrlichtInputReceiver.h"
 #include "../Input/Events.h"
 #include "../Input/IrrlichtInputReceiver.h"
@@ -34,6 +35,12 @@
 #include "../Physics/CollisionSystem.h"
 #include "../Physics/CollisionEngine.h"
 #include "../Physics/InitCollisionEngineEvent.h"
+#include "../Character/CharacterSystem.h"
+#include "../Character/CharacterComponent.h"
+#include "../Input/PlayerSystem.h"
+#include "../Input/PlayerComponent.h"
+
+#include "../Character/MoveAction.h"
 
 // TODO includes for createMovingCube, remove later
 #include "../Geometry/PositionComponent.h"
@@ -83,19 +90,80 @@ namespace Application
         );
     }
 
+    void createPlayer(Ecs::World& world)
+    {
+        // TODO: method AABB from model 3d
+        Geometry::AxisAlignedBoundingBox bbox(Geometry::Vec3Df(150.0, 150.0, 0.0), Geometry::Vec3Df(150.5, 150.5, 1.0));
+
+        Graphics::Render::AnimationMap animMap;
+        animMap[Graphics::Render::Idle] =
+            Graphics::Render::AnimationParameters(5.0f, true, Graphics::Render::NoAnimation);
+        animMap[Graphics::Render::Walk] =
+            Graphics::Render::AnimationParameters(5.0f, true, Graphics::Render::NoAnimation);
+
+        std::map<Character::Action::Type, Graphics::Render::AnimationType> animByAction;
+        animByAction[Character::MoveAction::Type] = Graphics::Render::Walk;
+
+        const Ecs::Entity& entity = world.createEntity();
+        world.addComponent(
+            entity,
+            new Geometry::PositionComponent(Geometry::Vec3Df(150.0, 150.0, 0.0))
+        );
+        world.addComponent(
+            entity,
+            new Geometry::RotationComponent(Geometry::Vec3Df(0, 0, 90))
+        );
+        world.addComponent(
+            entity,
+            new Graphics::Render::RenderableComponent(
+                "ninja.b3d", ""
+            )
+        );
+        world.addComponent(
+            entity,
+            new Graphics::Render::AnimationComponent(animMap, animByAction)
+        );
+        world.addComponent(
+            entity,
+            new Physics::MovementComponent(Geometry::Vec3Df(0.0, 0.0, 0.0))
+        );
+        // TODO: start applying gravity when the entity is renderered ?
+        /*world.addComponent(
+            entity,
+            new Physics::GravityComponent(1)
+        );*/
+        world.addComponent(
+            entity,
+            new Physics::CollisionComponent(Physics::AABBCollisionBody(bbox))
+        );
+        world.addComponent(
+            entity,
+            new Character::CharacterComponent(1.5)
+        );
+        world.addComponent(
+            entity,
+            new Input::PlayerComponent()
+        );
+    }
+
     void Application::start()
     {
         setupEventThread();
         setupGraphicsThread();
         setupUpdateThread();
         setupGenerationThread();
+        setupCharacterThread();
+        setupAnimationThread();
 
         eventThread_->start();
         graphicsThread_->start();
         updateThread_->start();
         generationThread_->start();
+        characterThread_->start();
+        animationThread_->start();
 
-        createMovingCube(ecsWorld_);
+        //createMovingCube(ecsWorld_);
+        createPlayer(ecsWorld_);
 
         running_ = true;
         while (running_)
@@ -107,13 +175,15 @@ namespace Application
         updateThread_->stop();
         graphicsThread_->stop();
         generationThread_->stop();
+        characterThread_->stop();
+        animationThread_->stop();
     }
 
     void Application::setupEventThread()
     {
         std::vector<Threading::ThreadableInterface*> eventThreadables;
         eventThreadables.push_back(&eventManager_);
-        eventThread_ = new Threading::Thread(eventThreadables, 300);
+        eventThread_ = new Threading::Thread(eventThreadables, 700);
     }
 
     void Application::setupGraphicsThread()
@@ -133,10 +203,15 @@ namespace Application
             new Input::IrrlichtInputReceiver(queue);
         reg.put(Input::InitInputEvent::TYPE, receiver);
 
+        Input::PlayerSystem* playerSystem =
+            new Input::PlayerSystem(ecsWorld_, eventManager_.getEventQueue());
+        playerSystem->registerListeners(reg);
+
         std::vector<Threading::ThreadableInterface*> graphicsThreadables;
         graphicsThreadables.push_back(dev);
         graphicsThreadables.push_back(scene);
         graphicsThreadables.push_back(receiver);
+        graphicsThreadables.push_back(playerSystem);
 
         Graphics::Render::RenderSystem* rs =
             new Graphics::Render::RenderSystem(ecsWorld_, queue);
@@ -169,6 +244,33 @@ namespace Application
         updateThread_ = new Threading::Thread(threadables, 80);
     }
 
+    void Application::setupCharacterThread()
+    {
+        Event::ListenerRegister& reg = eventManager_.getListenerRegister();
+
+        Character::CharacterSystem* characterSystem =
+            new Character::CharacterSystem(ecsWorld_, eventManager_.getEventQueue());
+        characterSystem->registerListeners(reg);
+
+        std::vector<Threading::ThreadableInterface*> threadables;
+        threadables.push_back(characterSystem);
+
+        characterThread_ = new Threading::Thread(threadables, 60);
+
+    }
+
+    void Application::setupAnimationThread()
+    {
+        Graphics::Render::AnimationSystem* as =
+            new Graphics::Render::AnimationSystem(ecsWorld_, eventManager_.getEventQueue());
+        as->registerListeners(eventManager_.getListenerRegister());
+
+        std::vector<Threading::ThreadableInterface*> animThreadables;
+        animThreadables.push_back(as);
+
+        animationThread_ = new Threading::Thread(animThreadables, 30);
+    }
+
     void Application::setupGenerationThread()
     {
         World::Generation::ChunkGenerator generator(world_, ecsWorld_, 42);
@@ -184,9 +286,9 @@ namespace Application
         // TODO Change world seed at each run :-)
         World::Generation::ChunkGenerationSystem* generation =
             new World::Generation::ChunkGenerationSystem(
-                ecsWorld_,
-                generator
-            );
+            ecsWorld_,
+            generator
+        );
 
         generation->registerListeners(eventManager_.getListenerRegister());
 

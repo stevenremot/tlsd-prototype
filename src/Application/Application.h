@@ -51,6 +51,9 @@ namespace Application
                 delete eventThread_;
                 delete graphicsThread_;
                 delete generationThread_;
+                delete updateThread_;
+                delete characterThread_;
+                delete animationThread_;
             }
         }
 
@@ -63,6 +66,8 @@ namespace Application
         Threading::Thread* graphicsThread_;
         Threading::Thread* updateThread_;
         Threading::Thread* generationThread_;
+        Threading::Thread* characterThread_;
+        Threading::Thread* animationThread_;
         Event::EventManager eventManager_;
         Ecs::World ecsWorld_;
         World::World world_;
@@ -70,8 +75,10 @@ namespace Application
 
         void setupEventThread();
         void setupGraphicsThread();
+        void setupAnimationThread();
         void setupUpdateThread();
         void setupGenerationThread();
+        void setupCharacterThread();
     };
 }
 

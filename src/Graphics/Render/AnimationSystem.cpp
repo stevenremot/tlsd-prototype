@@ -9,15 +9,17 @@
 
 using Ecs::ComponentCreatedEvent;
 using Ecs::ComponentGroup;
+using Ecs::World;
 
 namespace Graphics
 {
     namespace Render
     {
-        AnimationSystem::AnimationSystem(World& world, Event::EventQueue& eventQueue):
+        AnimationSystem::AnimationSystem(World& world, Event::EventQueue& outsideQueue):
             System(world),
-            eventQueue_(eventQueue)
+            outsideQueue_(outsideQueue)
         {
+            Threading::createChannel(eventQueue_, eventHead_);
         }
 
         AnimationSystem::~AnimationSystem()
@@ -29,37 +31,11 @@ namespace Graphics
         {
             if (event.getType() == ComponentCreatedEvent::TYPE)
             {
-                const ComponentCreatedEvent& componentEvent = static_cast<const ComponentCreatedEvent&>(event);
-
-                if (componentEvent.getComponentType() == AnimationComponent::Type)
-                {
-                    const Ecs::Entity& entity = componentEvent.getEntity();
-
-                    ComponentGroup::ComponentTypeCollection types;
-                    types.insert(AnimationComponent::Type);
-
-                    ComponentGroup prototype(types);
-                    ComponentGroup group = getWorld().getEntityComponents(entity, prototype);
-
-                    const AnimationComponent& animComponent = static_cast<const AnimationComponent&>(group.getComponent(AnimationComponent::Type));
-
-                    eventQueue_ << new SetupAnimationEvent(animComponent.getAnimationMap(), entity);
-                }
+                eventQueue_ << new ComponentCreatedEvent(static_cast<const ComponentCreatedEvent&>(event));
             }
             else if (event.getType() == AnimateActionEvent::TYPE)
             {
-                const AnimateActionEvent& actionEvent = static_cast<const AnimateActionEvent&>(event);
-                const Ecs::Entity& entity = actionEvent.getEntity();
-
-                ComponentGroup::ComponentTypeCollection types;
-                types.insert(AnimationComponent::Type);
-
-                ComponentGroup prototype(types);
-                ComponentGroup group = getWorld().getEntityComponents(entity, prototype);
-
-                AnimationComponent& animComponent = static_cast<AnimationComponent&>(group.getComponent(AnimationComponent::Type));
-
-                eventQueue_ << new AnimateEvent(animComponent.getAnimationByAction(actionEvent.getAction()), entity);
+                eventQueue_ << new AnimateActionEvent(static_cast<const AnimateActionEvent&>(event));
             }
         }
 
@@ -67,7 +43,50 @@ namespace Graphics
         {
             World& world = getWorld();
 
-            // Get all the entities with movement and position components
+            while (!eventHead_.isEmpty())
+            {
+                Event::Event* event = NULL;
+                eventHead_ >> event;
+
+                if (event != NULL)
+                {
+                    if (event->getType() == ComponentCreatedEvent::TYPE)
+                    {
+                        const ComponentCreatedEvent& componentEvent = static_cast<const ComponentCreatedEvent&>(*event);
+                        if (componentEvent.getComponentType() == AnimationComponent::Type)
+                        {
+                            const Ecs::Entity& entity = componentEvent.getEntity();
+
+                            ComponentGroup::ComponentTypeCollection types;
+                            types.insert(AnimationComponent::Type);
+
+                            ComponentGroup prototype(types);
+                            ComponentGroup group = getWorld().getEntityComponents(entity, prototype);
+
+                            const AnimationComponent& animComponent = static_cast<const AnimationComponent&>(group.getComponent(AnimationComponent::Type));
+
+                            outsideQueue_ << new SetupAnimationEvent(animComponent.getAnimationMap(), entity);
+                        }
+                    }
+                    else if (event->getType() == AnimateActionEvent::TYPE)
+                    {
+                        const AnimateActionEvent& actionEvent = static_cast<const AnimateActionEvent&>(*event);
+                        const Ecs::Entity& entity = actionEvent.getEntity();
+
+                        ComponentGroup::ComponentTypeCollection types;
+                        types.insert(AnimationComponent::Type);
+
+                        ComponentGroup prototype(types);
+                        ComponentGroup group = getWorld().getEntityComponents(entity, prototype);
+
+                        AnimationComponent& animComponent = static_cast<AnimationComponent&>(group.getComponent(AnimationComponent::Type));
+
+                        outsideQueue_ << new AnimateEvent(animComponent.getAnimationByAction(actionEvent.getAction()), entity);
+                    }
+                }
+            }
+
+            // Get all the entities with animation component
             Ecs::ComponentGroup::ComponentTypeCollection types;
             types.insert(AnimationComponent::Type);
 
@@ -78,8 +97,14 @@ namespace Graphics
             Ecs::World::ComponentGroupCollection::iterator group;
             for (group = groups.begin(); group != groups.end(); ++group)
             {
-                eventQueue_ << new UpdateAnimationEvent(group->getEntity());
+                outsideQueue_ << new UpdateAnimationEvent(group->getEntity());
             }
+        }
+
+        void AnimationSystem::registerListeners(Event::ListenerRegister& reg)
+        {
+            reg.put(Ecs::ComponentCreatedEvent::TYPE, this);
+            reg.put(AnimateActionEvent::TYPE, this);
         }
     }
 }

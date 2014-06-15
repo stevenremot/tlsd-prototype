@@ -25,6 +25,8 @@ namespace Character
 
             virtual void run();
 
+            void registerListeners(Event::ListenerRegister& reg);
+
         private:
             Event::EventQueue eventQueue_;
             Event::EventHead eventHead_;

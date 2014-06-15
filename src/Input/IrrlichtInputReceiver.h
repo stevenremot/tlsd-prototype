@@ -9,6 +9,7 @@
 
 #include "../Event/EventManager.h"
 #include "../Threading/ThreadableInterface.h"
+#include "../Geometry/Vec2D.h"
 
 namespace Input
 {
@@ -76,6 +77,8 @@ namespace Input
         irr::core::array<irr::SKeyMap> keyMap_;
         irr::core::position2df centerCursor_, cursorPos_;
         bool cursorKeys_[irr::EKA_COUNT];
+
+        Geometry::Vec2Df lastDirection_;
 
         Event::EventQueue& eventQueue_;
     };

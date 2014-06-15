@@ -71,23 +71,25 @@ namespace AnimationTest
         reg.put(Ecs::ComponentCreatedEvent::TYPE, &rs);
 
         AnimationSystem as(w, m.getEventQueue());
-        reg.put(Ecs::ComponentCreatedEvent::TYPE, &as);
-        reg.put(Graphics::Render::AnimateActionEvent::TYPE, &as);
+        as.registerListeners(reg);
 
-        std::vector<ThreadableInterface*> threadables, threadables2;
+        std::vector<ThreadableInterface*> threadables, threadables2, threadables3;
 
         // Device, Scene and InputReceiver use irrlicht engine, so they should be in the same thread
         threadables.push_back(&device);
         threadables.push_back(&scene);
         threadables.push_back(&receiver);
-        threadables.push_back(&as);
         Thread thread(threadables, 60);
 
         threadables2.push_back(&m);
-        Thread thread2(threadables2, 200);
+        Thread thread2(threadables2, 1000);
+
+        threadables3.push_back(&as);
+        Thread thread3(threadables3, 60);
 
         thread.start();
         thread2.start();
+        thread3.start();
 
         AnimationMap animMap;
         animMap[Graphics::Render::Idle] = AnimationParameters(5.0f, true, Graphics::Render::NoAnimation);
@@ -97,11 +99,16 @@ namespace AnimationTest
         animByAction[Character::MoveAction::Type] = Graphics::Render::Walk;
 
         std::string meshFile = "ninja.b3d";
-        Ecs::Entity e = w.createEntity(0);
-        w.addComponent(e, new PositionComponent(Vec3Df()));
-        w.addComponent(e, new RotationComponent(Vec3Df()));
-        w.addComponent(e, new RenderableComponent(meshFile, ""));
-        w.addComponent(e, new AnimationComponent(animMap, animByAction));
+
+        for (int i = 0; i < 15; i++)
+        {
+            Ecs::Entity e = w.createEntity();
+            w.addComponent(e, new PositionComponent(Vec3Df(150+5*i,150,0)));
+            w.addComponent(e, new RotationComponent(Vec3Df()));
+            w.addComponent(e, new RenderableComponent(meshFile, ""));
+            w.addComponent(e, new AnimationComponent(animMap, animByAction));
+        }
+
 
         int imax = 20 * 1;
         for (int i = 0; i < imax; i++)
