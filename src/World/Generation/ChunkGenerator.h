@@ -20,9 +20,12 @@
 #ifndef WORLD_GENERATION_CHUNK_GENERATOR_H
 #define WORLD_GENERATION_CHUNK_GENERATOR_H
 
+#include <vector>
+
 #include "../World.h"
 #include "../../Ecs/World.h"
 #include "../../Random/NumberGenerator.h"
+#include "../SimpleTree.h"
 
 namespace World
 {
@@ -61,6 +64,7 @@ namespace World
              * Generate a city in the chunk (x, y)
              */
             void generateCity(int x, int y, Random::NumberGenerator& rng);
+            void generateTrees(int x, int y, Random::NumberGenerator& rng, std::vector<Geometry::Vec3Df>& position, std::vector<SimpleTree*>& trees);
             Random::Seed getChunkSeed(int x, int y);
 
             void insertDescriptor(

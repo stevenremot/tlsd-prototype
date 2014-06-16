@@ -17,20 +17,15 @@
     <http://www.gnu.org/licenses/>.
 */
 
-#include "PlainBiome.h"
+#include "EventBoot.h"
 
-namespace World
+namespace Application
 {
-    const BiomeInterface::Type PlainBiome::Type = "PlainBiome";
-
-    float PlainBiome::transformCoefficient(float coefficient)
+    void EventBoot::start()
     {
-        return (coefficient+1.0)*15.0;
+        std::vector<Threading::ThreadableInterface*> threadables;
+        threadables.push_back(&eventManager_);
+        setThread(new Threading::Thread(threadables, 500));
+        finishBoot();
     }
-
-    Graphics::Color PlainBiome::getColor()
-    {
-        return Graphics::Color(0,1,0);
-    }
-
 }

@@ -95,4 +95,23 @@ namespace World
 
         return entity;
     }
+
+    Core::SharedPtr<Ecs::EntityDescriptor> createTree(const Geometry::Vec3Df& position, const TreeInterface& tree)
+    {
+        Core::SharedPtr<Ecs::EntityDescriptor> entity(new Ecs::EntityDescriptor);
+
+        entity->addComponent(
+            new Geometry::PositionComponent(position)
+        );
+
+        entity->addComponent(
+            new Geometry::RotationComponent(Geometry::Vec3Df())
+        );
+
+        entity->addComponent(
+            new Graphics::Render::RenderableComponent(tree.getModel())
+        );
+
+        return entity;
+    }
 }

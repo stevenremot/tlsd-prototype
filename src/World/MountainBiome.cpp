@@ -21,6 +21,8 @@
 
 namespace World
 {
+    const BiomeInterface::Type MountainBiome::Type = "MountainBiome";
+
     float MountainBiome::transformCoefficient(float coefficient)
     {
         return (coefficient+1.0)*25.0+150.0;

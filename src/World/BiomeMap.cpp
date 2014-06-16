@@ -20,17 +20,25 @@
 #include "BiomeMap.h"
 #include "World.h"
 #include "../Geometry/Vec2D.h"
+#include "../Geometry/Polygon2D.h"
 
 namespace World
 {
 
+    void BiomeMap::addCityPolygon(const Geometry::Polygon2D& cityPolygon)
+        {
+            cityPolygons_.push_back(cityPolygon);
+            cityPolygonsExtended_.push_back(cityPolygon.offset(static_cast<float>(World::ChunkSize) / std::sqrt(2.0))[0]);
+        }
+
+
     BiomeInterface& BiomeMap::getBiome(const Geometry::Vec2Df& position)
     {
-        unsigned int length = cityPolygons_.size();
+        unsigned int length = cityPolygonsExtended_.size();
         // Checking the position of the cities
         for (unsigned int i = 0; i < length; i++)
         {
-            if (cityPolygons_[i].contains(position))
+            if (cityPolygonsExtended_[i].contains(position))
             {
                 return cityBiome_;
             }

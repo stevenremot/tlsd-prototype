@@ -17,20 +17,22 @@
     <http://www.gnu.org/licenses/>.
 */
 
-#include "PlainBiome.h"
+#ifndef WORLD_TREE_INTERFACE_H
+#define WORLD_TREE_INTERFACE_H
+
+#include "../Graphics/Render/ModelableInterface.h"
 
 namespace World
 {
-    const BiomeInterface::Type PlainBiome::Type = "PlainBiome";
-
-    float PlainBiome::transformCoefficient(float coefficient)
-    {
-        return (coefficient+1.0)*15.0;
-    }
-
-    Graphics::Color PlainBiome::getColor()
-    {
-        return Graphics::Color(0,1,0);
-    }
-
+    /**
+     * Base class for in-game trees
+     */
+    typedef Graphics::Render::ModelableInterface TreeInterface;
 }
+
+#endif
+
+// Emacs local variables
+// Local variables:
+// mode: c++
+// End:

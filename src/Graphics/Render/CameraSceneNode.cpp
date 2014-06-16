@@ -76,7 +76,7 @@ namespace Graphics
 
         void CameraSceneNode::initPositionAndTargetFromParent()
         {
-            irr::scene::ICameraSceneNode* cameraNode = dynamic_cast<irr::scene::ICameraSceneNode*>(irrlichtSceneNode_);
+            irr::scene::ICameraSceneNode* cameraNode = static_cast<irr::scene::ICameraSceneNode*>(irrlichtSceneNode_);
 
             // we use the parent of the irrlichtSceneNode_ to avoid translating the position in and from Vec3Df
             irr::scene::ISceneNode* parent = irrlichtSceneNode_->getParent();

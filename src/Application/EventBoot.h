@@ -17,20 +17,29 @@
     <http://www.gnu.org/licenses/>.
 */
 
-#include "PlainBiome.h"
+#ifndef APPLICATION_EVENT_BOOT_H
+#define APPLICATION_EVENT_BOOT_H
 
-namespace World
+#include "BootInterface.h"
+#include "../Event/EventManager.h"
+
+namespace Application
 {
-    const BiomeInterface::Type PlainBiome::Type = "PlainBiome";
-
-    float PlainBiome::transformCoefficient(float coefficient)
+    class EventBoot: public BootInterface
     {
-        return (coefficient+1.0)*15.0;
-    }
+    public:
+        virtual void start();
 
-    Graphics::Color PlainBiome::getColor()
-    {
-        return Graphics::Color(0,1,0);
-    }
+        Event::EventManager& getEventManager() { return eventManager_; }
 
+    private:
+        Event::EventManager eventManager_;
+    };
 }
+
+#endif
+
+// Emacs local variables
+// Local variables:
+// mode: c++
+// End:

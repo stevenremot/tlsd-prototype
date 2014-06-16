@@ -21,6 +21,8 @@
 
 namespace World
 {
+    const BiomeInterface::Type CityBiome::Type = "CityBiome";
+
     float CityBiome::transformCoefficient(float coefficient)
     {
         return 0;
