@@ -56,11 +56,7 @@ namespace World
         {
             perlinCoefs_[Geometry::Vec2Di(x, y)] = perlinCoef;
         }
-        void addCityPolygon(const Geometry::Polygon2D& cityPolygon)
-        {
-            cityPolygons_.push_back(cityPolygon);
-        }
-
+        void addCityPolygon(const Geometry::Polygon2D& cityPolygon);
         /**
          * Returns the biome at the given position
          *
@@ -68,9 +64,12 @@ namespace World
          */
         BiomeInterface& getBiome(const Geometry::Vec2Df& position);
 
+        const std::vector<Geometry::Polygon2D>& getCityPolygons() {return cityPolygons_;}
+
     private:
         std::map<Geometry::Vec2Di, Geometry::Vec2Df> perlinCoefs_;
         std::vector<Geometry::Polygon2D> cityPolygons_;
+        std::vector<Geometry::Polygon2D> cityPolygonsExtended_;
         CityBiome cityBiome_;
         MountainBiome mountainBiome_;
         PlainBiome plainBiome_;

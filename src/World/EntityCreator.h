@@ -26,6 +26,7 @@
 #include "../Core/SharedPtr.h"
 #include "BuildingInterface.h"
 #include "RoadNetwork.h"
+#include "TreeInterface.h"
 
 namespace World
 {
@@ -48,6 +49,15 @@ namespace World
      * TODO Add physical component
      */
     Core::SharedPtr<Ecs::EntityDescriptor> createBuilding(const BuildingInterface& building);
+
+
+    /**
+     * Create an entity for a tree and insert it in the ECS world
+     *
+     * TODO Add physical component
+     */
+    Core::SharedPtr<Ecs::EntityDescriptor> createTree(const Geometry::Vec3Df& position, const TreeInterface& tree);
+
 }
 
 #endif

@@ -25,9 +25,12 @@
 #include "CoefficientsGenerator.h"
 #include "../../Graphics/Render/RenderableComponent.h"
 #include "CityGeneration.h"
+#include "../Ground.h"
+#include "../SimpleTree.h"
 
 using Graphics::Render::RenderableComponent;
 using Geometry::Vec3Df;
+using Geometry::Vec2Df;
 
 namespace World
 {
@@ -70,6 +73,18 @@ namespace World
             }
 
             finalEntities.push_back(createGround(world_, x, y));
+
+            Random::NumberGenerator rng(getChunkSeed(x, y));
+            std::vector<Geometry::Vec3Df> positions;
+            std::vector<SimpleTree*> trees;
+            generateTrees(x, y, rng, positions, trees);
+
+            unsigned int length = positions.size();
+
+            for (unsigned int i = 0; i < length; i++)
+            {
+                finalEntities.push_back(createTree(positions[i], *(trees[i])));
+            }
 
             currentChunk.setFinalEntities(finalEntities);
 
@@ -148,14 +163,53 @@ namespace World
 
             BiomeMap& biomeMap = world_.getBiomeMap();
             biomeMap.addCityPolygon(
-                city->getRoadNetwork().getConvexHull().offset(
-                    chunkSize / std::sqrt(2.0)
-                )[0]
+                city->getRoadNetwork().getConvexHull()
             );
 
             delete city;
         }
 
+        // TODO Generate more trees !
+        void ChunkGenerator::generateTrees(int x, int y, Random::NumberGenerator& rng, std::vector<Geometry::Vec3Df>& positions, std::vector<SimpleTree*>& trees)
+        {
+            const float chunkSize = World::ChunkSize;
+            const float floatX = x, floatY = y;
+            Chunk chunk;
+            world_.getChunk(x, y, chunk);
+
+            for (unsigned int i = 0; i < 200; i++)
+            {
+                float localX = rng.getUniform(0,chunkSize);
+                float localY = rng.getUniform(0,chunkSize);
+                float truncHeight = rng.getUniform(4,10);
+                float truncWidth = rng.getUniform(0.5,3);
+                float leavesHeight = rng.getUniform(1,3);
+                float leavesWidth = rng.getUniform(truncWidth+2,truncWidth+5);
+                float offset = rng.getUniform(0,0.3);
+                float truncR = rng.getUniform(0.2,0.4);
+                float truncG = rng.getUniform(0.05,0.15);
+                float truncB = rng.getUniform(0.01,0.04);
+                float leavesR = rng.getUniform(0.05,0.15);
+                float leavesG = rng.getUniform(0.2,0.6);
+                float leavesB = rng.getUniform(0.1,0.2);
+                const std::vector<Geometry::Polygon2D> cityPolygons = world_.getBiomeMap().getCityPolygons();
+                unsigned int length = cityPolygons.size();
+                bool isInACity = false;
+                for (unsigned int j = 0; j < length; j++)
+                {
+                    if (cityPolygons[j].contains(Vec2Df(localX + floatX*chunkSize, localY + floatY*chunkSize)))
+                    {
+                        isInACity = true;
+                    }
+                }
+                if (!isInACity)
+                {
+                    positions.push_back(Vec3Df(localX + floatX*chunkSize, localY + floatY*chunkSize, computeHeight(world_, floatX*chunkSize + localX, floatY*chunkSize + localY)));
+                    SimpleTree *tree = new SimpleTree(truncHeight,truncWidth,leavesHeight,leavesWidth,offset,Graphics::Color(truncR,truncG,truncB),Graphics::Color(leavesR,leavesG,leavesB));
+                    trees.push_back(tree);
+                }
+            }
+        }
 
         void ChunkGenerator::insertDescriptor(
             Core::SharedPtr<Ecs::EntityDescriptor>& descriptor,
