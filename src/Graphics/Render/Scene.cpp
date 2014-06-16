@@ -372,8 +372,8 @@ namespace Graphics
                     const Vec3Df& n = normals[buffer*verticesPerMeshBuffer_+i];
 
                     S3DVertex& irrVertex = currentMeshBuffer->Vertices[i];
-                    irrVertex.Pos.set(v.getX(), v.getZ(), v.getY());
-                    irrVertex.Normal.set(n.getX(), n.getZ(), n.getY());
+                    irrVertex.Pos.set(Geometry::fromVec3Df(v));
+                    irrVertex.Normal.set(Geometry::fromVec3Df(n));
                     irrVertex.TCoords.set(v.getX()/512.0f, v.getY()/512.0f);
                 }
 

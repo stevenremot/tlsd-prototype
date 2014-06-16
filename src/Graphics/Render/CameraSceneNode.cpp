@@ -20,13 +20,14 @@
 #include "CameraSceneNode.h"
 
 #include <irrlicht/SViewFrustum.h>
+#include "../../Geometry/IrrlichtConversions.h"
+
+using irr::core::vector3df;
 
 namespace Graphics
 {
     namespace Render
     {
-        using irr::core::vector3df;
-
         CameraSceneNode::CameraSceneNode(const SceneNode* parent) :
             SceneNode(parent)
         {
@@ -95,7 +96,7 @@ namespace Graphics
         {
             setPosition(position);
 
-            static_cast<irr::scene::ICameraSceneNode*>(irrlichtSceneNode_)->setTarget(vector3df(target.getX(), target.getZ(), target.getY()));
+            static_cast<irr::scene::ICameraSceneNode*>(irrlichtSceneNode_)->setTarget(Geometry::fromVec3Df(target));
         }
     }
 }

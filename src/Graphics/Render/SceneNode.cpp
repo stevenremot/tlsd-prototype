@@ -18,6 +18,7 @@
 */
 
 #include "SceneNode.h"
+#include "../../Geometry/IrrlichtConversions.h"
 
 #include <irrlicht/matrix4.h>
 
@@ -54,25 +55,25 @@ namespace Graphics
         Vec3Df SceneNode::getPosition() const
         {
             vector3df irrPosition = irrlichtSceneNode_->getPosition();
-            return Vec3Df(irrPosition.X, irrPosition.Z, irrPosition.Y);
+            return Geometry::fromIrrVector3df(irrPosition);
         }
 
         Vec3Df SceneNode::getRotation() const
         {
             vector3df irrRotation = irrlichtSceneNode_->getRotation();
-            return Vec3Df(irrRotation.X, irrRotation.Z, irrRotation.Y);
+            return Geometry::fromIrrVector3df(irrRotation);
         }
 
         Vec3Df SceneNode::getScale() const
         {
             vector3df irrScale = irrlichtSceneNode_->getScale();
-            return Vec3Df(irrScale.X, irrScale.Z, irrScale.Y);
+            return Geometry::fromIrrVector3df(irrScale);
         }
 
         Vec3Df SceneNode::getAbsolutePosition() const
         {
             vector3df irrPos = irrlichtSceneNode_->getAbsolutePosition();
-            return Vec3Df(irrPos.X, irrPos.Z, irrPos.Y);
+            return Geometry::fromIrrVector3df(irrPos);
         }
 
         Vec3Df SceneNode::getAbsoluteRotation() const
@@ -82,33 +83,33 @@ namespace Graphics
             else
             {
                 vector3df irrRot = irrlichtSceneNode_->getAbsoluteTransformation().getRotationDegrees();
-                return Vec3Df(irrRot.X, irrRot.Z, irrRot.Y);
+                return Geometry::fromIrrVector3df(irrRot);
             }
         }
 
         void SceneNode::setPosition(const Vec3Df& pos)
         {
-            vector3df irrPos = vector3df(pos.getX(), pos.getZ(), pos.getY());
+            vector3df irrPos = Geometry::fromVec3Df(pos);
             irrlichtSceneNode_->setPosition(irrPos);
         }
 
 
         void SceneNode::setRotation(const Vec3Df& rot)
         {
-            vector3df irrRot = vector3df(rot.getX(), rot.getZ(), rot.getY());
+            vector3df irrRot = Geometry::fromVec3Df(rot);
             irrlichtSceneNode_->setRotation(irrRot);
         }
 
 
         void SceneNode::setScale(const Vec3Df& sca)
         {
-            vector3df irrScale = vector3df(sca.getX(), sca.getZ(), sca.getY());
+            vector3df irrScale = Geometry::fromVec3Df(sca);
             irrlichtSceneNode_->setScale(irrScale);
         }
 
         void SceneNode::setAbsolutePosition(const Vec3Df& pos)
         {
-            vector3df irrPos = vector3df(pos.getX(), pos.getZ(), pos.getY());
+            vector3df irrPos = Geometry::fromVec3Df(pos);
 
             if(getParent() != NULL)
             {
@@ -134,7 +135,7 @@ namespace Graphics
 
         void SceneNode::setAbsoluteRotation(const Vec3Df& rot)
         {
-            vector3df irrRot = vector3df(rot.getX(), rot.getZ(), rot.getY());
+            vector3df irrRot = Geometry::fromVec3Df(rot);
 
             if(getParent() != NULL)
             {
