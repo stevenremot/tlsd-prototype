@@ -92,7 +92,7 @@ namespace Application
         );
     }
 
-    void createPlayer(Ecs::World& world)
+    void createPlayer(Ecs::World& world, const Geometry::Vec3Df& position, const Geometry::Vec3Df& rotation)
     {
         // TODO: method AABB from model 3d
         Geometry::AxisAlignedBoundingBox bbox(Geometry::Vec3Df(150.0, 150.0, 0.0), Geometry::Vec3Df(150.5, 150.5, 1.0));
@@ -110,11 +110,11 @@ namespace Application
         const Ecs::Entity& entity = world.createEntity();
         world.addComponent(
             entity,
-            new Geometry::PositionComponent(Geometry::Vec3Df(150.0, 150.0, 0.0))
+            new Geometry::PositionComponent(position)
         );
         world.addComponent(
             entity,
-            new Geometry::RotationComponent(Geometry::Vec3Df(0, 0, 90))
+            new Geometry::RotationComponent(rotation)
         );
         world.addComponent(
             entity,
@@ -134,14 +134,14 @@ namespace Application
         /*world.addComponent(
             entity,
             new Physics::GravityComponent(1)
-        );*/
-        world.addComponent(
-            entity,
-            new Physics::CollisionComponent(Physics::AABBCollisionBody(bbox))
         );
         world.addComponent(
             entity,
-            new Character::CharacterComponent(1.5)
+            new Physics::CollisionComponent(Physics::AABBCollisionBody(bbox))
+        );*/
+        world.addComponent(
+            entity,
+            new Character::CharacterComponent(2.0)
         );
         world.addComponent(
             entity,
@@ -166,7 +166,7 @@ namespace Application
         animationThread_->start();
 
         //createMovingCube(ecsWorld_);
-        createPlayer(ecsWorld_);
+        createPlayer(ecsWorld_, Geometry::Vec3Df(150,150,0), Geometry::Vec3Df(0,0,90));
 
         running_ = true;
         while (running_)
@@ -186,7 +186,7 @@ namespace Application
     {
         std::vector<Threading::ThreadableInterface*> eventThreadables;
         eventThreadables.push_back(&eventManager_);
-        eventThread_ = new Threading::Thread(eventThreadables, 700);
+        eventThread_ = new Threading::Thread(eventThreadables, 500);
     }
 
     void Application::setupGraphicsThread()
@@ -194,17 +194,17 @@ namespace Application
         Event::ListenerRegister& reg = eventManager_.getListenerRegister();
         Event::EventQueue& queue = eventManager_.getEventQueue();
 
-        reg.put(Graphics::CloseDeviceEvent::TYPE, this);
+        reg.put(Graphics::CloseDeviceEvent::Type, this);
 
         Graphics::Device* dev = new Graphics::Device(queue);
-        reg.put(Input::InputInitializedEvent::TYPE, dev);
+        reg.put(Input::InputInitializedEvent::Type, dev);
 
         Graphics::Render::Scene* scene = new Graphics::Render::Scene(queue);
         scene->registerListeners(reg);
 
         Input::IrrlichtInputReceiver* receiver =
             new Input::IrrlichtInputReceiver(queue);
-        reg.put(Input::InitInputEvent::TYPE, receiver);
+        reg.put(Input::InitInputEvent::Type, receiver);
 
         Input::PlayerSystem* playerSystem =
             new Input::PlayerSystem(ecsWorld_, eventManager_.getEventQueue());
@@ -218,7 +218,7 @@ namespace Application
 
         Graphics::Render::RenderSystem* rs =
             new Graphics::Render::RenderSystem(ecsWorld_, queue);
-        reg.put(Ecs::ComponentCreatedEvent::TYPE, rs);
+        reg.put(Ecs::ComponentCreatedEvent::Type, rs);
 
         graphicsThread_ = new Threading::Thread(graphicsThreadables, 60);
     }
@@ -236,15 +236,15 @@ namespace Application
         Physics::CollisionSystem* collisionSystem =
             new Physics::CollisionSystem(ecsWorld_, eventManager_.getEventQueue(), movementSystem->getTimer(), *collisionEngine);
 
-        reg.put(Physics::InitCollisionEngineEvent::TYPE, collisionEngine);
-        reg.put(Ecs::ComponentCreatedEvent::TYPE, collisionSystem);
+        reg.put(Physics::InitCollisionEngineEvent::Type, collisionEngine);
+        reg.put(Ecs::ComponentCreatedEvent::Type, collisionSystem);
 
         std::vector<Threading::ThreadableInterface*> threadables;
         threadables.push_back(movementSystem);
         threadables.push_back(collisionEngine);
         threadables.push_back(collisionSystem);
 
-        updateThread_ = new Threading::Thread(threadables, 80);
+        updateThread_ = new Threading::Thread(threadables, 100);
     }
 
     void Application::setupCharacterThread()
@@ -271,7 +271,7 @@ namespace Application
         std::vector<Threading::ThreadableInterface*> animThreadables;
         animThreadables.push_back(as);
 
-        animationThread_ = new Threading::Thread(animThreadables, 30);
+        animationThread_ = new Threading::Thread(animThreadables, 60);
     }
 
     void Application::setupGenerationThread()

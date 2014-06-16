@@ -17,7 +17,7 @@ namespace Physics
 {
     void CollisionSystem::call(const Event::Event& event)
     {
-        if (event.getType() == ComponentCreatedEvent::TYPE)
+        if (event.getType() == ComponentCreatedEvent::Type)
         {
             const ComponentCreatedEvent& componentEvent = static_cast<const ComponentCreatedEvent&>(event);
 

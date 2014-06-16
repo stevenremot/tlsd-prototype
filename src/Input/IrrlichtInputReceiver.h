@@ -19,10 +19,10 @@ namespace Input
     class InitInputEvent : public Event::Event
     {
     public:
-        static const Event::Type TYPE;
+        static const Event::Type Type;
 
         InitInputEvent(irr::gui::ICursorControl* cursorControl):
-            Event::Event(TYPE),
+            Event::Event(Type),
             cursorControl_(cursorControl)
         {}
 
@@ -38,10 +38,10 @@ namespace Input
     class InputInitializedEvent : public Event::Event
     {
     public:
-        static const Event::Type TYPE;
+        static const Event::Type Type;
 
         InputInitializedEvent(irr::IEventReceiver* receiver):
-            Event::Event(TYPE),
+            Event::Event(Type),
             receiver_(receiver)
         {}
 

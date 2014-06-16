@@ -34,6 +34,7 @@ using Geometry::PositionComponent;
 using Geometry::RotationComponent;
 using Graphics::Render::RenderableComponent;
 using Graphics::Render::AnimationComponent;
+using Geometry::Vec3Df;
 
 namespace AnimationTest
 {
@@ -61,7 +62,7 @@ namespace AnimationTest
 
         Device device(m.getEventQueue());
         Event::ListenerRegister& reg = m.getListenerRegister();
-        reg.put(Input::InputInitializedEvent::TYPE, &device);
+        reg.put(Input::InputInitializedEvent::Type, &device);
 
         DummyInputListener l(m.getEventQueue());
         reg.put(Input::MoveEvent::Type, &l);
@@ -70,10 +71,10 @@ namespace AnimationTest
         scene.registerListeners(reg);
 
         IrrlichtInputReceiver receiver(m.getEventQueue());
-        reg.put(Input::InitInputEvent::TYPE, &receiver);
+        reg.put(Input::InitInputEvent::Type, &receiver);
 
         RenderSystem rs(w, m.getEventQueue());
-        reg.put(Ecs::ComponentCreatedEvent::TYPE, &rs);
+        reg.put(Ecs::ComponentCreatedEvent::Type, &rs);
 
         AnimationSystem as(w, m.getEventQueue());
         as.registerListeners(reg);

@@ -6,6 +6,7 @@
 #include "../../Geometry/PositionComponent.h"
 #include "../../Geometry/RotationComponent.h"
 #include "RenderEvents.h"
+#include "../../Input/PlayerComponent.h"
 
 using Ecs::ComponentCreatedEvent;
 using Ecs::ComponentGroup;
@@ -29,7 +30,7 @@ namespace Graphics
 
         void RenderSystem::call(const Event::Event& event)
         {
-            if (event.getType() == ComponentCreatedEvent::TYPE)
+            if (event.getType() == ComponentCreatedEvent::Type)
             {
                 const ComponentCreatedEvent& componentEvent = static_cast<const ComponentCreatedEvent&>(event);
 
@@ -57,7 +58,8 @@ namespace Graphics
                                             renderableComponent.getMeshFileName(),
                                             renderableComponent.getTextureFileName(),
                                             positionComponent.getPosition(),
-                                            rotationComponent.getRotation(), entity
+                                            rotationComponent.getRotation(),
+                                            entity
                                         );
                         else
                             eventQueue_ << new RenderMeshFileEvent(
@@ -75,6 +77,12 @@ namespace Graphics
                                         rotationComponent.getRotation(),
                                         entity
                                     );
+                }
+                else if (componentEvent.getComponentType() == Input::PlayerComponent::Type)
+                {
+                    const Ecs::Entity& entity = componentEvent.getEntity();
+
+                    eventQueue_ << new RenderCameraEvent(entity);
                 }
             }
         }

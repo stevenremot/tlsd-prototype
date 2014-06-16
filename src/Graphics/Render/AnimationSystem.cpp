@@ -29,11 +29,11 @@ namespace Graphics
 
         void AnimationSystem::call(const Event::Event& event)
         {
-            if (event.getType() == ComponentCreatedEvent::TYPE)
+            if (event.getType() == ComponentCreatedEvent::Type)
             {
                 eventQueue_ << new ComponentCreatedEvent(static_cast<const ComponentCreatedEvent&>(event));
             }
-            else if (event.getType() == AnimateActionEvent::TYPE)
+            else if (event.getType() == AnimateActionEvent::Type)
             {
                 eventQueue_ << new AnimateActionEvent(static_cast<const AnimateActionEvent&>(event));
             }
@@ -50,7 +50,7 @@ namespace Graphics
 
                 if (event != NULL)
                 {
-                    if (event->getType() == ComponentCreatedEvent::TYPE)
+                    if (event->getType() == ComponentCreatedEvent::Type)
                     {
                         const ComponentCreatedEvent& componentEvent = static_cast<const ComponentCreatedEvent&>(*event);
                         if (componentEvent.getComponentType() == AnimationComponent::Type)
@@ -68,7 +68,7 @@ namespace Graphics
                             outsideQueue_ << new SetupAnimationEvent(animComponent.getAnimationMap(), entity);
                         }
                     }
-                    else if (event->getType() == AnimateActionEvent::TYPE)
+                    else if (event->getType() == AnimateActionEvent::Type)
                     {
                         const AnimateActionEvent& actionEvent = static_cast<const AnimateActionEvent&>(*event);
                         const Ecs::Entity& entity = actionEvent.getEntity();
@@ -103,8 +103,8 @@ namespace Graphics
 
         void AnimationSystem::registerListeners(Event::ListenerRegister& reg)
         {
-            reg.put(Ecs::ComponentCreatedEvent::TYPE, this);
-            reg.put(AnimateActionEvent::TYPE, this);
+            reg.put(Ecs::ComponentCreatedEvent::Type, this);
+            reg.put(AnimateActionEvent::Type, this);
         }
     }
 }

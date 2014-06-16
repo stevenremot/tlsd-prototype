@@ -12,8 +12,8 @@ using Geometry::Vec2Df;
 
 namespace Input
 {
-    const Event::Event::Type InitInputEvent::TYPE = "init_input";
-    const Event::Event::Type InputInitializedEvent::TYPE = "input_initialized";
+    const Event::Event::Type InitInputEvent::Type = "init_input";
+    const Event::Event::Type InputInitializedEvent::Type = "input_initialized";
 
     IrrlichtInputReceiver::IrrlichtInputReceiver(Event::EventQueue& eventQueue):
         lastDirection_(Vec2Df(0,0)),

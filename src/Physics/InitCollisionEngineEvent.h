@@ -10,10 +10,10 @@ namespace Physics
     class InitCollisionEngineEvent : public Event::Event
     {
         public:
-            static const Event::Type TYPE;
+            static const Event::Type Type;
 
             InitCollisionEngineEvent(irr::scene::ISceneManager* manager, Graphics::Render::SceneData* data):
-                Event::Event(TYPE),
+                Event::Event(Type),
                 manager_(manager),
                 data_(data)
                 {}

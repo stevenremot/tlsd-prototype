@@ -33,10 +33,10 @@ namespace Graphics
         class InitSceneEvent : public Event::Event
         {
         public:
-            static const Event::Type TYPE;
+            static const Event::Type Type;
 
             InitSceneEvent(irr::scene::ISceneManager* manager, irr::video::IVideoDriver* driver):
-                Event::Event(TYPE),
+                Event::Event(Type),
                 manager_(manager),
                 driver_(driver)
             {}

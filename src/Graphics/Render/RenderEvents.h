@@ -8,9 +8,6 @@
 #include "Model3D.h"
 #include "../../Ecs/Entity.h"
 
-using std::string;
-using Geometry::Vec3Df;
-
 namespace Graphics
 {
     namespace Render
@@ -18,10 +15,10 @@ namespace Graphics
         class RenderMeshFileEvent : public Event::Event
         {
         public:
-            static const Event::Type TYPE;
+            static const Event::Type Type;
 
-            RenderMeshFileEvent(const string& meshFile, const string& textureFile, const Vec3Df& position, const Vec3Df& rotation, const Ecs::Entity& entity):
-                Event::Event(TYPE),
+            RenderMeshFileEvent(const std::string& meshFile, const std::string& textureFile, const Geometry::Vec3Df& position, const Geometry::Vec3Df& rotation, const Ecs::Entity& entity):
+                Event::Event(Type),
                 meshFile_(meshFile),
                 textureFile_(textureFile),
                 position_(position),
@@ -29,22 +26,22 @@ namespace Graphics
                 entity_(entity)
             {}
 
-            const string& getMeshFile() const
+            const std::string& getMeshFile() const
             {
                 return meshFile_;
             }
 
-            const string& getTextureFile() const
+            const std::string& getTextureFile() const
             {
                 return textureFile_;
             }
 
-            const Vec3Df& getPosition() const
+            const Geometry::Vec3Df& getPosition() const
             {
                 return position_;
             }
 
-            const Vec3Df& getRotation() const
+            const Geometry::Vec3Df& getRotation() const
             {
                 return rotation_;
             }
@@ -55,20 +52,20 @@ namespace Graphics
             }
 
         private:
-            const string& meshFile_;
-            const string& textureFile_;
-            const Vec3Df& position_;
-            const Vec3Df& rotation_;
+            const std::string& meshFile_;
+            const std::string& textureFile_;
+            const Geometry::Vec3Df& position_;
+            const Geometry::Vec3Df& rotation_;
             Ecs::Entity entity_;
         };
 
         class RenderAnimatedMeshFileEvent : public Event::Event
         {
         public:
-            static const Event::Type TYPE;
+            static const Event::Type Type;
 
-            RenderAnimatedMeshFileEvent(const string& meshFile, const string& textureFile, const Vec3Df& position, const Vec3Df& rotation, const Ecs::Entity& entity):
-                Event::Event(TYPE),
+            RenderAnimatedMeshFileEvent(const std::string& meshFile, const std::string& textureFile, const Geometry::Vec3Df& position, const Geometry::Vec3Df& rotation, const Ecs::Entity& entity):
+                Event::Event(Type),
                 meshFile_(meshFile),
                 textureFile_(textureFile),
                 position_(position),
@@ -76,22 +73,22 @@ namespace Graphics
                 entity_(entity)
             {}
 
-            const string& getMeshFile() const
+            const std::string& getMeshFile() const
             {
                 return meshFile_;
             }
 
-            const string& getTextureFile() const
+            const std::string& getTextureFile() const
             {
                 return textureFile_;
             }
 
-            const Vec3Df& getPosition() const
+            const Geometry::Vec3Df& getPosition() const
             {
                 return position_;
             }
 
-            const Vec3Df& getRotation() const
+            const Geometry::Vec3Df& getRotation() const
             {
                 return rotation_;
             }
@@ -102,20 +99,20 @@ namespace Graphics
             }
 
         private:
-            const string& meshFile_;
-            const string& textureFile_;
-            const Vec3Df& position_;
-            const Vec3Df& rotation_;
+            const std::string& meshFile_;
+            const std::string& textureFile_;
+            const Geometry::Vec3Df& position_;
+            const Geometry::Vec3Df& rotation_;
             Ecs::Entity entity_;
         };
 
         class RenderModel3DEvent : public Event::Event
         {
         public:
-            static const Event::Type TYPE;
+            static const Event::Type Type;
 
-            RenderModel3DEvent(const Model3D& model, const Vec3Df& position, const Vec3Df& rotation, const Ecs::Entity& entity):
-                Event::Event(TYPE),
+            RenderModel3DEvent(const Model3D& model, const Geometry::Vec3Df& position, const Geometry::Vec3Df& rotation, const Ecs::Entity& entity):
+                Event::Event(Type),
                 model_(model),
                 position_(position),
                 rotation_(rotation),
@@ -127,12 +124,12 @@ namespace Graphics
                 return model_;
             }
 
-            const Vec3Df& getPosition() const
+            const Geometry::Vec3Df& getPosition() const
             {
                 return position_;
             }
 
-            const Vec3Df& getRotation() const
+            const Geometry::Vec3Df& getRotation() const
             {
                 return rotation_;
             }
@@ -144,8 +141,30 @@ namespace Graphics
 
         private:
             const Model3D& model_;
-            const Vec3Df& position_;
-            const Vec3Df& rotation_;
+            const Geometry::Vec3Df& position_;
+            const Geometry::Vec3Df& rotation_;
+            Ecs::Entity entity_;
+        };
+
+        /**
+        *   Event used to initialize a camera behind the entity
+        */
+        class RenderCameraEvent : public Event::Event
+        {
+        public:
+            static const Event::Type Type;
+
+            RenderCameraEvent(const Ecs::Entity& entity) :
+                Event(Type),
+                entity_(entity)
+            {}
+
+            const Ecs::Entity& getEntity() const
+            {
+                return entity_;
+            }
+
+        private:
             Ecs::Entity entity_;
         };
     }

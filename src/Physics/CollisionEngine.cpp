@@ -14,7 +14,7 @@ namespace Physics
 {
     void CollisionEngine::call(const Event::Event& event)
     {
-        if (event.getType() == InitCollisionEngineEvent::TYPE)
+        if (event.getType() == InitCollisionEngineEvent::Type)
         {
             const InitCollisionEngineEvent& initEvent = static_cast<const InitCollisionEngineEvent&>(event);
             irrlichtSceneManager_= initEvent.getManager();

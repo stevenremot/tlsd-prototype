@@ -12,10 +12,10 @@ namespace Graphics
         class SetupAnimationEvent : public Event::Event
         {
         public:
-            static const Event::Type TYPE;
+            static const Event::Type Type;
 
             SetupAnimationEvent(const AnimationMap& animationMap, const Ecs::Entity& entity):
-                Event::Event(TYPE),
+                Event::Event(Type),
                 animationMap_(animationMap),
                 entity_(entity)
                 {}
@@ -38,10 +38,10 @@ namespace Graphics
         class AnimateEvent : public Event::Event
         {
         public:
-            static const Event::Type TYPE;
+            static const Event::Type Type;
 
             AnimateEvent(const AnimationType& animation, const Ecs::Entity& entity):
-                Event::Event(TYPE),
+                Event::Event(Type),
                 animation_(animation),
                 entity_(entity)
                 {}
@@ -64,10 +64,10 @@ namespace Graphics
         class UpdateAnimationEvent : public Event::Event
         {
         public:
-            static const Event::Type TYPE;
+            static const Event::Type Type;
 
             UpdateAnimationEvent(const Ecs::Entity& entity):
-                Event::Event(TYPE),
+                Event::Event(Type),
                 entity_(entity)
                 {}
 

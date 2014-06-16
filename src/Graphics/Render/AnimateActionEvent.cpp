@@ -4,6 +4,6 @@ namespace Graphics
 {
     namespace Render
     {
-        const Event::Event::Type AnimateActionEvent::TYPE = "animate_action";
+        const Event::Event::Type AnimateActionEvent::Type = "animate_action";
     }
 }

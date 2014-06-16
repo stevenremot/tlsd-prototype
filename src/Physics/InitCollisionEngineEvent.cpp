@@ -2,5 +2,5 @@
 
 namespace Physics
 {
-    const Event::Event::Type InitCollisionEngineEvent::TYPE = "init_collision_engine";
+    const Event::Event::Type InitCollisionEngineEvent::Type = "init_collision_engine";
 }

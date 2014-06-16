@@ -61,7 +61,7 @@ namespace Graphics
             // we use the parent of the irrlichtSceneNode_ to avoid translating the position in and from Vec3Df
             irr::scene::ISceneNode* parent = irrlichtSceneNode_->getParent();
             // put the camera behind the player
-            vector3df charDir = parent->getRotation().rotationToDirection();
+            vector3df charDir = parent->getRotation().rotationToDirection(vector3df(-1,0,0));
             vector3df charScale = parent->getScale();
             vector3df charDims = parent->getBoundingBox().getExtent();
             vector3df pos = vector3df(0,charDims.Y*1.2f,0) - 2.0f * vector3df(charDims.X*charDir.X,0,charDims.Z*charDir.Z);

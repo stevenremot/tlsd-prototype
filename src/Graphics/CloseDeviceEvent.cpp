@@ -2,5 +2,5 @@
 
 namespace Graphics
 {
-    const Event::Event::Type CloseDeviceEvent::TYPE = "close_device";
+    const Event::Event::Type CloseDeviceEvent::Type = "close_device";
 }

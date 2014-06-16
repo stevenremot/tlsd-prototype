@@ -12,10 +12,10 @@ namespace Graphics
         class AnimateActionEvent : public Event::Event
         {
         public:
-            static const Event::Type TYPE;
+            static const Event::Type Type;
 
             AnimateActionEvent(const Ecs::Entity& entity, const Character::Action::Type& action):
-                Event::Event(TYPE),
+                Event::Event(Type),
                 entity_(entity),
                 action_(action)
                 {}
