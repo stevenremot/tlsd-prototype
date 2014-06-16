@@ -100,6 +100,7 @@ namespace Graphics
         void AnimatedMeshSceneNode::update()
         {
             static_cast<irr::scene::IAnimatedMeshSceneNode*>(irrlichtSceneNode_)->animateJoints();
+
             /*
             framesWithoutAnimationOrder_++;
 
