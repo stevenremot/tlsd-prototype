@@ -22,7 +22,7 @@ namespace Graphics
 
         void AnimatedMeshSceneNode::removeIrrlichtSceneNode()
         {
-            dynamic_cast<irr::scene::IAnimatedMeshSceneNode*>(irrlichtSceneNode_)->remove();
+            static_cast<irr::scene::IAnimatedMeshSceneNode*>(irrlichtSceneNode_)->remove();
         }
 
         void AnimatedMeshSceneNode::setAnimationMap(const AnimationMap& animationMap)
@@ -33,7 +33,7 @@ namespace Graphics
 
         void AnimatedMeshSceneNode::setIrrlichtSceneNode(irr::scene::IAnimatedMeshSceneNode* node)
         {
-            irrlichtSceneNode_ = dynamic_cast<irr::scene::ISceneNode*>(node);
+            irrlichtSceneNode_ = static_cast<irr::scene::ISceneNode*>(node);
 
             node->setJointMode(irr::scene::EJUOR_CONTROL);
             node->setTransitionTime(transitionTime_);
@@ -55,7 +55,7 @@ namespace Graphics
                 if (!getAnimationFrames(animation, start, end))
                     throw new NotSupportedAnimationException();
 
-                irr::scene::IAnimatedMeshSceneNode* animatedNode = dynamic_cast<irr::scene::IAnimatedMeshSceneNode*>(irrlichtSceneNode_);
+                irr::scene::IAnimatedMeshSceneNode* animatedNode = static_cast<irr::scene::IAnimatedMeshSceneNode*>(irrlichtSceneNode_);
 
                 animatedNode->setAnimationSpeed(animationMap_[animation].getSpeed());
                 animatedNode->setLoopMode(animationMap_[animation].getLoop());
@@ -99,7 +99,7 @@ namespace Graphics
 
         void AnimatedMeshSceneNode::update()
         {
-            dynamic_cast<irr::scene::IAnimatedMeshSceneNode*>(irrlichtSceneNode_)->animateJoints();
+            static_cast<irr::scene::IAnimatedMeshSceneNode*>(irrlichtSceneNode_)->animateJoints();
             /*
             framesWithoutAnimationOrder_++;
 
