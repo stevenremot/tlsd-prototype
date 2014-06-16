@@ -50,6 +50,10 @@ namespace World
         const EntityCollection& getFinalEntities() const { return finalEntities_; }
         const GroundCoefficients& getCoefficients() const { return coefficients_; }
 
+        EntityCollection& getBaseEntities() { return baseEntities_; }
+        EntityCollection& getFinalEntities() { return finalEntities_; }
+        GroundCoefficients& getCoefficients() { return coefficients_; }
+
         void setBaseEntities(const EntityCollection& baseEntities)
         {
             baseEntities_ = baseEntities;
