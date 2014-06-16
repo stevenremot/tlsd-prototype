@@ -20,6 +20,8 @@
 #ifndef WORLD_BIOME_INTERFACE_H
 #define WORLD_BIOME_INTERFACE_H
 
+#include <string>
+
 #include "../Graphics/Color.h"
 
 namespace World
@@ -34,6 +36,8 @@ namespace World
     class BiomeInterface
     {
     public:
+        typedef std::string Type;
+        BiomeInterface(const Type& type):type_(type){}
         /**
          * Return the transformed base-coefficient (transformation specific for a biome)
          *
@@ -44,6 +48,9 @@ namespace World
          *
          */
         virtual Graphics::Color getColor() =0;
+        virtual const Type& getType() {return type_;}
+    private:
+        Type type_;
     };
 }
 

@@ -21,6 +21,8 @@
 
 namespace World
 {
+    const BiomeInterface::Type PlainBiome::Type = "PlainBiome";
+
     float PlainBiome::transformCoefficient(float coefficient)
     {
         return (coefficient+1.0)*15.0;

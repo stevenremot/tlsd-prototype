@@ -29,6 +29,8 @@ namespace World
     class MountainBiome : public BiomeInterface
     {
     public:
+        static const Type Type;
+        MountainBiome():BiomeInterface(Type){}
         virtual float transformCoefficient(float coefficient);
         virtual Graphics::Color getColor();
     };

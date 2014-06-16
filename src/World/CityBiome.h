@@ -30,6 +30,8 @@ namespace World
     class CityBiome : public BiomeInterface
     {
     public:
+        static const Type Type;
+        CityBiome(): BiomeInterface(Type){}
         virtual float transformCoefficient(float coefficient);
         virtual Graphics::Color getColor();
     };
