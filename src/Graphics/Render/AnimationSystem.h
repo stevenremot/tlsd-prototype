@@ -7,44 +7,14 @@
 
 #include "../../Event/EventManager.h"
 
-using Ecs::World;
-
 namespace Graphics
 {
     namespace Render
     {
-        // Temporary class for testing purpose
-        // TODO: remove and replace by actual Action implementation
-        class DummyActionEvent : public Event::Event
-        {
-        public:
-            static const Event::Type TYPE;
-
-            DummyActionEvent(const Ecs::Entity& entity, unsigned int action):
-                Event::Event(TYPE),
-                entity_(entity),
-                action_(action)
-                {}
-
-            const Ecs::Entity& getEntity() const
-            {
-                return entity_;
-            }
-
-            const unsigned int& getAction() const
-            {
-                return action_;
-            }
-
-        private:
-            Ecs::Entity entity_;
-            unsigned int action_;
-        };
-
         class AnimationSystem : public Ecs::System, public Event::EventListenerInterface, public Threading::ThreadableInterface
         {
         public:
-            AnimationSystem(World& world, Event::EventQueue& eventQueue);
+            AnimationSystem(Ecs::World& world, Event::EventQueue& outsideQueue);
             virtual ~AnimationSystem();
 
             // EventListenerInterface
@@ -52,8 +22,13 @@ namespace Graphics
 
             // ThreadableInterface
             virtual void run();
+
+            void registerListeners(Event::ListenerRegister& reg);
         private:
-            Event::EventQueue& eventQueue_;
+            Event::EventQueue eventQueue_;
+            Event::EventHead eventHead_;
+
+            Event::EventQueue& outsideQueue_;
         };
     }
 }

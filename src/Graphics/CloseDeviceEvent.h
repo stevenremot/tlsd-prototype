@@ -8,10 +8,10 @@ namespace Graphics
     class CloseDeviceEvent : public Event::Event
     {
     public:
-        static const Event::Type TYPE;
+        static const Event::Type Type;
 
         CloseDeviceEvent():
-            Event::Event(TYPE)
+            Event::Event(Type)
         {}
     };
 }

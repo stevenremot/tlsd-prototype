@@ -9,6 +9,7 @@
 
 #include "../Event/EventManager.h"
 #include "../Threading/ThreadableInterface.h"
+#include "../Geometry/Vec2D.h"
 
 namespace Input
 {
@@ -18,10 +19,10 @@ namespace Input
     class InitInputEvent : public Event::Event
     {
     public:
-        static const Event::Type TYPE;
+        static const Event::Type Type;
 
         InitInputEvent(irr::gui::ICursorControl* cursorControl):
-            Event::Event(TYPE),
+            Event::Event(Type),
             cursorControl_(cursorControl)
         {}
 
@@ -37,10 +38,10 @@ namespace Input
     class InputInitializedEvent : public Event::Event
     {
     public:
-        static const Event::Type TYPE;
+        static const Event::Type Type;
 
         InputInitializedEvent(irr::IEventReceiver* receiver):
-            Event::Event(TYPE),
+            Event::Event(Type),
             receiver_(receiver)
         {}
 
@@ -76,6 +77,8 @@ namespace Input
         irr::core::array<irr::SKeyMap> keyMap_;
         irr::core::position2df centerCursor_, cursorPos_;
         bool cursorKeys_[irr::EKA_COUNT];
+
+        Geometry::Vec2Df lastDirection_;
 
         Event::EventQueue& eventQueue_;
     };

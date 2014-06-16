@@ -5,8 +5,6 @@
 #include "Animation.h"
 #include "../../Ecs/Entity.h"
 
-using Ecs::Entity;
-
 namespace Graphics
 {
     namespace Render
@@ -14,15 +12,15 @@ namespace Graphics
         class SetupAnimationEvent : public Event::Event
         {
         public:
-            static const Event::Type TYPE;
+            static const Event::Type Type;
 
-            SetupAnimationEvent(const AnimationMap& animationMap, const Entity& entity):
-                Event::Event(TYPE),
+            SetupAnimationEvent(const AnimationMap& animationMap, const Ecs::Entity& entity):
+                Event::Event(Type),
                 animationMap_(animationMap),
                 entity_(entity)
                 {}
 
-            const Entity& getEntity() const
+            const Ecs::Entity& getEntity() const
             {
                 return entity_;
             }
@@ -34,16 +32,16 @@ namespace Graphics
 
         private:
             const AnimationMap& animationMap_;
-            const Entity& entity_;
+            Ecs::Entity entity_;
         };
 
         class AnimateEvent : public Event::Event
         {
         public:
-            static const Event::Type TYPE;
+            static const Event::Type Type;
 
-            AnimateEvent(const AnimationType& animation, const Entity& entity):
-                Event::Event(TYPE),
+            AnimateEvent(const AnimationType& animation, const Ecs::Entity& entity):
+                Event::Event(Type),
                 animation_(animation),
                 entity_(entity)
                 {}
@@ -53,33 +51,33 @@ namespace Graphics
                 return animation_;
             }
 
-            const Entity& getEntity() const
+            const Ecs::Entity& getEntity() const
             {
                 return entity_;
             }
 
         private:
             const AnimationType& animation_;
-            Entity entity_;
+            Ecs::Entity entity_;
         };
 
         class UpdateAnimationEvent : public Event::Event
         {
         public:
-            static const Event::Type TYPE;
+            static const Event::Type Type;
 
-            UpdateAnimationEvent(const Entity& entity):
-                Event::Event(TYPE),
+            UpdateAnimationEvent(const Ecs::Entity& entity):
+                Event::Event(Type),
                 entity_(entity)
                 {}
 
-            const Entity& getEntity() const
+            const Ecs::Entity& getEntity() const
             {
                 return entity_;
             }
 
         private:
-            Entity entity_;
+            Ecs::Entity entity_;
         };
     }
 }

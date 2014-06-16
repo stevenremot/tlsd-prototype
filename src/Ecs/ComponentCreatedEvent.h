@@ -10,10 +10,10 @@ namespace Ecs
 class ComponentCreatedEvent : public Event::Event
 {
     public:
-        static const Event::Type TYPE;
+        static const Event::Type Type;
 
         ComponentCreatedEvent(const Entity& entity, Component* component):
-            Event::Event(TYPE),
+            Event::Event(Type),
             entity_(entity),
             component_(component)
             {}

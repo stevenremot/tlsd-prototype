@@ -41,11 +41,11 @@ namespace Graphics
 
         void AnimatedMeshSceneNode::applyAnimation(const AnimationType& animation)
         {
-            if (currentAnimation_ == animation)
+/*            if (currentAnimation_ == animation)
             {
                 framesWithoutAnimationOrder_ = 0;
             }
-
+*/
             if (currentAnimation_ == NoAnimation ||
                 (currentAnimation_ != animation && animationMap_[currentAnimation_].getOnEndCallback() == NoAnimation))
             {
@@ -100,11 +100,12 @@ namespace Graphics
         void AnimatedMeshSceneNode::update()
         {
             dynamic_cast<irr::scene::IAnimatedMeshSceneNode*>(irrlichtSceneNode_)->animateJoints();
-
+            /*
             framesWithoutAnimationOrder_++;
 
-            if (framesWithoutAnimationOrder_ > 20)
+            if (framesWithoutAnimationOrder_ > 10)
                 applyAnimation(Idle);
+            */
         }
 
     }

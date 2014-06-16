@@ -7,6 +7,7 @@
 #include "../../Ecs/Component.h"
 #include "Animation.h"
 #include "RenderableComponent.h"
+#include "../../Character/Action.h"
 
 using std::vector;
 using std::map;
@@ -28,7 +29,7 @@ namespace Graphics
         public:
             static const Ecs::Component::Type Type;
 
-            AnimationComponent(const AnimationMap& animationMap, map<unsigned int, AnimationType> animationsByAction):
+            AnimationComponent(const AnimationMap& animationMap, map<Character::Action::Type, AnimationType> animationsByAction):
                 Component(Type),
                 animationMap_(animationMap),
                 animationsByAction_(animationsByAction)
@@ -48,7 +49,7 @@ namespace Graphics
                 return animationMap_;
             }
 
-            const AnimationType& getAnimationByAction(unsigned int action)
+            const AnimationType& getAnimationByAction(Character::Action::Type action)
             {
                 if (animationsByAction_.find(action) == animationsByAction_.end())
                     throw new NoAnimationDefinedException();
@@ -59,7 +60,7 @@ namespace Graphics
         private:
             AnimationMap animationMap_;
             // TODO : replace unsigned int by a structure for game actions
-            map<unsigned int, AnimationType> animationsByAction_;
+            map<Character::Action::Type, AnimationType> animationsByAction_;
 
             static vector<Ecs::Component::Type> Dependencies;
         };

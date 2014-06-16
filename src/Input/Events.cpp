@@ -2,6 +2,6 @@
 
 namespace Input
 {
-    const Event::Event::Type MoveEvent::TYPE = "move";
-    const Event::Event::Type CameraEvent::TYPE = "camera";
+    const Event::Event::Type MoveEvent::Type = "move";
+    const Event::Event::Type CameraEvent::Type = "camera";
 }

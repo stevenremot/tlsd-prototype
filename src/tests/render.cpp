@@ -29,6 +29,7 @@ using Threading::Thread;
 using Input::IrrlichtInputReceiver;
 using Geometry::PositionComponent;
 using Geometry::RotationComponent;
+using Geometry::Vec3Df;
 using Graphics::Render::RenderableComponent;
 using Graphics::Render::RenderSystem;
 
@@ -50,16 +51,16 @@ namespace RenderTest
 
         Device device(m.getEventQueue());
         Event::ListenerRegister& reg = m.getListenerRegister();
-        reg.put(Input::InputInitializedEvent::TYPE, &device);
+        reg.put(Input::InputInitializedEvent::Type, &device);
 
         Scene scene(m.getEventQueue());
         scene.registerListeners(reg);
 
         IrrlichtInputReceiver receiver(m.getEventQueue());
-        reg.put(Input::InitInputEvent::TYPE, &receiver);
+        reg.put(Input::InitInputEvent::Type, &receiver);
 
         //DummyInputListener inputListener;
-        //reg.put(Input::MoveEvent::TYPE, &inputListener);
+        //reg.put(Input::MoveEvent::Type, &inputListener);
 
         std::vector<ThreadableInterface*> threadables, threadables2;
         threadables.push_back(&device);
@@ -91,19 +92,19 @@ namespace RenderTest
 
         Device device(m.getEventQueue());
         Event::ListenerRegister& reg = m.getListenerRegister();
-        reg.put(Input::InputInitializedEvent::TYPE, &device);
+        reg.put(Input::InputInitializedEvent::Type, &device);
 
         Scene scene(m.getEventQueue());
         scene.registerListeners(reg);
 
         IrrlichtInputReceiver receiver(m.getEventQueue());
-        reg.put(Input::InitInputEvent::TYPE, &receiver);
+        reg.put(Input::InitInputEvent::Type, &receiver);
 
         RenderSystem rs(w, m.getEventQueue());
-        reg.put(Ecs::ComponentCreatedEvent::TYPE, &rs);
+        reg.put(Ecs::ComponentCreatedEvent::Type, &rs);
 
         CloseDeviceListener cdl;
-        reg.put(Graphics::CloseDeviceEvent::TYPE, &cdl);
+        reg.put(Graphics::CloseDeviceEvent::Type, &cdl);
 
         std::vector<ThreadableInterface*> threadables, threadables2;
 
@@ -151,17 +152,17 @@ namespace RenderTest
 
         Device device(m.getEventQueue());
         Event::ListenerRegister& reg = m.getListenerRegister();
-        reg.put(Input::InputInitializedEvent::TYPE, &device);
+        reg.put(Input::InputInitializedEvent::Type, &device);
 
         Scene scene(m.getEventQueue());
-        reg.put(Graphics::Render::InitSceneEvent::TYPE, &scene);
-        reg.put(Input::CameraEvent::TYPE, &scene);
+        reg.put(Graphics::Render::InitSceneEvent::Type, &scene);
+        reg.put(Input::CameraEvent::Type, &scene);
 
         IrrlichtInputReceiver receiver(m.getEventQueue());
-        reg.put(Input::InitInputEvent::TYPE, &receiver);
+        reg.put(Input::InitInputEvent::Type, &receiver);
 
         DummyInputListener inputListener;
-        reg.put(Input::MoveEvent::TYPE, &inputListener);
+        reg.put(Input::MoveEvent::Type, &inputListener);
 
         std::vector<ThreadableInterface*> threadables, threadables2;
         threadables.push_back(&device);

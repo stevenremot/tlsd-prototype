@@ -10,10 +10,10 @@ namespace Physics
     class EntityPositionChangedEvent : public Event::Event
     {
         public:
-            static const Event::Event::Type TYPE;
+            static const Event::Event::Type Type;
 
             EntityPositionChangedEvent(const Ecs::Entity& entity, const Geometry::Vec3Df& position):
-                Event::Event(TYPE),
+                Event::Event(Type),
                 entity_(entity),
                 position_(position)
                 {}
