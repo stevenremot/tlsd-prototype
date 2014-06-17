@@ -16,7 +16,7 @@ namespace Graphics
     {
     public:
         Device(Event::EventQueue& eventQueue);
-        ~Device();
+        virtual ~Device();
 
         // Threadable
         virtual void run();

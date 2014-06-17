@@ -55,6 +55,11 @@ namespace Application
             return *thread_;
         }
 
+        Application& getApplication()
+        {
+            return callback_.application;
+        }
+
         void finishBoot()
         {
             callback_.callback(callback_.application, *this);

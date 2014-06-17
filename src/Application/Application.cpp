@@ -20,15 +20,9 @@
 #include "Application.h"
 #include "EventBoot.h"
 
-#include "../Graphics/Device.h"
-#include "../Graphics/CloseDeviceEvent.h"
-#include "../Graphics/Render/Scene.h"
-#include "../Graphics/Render/RenderSystem.h"
-#include "../Graphics/Render/RenderEvents.h"
 #include "../Graphics/Render/AnimationSystem.h"
 #include "../Input/IrrlichtInputReceiver.h"
 #include "../Input/Events.h"
-#include "../Input/IrrlichtInputReceiver.h"
 #include "../World/Generation/ChunkGenerationSystem.h"
 #include "../Input/PlayerPositionChangedEvent.h"
 #include "../Ecs/ComponentCreatedEvent.h"
@@ -38,7 +32,6 @@
 #include "../Physics/InitCollisionEngineEvent.h"
 #include "../Character/CharacterSystem.h"
 #include "../Character/CharacterComponent.h"
-#include "../Input/PlayerSystem.h"
 #include "../Input/PlayerComponent.h"
 
 // TODO: includes for createPlayer, remove later
@@ -152,13 +145,16 @@ namespace Application
 
     void applicationEventBootCallback(Application& application, BootInterface& eventBoot)
     {
-        application.setupGraphicsThread();
+        application.graphicsBoot_.start();
+    }
+
+    void applicationGraphicsBootCallback(Application& application, BootInterface& graphicsBoot)
+    {
         application.setupUpdateThread();
         application.setupGenerationThread();
         application.setupCharacterThread();
         application.setupAnimationThread();
 
-        application.graphicsThread_->start();
         application.updateThread_->start();
         application.generationThread_->start();
         application.characterThread_->start();
@@ -169,7 +165,7 @@ namespace Application
 
     Application::Application():
         eventBoot_(applicationEventBootCallback, *this),
-        graphicsThread_(NULL),
+        graphicsBoot_(applicationGraphicsBootCallback, *this),
         generationThread_(NULL),
         ecsWorld_(eventBoot_.getEventManager().getEventQueue()),
         world_(),
@@ -191,40 +187,6 @@ namespace Application
         {
             Threading::sleep(1, 0);
         }
-    }
-
-    void Application::setupGraphicsThread()
-    {
-        Event::ListenerRegister& reg = getEventManager().getListenerRegister();
-        Event::EventQueue& queue = getEventManager().getEventQueue();
-
-        reg.put(Graphics::CloseDeviceEvent::Type, this);
-
-        Graphics::Device* dev = new Graphics::Device(queue);
-        reg.put(Input::InputInitializedEvent::Type, dev);
-
-        Graphics::Render::Scene* scene = new Graphics::Render::Scene(queue);
-        scene->registerListeners(reg);
-
-        Input::IrrlichtInputReceiver* receiver =
-            new Input::IrrlichtInputReceiver(queue);
-        reg.put(Input::InitInputEvent::Type, receiver);
-
-        Input::PlayerSystem* playerSystem =
-            new Input::PlayerSystem(ecsWorld_, queue);
-        playerSystem->registerListeners(reg);
-
-        std::vector<Threading::ThreadableInterface*> graphicsThreadables;
-        graphicsThreadables.push_back(dev);
-        graphicsThreadables.push_back(scene);
-        graphicsThreadables.push_back(receiver);
-        graphicsThreadables.push_back(playerSystem);
-
-        Graphics::Render::RenderSystem* rs =
-            new Graphics::Render::RenderSystem(ecsWorld_, queue);
-        reg.put(Ecs::ComponentCreatedEvent::Type, rs);
-
-        graphicsThread_ = new Threading::Thread(graphicsThreadables, 60);
     }
 
     void Application::setupUpdateThread()

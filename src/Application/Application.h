@@ -26,6 +26,7 @@
 #include "../Ecs/World.h"
 #include "../World/World.h"
 #include "EventBoot.h"
+#include "GraphicsBoot.h"
 
 namespace Application
 {
@@ -41,7 +42,6 @@ namespace Application
         {
             if (animationThread_ != NULL)
             {
-                delete graphicsThread_;
                 delete generationThread_;
                 delete updateThread_;
                 delete characterThread_;
@@ -59,11 +59,17 @@ namespace Application
             return eventBoot_.getEventManager();
         }
 
+        Ecs::World& getEcsWorld()
+        {
+            return ecsWorld_;
+        }
+
         friend void applicationEventBootCallback(Application& application, BootInterface& eventBoot);
+        friend void applicationGraphicsBootCallback(Application& application, BootInterface& graphicsBoot);
 
     private:
         EventBoot eventBoot_;
-        Threading::Thread* graphicsThread_;
+        GraphicsBoot graphicsBoot_;
         Threading::Thread* updateThread_;
         Threading::Thread* generationThread_;
         Threading::Thread* characterThread_;
@@ -72,7 +78,7 @@ namespace Application
         World::World world_;
         bool running_;
 
-        void setupGraphicsThread();
+        // void setupGraphicsThread();
         void setupAnimationThread();
         void setupUpdateThread();
         void setupGenerationThread();
