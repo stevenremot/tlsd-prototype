@@ -18,24 +18,12 @@
 */
 
 #include "Application.h"
-#include "EventBoot.h"
-
-#include "../Graphics/Render/AnimationSystem.h"
-#include "../Input/IrrlichtInputReceiver.h"
-#include "../Input/Events.h"
-#include "../World/Generation/ChunkGenerationSystem.h"
-#include "../Input/PlayerPositionChangedEvent.h"
-#include "../Ecs/ComponentCreatedEvent.h"
-#include "../Physics/MovementSystem.h"
-#include "../Physics/CollisionSystem.h"
-#include "../Physics/CollisionEngine.h"
-#include "../Physics/InitCollisionEngineEvent.h"
-#include "../Character/CharacterComponent.h"
-#include "../Input/PlayerComponent.h"
 
 // TODO: includes for createPlayer, remove later
 #include "../Character/MoveAction.h"
 #include "../Character/StopAction.h"
+#include "../Character/CharacterComponent.h"
+#include "../Input/PlayerComponent.h"
 
 // TODO includes for createMovingCube, remove later
 #include "../Geometry/PositionComponent.h"
@@ -164,10 +152,11 @@ namespace Application
 
     void applicationCharacterBootCallback(Application& application, BootInterface& graphicsBoot)
     {
-        application.setupAnimationThread();
+        application.animationBoot_.start();
+    }
 
-        application.animationThread_->start();
-
+    void applicationAnimationBootCallback(Application& application, BootInterface& graphicsBoot)
+    {
         application.startLoop();
     }
 
@@ -179,7 +168,7 @@ namespace Application
         updateBoot_(applicationUpdateBootCallback, *this),
         generationBoot_(applicationGenerationBootCallback, *this),
         characterBoot_(applicationCharacterBootCallback, *this),
-        animationThread_(NULL),
+        animationBoot_(applicationAnimationBootCallback, *this),
         running_(false)
     {}
 
@@ -199,19 +188,6 @@ namespace Application
             Threading::sleep(1, 0);
         }
 
-        animationThread_->stop();
-    }
-
-    void Application::setupAnimationThread()
-    {
-        Graphics::Render::AnimationSystem* as =
-            new Graphics::Render::AnimationSystem(ecsWorld_, getEventManager().getEventQueue());
-        as->registerListeners(getEventManager().getListenerRegister());
-
-        std::vector<Threading::ThreadableInterface*> animThreadables;
-        animThreadables.push_back(as);
-
-        animationThread_ = new Threading::Thread(animThreadables, 60);
     }
 
     void Application::call(const Event::Event& event)

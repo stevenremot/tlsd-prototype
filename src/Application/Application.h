@@ -20,8 +20,6 @@
 #ifndef APPLICATION_APPLICATION_H
 #define APPLICATION_APPLICATION_H
 
-#include "../Threading/Thread.h"
-#include "../Event/EventManager.h"
 #include "../Event/EventListenerInterface.h"
 #include "../Ecs/World.h"
 #include "../World/World.h"
@@ -30,6 +28,7 @@
 #include "UpdateBoot.h"
 #include "GenerationBoot.h"
 #include "CharacterBoot.h"
+#include "AnimationBoot.h"
 
 namespace Application
 {
@@ -40,14 +39,6 @@ namespace Application
     {
     public:
         Application();
-
-        ~Application()
-        {
-            if (animationThread_ != NULL)
-            {
-                delete animationThread_;
-            }
-        }
 
         void start();
 
@@ -74,6 +65,7 @@ namespace Application
         friend void applicationUpdateBootCallback(Application& application, BootInterface& graphicsBoot);
         friend void applicationGenerationBootCallback(Application& application, BootInterface& graphicsBoot);
         friend void applicationCharacterBootCallback(Application& application, BootInterface& graphicsBoot);
+        friend void applicationAnimationBootCallback(Application& application, BootInterface& graphicsBoot);
 
     private:
         EventBoot eventBoot_;
@@ -83,10 +75,9 @@ namespace Application
         UpdateBoot updateBoot_;
         GenerationBoot generationBoot_;
         CharacterBoot characterBoot_;
-        Threading::Thread* animationThread_;
+        AnimationBoot animationBoot_;
         bool running_;
 
-        void setupAnimationThread();
         void startLoop();
     };
 }
