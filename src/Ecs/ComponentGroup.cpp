@@ -44,11 +44,7 @@ namespace Ecs
     bool ComponentGroup::satisfies(const ComponentCollection & components) const
     {
         // Suppose all components have different types
-
-        if (components_.size() > components.size())
-        {
-            return false;
-        }
+        unsigned int satisfied = 0;
 
         ComponentCollection::const_iterator component;
         for (component = components.begin(); component != components.end(); ++component)
@@ -56,11 +52,17 @@ namespace Ecs
             try
             {
                 components_.at((*component)->getType());
+                satisfied += 1;
             }
             catch (const out_of_range & e)
             {
-                return false;
+                continue;
             }
+        }
+
+        if (satisfied < components_.size())
+        {
+            return false;
         }
 
         return true;

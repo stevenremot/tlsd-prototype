@@ -90,6 +90,7 @@ namespace Graph
          * Return the edges which node is an extremity of.
          */
         EdgeCollection getNeighbourEdges(const PlanarNode& node);
+        EdgeCollection getNeighbourEdges(const PlanarNode& node) const;
 
     private:
         lemon::ListGraph graph_;

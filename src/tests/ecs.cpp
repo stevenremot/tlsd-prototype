@@ -20,16 +20,62 @@
 #include "ecs.h"
 
 #include <iostream>
+#include <string>
 
 using std::cout;
 using std::endl;
+using std::string;
 
 #include "../Ecs/World.h"
 
 namespace EcsTest
 {
+    class MessageComponent: public Ecs::Component
+    {
+    public:
+        static const Ecs::Component::Type Type;
+        static const std::vector<Ecs::Component::Type> Dependencies;
+
+        MessageComponent(const string& message): Component(Type),
+                                                 message_(message)
+        {}
+
+        const string& getMessage() const
+        {
+            return message_;
+        }
+
+        virtual const std::vector<Ecs::Component::Type>& getDependentComponents()
+        {
+            return Dependencies;
+        }
+
+    private:
+        string message_;
+    };
 
     const Ecs::Component::Type MessageComponent::Type = "message";
+    const std::vector<Ecs::Component::Type> MessageComponent::Dependencies =
+        std::vector<Ecs::Component::Type>();
+
+
+    class DummyComponent: public Ecs::Component
+    {
+    public:
+        static const Ecs::Component::Type Type;
+        static const std::vector<Ecs::Component::Type> Dependencies;
+
+        DummyComponent(): Component(Type)
+        {}
+
+        virtual const std::vector<Ecs::Component::Type>& getDependentComponents()
+        {
+            return Dependencies;
+        }
+    };
+
+    const Ecs::Component::Type DummyComponent::Type = "dummy";
+    const std::vector<Ecs::Component::Type> DummyComponent::Dependencies;
 
     void testEcs()
     {
@@ -37,6 +83,7 @@ namespace EcsTest
 
         Ecs::Entity entity1 = w.createEntity();
         w.addComponent(entity1, new MessageComponent("Hello world !"));
+        w.addComponent(entity1, new DummyComponent());
         w.createEntity();
 
         Ecs::ComponentGroup::ComponentTypeCollection types;

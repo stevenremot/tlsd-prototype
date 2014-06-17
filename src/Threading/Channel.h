@@ -24,6 +24,7 @@
 #include <exception>
 
 #include "Thread.h"
+#include "../Core/SharedPtr.h"
 
 namespace Threading
 {
@@ -44,63 +45,33 @@ namespace Threading
     class Channel
     {
     public:
-        Channel(): data_(new std::list<T>), refs_(new int)
-        {
-            *refs_ = 1;
-        }
-
-        Channel(const Channel& channel): data_(channel.data_),
-                                         refs_(channel.refs_)
-        {
-            (*refs_) += 1;
-        }
-
-        Channel& operator=(const Channel& channel)
-        {
-            freeData();
-            data_ = channel.data_;
-            refs_ = channel.refs_;
-
-            (*refs_) += 1;
-
-            return *this;
-        }
-
-        ~Channel()
-        {
-            freeData();
-        }
+        Channel() {}
 
         void operator<<(const T& data)
         {
-            data_->push_back(data);
+            data_.push_back(data);
         }
 
         void operator>>(T& data)
         {
-            while(data_->empty())
+            while(data_.empty())
             {
                 sleep(0, 10);
             }
 
-            data = data_->front();
-            data_->pop_front();
+            data = data_.front();
+            data_.pop_front();
+        }
+
+        bool isEmpty() const
+        {
+            return data_.empty();
         }
 
     private:
-        std::list<T>* data_;
-        int* refs_;
+        std::list<T> data_;
 
-        void freeData()
-        {
-            (*refs_) -= 1;
-
-            if (*refs_ == 0)
-            {
-                delete data_;
-                delete refs_;
-            }
-        }
+        Channel(const Channel&);
     };
 
     /**
@@ -110,16 +81,23 @@ namespace Threading
     class ChannelInput
     {
     public:
+        ChannelInput():
+            channel_(new Channel<T>)
+        {};
 
-        ChannelInput() {};
-
-        ChannelInput(Channel<T>& channel):
+        ChannelInput(Core::SharedPtr< Channel<T> >& channel):
             channel_(channel)
         {}
 
         ChannelInput(const ChannelInput& input):
             channel_(input.channel_)
         {}
+
+        ChannelInput& operator=(const ChannelInput& input)
+        {
+            channel_ = input.channel_;
+            return *this;
+        }
 
         /**
          * Send data to the channel
@@ -128,11 +106,11 @@ namespace Threading
          */
         void operator<<(const T& data)
         {
-            channel_ << data;
+            (*channel_) << data;
         }
 
     private:
-        Channel<T> channel_;
+        Core::SharedPtr< Channel<T> > channel_;
     };
 
     /**
@@ -142,16 +120,23 @@ namespace Threading
     class ChannelOutput
     {
     public:
+        ChannelOutput():
+            channel_(new Channel<T>)
+        {};
 
-        ChannelOutput() {};
-
-        ChannelOutput(Channel<T> channel):
+        ChannelOutput(Core::SharedPtr< Channel<T> > channel):
             channel_(channel)
         {}
 
         ChannelOutput(const ChannelOutput& output):
             channel_(output.channel_)
         {}
+
+        ChannelOutput& operator=(const ChannelOutput& output)
+        {
+            channel_ = output.channel_;
+            return *this;
+        }
 
         /**
          * Wait to receive data from the channel
@@ -160,11 +145,16 @@ namespace Threading
          */
         void operator>>(T& data)
         {
-            channel_ >> data;
+            (*channel_) >> data;
+        }
+
+        bool isEmpty()
+        {
+            return channel_->isEmpty();
         }
 
     private:
-        Channel<T> channel_;
+        Core::SharedPtr< Channel<T> > channel_;
     };
 
     /**
@@ -179,7 +169,7 @@ namespace Threading
     void createChannel(ChannelInput<T>& input,
                        ChannelOutput<T>& output)
     {
-        Channel<T> channel;
+        Core::SharedPtr< Channel<T> > channel(new Channel<T>);
         input = ChannelInput<T>(channel);
         output = ChannelOutput<T>(channel);
     }

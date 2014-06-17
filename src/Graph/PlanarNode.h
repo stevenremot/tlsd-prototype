@@ -49,6 +49,9 @@ namespace Graph
 
         // Operators
         bool operator==(const PlanarNode& node) const;
+        bool operator!=(const PlanarNode& node) const;
+        bool operator<(const PlanarNode& node) const;
+
 
         // In order to hide lemon node from the outside of the code,
         // but to let the graph implementation get it.

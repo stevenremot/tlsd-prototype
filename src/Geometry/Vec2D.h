@@ -66,6 +66,11 @@ namespace Geometry
             return x_ == vec.x_ && y_ == vec.y_;
         }
 
+        inline bool operator!=(const Vec2D& vec) const
+        {
+            return x_ != vec.x_ || y_ != vec.y_;
+        }
+
         inline Vec2D operator+(const Vec2D& vec) const
         {
             return Vec2D(x_ + vec.x_,
@@ -121,6 +126,11 @@ namespace Geometry
         inline Vec2D operator-() const
         {
             return Vec2D(-x_, -y_);
+        }
+
+        inline bool operator<(const Vec2D& vec) const
+        {
+            return x_ < vec.x_ || (x_ == vec.x_ && y_ < vec.y_);
         }
 
         inline T dot(const Vec2D& vec) const

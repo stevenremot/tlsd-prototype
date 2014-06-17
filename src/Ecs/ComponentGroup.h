@@ -115,7 +115,27 @@ namespace Ecs
          *
          * @throw UnexistingComponentException if such component does not exist.
          */
-        Component & getComponent(Component::Type type)
+        Component& getComponent(Component::Type type)
+        {
+            try
+            {
+                return *components_.at(type);
+            }
+            catch (const std::out_of_range & e)
+            {
+                throw UnexistingComponentException();
+            }
+        }
+
+        /**
+         * Return the component of a given type.
+         *
+         * Be sure to use it on a cloned component group, so that
+         * components are defined.
+         *
+         * @throw UnexistingComponentException if such component does not exist.
+         */
+        const Component& getComponent(Component::Type type) const
         {
             try
             {

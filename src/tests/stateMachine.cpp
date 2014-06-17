@@ -139,6 +139,5 @@ namespace StateMachineTest
         aiThread.stop();
         movementThread.stop();
         aiModule->computeNewPlan();
-        int k = 0;
     }
 }

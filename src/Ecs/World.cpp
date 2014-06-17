@@ -19,6 +19,8 @@
 
 #include "World.h"
 
+#include <algorithm>
+
 using std::map;
 
 namespace Ecs
@@ -39,30 +41,46 @@ namespace Ecs
         return createEntity(currentId);
     }
 
-    Entity World::createEntity(const Entity & entity)
+    Entity World::createEntity(const Entity& entity)
     {
         components_[entity] = ComponentCollection();
         return entity;
     }
 
-    void World::addComponent(const Entity & entity, Component * component)
+    void World::addComponent(const Entity& entity, Component* component)
     {
-        ComponentCollection & components = components_.at(entity);
+        ComponentCollection& components = components_.at(entity);
+        std::vector<Component::Type> dependencies =
+            component->getDependentComponents();
 
         ComponentCollection::const_iterator comp;
         for (comp = components.begin(); comp != components.end(); ++comp)
         {
-            if ((*comp)->getType() == component->getType())
+            Component::Type type = (*comp)->getType();
+            if (type == component->getType())
             {
                 throw AlreadySetComponentException();
             }
+
+            std::vector<Component::Type>::iterator it =
+                std::find(dependencies.begin(), dependencies.end(), type);
+
+            if (it != dependencies.end())
+            {
+                dependencies.erase(it);
+            }
+        }
+
+        if (!dependencies.empty())
+        {
+            throw MissingDependentComponentException();
         }
 
         components.push_back(component);
     }
 
-    ComponentGroup World::getEntityComponents(const Entity & entity,
-                                       const ComponentGroup & prototype)
+    ComponentGroup World::getEntityComponents(const Entity& entity,
+                                              const ComponentGroup& prototype)
     {
         ComponentCollection & components = components_.at(entity);
 

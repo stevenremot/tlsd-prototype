@@ -6,29 +6,37 @@
 
 namespace Geometry
 {
-  /**
-   * Component which add a position to an entity
-   */
-  class PositionComponent : public Ecs::Component
-  {
-  public:
-    static const Ecs::Component::Type Type;
-  PositionComponent(const Vec3Df & position): Component(Type),
-      position_(position)
-      {}
-
-    const Vec3Df & getPosition() const
+    /**
+     * Component which add a position to an entity
+     */
+    class PositionComponent : public Ecs::Component
     {
-      return position_;
-    }
+    public:
+        static const Ecs::Component::Type Type;
 
-    void setPosition(const Vec3Df & position)
-    {
-      position_ = position;
-    }
+        static const std::vector<Ecs::Component::Type> Dependencies;
 
-  private:
-    Vec3Df position_;
-  };
+        PositionComponent(const Vec3Df & position): Component(Type),
+            position_(position)
+            {}
+
+        virtual const std::vector<Ecs::Component::Type>& getDependentComponents()
+        {
+            return Dependencies;
+        }
+
+        const Vec3Df & getPosition() const
+        {
+            return position_;
+        }
+
+        void setPosition(const Vec3Df & position)
+        {
+            position_ = position;
+        }
+
+    private:
+        Vec3Df position_;
+    };
 }
 #endif // POSITIONCOMPONENT_H

@@ -70,22 +70,14 @@ namespace Graph
 
     void PlanarGraph::removeNode(const PlanarNode& node)
     {
+        EdgeCollection neighbours = getNeighbourEdges(node);
+        for (unsigned int i = 0; i < neighbours.size(); i++)
+        {
+            removeEdge(neighbours[i]);
+        }
+
         graph_.erase(node.node_);
         nodeCache_.erase(std::find(nodeCache_.begin(), nodeCache_.end(), node));
-        EdgeCollection newEdgeCache;
-
-        for (unsigned int i = 0; i < edgeCache_.size(); i++)
-        {
-            PlanarEdge& edge = edgeCache_[i];
-            if (!edge.hasNode(node))
-            {
-                newEdgeCache.push_back(edge);
-            }
-            else
-            {
-                graph_.erase(edge.edge_);
-            }
-        }
     }
 
     PlanarEdge PlanarGraph::addEdge(const PlanarNode& firstNode,
@@ -129,4 +121,18 @@ namespace Graph
 
         return edges;
     }
+
+    PlanarGraph::EdgeCollection PlanarGraph::getNeighbourEdges(const PlanarNode& node) const
+    {
+        EdgeCollection edges;
+        lemon::ListGraph::IncEdgeIt edge(graph_, node.node_);
+        for (; edge != lemon::INVALID; ++edge)
+        {
+            const PlanarEdge& planarEdge = edges_[edge];
+            edges.push_back(planarEdge);
+        }
+
+        return edges;
+    }
+
 }

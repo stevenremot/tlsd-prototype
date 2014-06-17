@@ -27,8 +27,10 @@
 #include "tests/random.h"
 #include "tests/graph.h"
 #include "tests/threading.h"
+#include "tests/core.h"
 #include "tests/ai.h"
 #include "tests/stateMachine.h"
+#include "tests/navmesh.h"
 
 using std::cout;
 using std::endl;
@@ -37,14 +39,17 @@ using std::vector;
 
 int main()
 {
-    //    EventTest::testEvents();
-    //    EcsTest::testEcs();
-    //    GeometryTest::testVectors();
-    //    RandomTest::testNumberGenerator();
-    //    GraphTest::testPlanarGraph();
-    //    ThreadingTest::testChannel();
-    //    AITest::testAI();
+    /*
+    EventTest::testEvents();
+    EcsTest::testEcs();
+    GeometryTest::testVectors();
+    RandomTest::testNumberGenerator();
+    GraphTest::testPlanarGraph();
+    ThreadingTest::testChannel();
+    CoreTest::testSharedPtr();
     StateMachineTest::testStateMachine();
+    */
+    NavMeshTest::testNavMesh();
 
     return 0;
 }

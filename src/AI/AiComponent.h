@@ -1,5 +1,24 @@
-#ifndef AICOMPONENT_H
-#define AICOMPONENT_H
+/*
+   This file is part of The Lost Souls Downfall prototype.
+
+    The Lost Souls Downfall prototype is free software: you can
+    redistribute it and/or modify it under the terms of the GNU
+    General Public License as published by the Free Software
+    Foundation, either version 3 of the License, or (at your option)
+    any later version.
+
+    The Lost Souls Downfall prototype is distributed in the hope that
+    it will be useful, but WITHOUT ANY WARRANTY; without even the
+    implied warranty of MERCHANTABILITY or FITNESS FOR A PARTICULAR
+    PURPOSE.  See the GNU General Public License for more details.
+
+    You should have received a copy of the GNU General Public License
+    along with The Lost Souls Downfall prototype.  If not, see
+    <http://www.gnu.org/licenses/>.
+*/
+
+#ifndef AI_AICOMPONENT_H
+#define AI_AICOMPONENT_H
 
 #include "../Ecs/Component.h"
 #include "WorkingMemory.h"
@@ -7,6 +26,9 @@
 #include "Sensor/SensorManager.h"
 #include "SubSystems/SubsystemsManager.h"
 #include "AiModule.h"
+
+#include "../Geometry/PositionComponent.h"
+#include "../Physics/MovementComponent.h"
 
 
 namespace AI
@@ -27,6 +49,16 @@ namespace AI
 
         ~AiComponent();
 
+        virtual const std::vector<Ecs::Component::Type>& getDependentComponents()
+        {
+            if(Dependencies.empty())
+            {
+                Dependencies.push_back(Geometry::PositionComponent::Type);
+                Dependencies.push_back(Physics::MovementComponent::Type);
+            }
+            return Dependencies;
+        }
+
         void setAiModule(AiModule* aiModule) {aiModule_ = aiModule;}
         AiModule* getAiModule() {return aiModule_;}
 
@@ -42,6 +74,8 @@ namespace AI
         }
 
     private:
+        static std::vector<Ecs::Component::Type> Dependencies;
+
         const Ecs::Entity entity_;
         WorkingMemory memory_;
         Blackboard blackboard_;
@@ -51,4 +85,4 @@ namespace AI
 
     };
 }
-#endif // AICOMPONENT_H
+#endif // AI_AICOMPONENT_H

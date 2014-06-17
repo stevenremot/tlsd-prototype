@@ -21,6 +21,7 @@
 #define ECS_COMPONENT_H
 
 #include <string>
+#include <vector>
 
 namespace Ecs
 {
@@ -51,6 +52,14 @@ namespace Ecs
 
         virtual ~Component()
         {}
+
+        /**
+         * Return the dependencies of this component
+         *
+         * Some components require an entity to have other components in
+         * order to work. This method tells these component's types.
+         */
+        virtual const std::vector<Type>& getDependentComponents() = 0;
 
         /**
          * Returns component's type
