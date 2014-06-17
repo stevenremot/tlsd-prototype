@@ -25,6 +25,7 @@
 #include "../Event/EventListenerInterface.h"
 #include "../Ecs/World.h"
 #include "../World/World.h"
+#include "EventBoot.h"
 
 namespace Application
 {
@@ -34,21 +35,12 @@ namespace Application
     class Application : public Event::EventListenerInterface
     {
     public:
-        Application():
-            eventThread_(NULL),
-            graphicsThread_(NULL),
-            generationThread_(NULL),
-            eventManager_(),
-            ecsWorld_(eventManager_.getEventQueue()),
-            world_(),
-            running_(false)
-        {}
+        Application();
 
         ~Application()
         {
-            if (eventThread_ != NULL)
+            if (animationThread_ != NULL)
             {
-                delete eventThread_;
                 delete graphicsThread_;
                 delete generationThread_;
                 delete updateThread_;
@@ -59,26 +51,33 @@ namespace Application
 
         void start();
 
+
         virtual void call(const Event::Event& event);
 
+        Event::EventManager& getEventManager()
+        {
+            return eventBoot_.getEventManager();
+        }
+
+        friend void applicationEventBootCallback(Application& application, BootInterface& eventBoot);
+
     private:
-        Threading::Thread* eventThread_;
+        EventBoot eventBoot_;
         Threading::Thread* graphicsThread_;
         Threading::Thread* updateThread_;
         Threading::Thread* generationThread_;
         Threading::Thread* characterThread_;
         Threading::Thread* animationThread_;
-        Event::EventManager eventManager_;
         Ecs::World ecsWorld_;
         World::World world_;
         bool running_;
 
-        void setupEventThread();
         void setupGraphicsThread();
         void setupAnimationThread();
         void setupUpdateThread();
         void setupGenerationThread();
         void setupCharacterThread();
+        void startLoop();
     };
 }
 

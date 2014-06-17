@@ -28,6 +28,10 @@ namespace Application
     class EventBoot: public BootInterface
     {
     public:
+        EventBoot(Callback callback, Application& application):
+            BootInterface(callback, application)
+        {}
+
         virtual void start();
 
         Event::EventManager& getEventManager() { return eventManager_; }

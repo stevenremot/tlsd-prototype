@@ -18,6 +18,7 @@
 */
 
 #include "Application.h"
+#include "EventBoot.h"
 
 #include "../Graphics/Device.h"
 #include "../Graphics/CloseDeviceEvent.h"
@@ -149,22 +150,39 @@ namespace Application
         );
     }
 
+    void applicationEventBootCallback(Application& application, BootInterface& eventBoot)
+    {
+        application.setupGraphicsThread();
+        application.setupUpdateThread();
+        application.setupGenerationThread();
+        application.setupCharacterThread();
+        application.setupAnimationThread();
+
+        application.graphicsThread_->start();
+        application.updateThread_->start();
+        application.generationThread_->start();
+        application.characterThread_->start();
+        application.animationThread_->start();
+
+        application.startLoop();
+    }
+
+    Application::Application():
+        eventBoot_(applicationEventBootCallback, *this),
+        graphicsThread_(NULL),
+        generationThread_(NULL),
+        ecsWorld_(eventBoot_.getEventManager().getEventQueue()),
+        world_(),
+        running_(false)
+    {}
+
     void Application::start()
     {
-        setupEventThread();
-        setupGraphicsThread();
-        setupUpdateThread();
-        setupGenerationThread();
-        setupCharacterThread();
-        setupAnimationThread();
+        eventBoot_.start();
+    }
 
-        eventThread_->start();
-        graphicsThread_->start();
-        updateThread_->start();
-        generationThread_->start();
-        characterThread_->start();
-        animationThread_->start();
-
+    void Application::startLoop()
+    {
         //createMovingCube(ecsWorld_);
         createPlayer(ecsWorld_, Geometry::Vec3Df(150,150,0), Geometry::Vec3Df(0,0,90));
 
@@ -173,26 +191,12 @@ namespace Application
         {
             Threading::sleep(1, 0);
         }
-
-        eventThread_->stop();
-        updateThread_->stop();
-        graphicsThread_->stop();
-        generationThread_->stop();
-        characterThread_->stop();
-        animationThread_->stop();
-    }
-
-    void Application::setupEventThread()
-    {
-        std::vector<Threading::ThreadableInterface*> eventThreadables;
-        eventThreadables.push_back(&eventManager_);
-        eventThread_ = new Threading::Thread(eventThreadables, 500);
     }
 
     void Application::setupGraphicsThread()
     {
-        Event::ListenerRegister& reg = eventManager_.getListenerRegister();
-        Event::EventQueue& queue = eventManager_.getEventQueue();
+        Event::ListenerRegister& reg = getEventManager().getListenerRegister();
+        Event::EventQueue& queue = getEventManager().getEventQueue();
 
         reg.put(Graphics::CloseDeviceEvent::Type, this);
 
@@ -207,7 +211,7 @@ namespace Application
         reg.put(Input::InitInputEvent::Type, receiver);
 
         Input::PlayerSystem* playerSystem =
-            new Input::PlayerSystem(ecsWorld_, eventManager_.getEventQueue());
+            new Input::PlayerSystem(ecsWorld_, queue);
         playerSystem->registerListeners(reg);
 
         std::vector<Threading::ThreadableInterface*> graphicsThreadables;
@@ -225,16 +229,17 @@ namespace Application
 
     void Application::setupUpdateThread()
     {
-        Event::ListenerRegister& reg = eventManager_.getListenerRegister();
+        Event::ListenerRegister& reg = getEventManager().getListenerRegister();
+        Event::EventQueue& queue = getEventManager().getEventQueue();
 
         Physics::MovementSystem* movementSystem =
-            new Physics::MovementSystem(ecsWorld_, eventManager_.getEventQueue());
+            new Physics::MovementSystem(ecsWorld_, queue);
 
         Physics::CollisionEngine* collisionEngine =
             new Physics::CollisionEngine();
 
         Physics::CollisionSystem* collisionSystem =
-            new Physics::CollisionSystem(ecsWorld_, eventManager_.getEventQueue(), movementSystem->getTimer(), *collisionEngine);
+            new Physics::CollisionSystem(ecsWorld_, queue, movementSystem->getTimer(), *collisionEngine);
 
         reg.put(Physics::InitCollisionEngineEvent::Type, collisionEngine);
         reg.put(Ecs::ComponentCreatedEvent::Type, collisionSystem);
@@ -249,10 +254,11 @@ namespace Application
 
     void Application::setupCharacterThread()
     {
-        Event::ListenerRegister& reg = eventManager_.getListenerRegister();
+        Event::ListenerRegister& reg = getEventManager().getListenerRegister();
+        Event::EventQueue& queue = getEventManager().getEventQueue();
 
         Character::CharacterSystem* characterSystem =
-            new Character::CharacterSystem(ecsWorld_, eventManager_.getEventQueue());
+            new Character::CharacterSystem(ecsWorld_, queue);
         characterSystem->registerListeners(reg);
 
         std::vector<Threading::ThreadableInterface*> threadables;
@@ -265,8 +271,8 @@ namespace Application
     void Application::setupAnimationThread()
     {
         Graphics::Render::AnimationSystem* as =
-            new Graphics::Render::AnimationSystem(ecsWorld_, eventManager_.getEventQueue());
-        as->registerListeners(eventManager_.getListenerRegister());
+            new Graphics::Render::AnimationSystem(ecsWorld_, getEventManager().getEventQueue());
+        as->registerListeners(getEventManager().getListenerRegister());
 
         std::vector<Threading::ThreadableInterface*> animThreadables;
         animThreadables.push_back(as);
@@ -293,7 +299,7 @@ namespace Application
             generator
         );
 
-        generation->registerListeners(eventManager_.getListenerRegister());
+        generation->registerListeners(getEventManager().getListenerRegister());
 
         std::vector<Threading::ThreadableInterface*> threadables;
         threadables.push_back(generation);
