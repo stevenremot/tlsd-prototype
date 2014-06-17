@@ -20,10 +20,16 @@
 #ifndef PHYSICS_GROUND_COLLISION_BODY_H
 #define PHYSICS_GROUND_COLLISION_BODY_H
 
+#include <vector>
+#include <cmath>
+
 #include "CollisionBody.h"
+#include "../Geometry/Vec2D.h"
 
 namespace Physics
 {
+    typedef std::vector< std::vector<float> > Heightmap;
+
     class GroundCollisionBody: public CollisionBody
     {
     public:
@@ -31,6 +37,39 @@ namespace Physics
 
         GroundCollisionBody(): CollisionBody(Type)
         {}
+
+        /**
+        *   @param position : relative position vector (position to check - ground position)
+        */
+        bool isOnChunk(const Geometry::Vec2Df& position) const
+        {
+            return position.getX() >= 0 && position.getX() < chunkSize_
+            && position.getY() >= 0 && position.getY() < chunkSize_;
+        }
+
+        /**
+        *   @param position : relative position vector (position to check - ground position)
+        *   @return height by bilinear interpolation
+        */
+        float getHeight(const Geometry::Vec2Df& position) const
+        {
+            float x = position.getX() / resolution_;
+            float y = position.getY() / resolution_;
+            float floorX = std::floor(x);
+            float floorY = std::floor(y);
+            unsigned int i = static_cast<unsigned int>(floorX);//position.getX() / resolution_);
+            unsigned int j = static_cast<unsigned int>(floorY);//position.getY() / resolution_);
+
+            return heightmap_[i][j] * (floorX + 1.0f - x) * (floorY + 1.0f - y)
+                + heightmap_[i+1][j] * (x - floorX) * (floorY + 1.0f - y)
+                + heightmap_[i][j+1] * (floorX + 1.0f - x) * (y - floorY)
+                + heightmap_[i+1][j+1] * (x - floorX) * (y - floorY);
+        }
+
+    private:
+        float chunkSize_;
+        float resolution_;
+        Heightmap heightmap_;
     };
 }
 
