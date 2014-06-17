@@ -187,6 +187,11 @@ namespace Application
         {
             Threading::sleep(1, 0);
         }
+
+        updateThread_->stop();
+        generationThread_->stop();
+        characterThread_->stop();
+        animationThread_->stop();
     }
 
     void Application::setupUpdateThread()

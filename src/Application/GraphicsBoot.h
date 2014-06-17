@@ -51,11 +51,11 @@ namespace Application
         {
             if (device_ != NULL)
             {
-                delete device_;
                 delete scene_;
                 delete receiver_;
                 delete playerSystem_;
                 delete renderSystem_;
+                delete device_;
             }
         }
 
