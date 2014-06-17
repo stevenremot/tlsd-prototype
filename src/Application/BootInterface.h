@@ -36,7 +36,7 @@ namespace Application
 
         BootInterface(Callback callback, Application& application):
             thread_(NULL),
-            callback_({callback, application})
+            callback_(callback, application)
         {}
 
         virtual void start() = 0;
@@ -64,7 +64,12 @@ namespace Application
         void setThread(Threading::Thread* thread) { thread_ = thread; }
 
     private:
-        typedef struct {
+        typedef struct CallbackStruct {
+            CallbackStruct(Callback callback, Application& application):
+                callback(callback),
+                application(application)
+            {}
+
             Callback callback;
             Application& application;
         } CallbackStruct;
