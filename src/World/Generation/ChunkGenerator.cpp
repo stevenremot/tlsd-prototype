@@ -172,11 +172,12 @@ namespace World
         void ChunkGenerator::generateTrees(int x, int y, Random::NumberGenerator& rng, std::vector<Geometry::Vec3Df>& positions, std::vector<SimpleTree*>& trees)
         {
             const float chunkSize = World::ChunkSize;
+            const unsigned int treeDensity = World::TreeDensity;
             const float floatX = x, floatY = y;
             Chunk chunk;
             world_.getChunk(x, y, chunk);
 
-            for (unsigned int i = 0; i < 200; i++)
+            for (unsigned int i = 0; i < treeDensity; i++)
             {
                 // Generate the parameters
                 float localX = rng.getUniform(0,chunkSize);

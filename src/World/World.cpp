@@ -23,6 +23,7 @@ namespace World
 {
 
     const unsigned int World::ChunkSize = 512;
+    const unsigned int World::TreeDensity = 100;
 
     BiomeInterface& World::getBiome(float x, float y)
     {
