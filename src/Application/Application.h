@@ -29,6 +29,7 @@
 #include "GraphicsBoot.h"
 #include "UpdateBoot.h"
 #include "GenerationBoot.h"
+#include "CharacterBoot.h"
 
 namespace Application
 {
@@ -44,7 +45,6 @@ namespace Application
         {
             if (animationThread_ != NULL)
             {
-                delete characterThread_;
                 delete animationThread_;
             }
         }
@@ -73,6 +73,7 @@ namespace Application
         friend void applicationGraphicsBootCallback(Application& application, BootInterface& graphicsBoot);
         friend void applicationUpdateBootCallback(Application& application, BootInterface& graphicsBoot);
         friend void applicationGenerationBootCallback(Application& application, BootInterface& graphicsBoot);
+        friend void applicationCharacterBootCallback(Application& application, BootInterface& graphicsBoot);
 
     private:
         EventBoot eventBoot_;
@@ -81,13 +82,11 @@ namespace Application
         GraphicsBoot graphicsBoot_;
         UpdateBoot updateBoot_;
         GenerationBoot generationBoot_;
-        Threading::Thread* characterThread_;
+        CharacterBoot characterBoot_;
         Threading::Thread* animationThread_;
         bool running_;
 
         void setupAnimationThread();
-        void setupGenerationThread();
-        void setupCharacterThread();
         void startLoop();
     };
 }

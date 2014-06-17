@@ -30,7 +30,6 @@
 #include "../Physics/CollisionSystem.h"
 #include "../Physics/CollisionEngine.h"
 #include "../Physics/InitCollisionEngineEvent.h"
-#include "../Character/CharacterSystem.h"
 #include "../Character/CharacterComponent.h"
 #include "../Input/PlayerComponent.h"
 
@@ -160,10 +159,13 @@ namespace Application
 
     void applicationGenerationBootCallback(Application& application, BootInterface& graphicsBoot)
     {
-        application.setupCharacterThread();
+        application.characterBoot_.start();
+    }
+
+    void applicationCharacterBootCallback(Application& application, BootInterface& graphicsBoot)
+    {
         application.setupAnimationThread();
 
-        application.characterThread_->start();
         application.animationThread_->start();
 
         application.startLoop();
@@ -176,7 +178,7 @@ namespace Application
         graphicsBoot_(applicationGraphicsBootCallback, *this),
         updateBoot_(applicationUpdateBootCallback, *this),
         generationBoot_(applicationGenerationBootCallback, *this),
-        characterThread_(NULL),
+        characterBoot_(applicationCharacterBootCallback, *this),
         animationThread_(NULL),
         running_(false)
     {}
@@ -197,24 +199,7 @@ namespace Application
             Threading::sleep(1, 0);
         }
 
-        characterThread_->stop();
         animationThread_->stop();
-    }
-
-    void Application::setupCharacterThread()
-    {
-        Event::ListenerRegister& reg = getEventManager().getListenerRegister();
-        Event::EventQueue& queue = getEventManager().getEventQueue();
-
-        Character::CharacterSystem* characterSystem =
-            new Character::CharacterSystem(ecsWorld_, queue);
-        characterSystem->registerListeners(reg);
-
-        std::vector<Threading::ThreadableInterface*> threadables;
-        threadables.push_back(characterSystem);
-
-        characterThread_ = new Threading::Thread(threadables, 60);
-
     }
 
     void Application::setupAnimationThread()
