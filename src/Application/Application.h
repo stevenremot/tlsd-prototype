@@ -27,6 +27,7 @@
 #include "../World/World.h"
 #include "EventBoot.h"
 #include "GraphicsBoot.h"
+#include "UpdateBoot.h"
 
 namespace Application
 {
@@ -43,7 +44,6 @@ namespace Application
             if (animationThread_ != NULL)
             {
                 delete generationThread_;
-                delete updateThread_;
                 delete characterThread_;
                 delete animationThread_;
             }
@@ -66,11 +66,12 @@ namespace Application
 
         friend void applicationEventBootCallback(Application& application, BootInterface& eventBoot);
         friend void applicationGraphicsBootCallback(Application& application, BootInterface& graphicsBoot);
+        friend void applicationUpdateBootCallback(Application& application, BootInterface& graphicsBoot);
 
     private:
         EventBoot eventBoot_;
         GraphicsBoot graphicsBoot_;
-        Threading::Thread* updateThread_;
+        UpdateBoot updateBoot_;
         Threading::Thread* generationThread_;
         Threading::Thread* characterThread_;
         Threading::Thread* animationThread_;
@@ -78,7 +79,6 @@ namespace Application
         World::World world_;
         bool running_;
 
-        // void setupGraphicsThread();
         void setupAnimationThread();
         void setupUpdateThread();
         void setupGenerationThread();

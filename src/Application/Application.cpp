@@ -150,12 +150,15 @@ namespace Application
 
     void applicationGraphicsBootCallback(Application& application, BootInterface& graphicsBoot)
     {
-        application.setupUpdateThread();
+        application.updateBoot_.start();
+    }
+
+    void applicationUpdateBootCallback(Application& application, BootInterface& graphicsBoot)
+    {
         application.setupGenerationThread();
         application.setupCharacterThread();
         application.setupAnimationThread();
 
-        application.updateThread_->start();
         application.generationThread_->start();
         application.characterThread_->start();
         application.animationThread_->start();
@@ -166,6 +169,7 @@ namespace Application
     Application::Application():
         eventBoot_(applicationEventBootCallback, *this),
         graphicsBoot_(applicationGraphicsBootCallback, *this),
+        updateBoot_(applicationUpdateBootCallback, *this),
         generationThread_(NULL),
         ecsWorld_(eventBoot_.getEventManager().getEventQueue()),
         world_(),
@@ -188,35 +192,10 @@ namespace Application
             Threading::sleep(1, 0);
         }
 
-        updateThread_->stop();
+        // updateThread_->stop();
         generationThread_->stop();
         characterThread_->stop();
         animationThread_->stop();
-    }
-
-    void Application::setupUpdateThread()
-    {
-        Event::ListenerRegister& reg = getEventManager().getListenerRegister();
-        Event::EventQueue& queue = getEventManager().getEventQueue();
-
-        Physics::MovementSystem* movementSystem =
-            new Physics::MovementSystem(ecsWorld_, queue);
-
-        Physics::CollisionEngine* collisionEngine =
-            new Physics::CollisionEngine();
-
-        Physics::CollisionSystem* collisionSystem =
-            new Physics::CollisionSystem(ecsWorld_, queue, movementSystem->getTimer(), *collisionEngine);
-
-        reg.put(Physics::InitCollisionEngineEvent::Type, collisionEngine);
-        reg.put(Ecs::ComponentCreatedEvent::Type, collisionSystem);
-
-        std::vector<Threading::ThreadableInterface*> threadables;
-        threadables.push_back(movementSystem);
-        threadables.push_back(collisionEngine);
-        threadables.push_back(collisionSystem);
-
-        updateThread_ = new Threading::Thread(threadables, 100);
     }
 
     void Application::setupCharacterThread()
