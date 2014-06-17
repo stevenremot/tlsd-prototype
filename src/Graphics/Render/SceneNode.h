@@ -44,7 +44,7 @@ namespace Graphics
 
                 void setId(unsigned int id);
 
-                const unsigned int getId() const;
+                unsigned int getId() const;
 
                 const SceneNode* getParent() const;
                 const std::list<SceneNode*>& getChildren() const;
