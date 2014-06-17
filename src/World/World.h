@@ -37,6 +37,7 @@ namespace World
     {
     public:
         static const unsigned int ChunkSize;
+        static const unsigned int TreeDensity;
 
         /**
          * Return the chunk at indexes (x, y)
