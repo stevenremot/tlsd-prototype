@@ -70,13 +70,13 @@ namespace Application
 
     private:
         EventBoot eventBoot_;
+        Ecs::World ecsWorld_;
+        World::World world_;
         GraphicsBoot graphicsBoot_;
         UpdateBoot updateBoot_;
         Threading::Thread* generationThread_;
         Threading::Thread* characterThread_;
         Threading::Thread* animationThread_;
-        Ecs::World ecsWorld_;
-        World::World world_;
         bool running_;
 
         void setupAnimationThread();

@@ -168,11 +168,11 @@ namespace Application
 
     Application::Application():
         eventBoot_(applicationEventBootCallback, *this),
+        ecsWorld_(eventBoot_.getEventManager().getEventQueue()),
+        world_(),
         graphicsBoot_(applicationGraphicsBootCallback, *this),
         updateBoot_(applicationUpdateBootCallback, *this),
         generationThread_(NULL),
-        ecsWorld_(eventBoot_.getEventManager().getEventQueue()),
-        world_(),
         running_(false)
     {}
 
