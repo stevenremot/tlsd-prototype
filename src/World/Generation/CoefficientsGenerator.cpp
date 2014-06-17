@@ -34,7 +34,9 @@ namespace World
         {
 
             GroundCoefficients groundCoefficients;
+            // Generate the first octave
             groundCoefficients.setCoefficient(1, 0, 0, rng.getUniform(-1, 1));
+            // Generate the second octave
             for (unsigned int i = 0; i < 2; i++)
             {
                 for (unsigned int j = 0; j < 2; j++)
@@ -42,6 +44,7 @@ namespace World
                     groundCoefficients.setCoefficient(2,i,j,rng.getUniform(-1,1));
                 }
             }
+            // Generate the third octave
             for (unsigned int i = 0; i < 4; i++)
             {
                 for (unsigned int j = 0; j < 4; j++)

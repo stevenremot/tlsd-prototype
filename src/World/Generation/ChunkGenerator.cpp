@@ -169,7 +169,6 @@ namespace World
             delete city;
         }
 
-        // TODO Generate more trees !
         void ChunkGenerator::generateTrees(int x, int y, Random::NumberGenerator& rng, std::vector<Geometry::Vec3Df>& positions, std::vector<SimpleTree*>& trees)
         {
             const float chunkSize = World::ChunkSize;
@@ -179,6 +178,7 @@ namespace World
 
             for (unsigned int i = 0; i < 200; i++)
             {
+                // Generate the parameters
                 float localX = rng.getUniform(0,chunkSize);
                 float localY = rng.getUniform(0,chunkSize);
                 float truncHeight = rng.getUniform(4,10);
@@ -194,6 +194,7 @@ namespace World
                 float leavesB = rng.getUniform(0.1,0.2);
                 const std::vector<Geometry::Polygon2D> cityPolygons = world_.getBiomeMap().getCityPolygons();
                 unsigned int length = cityPolygons.size();
+                // Test to see if the future tree will be in a city
                 bool isInACity = false;
                 for (unsigned int j = 0; j < length; j++)
                 {
@@ -202,6 +203,7 @@ namespace World
                         isInACity = true;
                     }
                 }
+                // Insert the tree in the trees list
                 if (!isInACity)
                 {
                     positions.push_back(Vec3Df(localX + floatX*chunkSize, localY + floatY*chunkSize, computeHeight(world_, floatX*chunkSize + localX, floatY*chunkSize + localY)));

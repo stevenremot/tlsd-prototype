@@ -64,6 +64,16 @@ namespace World
              * Generate a city in the chunk (x, y)
              */
             void generateCity(int x, int y, Random::NumberGenerator& rng);
+
+            /**
+             * Generate trees in the chunk (x, y)
+             *
+             * @param[in] x
+             * @param[in] y
+             * @param[in] rng
+             * @param[out] positions
+             * @param[out] trees
+             */
             void generateTrees(int x, int y, Random::NumberGenerator& rng, std::vector<Geometry::Vec3Df>& position, std::vector<SimpleTree*>& trees);
             Random::Seed getChunkSeed(int x, int y);
 

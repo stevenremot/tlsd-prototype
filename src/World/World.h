@@ -32,7 +32,6 @@ namespace World
     /**
      * Represents the world with its different generation states.
      *
-     * TODO implement
      */
     class World
     {
