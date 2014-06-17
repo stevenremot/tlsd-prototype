@@ -28,6 +28,7 @@
 #include "EventBoot.h"
 #include "GraphicsBoot.h"
 #include "UpdateBoot.h"
+#include "GenerationBoot.h"
 
 namespace Application
 {
@@ -43,7 +44,6 @@ namespace Application
         {
             if (animationThread_ != NULL)
             {
-                delete generationThread_;
                 delete characterThread_;
                 delete animationThread_;
             }
@@ -64,9 +64,15 @@ namespace Application
             return ecsWorld_;
         }
 
+        World::World& getWorld()
+        {
+            return world_;
+        }
+
         friend void applicationEventBootCallback(Application& application, BootInterface& eventBoot);
         friend void applicationGraphicsBootCallback(Application& application, BootInterface& graphicsBoot);
         friend void applicationUpdateBootCallback(Application& application, BootInterface& graphicsBoot);
+        friend void applicationGenerationBootCallback(Application& application, BootInterface& graphicsBoot);
 
     private:
         EventBoot eventBoot_;
@@ -74,13 +80,12 @@ namespace Application
         World::World world_;
         GraphicsBoot graphicsBoot_;
         UpdateBoot updateBoot_;
-        Threading::Thread* generationThread_;
+        GenerationBoot generationBoot_;
         Threading::Thread* characterThread_;
         Threading::Thread* animationThread_;
         bool running_;
 
         void setupAnimationThread();
-        void setupUpdateThread();
         void setupGenerationThread();
         void setupCharacterThread();
         void startLoop();

@@ -155,11 +155,14 @@ namespace Application
 
     void applicationUpdateBootCallback(Application& application, BootInterface& graphicsBoot)
     {
-        application.setupGenerationThread();
+        application.generationBoot_.start();
+    }
+
+    void applicationGenerationBootCallback(Application& application, BootInterface& graphicsBoot)
+    {
         application.setupCharacterThread();
         application.setupAnimationThread();
 
-        application.generationThread_->start();
         application.characterThread_->start();
         application.animationThread_->start();
 
@@ -172,7 +175,9 @@ namespace Application
         world_(),
         graphicsBoot_(applicationGraphicsBootCallback, *this),
         updateBoot_(applicationUpdateBootCallback, *this),
-        generationThread_(NULL),
+        generationBoot_(applicationGenerationBootCallback, *this),
+        characterThread_(NULL),
+        animationThread_(NULL),
         running_(false)
     {}
 
@@ -192,8 +197,6 @@ namespace Application
             Threading::sleep(1, 0);
         }
 
-        // updateThread_->stop();
-        generationThread_->stop();
         characterThread_->stop();
         animationThread_->stop();
     }
@@ -224,33 +227,6 @@ namespace Application
         animThreadables.push_back(as);
 
         animationThread_ = new Threading::Thread(animThreadables, 60);
-    }
-
-    void Application::setupGenerationThread()
-    {
-        World::Generation::ChunkGenerator generator(world_, ecsWorld_, 42);
-
-        for (int i = -1; i <= 1; i++)
-        {
-            for (int j = -1; j <= 1; j++)
-            {
-                generator.generateChunk(i, j);
-            }
-        }
-
-        // TODO Change world seed at each run :-)
-        World::Generation::ChunkGenerationSystem* generation =
-            new World::Generation::ChunkGenerationSystem(
-            ecsWorld_,
-            generator
-        );
-
-        generation->registerListeners(getEventManager().getListenerRegister());
-
-        std::vector<Threading::ThreadableInterface*> threadables;
-        threadables.push_back(generation);
-
-        generationThread_ = new Threading::Thread(threadables, 1);
     }
 
     void Application::call(const Event::Event& event)
