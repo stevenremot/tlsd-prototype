@@ -24,8 +24,8 @@ namespace AI
     namespace NavMesh
     {
 
-        const Event::Event::Type AreaCreatedEvent::TYPE = "areaCreated";
-        const Event::Event::Type ObstacleAddedEvent::TYPE = "obstacleAdded";
-        const Event::Event::Type NavMeshOverEvent::TYPE = "navMeshOver";
+        const Event::Event::Type AreaCreatedEvent::Type = "areaCreated";
+        const Event::Event::Type ObstacleAddedEvent::Type = "obstacleAdded";
+        const Event::Event::Type NavMeshOverEvent::Type = "navMeshOver";
     }
 }

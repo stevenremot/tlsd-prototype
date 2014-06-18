@@ -22,8 +22,7 @@
 
 #include <map>
 
-#include "NavMesh.h"
-#include "VertexIdGenerator.h"
+#include "NavMeshContainer.h"
 #include "NavMeshGeneratorEvent.h"
 #include "Obstacle.h"
 #include "../../Event/EventListenerInterface.h"
@@ -79,12 +78,11 @@ namespace AI
             typedef std::map<Rectangle, NavMesh*> NavMeshesMap;
             typedef std::vector<NavMesh*> NavMeshesList;
 
-            NavMeshGenerator();
+            NavMeshGenerator(NavMeshContainer& navMeshContainer);
 
             virtual void call(const Event::Event& event);
 
             NavMeshesList getNavMeshes() const {return navMeshesList_;}
-        private:
             /**
              * Create a new navigation mesh
              */
@@ -98,6 +96,8 @@ namespace AI
              * Look for all the nodes of the navmeshes intersecting the obstacle.
              * Divide them until the new nodes don't intersect the obstacle or have reached the minimum size of cell
              */
+        public:
+
             void updateNavMesh(NavMesh& navMesh, const Obstacle& obstacle);
 
             /**
@@ -119,10 +119,11 @@ namespace AI
             NavMeshesMap navMeshesMap_;
             NavMeshesList navMeshesList_;
 
-            void test(NavMesh& navMesh, const Geometry::Vec2Df& position, const NavMesh::VerticesIdsList& verticesIdsList);
-
-            typedef std::vector< std::vector<const Graph::PlanarNode*> > NodesArray;
+            /**
+             * TO DO : 1 map per navmesh
+             */
             NodesArrayMap nodesArrayMap_;
+            NavMeshContainer& navMeshes_;
 
         };
     }

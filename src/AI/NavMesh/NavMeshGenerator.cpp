@@ -103,13 +103,13 @@ namespace AI
 
         const float NavMeshGenerator::minSizeOfCell_ = 8;
 
-        NavMeshGenerator::NavMeshGenerator()
+        NavMeshGenerator::NavMeshGenerator(NavMeshContainer& navMeshes) : navMeshes_(navMeshes)
         {
         }
 
         void NavMeshGenerator::call(const Event::Event& event)
         {
-            if(event.getType() == AreaCreatedEvent::TYPE)
+            if(event.getType() == AreaCreatedEvent::Type)
             {
                 // Create a new NavMesh
                 const AreaCreatedEvent& areaCreatedEvent = static_cast<const AreaCreatedEvent&>(event);
@@ -117,25 +117,34 @@ namespace AI
                 Geometry::Vec2Df upperRightPoint = areaCreatedEvent.getUpperRightPoint();
                 NavMesh* newNavMesh = createNewNavMesh(lowerLeftPoint, upperRightPoint);
                 Rectangle rect(lowerLeftPoint, upperRightPoint);
-                navMeshesMap_.insert(std::make_pair(rect, newNavMesh));
+                //navMeshesMap_.insert(std::make_pair(rect, newNavMesh));
+                navMeshes_.setNavMesh(lowerLeftPoint, upperRightPoint, newNavMesh);
                 navMeshesList_.push_back(newNavMesh);
                 nodesArrayMap_.insertNewNodesArray(*newNavMesh);
             }
-            else if (event.getType() == ObstacleAddedEvent::TYPE)
+            else if (event.getType() == ObstacleAddedEvent::Type)
             {
                 Obstacle obstacle = static_cast<const ObstacleAddedEvent&>(event).getObstacle();
                 NavMeshesList updatednavMeshes = updateNavMeshes(obstacle);
 
             }
-            else if (event.getType() == NavMeshOverEvent::TYPE)
+            else if (event.getType() == NavMeshOverEvent::Type)
             {
                 const NavMeshOverEvent& navMeshOverEvent = static_cast<const NavMeshOverEvent&>(event);
                 Geometry::Vec2Df lowerLeftPoint = navMeshOverEvent.getLowerLeftPoint();
                 Geometry::Vec2Df upperRightPoint = navMeshOverEvent.getUpperRightPoint();
                 Rectangle rect(lowerLeftPoint, upperRightPoint);
+                /*
                 if(navMeshesMap_.find(rect) != navMeshesMap_.end())
                 {
                     const NavMesh* navMesh = navMeshesMap_.at(rect);
+                    nodesArrayMap_.cleanAll(*navMesh);
+                }
+                */
+                NavMesh* navMesh = NULL;
+                if(navMeshes_.getNavMesh(lowerLeftPoint, upperRightPoint, navMesh))
+                {
+                    //const NavMesh* navMesh = navMeshesMap_.at(rect);
                     nodesArrayMap_.cleanAll(*navMesh);
                 }
             }
@@ -154,6 +163,12 @@ namespace AI
             verticesIdsList.push_back(navMesh->addVertex(upperRightPoint));
             // Add the node to the graph
             navMesh->addNode((lowerLeftPoint+upperRightPoint)*0.5, verticesIdsList);
+
+            /*
+            navMeshes_.setNavMesh(lowerLeftPoint, upperRightPoint, newNavMesh);
+            navMeshesList_.push_back(newNavMesh);
+            nodesArrayMap_.insertNewNodesArray(*newNavMesh);
+            */
             return navMesh;
 
         }

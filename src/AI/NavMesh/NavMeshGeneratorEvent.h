@@ -35,10 +35,10 @@ namespace AI
         class AreaCreatedEvent: public Event::Event
         {
         public:
-            static const Type TYPE;
+            static const Event::Type Type;
 
             AreaCreatedEvent(Geometry::Vec2Df lowerLeftPoint, Geometry::Vec2Df upperRightPoint)
-                : Event::Event(TYPE), lowerLeftPoint_(lowerLeftPoint), upperRightPoint_(upperRightPoint)
+                : Event::Event(Type), lowerLeftPoint_(lowerLeftPoint), upperRightPoint_(upperRightPoint)
             {}
 
             Geometry::Vec2Df getLowerLeftPoint() const {return lowerLeftPoint_;}
@@ -55,9 +55,9 @@ namespace AI
         class ObstacleAddedEvent: public Event::Event
         {
         public:
-            static const Type TYPE;
+            static const Event::Type Type;
 
-            ObstacleAddedEvent(Obstacle obstacle): Event::Event(TYPE), obstacle_(obstacle)
+            ObstacleAddedEvent(Obstacle obstacle): Event::Event(Type), obstacle_(obstacle)
             {}
 
             Obstacle getObstacle() const
@@ -75,10 +75,10 @@ namespace AI
         class NavMeshOverEvent: public Event::Event
         {
         public:
-            static const Type TYPE;
+            static const Event::Type Type;
 
             NavMeshOverEvent(Geometry::Vec2Df lowerLeftPoint, Geometry::Vec2Df upperRightPoint)
-                : Event::Event(TYPE), lowerLeftPoint_(lowerLeftPoint), upperRightPoint_(upperRightPoint)
+                : Event::Event(Type), lowerLeftPoint_(lowerLeftPoint), upperRightPoint_(upperRightPoint)
             {}
 
             Geometry::Vec2Df getLowerLeftPoint() const {return lowerLeftPoint_;}

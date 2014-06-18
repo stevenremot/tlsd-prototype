@@ -55,6 +55,15 @@ namespace AI
                         || y1 + height1 < y2 || y2 + height2 < y1);
             }
 
+            bool contains(const Geometry::Vec2Df& p) const
+            {
+                float x = p.getX();
+                float y = p.getY();
+                float x_min = lowerLeftPoint_.getX(), x_max = upperRightPoint_.getX();
+                float y_min = lowerLeftPoint_.getY(), y_max = upperRightPoint_.getY();
+                return !(x_min > x || x_max < x || y_min > y || y_max < y);
+            }
+
 
             const Geometry::Vec2Df& getLowerLeftPoint() const {return lowerLeftPoint_;}
             const Geometry::Vec2Df& getUpperRightPoint() const {return upperRightPoint_;}
