@@ -1,6 +1,10 @@
 #include "CameraSceneNode.h"
 
+#include <cmath>
 #include <irrlicht/SViewFrustum.h>
+#include <irrlicht/position2d.h>
+
+#include "../../Geometry/IrrlichtConversions.h"
 
 namespace Graphics
 {
@@ -30,8 +34,9 @@ namespace Graphics
             irrlichtSceneNode_ = static_cast<irr::scene::ISceneNode*>(node);
         }
 
-        void CameraSceneNode::updateTarget(const irr::core::position2df& cursorPos)
-        {
+        Geometry::Vec3Df CameraSceneNode::computeNewTarget(
+            const Geometry::Vec2Df& cursorPos
+        ) {
             irr::scene::ICameraSceneNode* cameraNode = static_cast<irr::scene::ICameraSceneNode*>(irrlichtSceneNode_);
 
             const irr::scene::SViewFrustum* frustum = cameraNode->getViewFrustum();
@@ -40,10 +45,19 @@ namespace Graphics
             vector3df leftToRight = frustum->getFarRightUp() - farLeftUp;
             vector3df upToDown = frustum->getFarLeftDown() - farLeftUp;
 
-            vector3df newTarget = farLeftUp + leftToRight*cursorPos.X + upToDown*cursorPos.Y;
+            return Geometry::fromIrrVector3df(
+                farLeftUp + leftToRight*cursorPos.getX() +
+                upToDown*cursorPos.getY()
+            );
+        }
+
+        void CameraSceneNode::updateTarget(const Geometry::Vec2Df& cursorPos)
+        {
+            irr::scene::ICameraSceneNode* cameraNode = static_cast<irr::scene::ICameraSceneNode*>(irrlichtSceneNode_);
+
+            vector3df newTarget = fromVec3Df(computeNewTarget(cursorPos));
             // tweening
             vector3df target = newTarget*rotateSpeed_ + cameraNode->getTarget()*(1-rotateSpeed_);
-
             // check vertical angle
             float verticalAngle = (target - cameraNode->getAbsolutePosition()).getHorizontalAngle().X;
             if (verticalAngle > 180.0f)
@@ -77,6 +91,25 @@ namespace Graphics
             setPosition(position);
 
             static_cast<irr::scene::ICameraSceneNode*>(irrlichtSceneNode_)->setTarget(vector3df(target.getX(), target.getZ(), target.getY()));
+        }
+
+        float CameraSceneNode::getHorizontalRotation() const
+        {
+            irr::scene::ICameraSceneNode* cameraNode = static_cast<irr::scene::ICameraSceneNode*>(getIrrlichtSceneNode());
+
+            const irr::core::vector3df direction =
+                cameraNode->getTarget() - cameraNode->getPosition();
+
+            const Geometry::Vec2Df planeDirection =
+                Geometry::Vec2Df(direction.X, direction.Z);
+
+            return planeDirection.getOrientation();
+        }
+
+        Geometry::Vec3Df CameraSceneNode::getTarget() const
+        {
+            irr::scene::ICameraSceneNode* cameraNode = static_cast<irr::scene::ICameraSceneNode*>(getIrrlichtSceneNode());
+            return Geometry::fromIrrVector3df(cameraNode->getTarget());
         }
     }
 }

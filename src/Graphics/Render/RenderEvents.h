@@ -6,6 +6,7 @@
 #include "../../Event/Event.h"
 #include "../../Geometry/Vec3D.h"
 #include "Model3D.h"
+#include "CameraSceneNode.h"
 #include "../../Ecs/Entity.h"
 
 namespace Graphics
@@ -166,6 +167,28 @@ namespace Graphics
 
         private:
             Ecs::Entity entity_;
+        };
+
+        /**
+         * Dispatched when the scene has initialized the camera.
+         */
+        class CameraRenderedEvent: public Event::Event
+        {
+        public:
+            static const Type Type;
+
+            CameraRenderedEvent(CameraSceneNode* camera):
+                Event(Type),
+                camera_(camera)
+            {}
+
+            CameraSceneNode* getCamera() const
+            {
+                return camera_;
+            }
+
+        private:
+            CameraSceneNode* camera_;
         };
     }
 }

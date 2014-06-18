@@ -4,6 +4,7 @@
 #include <iostream>
 
 #include "Events.h"
+#include "../Geometry/IrrlichtConversions.h"
 
 using irr::SKeyMap;
 using irr::core::array;
@@ -69,7 +70,7 @@ namespace Input
         {
             if (cursorPos_ != centerCursor_)
             {
-                eventQueue_ << new CameraEvent(cursorPos_);
+                eventQueue_ << new CameraEvent(Geometry::fromIrrPosition2df(cursorPos_));
 
                 // Do the fix as normal, special case below
                 // reset cursor position to the centre of the window.

@@ -1,7 +1,6 @@
 #ifndef INPUT_EVENTS_H
 #define INPUT_EVENTS_H
 
-#include <irrlicht/position2d.h>
 #include "../Geometry/Vec2D.h"
 
 #include "../Event/Event.h"
@@ -32,7 +31,7 @@ namespace Input
     public:
         static const Event::Type Type;
 
-        CameraEvent(irr::core::position2df cursorPosition):
+        CameraEvent(const Geometry::Vec2Df& cursorPosition):
             Event::Event(Type),
             cursorPosition_(cursorPosition)
             {}
@@ -42,13 +41,13 @@ namespace Input
             cursorPosition_(event.getCursorPosition())
             {}
 
-        const irr::core::position2df& getCursorPosition() const
+        const Geometry::Vec2Df& getCursorPosition() const
         {
             return cursorPosition_;
         }
 
     private:
-        irr::core::position2df cursorPosition_;
+        Geometry::Vec2Df cursorPosition_;
     };
 }
 

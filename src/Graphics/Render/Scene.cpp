@@ -195,6 +195,9 @@ namespace Graphics
                         addCameraSceneNode(playerNode);
                         camera_ = dynamic_cast<CameraSceneNode*>(data_.getLastSceneNode());
                         camera_->initPositionAndTargetFromParent();
+
+                        std::cout << "[Camera]: rendered" << std::endl;
+                        eventQueue_ << new CameraRenderedEvent(camera_);
                     }
                     else
                         delayedEvents.push_back(event);
