@@ -88,7 +88,7 @@ namespace Application
         );
         world.addComponent(
             entity,
-            new Physics::CollisionComponent(Physics::AABBCollisionBody(bbox))
+            new Physics::CollisionComponent(new Physics::AABBCollisionBody(bbox))
         );
     }
 
@@ -130,18 +130,17 @@ namespace Application
             entity,
             new Physics::MovementComponent(Geometry::Vec3Df(0.0, 0.0, 0.0))
         );
-        // TODO: start applying gravity when the entity is renderered ?
-        /*world.addComponent(
+        world.addComponent(
             entity,
             new Physics::GravityComponent(1)
         );
         world.addComponent(
             entity,
-            new Physics::CollisionComponent(Physics::AABBCollisionBody(bbox))
-        );*/
+            new Physics::CollisionComponent(new Physics::AABBCollisionBody(bbox))
+        );
         world.addComponent(
             entity,
-            new Character::CharacterComponent(2.0)
+            new Character::CharacterComponent(5.0)
         );
         world.addComponent(
             entity,
@@ -166,7 +165,7 @@ namespace Application
         animationThread_->start();
 
         //createMovingCube(ecsWorld_);
-        createPlayer(ecsWorld_, Geometry::Vec3Df(150,150,0), Geometry::Vec3Df(0,0,90));
+        createPlayer(ecsWorld_, Geometry::Vec3Df(300,300,0), Geometry::Vec3Df(0,0,90));
 
         running_ = true;
         while (running_)
@@ -230,18 +229,11 @@ namespace Application
         Physics::MovementSystem* movementSystem =
             new Physics::MovementSystem(ecsWorld_, eventManager_.getEventQueue());
 
-        Physics::CollisionEngine* collisionEngine =
-            new Physics::CollisionEngine();
-
         Physics::CollisionSystem* collisionSystem =
-            new Physics::CollisionSystem(ecsWorld_, eventManager_.getEventQueue(), movementSystem->getTimer(), *collisionEngine);
-
-        reg.put(Physics::InitCollisionEngineEvent::Type, collisionEngine);
-        reg.put(Ecs::ComponentCreatedEvent::Type, collisionSystem);
+            new Physics::CollisionSystem(ecsWorld_, eventManager_.getEventQueue(), movementSystem->getTimer());
 
         std::vector<Threading::ThreadableInterface*> threadables;
         threadables.push_back(movementSystem);
-        threadables.push_back(collisionEngine);
         threadables.push_back(collisionSystem);
 
         updateThread_ = new Threading::Thread(threadables, 100);

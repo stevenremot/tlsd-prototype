@@ -29,7 +29,13 @@
 namespace World
 {
 
-    Graphics::Render::Model3D computeGroundModel(World& world, int x, int y)
+    void computeGroundModel(
+        World& world,
+        int x,
+        int y,
+        Graphics::Render::Model3D& model,
+        Physics::GroundCollisionBody& collBody
+    )
     {
         float chunkSize = World::ChunkSize;
 
@@ -45,7 +51,14 @@ namespace World
         }
         // Creating the heightmap of the ground
         float period = 1.0/Resolution;
-        float groundTable[static_cast<int>(chunkSize*period)+1][static_cast<int>(chunkSize*period)+1];
+
+
+        int size = static_cast<int>(chunkSize*period) + 1;
+        Physics::Heightmap groundTable;
+        for (int i = 0; i < size; i++)
+        {
+            groundTable.push_back(std::vector<float>(size));
+        }
 
         for (float i = 0; i<=chunkSize; i += Resolution)
         {
@@ -54,11 +67,16 @@ namespace World
                 groundTable[static_cast<int>(i*period)][static_cast<int>(j*period)] = computeHeight(world, x*chunkSize+i, y*chunkSize+j);
             }
         }
-        int baseIndex = 0;
 
+        collBody.setChunkSize(chunkSize);
+        collBody.setResolution(Resolution);
+        collBody.setHeightmap(groundTable);
+
+        // Creating the 3D model from the heightmap
+        int baseIndex = 0;
         std::vector<Geometry::Vec3Df> vertices;
         std::vector<Graphics::Render::Face> faces;
-        // Creating the 3D model from the heightmap
+
         for (float i = 0; i<chunkSize*period; i++)
         {
             for (float j = 0; j<chunkSize*period; j++)
@@ -80,9 +98,8 @@ namespace World
 
             }
         }
-
-        return Graphics::Render::Model3D(vertices, faces);
-
+        model.setVertices(vertices);
+        model.setFaces(faces);
     }
 
     float computeEllipse(float x, float y, float squareChunk)
@@ -210,7 +227,7 @@ namespace World
             {
                 if (!world.getChunk(i0+i1,j0+j1,sideChunk))
                 {
-                 throw NotPreparatedChunkException();
+                    throw NotPreparatedChunkException();
                 }
                 n2 = powf(ellipse2,4)*diagonalBiome.transformCoefficient(sideChunk.getCoefficients().getCoefficient(2,1,0));
             }
@@ -226,7 +243,7 @@ namespace World
             {
                 if (!world.getChunk(i0+i1,j0+j1,sideChunk))
                 {
-                 throw NotPreparatedChunkException();
+                    throw NotPreparatedChunkException();
                 }
                 n2 = powf(ellipse2,4)*diagonalBiome.transformCoefficient(sideChunk.getCoefficients().getCoefficient(2,0,1));
             }
@@ -253,7 +270,7 @@ namespace World
                 {
                     if (!world.getChunk(i0+i1,j0+j1,sideChunk))
                     {
-                     throw NotPreparatedChunkException();
+                        throw NotPreparatedChunkException();
                     }
                     n1 = powf(ellipse1,4)*sideBiome.transformCoefficient(sideChunk.getCoefficients().getCoefficient(2,0,0));
                 }
@@ -272,7 +289,7 @@ namespace World
                 {
                     if (!world.getChunk(i0+i1,j0+j1,sideChunk))
                     {
-                     throw NotPreparatedChunkException();
+                        throw NotPreparatedChunkException();
                     }
                     n1 = powf(ellipse1,4)*sideBiome.transformCoefficient(sideChunk.getCoefficients().getCoefficient(2,0,0));
                 }
@@ -281,7 +298,7 @@ namespace World
             {
                 if (!world.getChunk(i0+i1,j0+j1,sideChunk))
                 {
-                 throw NotPreparatedChunkException();
+                    throw NotPreparatedChunkException();
                 }
                 if (i2==0)
                 {
@@ -330,7 +347,7 @@ namespace World
             {
                 if (!world.getChunk(i0+i1,j0+j1,sideChunk))
                 {
-                 throw NotPreparatedChunkException();
+                    throw NotPreparatedChunkException();
                 }
                 n2 = powf(ellipse2,4)*diagonalBiome.transformCoefficient(sideChunk.getCoefficients().getCoefficient(3,i+1,0));
             }
@@ -338,7 +355,7 @@ namespace World
             {
                 if (!world.getChunk(i0+i1,j0+j1,sideChunk))
                 {
-                 throw NotPreparatedChunkException();
+                    throw NotPreparatedChunkException();
                 }
                 n2 = powf(ellipse2,4)*diagonalBiome.transformCoefficient(sideChunk.getCoefficients().getCoefficient(3,0,j+1));
             }
@@ -369,7 +386,7 @@ namespace World
                 {
                     if (!world.getChunk(i0+i1,j0+j1,sideChunk))
                     {
-                     throw NotPreparatedChunkException();
+                        throw NotPreparatedChunkException();
                     }
                     n1 = powf(ellipse1,4)*sideBiome.transformCoefficient(sideChunk.getCoefficients().getCoefficient(3,i,0));
                 }
@@ -388,7 +405,7 @@ namespace World
                 {
                     if (!world.getChunk(i0+i1,j0+j1,sideChunk))
                     {
-                     throw NotPreparatedChunkException();
+                        throw NotPreparatedChunkException();
                     }
                     n1 = powf(ellipse1,4)*sideBiome.transformCoefficient(sideChunk.getCoefficients().getCoefficient(3,0,j));
                 }
@@ -399,7 +416,7 @@ namespace World
                 {
                     if (!world.getChunk(i0+i1,j0+j1,sideChunk))
                     {
-                     throw NotPreparatedChunkException();
+                        throw NotPreparatedChunkException();
                     }
                     n1 = powf(ellipse1,4)*sideBiome.transformCoefficient(sideChunk.getCoefficients().getCoefficient(3,3,0));
                 }
@@ -407,7 +424,7 @@ namespace World
                 {
                     if (!world.getChunk(i0+i1,j0+j1,sideChunk))
                     {
-                     throw NotPreparatedChunkException();
+                        throw NotPreparatedChunkException();
                     }
                     n1 = powf(ellipse1,4)*sideBiome.transformCoefficient(sideChunk.getCoefficients().getCoefficient(3,0,3));
                 }
@@ -457,9 +474,9 @@ namespace World
         float ellipse2 = computeEllipse(x2, y2, squareChunk);
 
         float firstOctaveContribution = computeFirstOctaveContribution(
-            world, ellipse0, ellipse1, ellipse2,
-            i0, j0, i1, j1, chunkSize
-        );
+                                            world, ellipse0, ellipse1, ellipse2,
+                                            i0, j0, i1, j1, chunkSize
+                                        );
 
         // Computing the second octave contribution
         chunkSize = chunkSize/2;
@@ -484,11 +501,11 @@ namespace World
         ellipse2 = computeEllipse(x2, y2, squareChunk);
 
         float secondOctaveContribution = computeSecondOctaveContribution(
-            world, ellipse0, ellipse1, ellipse2,
-            i0, j0, i1, j1,
-            i2, j2, i, j,
-            x, y, chunkSize
-        );
+                                             world, ellipse0, ellipse1, ellipse2,
+                                             i0, j0, i1, j1,
+                                             i2, j2, i, j,
+                                             x, y, chunkSize
+                                         );
 
         // Computing the third octave contribution
         chunkSize = chunkSize/2;
@@ -512,11 +529,11 @@ namespace World
         ellipse2 = computeEllipse(x2,y2,squareChunk);
 
         float thirdOctaveContribution = computeThirdOctaveContribution(
-            world, ellipse0, ellipse1, ellipse2,
-            i0, j0, i1, j1,
-            i2, j2, i, j,
-            x, y, chunkSize
-        );
+                                            world, ellipse0, ellipse1, ellipse2,
+                                            i0, j0, i1, j1,
+                                            i2, j2, i, j,
+                                            x, y, chunkSize
+                                        );
 
         return firstOctaveContribution + 1.0/2.0*secondOctaveContribution + 1.0/4.0*thirdOctaveContribution;
 

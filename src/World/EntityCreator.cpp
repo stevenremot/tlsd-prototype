@@ -47,12 +47,16 @@ namespace World
             )
         );
 
+        Graphics::Render::Model3D model;
+        Physics::GroundCollisionBody* collBody = new Physics::GroundCollisionBody();
+        computeGroundModel(world, i, j, model, *collBody);
+
         groundEntity->addComponent(
-            new Graphics::Render::RenderableComponent(computeGroundModel(world, i, j))
+            new Graphics::Render::RenderableComponent(model)
         );
 
         groundEntity->addComponent(
-            new Physics::CollisionComponent(Physics::GroundCollisionBody())
+            new Physics::CollisionComponent(collBody)
         );
 
         return groundEntity;

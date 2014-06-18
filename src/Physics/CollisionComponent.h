@@ -30,7 +30,7 @@ namespace Physics
     public:
         static const Ecs::Component::Type Type;
 
-        CollisionComponent(CollisionBody collisionBody):
+        CollisionComponent(CollisionBody* collisionBody):
             Ecs::Component(Type),
             collisionBody_(collisionBody)
             {}
@@ -39,12 +39,12 @@ namespace Physics
 
         const CollisionBody& getCollisionBody() const
         {
-            return collisionBody_;
+            return *collisionBody_;
         }
 
     private:
         static std::vector<Ecs::Component::Type> dependentTypes_;
-        CollisionBody collisionBody_;
+        CollisionBody* collisionBody_;
     };
 }
 

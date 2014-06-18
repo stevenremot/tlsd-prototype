@@ -35,8 +35,31 @@ namespace Physics
     public:
         static const Type Type;
 
-        GroundCollisionBody(): CollisionBody(Type)
+        GroundCollisionBody():
+             CollisionBody(Type)
         {}
+
+        GroundCollisionBody(float chunkSize, float resolution, const Heightmap& heightmap):
+             CollisionBody(Type),
+             chunkSize_(chunkSize),
+             resolution_(resolution),
+             heightmap_(heightmap)
+        {}
+
+        void setChunkSize(float chunkSize)
+        {
+            chunkSize_ = chunkSize;
+        }
+
+        void setResolution(float resolution)
+        {
+            resolution_ = resolution;
+        }
+
+        void setHeightmap(const Heightmap& heightmap)
+        {
+            heightmap_ = heightmap;
+        }
 
         /**
         *   @param position : relative position vector (position to check - ground position)
