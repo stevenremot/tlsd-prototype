@@ -17,29 +17,28 @@
     <http://www.gnu.org/licenses/>.
 */
 
-#ifndef WORLD_COEFFICIENTS_GENERATOR_H
-#define WORLD_COEFFICIENTS_GENERATOR_H
+#include "CharacterBoot.h"
 
+#include "Application.h"
 
-#include "../../Random/NumberGenerator.h"
-#include "../GroundCoefficients.h"
-#include "../../Geometry/Vec2D.h"
-
-namespace World
+namespace Application
 {
-
-    namespace Generation
+    void CharacterBoot::start()
     {
-        /*
-         * Generate a random 2D vector to be used as gradient 
-         */
-        Geometry::Vec2Df generatePerlinCoefficient(Random::NumberGenerator& rng);
-        /*
-         * Generate 3 octaves of coefficients for the simplex noise
-         */
-        GroundCoefficients generateGroundCoefficients(Random::NumberGenerator& rng);
+        Event::ListenerRegister& reg = getApplication().getEventManager().getListenerRegister();
+        Event::EventQueue& queue = getApplication().getEventManager().getEventQueue();
+
+        characterSystem_ = new Character::CharacterSystem(
+            getApplication().getEcsWorld(),
+            queue
+        );
+        characterSystem_->registerListeners(reg);
+
+        std::vector<Threading::ThreadableInterface*> threadables;
+        threadables.push_back(characterSystem_);
+
+        setThread(new Threading::Thread(threadables, 60));
+        getThread().start();
+        finishBoot();
     }
-
 }
-
-#endif

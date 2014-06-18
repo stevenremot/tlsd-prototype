@@ -17,29 +17,41 @@
     <http://www.gnu.org/licenses/>.
 */
 
-#ifndef WORLD_COEFFICIENTS_GENERATOR_H
-#define WORLD_COEFFICIENTS_GENERATOR_H
+#ifndef APPLICATION_CHARACTER_BOOT_H
+#define APPLICATION_CHARACTER_BOOT_H
 
+#include "BootInterface.h"
 
-#include "../../Random/NumberGenerator.h"
-#include "../GroundCoefficients.h"
-#include "../../Geometry/Vec2D.h"
+#include "../Character/CharacterSystem.h"
 
-namespace World
+namespace Application
 {
-
-    namespace Generation
+    class CharacterBoot: public BootInterface
     {
-        /*
-         * Generate a random 2D vector to be used as gradient 
-         */
-        Geometry::Vec2Df generatePerlinCoefficient(Random::NumberGenerator& rng);
-        /*
-         * Generate 3 octaves of coefficients for the simplex noise
-         */
-        GroundCoefficients generateGroundCoefficients(Random::NumberGenerator& rng);
-    }
+    public:
+        CharacterBoot(Callback callback, Application& application):
+            BootInterface(callback, application),
+            characterSystem_(NULL)
+        {}
 
+        virtual ~CharacterBoot()
+        {
+            if (characterSystem_ != NULL)
+            {
+                delete characterSystem_;
+            }
+        }
+
+        virtual void start();
+
+    private:
+        Character::CharacterSystem* characterSystem_;
+    };
 }
 
 #endif
+
+// Emacs local variables
+// Local variables:
+// mode: c++
+// End:

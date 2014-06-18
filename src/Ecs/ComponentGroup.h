@@ -100,7 +100,7 @@ namespace Ecs
          * @throw DoesNotSatisfyException when the components does not match
          *                                the group's requirements
          */
-        ComponentGroup clone(Entity entity, ComponentCollection components) const;
+        ComponentGroup clone(Entity entity, const ComponentCollection& components) const;
 
         const Entity& getEntity() const
         {

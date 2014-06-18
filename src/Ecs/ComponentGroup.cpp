@@ -68,7 +68,7 @@ namespace Ecs
         return true;
     }
 
-    ComponentGroup ComponentGroup::clone(Entity entity, ComponentCollection components) const
+    ComponentGroup ComponentGroup::clone(Entity entity, const ComponentCollection& components) const
     {
         if (!satisfies(components))
         {
@@ -78,7 +78,7 @@ namespace Ecs
         ComponentGroup group(*this);
         group.entity_ = entity;
 
-        ComponentCollection::iterator component;
+        ComponentCollection::const_iterator component;
         for (component = components.begin(); component != components.end(); ++component)
         {
             group.components_[(*component)->getType()] = *component;

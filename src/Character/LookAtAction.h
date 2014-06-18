@@ -17,29 +17,33 @@
     <http://www.gnu.org/licenses/>.
 */
 
-#ifndef WORLD_COEFFICIENTS_GENERATOR_H
-#define WORLD_COEFFICIENTS_GENERATOR_H
+#ifndef CHARACTER_LOOK_AT_ACTION_H
+#define CHARACTER_LOOK_AT_ACTION_H
 
+#include "Action.h"
 
-#include "../../Random/NumberGenerator.h"
-#include "../GroundCoefficients.h"
-#include "../../Geometry/Vec2D.h"
-
-namespace World
+namespace Character
 {
-
-    namespace Generation
+    class LookAtAction: public Action
     {
-        /*
-         * Generate a random 2D vector to be used as gradient 
-         */
-        Geometry::Vec2Df generatePerlinCoefficient(Random::NumberGenerator& rng);
-        /*
-         * Generate 3 octaves of coefficients for the simplex noise
-         */
-        GroundCoefficients generateGroundCoefficients(Random::NumberGenerator& rng);
-    }
+    public:
+        static const Type Type;
 
+        LookAtAction(float orientation):
+            Action(Type),
+            orientation_(orientation)
+        {}
+
+        float getOrientation() const { return orientation_; }
+
+    private:
+        float orientation_;
+    };
 }
 
 #endif
+
+// Emacs local variables
+// Local variables:
+// mode: c++
+// End:

@@ -17,27 +17,43 @@
     <http://www.gnu.org/licenses/>.
 */
 
-#ifndef APPLICATION_EVENT_BOOT_H
-#define APPLICATION_EVENT_BOOT_H
+#ifndef APPLICATION_UPDATE_BOOT_H
+#define APPLICATION_UPDATE_BOOT_H
 
 #include "BootInterface.h"
-#include "../Event/EventManager.h"
+
+#include "../Physics/MovementSystem.h"
+#include "../Physics/CollisionSystem.h"
+#include "../Physics/CollisionEngine.h"
 
 namespace Application
 {
-    class EventBoot: public BootInterface
+    class UpdateBoot: public BootInterface
     {
     public:
-        EventBoot(Callback callback, Application& application):
-            BootInterface(callback, application)
+        UpdateBoot(Callback callback, Application& application):
+            BootInterface(callback, application),
+            movementSystem_(NULL),
+            collisionEngine_(NULL),
+            collisionSystem_(NULL)
         {}
+
+        virtual ~UpdateBoot()
+        {
+            if (movementSystem_ != NULL)
+            {
+                delete collisionSystem_;
+                delete collisionEngine_;
+                delete movementSystem_;
+            }
+        }
 
         virtual void start();
 
-        Event::EventManager& getEventManager() { return eventManager_; }
-
     private:
-        Event::EventManager eventManager_;
+        Physics::MovementSystem* movementSystem_;
+        Physics::CollisionEngine* collisionEngine_;
+        Physics::CollisionSystem* collisionSystem_;
     };
 }
 

@@ -17,29 +17,40 @@
     <http://www.gnu.org/licenses/>.
 */
 
-#ifndef WORLD_COEFFICIENTS_GENERATOR_H
-#define WORLD_COEFFICIENTS_GENERATOR_H
+#ifndef APPLICATION_GENERATION_BOOT_H
+#define APPLICATION_GENERATION_BOOT_H
 
+#include "BootInterface.h"
+#include "../World/Generation/ChunkGenerationSystem.h"
 
-#include "../../Random/NumberGenerator.h"
-#include "../GroundCoefficients.h"
-#include "../../Geometry/Vec2D.h"
-
-namespace World
+namespace Application
 {
-
-    namespace Generation
+    class GenerationBoot: public BootInterface
     {
-        /*
-         * Generate a random 2D vector to be used as gradient 
-         */
-        Geometry::Vec2Df generatePerlinCoefficient(Random::NumberGenerator& rng);
-        /*
-         * Generate 3 octaves of coefficients for the simplex noise
-         */
-        GroundCoefficients generateGroundCoefficients(Random::NumberGenerator& rng);
-    }
+    public:
+        GenerationBoot(Callback callback, Application& application):
+            BootInterface(callback, application),
+            generationSystem_(NULL)
+        {}
 
+        virtual ~GenerationBoot()
+        {
+            if (generationSystem_ != NULL)
+            {
+                delete generationSystem_;
+            }
+        }
+
+        virtual void start();
+
+    private:
+        World::Generation::ChunkGenerationSystem* generationSystem_;
+    };
 }
 
 #endif
+
+// Emacs local variables
+// Local variables:
+// mode: c++
+// End:

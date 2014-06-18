@@ -165,7 +165,7 @@ namespace Graphics
             irrlichtSceneNode_->setID(id_);
         }
 
-        const unsigned int SceneNode::getId() const
+        unsigned int SceneNode::getId() const
         {
             return id_;
         }

@@ -22,11 +22,16 @@
 #include <cmath>
 
 #include "Events.h"
+#include "PlayerComponent.h"
 #include "../Character/MoveAction.h"
 #include "../Character/StopAction.h"
+#include "../Character/LookAtAction.h"
 #include "../Character/ActionPerformedEvent.h"
-#include "PlayerComponent.h"
 #include "../Geometry/RotationComponent.h"
+#include "../Geometry/PositionComponent.h"
+#include "../Graphics/Render/RenderEvents.h"
+
+using Graphics::Render::CameraRenderedEvent;
 
 namespace Input
 {
@@ -37,6 +42,18 @@ namespace Input
             eventQueue_ << new MoveEvent(
                             dynamic_cast<const MoveEvent&>(event)
                         );
+        }
+        else if (event.getType() == CameraEvent::Type)
+        {
+            eventQueue_ << new CameraEvent(
+                dynamic_cast<const CameraEvent&>(event)
+            );
+        }
+        else if (event.getType() == CameraRenderedEvent::Type)
+        {
+            eventQueue_ << new CameraRenderedEvent(
+                dynamic_cast<const CameraRenderedEvent&>(event)
+            );
         }
     }
 
@@ -54,6 +71,7 @@ namespace Input
                 Ecs::ComponentGroup::ComponentTypeCollection types;
                 types.insert(PlayerComponent::Type);
                 types.insert(Geometry::RotationComponent::Type);
+                types.insert(Geometry::PositionComponent::Type);
 
                 Ecs::ComponentGroup prototype(types);
                 Ecs::World::ComponentGroupCollection groups =
@@ -63,8 +81,20 @@ namespace Input
                 for (group = groups.begin(); group != groups.end(); ++group)
                 {
                     const Ecs::Entity& entity = group->getEntity();
+
                     const Geometry::RotationComponent& component =
                         dynamic_cast<Geometry::RotationComponent&>(group->getComponent(Geometry::RotationComponent::Type));
+
+                    const Geometry::PositionComponent& positionComponent =
+                        dynamic_cast<Geometry::PositionComponent&>(
+                            group->getComponent(Geometry::PositionComponent::Type)
+                        );
+
+                    PlayerComponent& playerComponent =
+                        dynamic_cast<PlayerComponent&>(
+                            group->getComponent(PlayerComponent::Type)
+                        );
+
                     const Geometry::Vec3Df& rotation = component.getRotation();
                     const float camOrientation = rotation.getZ() / 180.0 * M_PI;
 
@@ -89,6 +119,51 @@ namespace Input
                             action = new Character::MoveAction(v);
                         }
                     }
+                    else if (
+                        event->getType() == CameraEvent::Type &&
+                        playerComponent.isCameraSet()
+                    ) {
+                        const CameraEvent& evt = dynamic_cast<const CameraEvent&>(*event);
+                        const Geometry::Vec2Df& cursorPos = evt.getCursorPosition();
+                        Graphics::Render::CameraSceneNode& camera =
+                            playerComponent.getCamera();
+
+                        const Geometry::Vec3Df& playerPos =
+                            positionComponent.getPosition();
+                        const Geometry::Vec2Df playerPos2d = Geometry::Vec2Df(
+                            playerPos.getX(),
+                            playerPos.getY()
+                        );
+
+                        const Geometry::Vec3Df target = camera.getTarget();
+                        const Geometry::Vec2Df target2d = Geometry::Vec2Df(
+                            target.getX(),
+                            target.getY()
+                        );
+                        const Geometry::Vec3Df newTarget = camera.computeNewTarget(
+                            cursorPos
+                        );
+
+                        const Geometry::Vec2Df newTarget2d = Geometry::Vec2Df(
+                            newTarget.getX(),
+                            newTarget.getY()
+                        );
+                        const Geometry::Vec2Df direction = target2d - playerPos2d;
+                        const Geometry::Vec2Df newDirection = newTarget2d - playerPos2d;
+
+                        const float newOrientation = camOrientation +
+                            newDirection.getOrientation() -
+                            direction.getOrientation();
+
+                        action = new Character::LookAtAction(newOrientation);
+                    }
+                    else if (event->getType() == CameraRenderedEvent::Type)
+                    {
+                        const CameraRenderedEvent& evt =
+                            dynamic_cast<const CameraRenderedEvent&>(*event);
+
+                        playerComponent.setCamera(evt.getCamera());
+                    }
 
                     if (action != NULL)
                     {
@@ -106,5 +181,7 @@ namespace Input
     void PlayerSystem::registerListeners(Event::ListenerRegister& listener)
     {
         listener.put(MoveEvent::Type, this);
+        listener.put(CameraEvent::Type, this);
+        listener.put(CameraRenderedEvent::Type, this);
     }
 }

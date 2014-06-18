@@ -23,6 +23,7 @@
 #include <irrlicht/ICameraSceneNode.h>
 
 #include "SceneNode.h"
+#include "../../Geometry/Vec2D.h"
 
 namespace Graphics
 {
@@ -39,14 +40,30 @@ namespace Graphics
 
             void setIrrlichtSceneNode(irr::scene::ICameraSceneNode* node);
 
+            /**
+             * Compute the new camera's target from the new cursor's position
+             */
+            Geometry::Vec3Df computeNewTarget(const Geometry::Vec2Df& cursorPos);
+
             /*
             *   This method fixes the camera target at each step of the rendering loop
             */
-            void updateTarget(const irr::core::position2df& cursorPos);
+            void updateTarget(const Geometry::Vec2Df& cursorPos);
+
             /*
             *   Initialize the camera position (relative to the player's)
             */
             void initPositionAndTargetFromParent();
+
+            /**
+             * Return the absolute position of the camera's target
+             */
+            Geometry::Vec3Df getTarget() const;
+
+            /**
+             * Return the rotation of the camera on the plane (X, Y)
+             */
+            float getHorizontalRotation() const;
 
             void initStaticCamera(const Vec3Df& position, const Vec3Df& target);
         protected:

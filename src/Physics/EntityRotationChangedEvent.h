@@ -17,22 +17,42 @@
     <http://www.gnu.org/licenses/>.
 */
 
-#ifndef THREADING_THREADABLE_INTERFACE_H
-#define THREADING_THREADABLE_INTERFACE_H
+#ifndef PHYSICS_ENTITY_ROTATION_CHANGED_EVENT_H
+#define PHYSICS_ENTITY_ROTATION_CHANGED_EVENT_H
 
-namespace Threading
+#include "../Event/Event.h"
+#include "../Ecs/Entity.h"
+#include "../Geometry/Vec3D.h"
+
+namespace Physics
 {
-    /**
-     * Interface for code blocks that can run into a thread.
-     */
-    class ThreadableInterface
+    class EntityRotationChangedEvent: public Event::Event
     {
     public:
-        virtual ~ThreadableInterface() {}
-        /**
-         * This method will be executed at each thread loop.
-         */
-        virtual void run() = 0;
+        static const Type Type;
+
+        EntityRotationChangedEvent(
+            const Ecs::Entity& entity,
+            const Geometry::Vec3Df& rotation
+        ):
+            Event(Type),
+            entity_(entity),
+            rotation_(rotation)
+        {}
+
+        const Ecs::Entity& getEntity()
+        {
+            return entity_;
+        }
+
+        const Geometry::Vec3Df& getRotation()
+        {
+            return rotation_;
+        }
+
+    private:
+        Ecs::Entity entity_;
+        Geometry::Vec3Df rotation_;
     };
 
 }

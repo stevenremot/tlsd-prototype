@@ -21,6 +21,7 @@
 #define INPUT_PLAYER_COMPONENT_H
 
 #include "../Ecs/Component.h"
+#include "../Graphics/Render/CameraSceneNode.h"
 
 namespace Input
 {
@@ -31,13 +32,36 @@ namespace Input
     {
     public:
         static const Type Type;
-        PlayerComponent(): Component(Type)
+        PlayerComponent():
+            Component(Type),
+            camera_(NULL)
         {}
 
         virtual const std::vector<Component::Type>& getDependentComponents();
 
+        Graphics::Render::CameraSceneNode& getCamera()
+        {
+            return *camera_;
+        }
+        const Graphics::Render::CameraSceneNode& getCamera() const
+        {
+            return *camera_;
+        }
+
+        void setCamera(Graphics::Render::CameraSceneNode* camera)
+        {
+            camera_ = camera;
+        }
+
+        bool isCameraSet() const
+        {
+            return camera_ != NULL;
+        }
+
+
     private:
         static std::vector<Component::Type> dependantComponents_;
+        Graphics::Render::CameraSceneNode* camera_;
     };
 }
 
