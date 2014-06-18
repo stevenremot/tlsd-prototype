@@ -21,6 +21,7 @@
 
 #include <vector>
 
+#include "../AI/NavMesh/NavMeshGenerationEngine.h"
 #include "../AI/NavMesh/NavMeshGenerator.h"
 #include "../Graph/PathFinding.h"
 #include "../Event/EventManager.h"
@@ -34,18 +35,21 @@ namespace NavMeshTest
         Event::EventManager m;
         Event::ListenerRegister & reg = m.getListenerRegister();
 
-        AI::NavMesh::NavMeshGenerator navMeshGenerator;
-
-        reg.put(AI::NavMesh::AreaCreatedEvent::TYPE, &navMeshGenerator);
-        reg.put(AI::NavMesh::ObstacleAddedEvent::TYPE, &navMeshGenerator);
-        reg.put(AI::NavMesh::NavMeshOverEvent::TYPE, &navMeshGenerator);
-
+        AI::NavMesh::NavMeshGenerationEngine navMeshGenerationEngine;
+        navMeshGenerationEngine.registerListeners(reg);
 
         vector<Threading::ThreadableInterface*> threadables;
         threadables.push_back(&m);
 
         Threading::Thread eventThread(threadables, 2);
         eventThread.start();
+
+        vector<Threading::ThreadableInterface*> threadables2;
+        threadables2.push_back(&navMeshGenerationEngine);
+
+        Threading::Thread generationThread(threadables2, 2);
+        generationThread.start();
+
 
         Event::EventQueue & queue = m.getEventQueue();
 
@@ -67,9 +71,11 @@ namespace NavMeshTest
         }
 
         eventThread.stop();
+        generationThread.stop();
 
         Test::SvgDrawer drawer(256,256);
-        const AI::NavMesh::NavMeshGenerator::NavMeshesList& navMeshes = navMeshGenerator.getNavMeshes();
+        AI::NavMesh::NavMeshContainer::NavMeshesList navMeshes = navMeshGenerationEngine.getNavMeshes().getNavMeshesList();
+
         if(navMeshes.size() > 0)
         {
             AI::NavMesh::NavMesh* navMesh = navMeshes.at(0);

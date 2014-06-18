@@ -24,6 +24,7 @@ namespace AI
     {
         NavMeshGenerationEngine::NavMeshGenerationEngine() : navMeshes_() , navMeshGenerator_(navMeshes_)
         {
+            createChannel(eventQueue_, eventHead_);
         }
 
         void NavMeshGenerationEngine::call(const Event::Event& event)
@@ -69,6 +70,7 @@ namespace AI
                         const NavMeshOverEvent& navMeshOverEvent = dynamic_cast<const NavMeshOverEvent&>(*event);
                         Geometry::Vec2Df lowerLeftPoint = navMeshOverEvent.getLowerLeftPoint();
                         Geometry::Vec2Df upperRightPoint = navMeshOverEvent.getUpperRightPoint();
+                        navMeshGenerator_.clean(lowerLeftPoint, upperRightPoint);
                     }
                     delete event;
                 }

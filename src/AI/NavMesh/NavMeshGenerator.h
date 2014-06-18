@@ -23,11 +23,8 @@
 #include <map>
 
 #include "NavMeshContainer.h"
-#include "NavMeshGeneratorEvent.h"
 #include "Obstacle.h"
-#include "../../Event/EventListenerInterface.h"
 
-#include "../../tests/navmesh.h"
 namespace AI
 {
     namespace NavMesh
@@ -66,7 +63,7 @@ namespace AI
          * All the polygonal nodes are rectangles whose height and width are bigger than the defined minimum size of cell
          *
          */
-        class NavMeshGenerator : public Event::EventListenerInterface
+        class NavMeshGenerator
         {
         public:
 
@@ -80,22 +77,26 @@ namespace AI
 
             NavMeshGenerator(NavMeshContainer& navMeshContainer);
 
-            virtual void call(const Event::Event& event);
-
             NavMeshesList getNavMeshes() const {return navMeshesList_;}
             /**
              * Create a new navigation mesh
              */
-            NavMesh* createNewNavMesh(const Geometry::Vec2Df& lowerLeftPoint, const Geometry::Vec2Df& upperRightPoint);
+            void createNewNavMesh(const Geometry::Vec2Df& lowerLeftPoint, const Geometry::Vec2Df& upperRightPoint);
             /**
              * Called when a new obstacle is added
              * Look for all the navmeshes intersecting the obstacle and update them
              */
-            NavMeshesList updateNavMeshes(const Obstacle& obstacle);
+            void updateNavMeshes(const Obstacle& obstacle);
             /**
              * Look for all the nodes of the navmeshes intersecting the obstacle.
              * Divide them until the new nodes don't intersect the obstacle or have reached the minimum size of cell
              */
+
+            /**
+             * Clean the nodes array map for the navigation mesh.
+             */
+            void clean(const Geometry::Vec2Df& lowerLeftPoint, const Geometry::Vec2Df& upperRightPoint);
+
         public:
 
             void updateNavMesh(NavMesh& navMesh, const Obstacle& obstacle);
@@ -119,9 +120,6 @@ namespace AI
             NavMeshesMap navMeshesMap_;
             NavMeshesList navMeshesList_;
 
-            /**
-             * TO DO : 1 map per navmesh
-             */
             NodesArrayMap nodesArrayMap_;
             NavMeshContainer& navMeshes_;
 

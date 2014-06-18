@@ -34,6 +34,7 @@ namespace AI
         class NavMeshContainer
         {
         public:
+            typedef std::vector<NavMesh*> NavMeshesList;
             typedef std::map<std::pair<Geometry::Vec2Df, Geometry::Vec2Df>, NavMesh*> NavMeshesMap;
 
             NavMeshContainer();
@@ -64,6 +65,20 @@ namespace AI
                 {
                     return false;
                 }
+            }
+
+            NavMeshesMap& getNavMeshesMap()
+            {
+                return navMeshesMap_;
+            }
+
+            NavMeshesList getNavMeshesList()
+            {
+                NavMeshesList navMeshes;
+                NavMeshesMap::const_iterator it;
+                for(it = navMeshesMap_.begin(); it != navMeshesMap_.end(); ++it)
+                    navMeshes.push_back(it->second);
+                return navMeshes;
             }
 
             void setNavMesh(const Geometry::Vec2Df& lowerLeftPoint, const Geometry::Vec2Df& upperRightPoint, NavMesh* navMesh)

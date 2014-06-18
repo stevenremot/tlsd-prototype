@@ -101,56 +101,13 @@ namespace AI
             nodesArray.clear();
         }
 
-        const float NavMeshGenerator::minSizeOfCell_ = 8;
+        const float NavMeshGenerator::minSizeOfCell_ = 16;
 
         NavMeshGenerator::NavMeshGenerator(NavMeshContainer& navMeshes) : navMeshes_(navMeshes)
         {
         }
 
-        void NavMeshGenerator::call(const Event::Event& event)
-        {
-            if(event.getType() == AreaCreatedEvent::Type)
-            {
-                // Create a new NavMesh
-                const AreaCreatedEvent& areaCreatedEvent = static_cast<const AreaCreatedEvent&>(event);
-                Geometry::Vec2Df lowerLeftPoint = areaCreatedEvent.getLowerLeftPoint();
-                Geometry::Vec2Df upperRightPoint = areaCreatedEvent.getUpperRightPoint();
-                NavMesh* newNavMesh = createNewNavMesh(lowerLeftPoint, upperRightPoint);
-                Rectangle rect(lowerLeftPoint, upperRightPoint);
-                //navMeshesMap_.insert(std::make_pair(rect, newNavMesh));
-                navMeshes_.setNavMesh(lowerLeftPoint, upperRightPoint, newNavMesh);
-                navMeshesList_.push_back(newNavMesh);
-                nodesArrayMap_.insertNewNodesArray(*newNavMesh);
-            }
-            else if (event.getType() == ObstacleAddedEvent::Type)
-            {
-                Obstacle obstacle = static_cast<const ObstacleAddedEvent&>(event).getObstacle();
-                NavMeshesList updatednavMeshes = updateNavMeshes(obstacle);
-
-            }
-            else if (event.getType() == NavMeshOverEvent::Type)
-            {
-                const NavMeshOverEvent& navMeshOverEvent = static_cast<const NavMeshOverEvent&>(event);
-                Geometry::Vec2Df lowerLeftPoint = navMeshOverEvent.getLowerLeftPoint();
-                Geometry::Vec2Df upperRightPoint = navMeshOverEvent.getUpperRightPoint();
-                Rectangle rect(lowerLeftPoint, upperRightPoint);
-                /*
-                if(navMeshesMap_.find(rect) != navMeshesMap_.end())
-                {
-                    const NavMesh* navMesh = navMeshesMap_.at(rect);
-                    nodesArrayMap_.cleanAll(*navMesh);
-                }
-                */
-                NavMesh* navMesh = NULL;
-                if(navMeshes_.getNavMesh(lowerLeftPoint, upperRightPoint, navMesh))
-                {
-                    //const NavMesh* navMesh = navMeshesMap_.at(rect);
-                    nodesArrayMap_.cleanAll(*navMesh);
-                }
-            }
-        }
-
-        NavMesh* NavMeshGenerator::createNewNavMesh(const Geometry::Vec2Df& lowerLeftPoint, const Geometry::Vec2Df& upperRightPoint)
+        void NavMeshGenerator::createNewNavMesh(const Geometry::Vec2Df& lowerLeftPoint, const Geometry::Vec2Df& upperRightPoint)
         {
             NavMesh* navMesh = new NavMesh();
             NavMesh::VerticesIdsList verticesIdsList;
@@ -164,26 +121,25 @@ namespace AI
             // Add the node to the graph
             navMesh->addNode((lowerLeftPoint+upperRightPoint)*0.5, verticesIdsList);
 
-            /*
-            navMeshes_.setNavMesh(lowerLeftPoint, upperRightPoint, newNavMesh);
-            navMeshesList_.push_back(newNavMesh);
-            nodesArrayMap_.insertNewNodesArray(*newNavMesh);
-            */
-            return navMesh;
+
+            navMeshes_.setNavMesh(lowerLeftPoint, upperRightPoint, navMesh);
+            nodesArrayMap_.insertNewNodesArray(*navMesh);
 
         }
 
-        NavMeshGenerator::NavMeshesList NavMeshGenerator::updateNavMeshes(const Obstacle& obstacle)
+        void NavMeshGenerator::updateNavMeshes(const Obstacle& obstacle)
         {
             // Find all the navigation meshes intersected by the obstacle.
             NavMeshesList intersectedNavMeshes;
             // We assume that the cell of the navigation mesh and the obstacle's bounding box are squares.
             const Rectangle& rectBB = obstacle.getBoundingBox();
 
-            NavMeshesMap::const_iterator it;
-            for (it = navMeshesMap_.begin(); it != navMeshesMap_.end(); ++it)
+            const NavMeshContainer::NavMeshesMap& navMeshesMap = navMeshes_.getNavMeshesMap();
+            NavMeshContainer::NavMeshesMap::const_iterator it;
+            for (it = navMeshesMap.begin(); it != navMeshesMap.end(); ++it)
             {
-                Rectangle rectNavMesh((it->first).getLowerLeftPoint(), (it->first).getUpperRightPoint());
+                std::pair<Geometry::Vec2Df, Geometry::Vec2Df> key = it->first;
+                Rectangle rectNavMesh(key.first, key.second);
 
                 // intersection rectangle-rectangle
                 if(rectNavMesh.intersect(rectBB))
@@ -191,10 +147,15 @@ namespace AI
             }
             for (unsigned int i = 0; i < intersectedNavMeshes.size(); i++)
                 updateNavMesh(*(intersectedNavMeshes.at(i)), obstacle);
+        }
 
-
-
-            return intersectedNavMeshes;
+        void NavMeshGenerator::clean(const Geometry::Vec2Df &lowerLeftPoint, const Geometry::Vec2Df &upperRightPoint)
+        {
+            NavMesh* navMesh = NULL;
+            if(navMeshes_.getNavMesh(lowerLeftPoint, upperRightPoint, navMesh))
+            {
+                nodesArrayMap_.cleanAll(*navMesh);
+            }
         }
 
         void NavMeshGenerator::updateNavMesh(NavMesh& navMesh, const Obstacle& obstacle)
@@ -210,7 +171,7 @@ namespace AI
                 const Geometry::Vec2Df& lowerLeftpoint = vertices.at(verticesIds.at(1));
                 const Geometry::Vec2Df& upperRightPoint = vertices.at(verticesIds.at(3));
                 Rectangle rectNode(lowerLeftpoint, upperRightPoint);
-                if(rectNode.intersect(obstacle.getBoundingBox()))//intersect(rectNode, obstacle.getBoundingBox()))
+                if(rectNode.intersect(obstacle.getBoundingBox()))
                 {
                     nodesArrayMap_.clean(navMesh,lowerLeftpoint, upperRightPoint);
 
