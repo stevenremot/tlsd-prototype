@@ -11,6 +11,7 @@
 #include "RenderEvents.h"
 #include "AnimationEvents.h"
 #include "../../Physics/EntityPositionChangedEvent.h"
+#include "../../Physics/EntityRotationChangedEvent.h"
 #include "../../Physics/InitCollisionEngineEvent.h"
 #include "../../Geometry/IrrlichtConversions.h"
 
@@ -49,6 +50,7 @@ namespace Graphics
             reg.put(Graphics::Render::AnimateEvent::Type, this);
             reg.put(Graphics::Render::UpdateAnimationEvent::Type, this);
             reg.put(Physics::EntityPositionChangedEvent::Type, this);
+            reg.put(Physics::EntityRotationChangedEvent::Type, this);
         }
 
         void Scene::call(const Event::Event& event)
@@ -95,6 +97,12 @@ namespace Graphics
             else if (event.getType() == Physics::EntityPositionChangedEvent::Type)
             {
                 events_ << new Physics::EntityPositionChangedEvent(static_cast<const Physics::EntityPositionChangedEvent&>(event));
+            }
+            else if (event.getType() == Physics::EntityRotationChangedEvent::Type)
+            {
+                events_ << new Physics::EntityRotationChangedEvent(
+                    dynamic_cast<const Physics::EntityRotationChangedEvent&>(event)
+                );
             }
 
         }
@@ -234,6 +242,18 @@ namespace Graphics
                     if (entityNode != NULL)
                     {
                         entityNode->setAbsolutePosition(posChangedEvent->getPosition());
+                    }
+                }
+                else if (event->getType() == Physics::EntityRotationChangedEvent::Type)
+                {
+                    Physics::EntityRotationChangedEvent& evt =
+                        dynamic_cast<Physics::EntityRotationChangedEvent&>(*event);
+
+                    SceneNode* entityNode = data_.getEntitySceneNode(evt.getEntity());
+
+                    if (entityNode != NULL)
+                    {
+                        entityNode->setAbsoluteRotation(evt.getRotation());
                     }
                 }
 
