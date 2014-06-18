@@ -48,7 +48,7 @@ namespace Graphics
             */
             void initPositionAndTargetFromParent();
 
-            void initStaticCamera(const Vec3Df& position, const Vec3Df& target);
+            void initStaticCamera(const Geometry::Vec3Df& position, const Geometry::Vec3Df& target);
         protected:
             // override
             virtual void removeIrrlichtSceneNode();

@@ -36,6 +36,9 @@
 // TODO: remove
 #include <iostream>
 
+using std::string;
+using Geometry::Vec3Df;
+
 namespace Graphics
 {
     namespace Render
@@ -320,6 +323,7 @@ namespace Graphics
 
             node->setAbsolutePosition(position);
             node->setAbsoluteRotation(rotation);
+            node->setScale(Vec3Df(0.2,0.2,0.2));
         }
 
         void Scene::addMeshSceneNodeFromModel3D(

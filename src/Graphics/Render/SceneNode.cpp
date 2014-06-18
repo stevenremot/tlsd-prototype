@@ -22,6 +22,8 @@
 
 #include <irrlicht/matrix4.h>
 
+using Geometry::Vec3Df;
+
 namespace Graphics
 {
     namespace Render

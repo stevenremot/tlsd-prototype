@@ -23,6 +23,7 @@
 #include "../../Geometry/IrrlichtConversions.h"
 
 using irr::core::vector3df;
+using Geometry::Vec3Df;
 
 namespace Graphics
 {

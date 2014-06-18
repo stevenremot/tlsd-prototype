@@ -101,7 +101,7 @@ namespace Application
         animMap[Graphics::Render::Idle] =
             Graphics::Render::AnimationParameters(5.0f, true, Graphics::Render::NoAnimation);
         animMap[Graphics::Render::Walk] =
-            Graphics::Render::AnimationParameters(5.0f, true, Graphics::Render::NoAnimation);
+            Graphics::Render::AnimationParameters(15.0f, true, Graphics::Render::NoAnimation);
 
         std::map<Character::Action::Type, Graphics::Render::AnimationType> animByAction;
         animByAction[Character::MoveAction::Type] = Graphics::Render::Walk;
@@ -140,7 +140,7 @@ namespace Application
         );
         world.addComponent(
             entity,
-            new Character::CharacterComponent(5.0)
+            new Character::CharacterComponent(4.0)
         );
         world.addComponent(
             entity,
@@ -224,8 +224,6 @@ namespace Application
 
     void Application::setupUpdateThread()
     {
-        Event::ListenerRegister& reg = eventManager_.getListenerRegister();
-
         Physics::MovementSystem* movementSystem =
             new Physics::MovementSystem(ecsWorld_, eventManager_.getEventQueue());
 
