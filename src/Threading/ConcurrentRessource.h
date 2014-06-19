@@ -41,7 +41,12 @@ namespace Threading
             lock_.unlockForReading();
         }
 
-        const T& getData() const
+        const T& operator*()
+        {
+            return data_;
+        }
+
+        const T& operator->()
         {
             return data_;
         }
@@ -67,7 +72,12 @@ namespace Threading
             lock_.unlockForWriting();
         }
 
-        T& getData()
+        T& operator*()
+        {
+            return data_;
+        }
+
+        T& operator->()
         {
             return data_;
         }
