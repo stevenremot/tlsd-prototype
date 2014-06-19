@@ -96,6 +96,41 @@ namespace World
             world_.setChunk(x, y, currentChunk);
         }
 
+        void ChunkGenerator::unGenerateChunk(int x, int y)
+        {
+            Chunk currentChunk;
+
+            if (world_.getChunk(x, y, currentChunk) &&
+                currentChunk.getState() == Chunk::GeneratedState)
+            {
+                Chunk::EntityCollection& finalEntities =
+                    currentChunk.getFinalEntities();
+
+                for (unsigned int i = 0; i < finalEntities.size(); i++)
+                {
+                    ecsWorld_.unloadDescriptor(*(finalEntities[i]));
+                }
+
+                finalEntities.clear();
+                currentChunk.setState(Chunk::PreparedState);
+                world_.setChunk(x, y, currentChunk);
+            }
+        }
+
+        void ChunkGenerator::removeChunk(int x, int y)
+        {
+            for (int i = -1; i <= 1; i++)
+            {
+                for (int j = -1; j <= 1; j++)
+                {
+                    unGenerateChunk(x + i, y + j);
+                }
+            }
+
+            Chunk currentChunk;
+            world_.setChunk(x, y, currentChunk);
+        }
+
         void ChunkGenerator::prepareChunk(int x, int y)
         {
             Chunk currentChunk;

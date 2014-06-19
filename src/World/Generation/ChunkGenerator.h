@@ -53,6 +53,16 @@ namespace World
              */
             void generateChunk(int x, int y);
 
+            /**
+             * Cancel the generation of the chunk
+             */
+            void unGenerateChunk(int x, int y);
+
+            /**
+             * Totally forget about the chunk in x, y
+             */
+            void removeChunk(int x, int y);
+
         private:
             World& world_;
             Ecs::World& ecsWorld_;
