@@ -46,9 +46,9 @@ namespace Threading
             return data_;
         }
 
-        const T& operator->()
+        const T* operator->()
         {
-            return data_;
+            return &data_;
         }
 
     private:
@@ -77,9 +77,9 @@ namespace Threading
             return data_;
         }
 
-        T& operator->()
+        T* operator->()
         {
-            return data_;
+            return &data_;
         }
 
     private:
@@ -105,12 +105,12 @@ namespace Threading
 
         ConcurrentReader<T> getReader()
         {
-            return ConcurrentReader<T>(lock_, data_);
+            return ConcurrentReader<T>(lock_, *data_);
         }
 
         ConcurrentWriter<T> getWriter()
         {
-            return ConcurrentWriter<T>(lock_, data_);
+            return ConcurrentWriter<T>(lock_, *data_);
         }
 
     private:
