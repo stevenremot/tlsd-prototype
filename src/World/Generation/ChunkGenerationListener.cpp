@@ -31,8 +31,8 @@ namespace World
 
             const Geometry::Vec3Df& newPos = evt.getPosition();
             const Geometry::Vec2Di& new2DPos = Geometry::Vec2Di(
-                newPos.getX() / World::ChunkSize,
-                newPos.getY() / World::ChunkSize
+                newPos.getX() / static_cast<float>(World::ChunkSize),
+                newPos.getY() / static_cast<float>(World::ChunkSize)
             );
 
             if (new2DPos != lastPos_)

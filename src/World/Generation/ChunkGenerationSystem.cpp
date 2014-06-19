@@ -38,6 +38,18 @@ namespace World
                         chunkGenerator_.generateChunk(pos.getX() + i, pos.getY() + j);
                     }
                 }
+
+                for (int j = -3; j <= 3; j++)
+                {
+                    chunkGenerator_.removeChunk(pos.getX() - 3, pos.getY() + j);
+                    chunkGenerator_.removeChunk(pos.getX() + 3, pos.getY() + j);
+
+                    if (j != -3 && j != 3)
+                    {
+                        chunkGenerator_.removeChunk(pos.getX() + j, pos.getY() - 3);
+                        chunkGenerator_.removeChunk(pos.getX() + j, pos.getY() + 3);
+                    }
+                }
             }
         }
 
