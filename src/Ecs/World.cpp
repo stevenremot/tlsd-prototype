@@ -22,6 +22,7 @@
 #include <algorithm>
 
 #include "ComponentCreatedEvent.h"
+#include "EntityRemovedEvent.h"
 
 using std::map;
 
@@ -94,7 +95,7 @@ namespace Ecs
 
         if (descriptor.references_ == 0)
         {
-            components_.erase(descriptor.entity_);
+            removeEntity(descriptor.entity_);
         }
     }
 
@@ -189,6 +190,7 @@ namespace Ecs
     void World::removeEntity(const Entity& entity)
     {
         components_.erase(entity);
+        eventQueue_ << new EntityRemovedEvent(entity);
     }
 
     bool World::hasComponent(const Entity& entity, Component::Type type) const
