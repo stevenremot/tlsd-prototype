@@ -31,7 +31,13 @@ namespace World
                 Geometry::Vec2Di pos;
                 channelOutput_ >> pos;
 
-                chunkGenerator_.generateChunk(pos.getX(), pos.getY());
+                for (int i = -1; i <= 1; i++)
+                {
+                    for (int j = -1; j <= 1; j++)
+                    {
+                        chunkGenerator_.generateChunk(pos.getX() + i, pos.getY() + j);
+                    }
+                }
             }
         }
 
