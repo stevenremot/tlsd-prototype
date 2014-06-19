@@ -31,6 +31,11 @@ namespace Graphics
             */
             void setLastSceneNodeEntity(const Ecs::Entity& entity);
 
+            /**
+             * Remove the scene node corresponding to this entity.
+             */
+            void removeSceneNodeEntity(const Ecs::Entity& entity);
+
         private:
             /**
             *   @param[in] entity
@@ -41,6 +46,8 @@ namespace Graphics
 
             std::map<Ecs::Entity, unsigned int> sceneNodeIdsByEntity_;
             std::vector<SceneNode*> sceneNodes_;
+
+            SceneNode* lastSceneNode_;
         };
     }
 }
