@@ -22,6 +22,8 @@
 #include "MovementComponent.h"
 #include "../Geometry/PositionComponent.h"
 #include "../Threading/Thread.h"
+#include "../Input/PlayerComponent.h"
+#include "../Input/PlayerPositionChangedEvent.h"
 #include "GravityComponent.h"
 #include "CollisionComponent.h"
 #include "EntityPositionChangedEvent.h"
@@ -64,7 +66,14 @@ namespace Physics
 
                 if (!world.hasComponent(group->getEntity(), CollisionComponent::Type))
                     if (movement != Geometry::Vec3Df(0,0,0))
+                    {
                         eventQueue_ << new EntityPositionChangedEvent(group->getEntity(), positionComponent.getPosition());
+
+                        if (world.hasComponent(group->getEntity(), Input::PlayerComponent::Type))
+                        {
+                            eventQueue_ << new Input::PlayerPositionChangedEvent(positionComponent.getPosition());
+                        }
+                    }
             }
         }
 
