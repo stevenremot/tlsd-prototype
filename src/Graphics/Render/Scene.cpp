@@ -14,6 +14,7 @@
 #include "../../Physics/EntityRotationChangedEvent.h"
 #include "../../Physics/InitCollisionEngineEvent.h"
 #include "../../Geometry/IrrlichtConversions.h"
+#include "../../Ecs/EntityRemovedEvent.h"
 
 // TODO: remove
 #include <iostream>
@@ -51,6 +52,7 @@ namespace Graphics
             reg.put(Graphics::Render::UpdateAnimationEvent::Type, this);
             reg.put(Physics::EntityPositionChangedEvent::Type, this);
             reg.put(Physics::EntityRotationChangedEvent::Type, this);
+            reg.put(Ecs::EntityRemovedEvent::Type, this);
         }
 
         void Scene::call(const Event::Event& event)
@@ -104,7 +106,12 @@ namespace Graphics
                     dynamic_cast<const Physics::EntityRotationChangedEvent&>(event)
                 );
             }
-
+            else if (event.getType() == Ecs::EntityRemovedEvent::Type)
+            {
+                events_ << new Ecs::EntityRemovedEvent(
+                    dynamic_cast<const Ecs::EntityRemovedEvent&>(event)
+                );
+            }
         }
 
         void Scene::run()
@@ -255,6 +262,13 @@ namespace Graphics
                     {
                         entityNode->setAbsoluteRotation(evt.getRotation());
                     }
+                }
+                else if (event->getType() == Ecs::EntityRemovedEvent::Type)
+                {
+                    const Ecs::EntityRemovedEvent& evt =
+                        dynamic_cast<const Ecs::EntityRemovedEvent&>(*event);
+
+                    data_.removeSceneNodeEntity(evt.getEntity());
                 }
 
                 delete event;
