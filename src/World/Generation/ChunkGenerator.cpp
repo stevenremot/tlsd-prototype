@@ -330,17 +330,15 @@ namespace World
                     ceil(offsetMax.getY())
                 );
 
-                for (int i = planMin.getX(); i <= planMax.getX(); i++)
+                for (int i = planMin.getX(); i < planMax.getX(); i++)
                 {
-                    for (int j = planMin.getY(); j <= planMax.getY(); j++)
+                    for (int j = planMin.getY(); j < planMax.getY(); j++)
                     {
                         Chunk chunk;
                         world_.getChunk(i, j, chunk); // Don't care if it fails
 
-                        Chunk::EntityCollection entities = chunk.getBaseEntities();
+                        Chunk::EntityCollection& entities = chunk.getBaseEntities();
                         entities.push_back(descriptor);
-                        chunk.setBaseEntities(entities);
-
                         world_.setChunk(i, j, chunk);
                     }
                 }
