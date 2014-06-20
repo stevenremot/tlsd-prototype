@@ -31,6 +31,8 @@
 #include "tests/ai.h"
 #include "tests/stateMachine.h"
 #include "tests/navmesh.h"
+#include "tests/world.h"
+#include "tests/worldGeneration.h"
 
 using std::cout;
 using std::endl;
@@ -39,17 +41,29 @@ using std::vector;
 
 int main()
 {
-    /*
-    EventTest::testEvents();
-    EcsTest::testEcs();
-    GeometryTest::testVectors();
-    RandomTest::testNumberGenerator();
-    GraphTest::testPlanarGraph();
-    ThreadingTest::testChannel();
-    CoreTest::testSharedPtr();
-    StateMachineTest::testStateMachine();
-    */
+ 
+    // EventTest::testEvents();
+    // EcsTest::testEcs();
+    // EcsTest::testSharedEntity();
+    // CoreTest::testSharedPtr();
+    // GeometryTest::testVectors();
+    // GeometryTest::testPolygons();
+    // RandomTest::testNumberGenerator();
+    // GraphTest::testPlanarGraph();
+    // GraphTest::testIsBetween();
+    // GraphTest::testPrimitiveExtraction();
+    // GraphTest::testPlanarCopy();
+    // GraphTest::testFilamentInCycleExtraction();
     NavMeshTest::testNavMesh();
+    // StateMachineTest::testStateMachine();
+    // ThreadingTest::testChannel();
+    // WorldTest::testRoadNetworkModel();
+    // WorldGenerationTests::testRoadExpansion();
+    // WorldTest::testGroundCoefficients();
+    // WorldTest::testGroundModel();
+    // WorldGenerationTests::testRoadExpansion();
+    // WorldGenerationTests::testLotCreation();
+    //WorldGenerationTests::testCityCreation();
 
     return 0;
 }

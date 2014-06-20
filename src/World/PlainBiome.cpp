@@ -17,46 +17,18 @@
     <http://www.gnu.org/licenses/>.
 */
 
-#ifndef GRAPHICS_MODEL3D_H
-#define GRAPHICS_MODEL3D_H
+#include "PlainBiome.h"
 
-#include <vector>
-
-#include "../Geometry/Vec3D.h"
-#include "Face.h"
-
-namespace Graphics
+namespace World
 {
-    /**
-     * Class describing a 3D coloured mesh
-     */
-    class Model3D
+    float PlainBiome::transformCoefficient(float coefficient)
     {
-    public:
-        Model3D(std::vector<Geometry::Vec3Df>& vertices, std::vector<Face>& faces):
-            vertices_(vertices),
-            faces_(faces)
-        {}
+        return (coefficient+1.0)*15.0;
+    }
 
-        std::vector<Geometry::Vec3Df>& getVertices()
-        {
-            return vertices_;
-        }
+    Graphics::Color PlainBiome::getColor()
+    {
+        return Graphics::Color(0,1,0);
+    }
 
-        std::vector<Face>& getFaces()
-        {
-            return faces_;
-        }
-
-    private:
-        std::vector<Geometry::Vec3Df> vertices_;
-        std::vector<Face> faces_;
-    };
 }
-
-#endif
-
-// Emacs local variables
-// Local variables:
-// mode: c++
-// End:

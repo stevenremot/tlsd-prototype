@@ -71,6 +71,11 @@ namespace Geometry
             return x_ == vec.x_ && y_ == vec.y_ && z_ == vec.z_;
         }
 
+        inline bool operator!=(const Vec3D& vec) const
+        {
+            return x_ != vec.x_ && y_ != vec.y_ && z_ != vec.z_;
+        }
+
         inline Vec3D operator+(const Vec3D& vec) const
         {
             return Vec3D(x_ + vec.x_,

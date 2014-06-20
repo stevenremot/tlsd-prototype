@@ -36,6 +36,9 @@ namespace Graph
 
         PlanarGraph();
         PlanarGraph(const NodeCollection& nodes, const EdgeCollection& edges);
+        PlanarGraph(const PlanarGraph& graph);
+
+        PlanarGraph& operator=(const PlanarGraph& graph);
 
         // Nodes and edges adding / removal
 
@@ -92,6 +95,11 @@ namespace Graph
         EdgeCollection getNeighbourEdges(const PlanarNode& node);
         EdgeCollection getNeighbourEdges(const PlanarNode& node) const;
 
+        /**
+         * Return the edges which node is an extremity of.
+         */
+        EdgeCollection getNeighbourEdges(const PlanarNode& node) const;
+
     private:
         lemon::ListGraph graph_;
         lemon::ListGraph::NodeMap<PlanarNode> nodes_;
@@ -99,8 +107,8 @@ namespace Graph
         NodeCollection nodeCache_;
         EdgeCollection edgeCache_;
 
-
-        PlanarGraph(const PlanarGraph& graph);
+        void insertData(const NodeCollection& nodes,
+                        const EdgeCollection& edges);
     };
 }
 

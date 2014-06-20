@@ -84,6 +84,7 @@ namespace Test
                 drawCircle(p.getX(), p.getY(), 1, "red");
             }
         }
+
     private:
         unsigned int width_;
         unsigned int height_;

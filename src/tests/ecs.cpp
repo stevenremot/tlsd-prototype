@@ -99,4 +99,53 @@ namespace EcsTest
             cout << static_cast<MessageComponent &>(group->getComponent(MessageComponent::Type)).getMessage() << endl;
         }
     }
+
+    void testSharedEntity()
+    {
+        bool failed = false;
+
+        Ecs::World world;
+
+        Ecs::ComponentGroup::ComponentTypeCollection types;
+        types.insert(MessageComponent::Type);
+
+        Ecs::ComponentGroup prototype(types);
+        Ecs::World::ComponentGroupCollection groups =
+            world.getComponents(prototype);
+
+        if (!groups.empty())
+        {
+            cout << "SharedEntity : wtf ?!" << endl;
+            failed = true;
+        }
+
+
+        {
+            Ecs::SharedEntity entity = world.createSharedEntity();
+            world.addComponent(entity.getEntity(), new MessageComponent("yo"));
+            Ecs::World::ComponentGroupCollection groups =
+                world.getComponents(prototype);
+
+            if (groups.size() != 1)
+            {
+                cout << "SharedEntity : expected to be 1, is " << groups.size()
+                     << endl;
+                failed = true;
+            }
+        }
+
+        groups = world.getComponents(prototype);
+
+        if (!groups.empty())
+        {
+            cout << "SharedEntity : expected to be empty, is " << groups.size()
+                 << endl;
+            failed = true;
+        }
+
+        if (!failed)
+        {
+            cout << "SharedEntity : All tests passed." << endl;
+        }
+    }
 }

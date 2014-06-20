@@ -19,6 +19,8 @@
 
 #include "PlanarGraph.h"
 
+#include <map>
+
 using Geometry::Vec2Df;
 
 namespace Graph
@@ -36,16 +38,45 @@ namespace Graph
         nodes_(graph_),
         edges_(graph_)
     {
+        insertData(nodes, edges);
+    }
+
+    PlanarGraph::PlanarGraph(const PlanarGraph& graph):
+        graph_(),
+        nodes_(graph_),
+        edges_(graph_)
+    {
+        insertData(graph.getNodes(), graph.getEdges());
+    }
+
+    PlanarGraph& PlanarGraph::operator=(const PlanarGraph& graph)
+    {
+        while (!nodeCache_.empty())
+        {
+            removeNode(nodeCache_.front());
+        }
+
+        insertData(graph.getNodes(), graph.getEdges());
+        return *this;
+    }
+
+    void PlanarGraph::insertData(const NodeCollection& nodes,
+                                 const EdgeCollection& edges)
+    {
+        std::map<Vec2Df, PlanarNode> changeCache;
         for (unsigned int i = 0; i < nodes.size(); i++)
         {
             const PlanarNode& node = nodes[i];
-            addNode(node.getPosition());
+            changeCache[node.getPosition()] = addNode(node.getPosition());
         }
 
         for (unsigned int i = 0; i < edges.size(); i++)
         {
             const PlanarEdge& edge = edges[i];
-            addEdge(edge.getFirstNode(), edge.getSecondNode());
+            addEdge(
+                changeCache[edge.getFirstNode().getPosition()],
+                changeCache[edge.getSecondNode().getPosition()]
+            );
         }
     }
 
@@ -92,9 +123,12 @@ namespace Graph
             }
         }
 
+        const PlanarNode& trueFirstNode = addNode(firstNode.getPosition());
+        const PlanarNode& trueSecondNode = addNode(secondNode.getPosition());
+
         lemon::ListGraph::Edge lemonEdge = graph_.addEdge(
-            firstNode.node_,
-            secondNode.node_
+            trueFirstNode.node_,
+            trueSecondNode.node_
         );
         edgeCache_.push_back(PlanarEdge(firstNode, secondNode, lemonEdge));
         PlanarEdge& newEdge = edgeCache_[edgeCache_.size() - 1];
@@ -134,5 +168,4 @@ namespace Graph
 
         return edges;
     }
-
 }

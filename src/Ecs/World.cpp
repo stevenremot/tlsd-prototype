@@ -25,6 +25,11 @@ using std::map;
 
 namespace Ecs
 {
+    void removeEntity(World& world, Entity entity)
+    {
+        world.removeEntity(entity);
+    }
+
     Entity World::createEntity()
     {
         Entity currentId = 0;
@@ -45,6 +50,16 @@ namespace Ecs
     {
         components_[entity] = ComponentCollection();
         return entity;
+    }
+
+    SharedEntity World::createSharedEntity()
+    {
+        return SharedEntity(*this, createEntity(), &Ecs::removeEntity);
+    }
+
+    SharedEntity World::createSharedEntity(const Entity& entity)
+    {
+        return SharedEntity(*this, createEntity(entity), &Ecs::removeEntity);
     }
 
     void World::addComponent(const Entity& entity, Component* component)
@@ -113,5 +128,10 @@ namespace Ecs
         }
 
         return groups;
+    }
+
+    void World::removeEntity(const Entity& entity)
+    {
+        components_.erase(entity);
     }
 }

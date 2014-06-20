@@ -25,6 +25,7 @@
 namespace EcsTest
 {
     void testEcs();
+    void testSharedEntity();
 }
 
 #endif
