@@ -13,7 +13,8 @@ namespace Graphics
         class RenderSystem : public Ecs::System, public Event::EventListenerInterface
         {
         public:
-            RenderSystem(Ecs::World& world, Event::EventQueue& eventQueue);
+            RenderSystem(Threading::ConcurrentRessource<Ecs::World>& world,
+                         Event::EventQueue& eventQueue);
             virtual ~RenderSystem();
 
             // EventListenerInterface

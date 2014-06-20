@@ -14,7 +14,10 @@ namespace Character
     class CharacterSystem : public Event::EventListenerInterface, public Ecs::System, public Threading::ThreadableInterface
     {
         public:
-            CharacterSystem(Ecs::World& world, Event::EventQueue& outsideQueue):
+    CharacterSystem(
+        Threading::ConcurrentRessource<Ecs::World>& world,
+        Event::EventQueue& outsideQueue
+    ):
                 Ecs::System(world),
                 outsideQueue_(outsideQueue)
                 {

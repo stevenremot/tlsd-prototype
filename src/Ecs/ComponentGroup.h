@@ -28,6 +28,7 @@
 
 #include "Entity.h"
 #include "Component.h"
+#include "../Threading/ConcurrentRessource.h"
 
 namespace Ecs
 {
@@ -72,7 +73,7 @@ namespace Ecs
         /**
          * Type to use for sending components to the group methods.
          */
-        typedef std::list< Component* > ComponentCollection;
+        typedef std::list< Threading::ConcurrentRessource<Component> > ComponentCollection;
 
         /**
          * Type to use when sending component types to the group methods.
@@ -90,7 +91,7 @@ namespace Ecs
         /**
          * Check if the components satisfies group's types.
          */
-        bool satisfies(const ComponentCollection& components) const;
+        bool satisfies(ComponentCollection& components) const;
 
         /**
          * Create a new group containing entity and components.
@@ -100,7 +101,7 @@ namespace Ecs
          * @throw DoesNotSatisfyException when the components does not match
          *                                the group's requirements
          */
-        ComponentGroup clone(Entity entity, const ComponentCollection& components) const;
+        ComponentGroup clone(Entity entity, ComponentCollection& components) const;
 
         const Entity& getEntity() const
         {
@@ -115,11 +116,11 @@ namespace Ecs
          *
          * @throw UnexistingComponentException if such component does not exist.
          */
-        Component& getComponent(Component::Type type)
+        Threading::ConcurrentRessource<Component>& getComponent(Component::Type type)
         {
             try
             {
-                return *components_.at(type);
+                return components_.at(type);
             }
             catch (const std::out_of_range& e)
             {
@@ -129,7 +130,8 @@ namespace Ecs
 
     private:
         Entity entity_;
-        std::map< Component::Type, Component* >components_;
+        ComponentTypeCollection types_;
+        std::map< Component::Type, Threading::ConcurrentRessource<Component> > components_;
     };
 }
 

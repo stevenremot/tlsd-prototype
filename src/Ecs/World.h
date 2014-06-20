@@ -30,6 +30,7 @@
 #include "SharedEntity.h"
 #include "EntityDescriptor.h"
 
+#include "../Threading/ConcurrentRessource.h"
 #include "../Event/EventManager.h"
 
 
@@ -164,12 +165,12 @@ namespace Ecs
          *
          * @throw DoesNotSatisfyException when entity has no such component
          */
-        Component& getEntityComponent(
+        Threading::ConcurrentRessource<Component>& getEntityComponent(
             const Entity& entity,
             const Component::Type& type
         );
 
-        bool hasComponent(const Entity& entity, Component::Type type) const;
+        bool hasComponent(const Entity& entity, Component::Type type);
 
         /**
          * Return components groups for entities matching prototype.
@@ -182,7 +183,7 @@ namespace Ecs
         void removeEntity(const Entity& entity);
 
     private:
-        typedef std::list<Component*> ComponentCollection;
+        typedef std::list< Threading::ConcurrentRessource<Component> > ComponentCollection;
 
         std::map< Entity, ComponentCollection > components_;
 

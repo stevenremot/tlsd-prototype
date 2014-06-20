@@ -17,7 +17,10 @@ namespace Graphics
 {
     namespace Render
     {
-        RenderSystem::RenderSystem(Ecs::World& world, Event::EventQueue& eventQueue) :
+        RenderSystem::RenderSystem(
+            Threading::ConcurrentRessource<Ecs::World>& world,
+            Event::EventQueue& eventQueue
+        ) :
             System(world),
             eventQueue_(eventQueue)
         {
@@ -42,39 +45,43 @@ namespace Graphics
                     types.insert(RenderableComponent::Type);
 
                     ComponentGroup prototype(types);
-                    ComponentGroup group = getWorld().getEntityComponents(entity, prototype);
+                    ComponentGroup group = getWorld()->getEntityComponents(entity, prototype);
 
-                    const PositionComponent& positionComponent =
-                        static_cast<const PositionComponent&>(group.getComponent(PositionComponent::Type));
-                    const RotationComponent& rotationComponent =
-                        static_cast<const RotationComponent&>(group.getComponent(RotationComponent::Type));
-                    const RenderableComponent& renderableComponent =
-                        static_cast<const RenderableComponent&>(group.getComponent(RenderableComponent::Type));
+                    bool hasAnimation = getWorld()->hasComponent(entity, AnimationComponent::Type);
 
-                    if (renderableComponent.getMeshFileName() != "")
+                    Threading::ConcurrentReader<PositionComponent> positionComponent =
+                        Threading::getConcurrentReader<Ecs::Component, PositionComponent>(group.getComponent(PositionComponent::Type));
+
+                    Threading::ConcurrentReader<RotationComponent> rotationComponent =
+                        Threading::getConcurrentReader<Ecs::Component, RotationComponent>(group.getComponent(RotationComponent::Type));
+
+                    Threading::ConcurrentReader<RenderableComponent> renderableComponent =
+                        Threading::getConcurrentReader<Ecs::Component, RenderableComponent>(group.getComponent(RenderableComponent::Type));
+
+                    if (renderableComponent->getMeshFileName() != "")
                     {
-                        if (getWorld().hasComponent(entity, AnimationComponent::Type))
+                        if (hasAnimation)
                             eventQueue_ << new RenderAnimatedMeshFileEvent(
-                                            renderableComponent.getMeshFileName(),
-                                            renderableComponent.getTextureFileName(),
-                                            positionComponent.getPosition(),
-                                            rotationComponent.getRotation(),
+                                            renderableComponent->getMeshFileName(),
+                                            renderableComponent->getTextureFileName(),
+                                            positionComponent->getPosition(),
+                                            rotationComponent->getRotation(),
                                             entity
                                         );
                         else
                             eventQueue_ << new RenderMeshFileEvent(
-                                            renderableComponent.getMeshFileName(),
-                                            renderableComponent.getTextureFileName(),
-                                            positionComponent.getPosition(),
-                                            rotationComponent.getRotation(),
+                                            renderableComponent->getMeshFileName(),
+                                            renderableComponent->getTextureFileName(),
+                                            positionComponent->getPosition(),
+                                            rotationComponent->getRotation(),
                                             entity
                                         );
                     }
                     else
                         eventQueue_ << new RenderModel3DEvent(
-                                        renderableComponent.getModel3d(),
-                                        positionComponent.getPosition(),
-                                        rotationComponent.getRotation(),
+                                        renderableComponent->getModel3d(),
+                                        positionComponent->getPosition(),
+                                        rotationComponent->getRotation(),
                                         entity
                                     );
                 }

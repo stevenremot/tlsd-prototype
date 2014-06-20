@@ -17,39 +17,32 @@
     <http://www.gnu.org/licenses/>.
 */
 
-#ifndef THREADING_LOCK_H
-#define THREADING_LOCK_H
-
-#include <pthread.h>
+#include "Lock.h"
 
 namespace Threading
 {
-    /**
-     * Basic class for locking data for read / write
-     *
-     * TODO handle differently readers and writers
-     */
-    class Lock
+    Lock::Lock()
     {
-    public:
-        Lock();
+        pthread_mutex_init(&writeMutex_, NULL);
+    }
 
-        void lockForReading();
+    void Lock::lockForReading()
+    {
+        lockForWriting();
+    }
 
-        void unlockForReading();
+    void Lock::unlockForReading()
+    {
+        unlockForWriting();
+    }
 
-        void lockForWriting();
+    void Lock::lockForWriting()
+    {
+        pthread_mutex_lock(&writeMutex_);
+    }
 
-        void unlockForWriting();
-
-    private:
-        pthread_mutex_t writeMutex_;
-    };
+    void Lock::unlockForWriting()
+    {
+        pthread_mutex_unlock(&writeMutex_);
+    }
 }
-
-#endif
-
-// Emacs local variables
-// Local variables:
-// mode: c++
-// End:

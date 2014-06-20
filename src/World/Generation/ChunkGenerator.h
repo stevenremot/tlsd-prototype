@@ -25,6 +25,7 @@
 #include "../World.h"
 #include "../../Ecs/World.h"
 #include "../../Random/NumberGenerator.h"
+#include "../../Threading/ConcurrentRessource.h"
 #include "../SimpleTree.h"
 
 namespace World
@@ -41,7 +42,7 @@ namespace World
         public:
             ChunkGenerator(
                 World& world,
-                Ecs::World& ecsWorld,
+                Threading::ConcurrentRessource<Ecs::World>& ecsWorld,
                 Random::Seed worldSeed
             ): world_(world),
                ecsWorld_(ecsWorld),
@@ -65,7 +66,7 @@ namespace World
 
         private:
             World& world_;
-            Ecs::World& ecsWorld_;
+            Threading::ConcurrentRessource<Ecs::World>& ecsWorld_;
             Random::Seed worldSeed_;
 
             void prepareChunk(int x, int y);

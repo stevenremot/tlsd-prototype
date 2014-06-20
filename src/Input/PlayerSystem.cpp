@@ -66,8 +66,6 @@ namespace Input
 
             if (event != NULL)
             {
-                Ecs::World& world = getWorld();
-
                 Ecs::ComponentGroup::ComponentTypeCollection types;
                 types.insert(PlayerComponent::Type);
                 types.insert(Geometry::RotationComponent::Type);
@@ -75,27 +73,23 @@ namespace Input
 
                 Ecs::ComponentGroup prototype(types);
                 Ecs::World::ComponentGroupCollection groups =
-                    world.getComponents(prototype);
+                    getWorld()->getComponents(prototype);
 
                 Ecs::World::ComponentGroupCollection::iterator group;
                 for (group = groups.begin(); group != groups.end(); ++group)
                 {
                     const Ecs::Entity& entity = group->getEntity();
 
-                    const Geometry::RotationComponent& component =
-                        dynamic_cast<Geometry::RotationComponent&>(group->getComponent(Geometry::RotationComponent::Type));
+                    Threading::ConcurrentReader<Geometry::RotationComponent> component =
+                        Threading::getConcurrentReader<Ecs::Component, Geometry::RotationComponent>(group->getComponent(Geometry::RotationComponent::Type));
 
-                    const Geometry::PositionComponent& positionComponent =
-                        dynamic_cast<Geometry::PositionComponent&>(
-                            group->getComponent(Geometry::PositionComponent::Type)
-                        );
+                    Threading::ConcurrentReader<Geometry::PositionComponent> positionComponent =
+                        Threading::getConcurrentReader<Ecs::Component, Geometry::PositionComponent>(group->getComponent(Geometry::PositionComponent::Type));
 
-                    PlayerComponent& playerComponent =
-                        dynamic_cast<PlayerComponent&>(
-                            group->getComponent(PlayerComponent::Type)
-                        );
+                    Threading::ConcurrentWriter<PlayerComponent> playerComponent =
+                        Threading::getConcurrentWriter<Ecs::Component, PlayerComponent>(group->getComponent(PlayerComponent::Type));
 
-                    const Geometry::Vec3Df& rotation = component.getRotation();
+                    const Geometry::Vec3Df& rotation = component->getRotation();
                     const float camOrientation = rotation.getZ() / 180.0 * M_PI;
 
                     Character::Action* action = NULL;
@@ -121,15 +115,15 @@ namespace Input
                     }
                     else if (
                         event->getType() == CameraEvent::Type &&
-                        playerComponent.isCameraSet()
+                        playerComponent->isCameraSet()
                     ) {
                         const CameraEvent& evt = dynamic_cast<const CameraEvent&>(*event);
                         const Geometry::Vec2Df& cursorPos = evt.getCursorPosition();
                         Graphics::Render::CameraSceneNode& camera =
-                            playerComponent.getCamera();
+                            playerComponent->getCamera();
 
                         const Geometry::Vec3Df& playerPos =
-                            positionComponent.getPosition();
+                            positionComponent->getPosition();
                         const Geometry::Vec2Df playerPos2d = Geometry::Vec2Df(
                             playerPos.getX(),
                             playerPos.getY()
@@ -161,7 +155,7 @@ namespace Input
                         const CameraRenderedEvent& evt =
                             dynamic_cast<const CameraRenderedEvent&>(*event);
 
-                        playerComponent.setCamera(evt.getCamera());
+                        playerComponent->setCamera(evt.getCamera());
                     }
 
                     if (action != NULL)

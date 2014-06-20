@@ -21,9 +21,24 @@
 #define THREADING_CONCURRENT_RESSOURCE_H
 
 #include "Lock.h"
+#include "../Core/SharedPtr.h"
 
 namespace Threading
 {
+    template<typename T>
+    class ConcurrentRessource;
+
+    template<typename T>
+    class ConcurrentReader;
+
+    template<typename T>
+    class ConcurrentWriter;
+
+    template <typename T1, typename T2>
+    ConcurrentReader<T2> getConcurrentReader(ConcurrentRessource<T1> res);
+
+    template <typename T1, typename T2>
+    ConcurrentWriter<T2> getConcurrentWriter(ConcurrentRessource<T1> res);
 
     template<typename T>
     class ConcurrentReader
@@ -33,7 +48,7 @@ namespace Threading
             lock_(lock),
             data_(data)
         {
-            lock.lockForReading();
+            lock_.lockForReading();
         }
 
         ~ConcurrentReader()
@@ -64,7 +79,7 @@ namespace Threading
             lock_(lock),
             data_(data)
         {
-            lock.lockForWriting();
+            lock_.lockForWriting();
         }
 
         ~ConcurrentWriter()
@@ -95,28 +110,48 @@ namespace Threading
     {
     public:
         ConcurrentRessource(T* data):
+            lock_(new Lock()),
             data_(data)
         {}
 
-        ~ConcurrentRessource()
-        {
-            delete data_;
-        }
+        ConcurrentRessource(const ConcurrentRessource& res):
+            lock_(res.lock_),
+            data_(res.data_)
+        {}
 
         ConcurrentReader<T> getReader()
         {
-            return ConcurrentReader<T>(lock_, *data_);
+            return ConcurrentReader<T>(*lock_, *data_);
         }
 
         ConcurrentWriter<T> getWriter()
         {
-            return ConcurrentWriter<T>(lock_, *data_);
+            return ConcurrentWriter<T>(*lock_, *data_);
         }
 
+        template<typename U, typename V>
+        friend ConcurrentReader<V> getConcurrentReader(ConcurrentRessource<U>);
+
+        template<typename U, typename V>
+        friend ConcurrentWriter<V> getConcurrentWriter(ConcurrentRessource<U>);
+
     private:
-        Lock lock_;
-        T* data_;
+        Core::SharedPtr<Lock> lock_;
+        Core::SharedPtr<T> data_;
     };
+
+    template <typename T1, typename T2>
+    ConcurrentReader<T2> getConcurrentReader(ConcurrentRessource<T1> res)
+    {
+        return ConcurrentReader<T2>(*res.lock_, dynamic_cast<T2&>(*res.data_));
+    }
+
+
+    template <typename T1, typename T2>
+    ConcurrentWriter<T2> getConcurrentWriter(ConcurrentRessource<T1> res)
+    {
+        return ConcurrentWriter<T2>(*res.lock_, dynamic_cast<T2&>(*res.data_));
+    }
 }
 
 #endif

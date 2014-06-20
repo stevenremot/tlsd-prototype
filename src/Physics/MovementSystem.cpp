@@ -38,7 +38,7 @@ namespace Physics
 
     void MovementSystem::run()
     {
-        World& world = getWorld();
+        // Threading::ConcurrentWriter<World> world = getWorld().getWriter();
 
         // Get all the entities with movement and position components
         Ecs::ComponentGroup::ComponentTypeCollection types;
@@ -46,7 +46,8 @@ namespace Physics
         types.insert(PositionComponent::Type);
 
         Ecs::ComponentGroup prototype(types);
-        Ecs::World::ComponentGroupCollection groups = world.getComponents(prototype);
+        Ecs::World::ComponentGroupCollection groups =
+            getWorld()->getComponents(prototype);
 
         // Update their positions
         timer_->updateCurrentTime();
@@ -58,20 +59,24 @@ namespace Physics
             Ecs::World::ComponentGroupCollection::iterator group;
             for (group = groups.begin(); group != groups.end(); ++group)
             {
-                PositionComponent& positionComponent =
-                    dynamic_cast<PositionComponent&>(group->getComponent(PositionComponent::Type));
-                Vec3Df movement = getMovement(*group, delay);
 
-                positionComponent.setPosition(positionComponent.getPosition() + movement);
+                Vec3Df movement = getMovement(*getWorld(), *group, delay);
+                bool hasCollision = getWorld()->hasComponent(group->getEntity(), CollisionComponent::Type);
+                bool hasInput = getWorld()->hasComponent(group->getEntity(), Input::PlayerComponent::Type);
 
-                if (!world.hasComponent(group->getEntity(), CollisionComponent::Type))
+                Threading::ConcurrentWriter<PositionComponent> positionComponent =
+                    Threading::getConcurrentWriter<Ecs::Component, PositionComponent>(group->getComponent(PositionComponent::Type));
+
+                positionComponent->setPosition(positionComponent->getPosition() + movement * 100.0);
+
+                if (!hasCollision)
                     if (movement != Geometry::Vec3Df(0,0,0))
                     {
-                        eventQueue_ << new EntityPositionChangedEvent(group->getEntity(), positionComponent.getPosition());
+                        eventQueue_ << new EntityPositionChangedEvent(group->getEntity(), positionComponent->getPosition());
 
-                        if (world.hasComponent(group->getEntity(), Input::PlayerComponent::Type))
+                        if (hasInput)
                         {
-                            eventQueue_ << new Input::PlayerPositionChangedEvent(positionComponent.getPosition());
+                            eventQueue_ << new Input::PlayerPositionChangedEvent(positionComponent->getPosition());
                         }
                     }
             }
@@ -81,31 +86,33 @@ namespace Physics
     }
 
     Geometry::Vec3Df MovementSystem::getMovement(
+        Ecs::World& world,
         Ecs::ComponentGroup& group,
         unsigned long delay
     )
     {
-        World& world = getWorld();
-
-        MovementComponent& movementComponent =
-            dynamic_cast<MovementComponent&>(group.getComponent(MovementComponent::Type));
-        const float factor = (static_cast<float>(delay) / 1000.0);
-
         const Entity& entity = group.getEntity();
 
-        if (world.hasComponent(entity, GravityComponent::Type))
-        {
-            const GravityComponent& gravity = dynamic_cast<GravityComponent&>(
-                                                  world.getEntityComponent(entity, GravityComponent::Type)
-                                              );
+        // Must be called before getting any writer to avoid deadlock
+        bool hasGravity = world.hasComponent(entity, GravityComponent::Type);
 
-            const Vec3Df& baseVelocity = movementComponent.getVelocity();
-            movementComponent.setVelocity(
+        Threading::ConcurrentWriter<MovementComponent> movementComponent =
+            Threading::getConcurrentWriter<Ecs::Component, MovementComponent>(group.getComponent(MovementComponent::Type));
+
+        const float factor = (static_cast<float>(delay) / 1000.0);
+
+        if (hasGravity)
+        {
+            Threading::ConcurrentReader<GravityComponent> gravityComponent =
+                Threading::getConcurrentReader<Ecs::Component, GravityComponent>(world.getEntityComponent(entity, GravityComponent::Type));
+
+            const Vec3Df& baseVelocity = movementComponent->getVelocity();
+            movementComponent->setVelocity(
                 baseVelocity +
-                GravityVec * gravity.getWeight() * factor
+                GravityVec * gravityComponent->getWeight() * factor
             );
         }
 
-        return movementComponent.getVelocity() * factor;
+        return movementComponent->getVelocity() * factor;
     }
 }

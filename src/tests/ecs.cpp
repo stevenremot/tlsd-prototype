@@ -100,7 +100,7 @@ namespace EcsTest
         for (group = groups.begin(); group != groups.end(); ++group)
         {
             cout << group->getEntity() << " says ";
-            cout << static_cast<MessageComponent &>(group->getComponent(MessageComponent::Type)).getMessage() << endl;
+            cout << static_cast<const MessageComponent &>(*group->getComponent(MessageComponent::Type).getReader()).getMessage() << endl;
         }
     }
 

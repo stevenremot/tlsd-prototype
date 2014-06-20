@@ -21,6 +21,7 @@
 #define APPLICATION_APPLICATION_H
 
 #include "../Event/EventListenerInterface.h"
+#include "../Threading/ConcurrentRessource.h"
 #include "../Ecs/World.h"
 #include "../World/World.h"
 #include "EventBoot.h"
@@ -50,7 +51,7 @@ namespace Application
             return eventBoot_.getEventManager();
         }
 
-        Ecs::World& getEcsWorld()
+        Threading::ConcurrentRessource<Ecs::World>& getEcsWorld()
         {
             return ecsWorld_;
         }
@@ -69,7 +70,7 @@ namespace Application
 
     private:
         EventBoot eventBoot_;
-        Ecs::World ecsWorld_;
+        Threading::ConcurrentRessource<Ecs::World> ecsWorld_;
         World::World world_;
         GraphicsBoot graphicsBoot_;
         UpdateBoot updateBoot_;

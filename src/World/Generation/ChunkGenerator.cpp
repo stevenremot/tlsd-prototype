@@ -87,10 +87,12 @@ namespace World
             }
 
             currentChunk.setFinalEntities(finalEntities);
+            Threading::ConcurrentWriter<Ecs::World> ecsWorld =
+                ecsWorld_.getWriter();
 
             for (unsigned int i = 0; i < finalEntities.size(); i++)
             {
-                ecsWorld_.loadDescriptor(*(finalEntities[i]));
+                ecsWorld->loadDescriptor(*(finalEntities[i]));
             }
 
             world_.setChunk(x, y, currentChunk);
@@ -106,9 +108,12 @@ namespace World
                 Chunk::EntityCollection& finalEntities =
                     currentChunk.getFinalEntities();
 
+                Threading::ConcurrentWriter<Ecs::World> ecsWorld =
+                    ecsWorld_.getWriter();
+
                 for (unsigned int i = 0; i < finalEntities.size(); i++)
                 {
-                    ecsWorld_.unloadDescriptor(*(finalEntities[i]));
+                    ecsWorld->unloadDescriptor(*(finalEntities[i]));
                 }
 
                 finalEntities.clear();

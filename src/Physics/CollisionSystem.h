@@ -13,7 +13,12 @@ namespace Physics
     class CollisionSystem : public Ecs::System, public Threading::ThreadableInterface, public Event::EventListenerInterface
     {
         public:
-            CollisionSystem(Ecs::World& world, Event::EventQueue& queue, const MovementTimer& timer, CollisionEngine& engine):
+    CollisionSystem(
+        Threading::ConcurrentRessource<Ecs::World>& world,
+        Event::EventQueue& queue,
+        const MovementTimer& timer,
+        CollisionEngine& engine
+    ):
                 Ecs::System(world),
                 eventQueue_(queue),
                 timer_(timer),

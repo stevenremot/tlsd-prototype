@@ -14,7 +14,10 @@ namespace Graphics
         class AnimationSystem : public Ecs::System, public Event::EventListenerInterface, public Threading::ThreadableInterface
         {
         public:
-            AnimationSystem(Ecs::World& world, Event::EventQueue& outsideQueue);
+            AnimationSystem(
+                Threading::ConcurrentRessource<Ecs::World>& world,
+                Event::EventQueue& outsideQueue
+            );
             virtual ~AnimationSystem();
 
             // EventListenerInterface

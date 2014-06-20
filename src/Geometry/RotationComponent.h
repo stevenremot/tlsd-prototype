@@ -19,7 +19,7 @@ namespace Geometry
 
         RotationComponent(const Vec3Df & rotation): Component(Type),
             rotation_(rotation)
-            {}
+        {}
 
         virtual const std::vector<Ecs::Component::Type>& getDependentComponents()
         {

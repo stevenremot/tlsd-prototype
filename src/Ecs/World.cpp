@@ -105,10 +105,10 @@ namespace Ecs
         std::vector<Component::Type> dependencies =
             component->getDependentComponents();
 
-        ComponentCollection::const_iterator comp;
+        ComponentCollection::iterator comp;
         for (comp = components.begin(); comp != components.end(); ++comp)
         {
-            Component::Type type = (*comp)->getType();
+            Component::Type type = comp->getReader()->getType();
             if (type == component->getType())
             {
                 throw AlreadySetComponentException();
@@ -148,7 +148,7 @@ namespace Ecs
         }
     }
 
-    Component& World::getEntityComponent(
+    Threading::ConcurrentRessource<Component>& World::getEntityComponent(
         const Entity& entity,
         const Component::Type& type
     ) {
@@ -157,9 +157,9 @@ namespace Ecs
         ComponentCollection::iterator component;
         for (component = components.begin(); component != components.end(); ++component)
         {
-            if ((*component)->getType() == type)
+            if (component->getReader()->getType() == type)
             {
-                return **component;
+                return *component;
             }
         }
 
@@ -193,14 +193,14 @@ namespace Ecs
         eventQueue_ << new EntityRemovedEvent(entity);
     }
 
-    bool World::hasComponent(const Entity& entity, Component::Type type) const
+    bool World::hasComponent(const Entity& entity, Component::Type type)
     {
-        const ComponentCollection& components = components_.at(entity);
+        ComponentCollection& components = components_.at(entity);
 
-        ComponentCollection::const_iterator comp;
+        ComponentCollection::iterator comp;
         for (comp = components.begin(); comp != components.end(); ++comp)
         {
-            if ((*comp)->getType() == type)
+            if (comp->getReader()->getType() == type)
                 return true;
         }
 
