@@ -24,6 +24,7 @@
 #include "LookAtAction.h"
 #include "ActionPerformedEvent.h"
 #include "CharacterComponent.h"
+#include "../Input/PlayerComponent.h"
 #include "../Physics/MovementComponent.h"
 #include "../Physics/EntityRotationChangedEvent.h"
 #include "../Graphics/Render/AnimateActionEvent.h"
@@ -74,39 +75,19 @@ namespace Character
                         )
                     );
 
-                if (action.getType() == MoveAction::Type)
-                {
-                    Physics::MovementComponent& movementComponent =
-                        dynamic_cast<Physics::MovementComponent&>(
-                            world.getEntityComponent(entity, Physics::MovementComponent::Type)
-                        );
+                Physics::MovementComponent& movementComponent =
+                    dynamic_cast<Physics::MovementComponent&>(
+                        world.getEntityComponent(entity, Physics::MovementComponent::Type)
+                    );
 
-                    Vec2Df direction2D = dynamic_cast<const MoveAction&>(action).getDirection();
-                    Vec3Df velocity =
-                        Vec3Df(direction2D.getX(), direction2D.getY(), 0) * charComponent.getWalkingSpeed();
-
-                    movementComponent.setVelocity(velocity);
-
-                    outsideQueue_ << new Graphics::Render::AnimateActionEvent(entity, MoveAction::Type);
-                }
-                else if (action.getType() == StopAction::Type)
-                {
-                    Physics::MovementComponent& movementComponent =
-                        dynamic_cast<Physics::MovementComponent&>(
-                            world.getEntityComponent(entity, Physics::MovementComponent::Type)
-                        );
-
-                    movementComponent.setVelocity(Vec3Df(0,0,0));
-
-                    outsideQueue_ << new Graphics::Render::AnimateActionEvent(entity, StopAction::Type);
-                }
-                else if (action.getType() == LookAtAction::Type)
+                if (action.getType() == LookAtAction::Type)
                 {
                     const LookAtAction& lookAction =
                         dynamic_cast<const LookAtAction&>(action);
 
                     const float orientation = lookAction.getOrientation();
-                    const Vec3Df& currentOrientation = rotComponent.getRotation();
+
+                    Vec3Df currentOrientation = rotComponent.getRotation();
                     rotComponent.setRotation(
                         Vec3Df(
                             currentOrientation.getX(),
@@ -115,13 +96,50 @@ namespace Character
                         )
                     );
 
-                    outsideQueue_ << new Physics::EntityRotationChangedEvent(
-                        entity,
-                        rotComponent.getRotation()
+                    // update movement component orientation
+                    Vec2Df currentDirection(movementComponent.getVelocity().getX(),
+                                            movementComponent.getVelocity().getY()
+                                           );
+                    float currentAngle = currentDirection.getOrientation();
+                    currentAngle += orientation - currentOrientation.getZ() * M_PI / 180;
+                    Vec2Df newDirection =
+                        Geometry::Vec2Df::fromPolar(currentAngle, currentDirection.getLength());
+
+                    movementComponent.setVelocity(
+                        Vec3Df(newDirection.getX(),
+                               newDirection.getY(),
+                               movementComponent.getVelocity().getZ()
+                              )
                     );
+
+                    if (!world.hasComponent(entity, Input::PlayerComponent::Type))
+                    {
+                        outsideQueue_ << new Physics::EntityRotationChangedEvent(
+                                          entity,
+                                          rotComponent.getRotation()
+                                      );
+                    }
 
                     // std::cout << "Look at : " << dynamic_cast<const LookAtAction&>(action).getOrientation() << std::endl;
                 }
+                else if (action.getType() == MoveAction::Type)
+                {
+                    Vec2Df direction2D =
+                        dynamic_cast<const MoveAction&>(action).getDirection() * charComponent.getWalkingSpeed();
+                    Vec3Df velocity =
+                        Vec3Df(direction2D.getX(), direction2D.getY(), movementComponent.getVelocity().getZ()) ;
+
+                    movementComponent.setVelocity(velocity);
+
+                    outsideQueue_ << new Graphics::Render::AnimateActionEvent(entity, MoveAction::Type);
+                }
+                else if (action.getType() == StopAction::Type)
+                {
+                    movementComponent.setVelocity(Vec3Df(0,0,0));
+
+                    outsideQueue_ << new Graphics::Render::AnimateActionEvent(entity, StopAction::Type);
+                }
+
             }
         }
     }

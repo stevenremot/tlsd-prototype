@@ -113,6 +113,8 @@ namespace Graphics
             throw "Couldn't create Irrlicht Device";
         }
 
+        irrlichtDevice_->setResizable(false);
+
         // disable mouse cursor
         irrlichtDevice_->getCursorControl()->setVisible(false);
 

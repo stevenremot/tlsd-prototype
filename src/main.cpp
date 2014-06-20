@@ -67,6 +67,7 @@ int main()
     // RenderTest::testRenderSystem(10);
     // PhysicsTest::testMovementSystem();
     //InputTest::testPlayerSystem();
+    InputTest::testCoordinates();
 
     Application::Application app;
     app.start();

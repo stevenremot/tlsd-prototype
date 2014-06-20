@@ -32,6 +32,8 @@
 #include "../Input/PlayerComponent.h"
 #include "../Input/Events.h"
 
+#include "../Geometry/IrrlichtConversions.h"
+
 namespace InputTest
 {
     class ActionEventListener: public Event::EventListenerInterface
@@ -85,7 +87,7 @@ namespace InputTest
         animMap[Graphics::Render::Walk] =
             Graphics::Render::AnimationParameters(5.0f, true, Graphics::Render::NoAnimation);
         std::map<Character::Action::Type, Graphics::Render::AnimationType> animByAction;
- //       animByAction[0] = Graphics::Render::Idle;
+//       animByAction[0] = Graphics::Render::Idle;
         animByAction[Character::MoveAction::Type] = Graphics::Render::Walk;
 
         w.addComponent(
@@ -117,5 +119,36 @@ namespace InputTest
         Threading::sleep(0, 500);
 
         t.stop();
+    }
+
+    void testCoordinates()
+    {
+        Geometry::Vec3Df dir(1,0,0);
+        Geometry::Vec2Df dir2d(dir.getX(), dir.getY());
+        std::cout << dir2d.getOrientation() * 180.0 / M_PI << std::endl;
+        std::cout << "irrlicht: " << Geometry::fromIrrVector3df(
+                      Geometry::fromVec3Df(dir).getHorizontalAngle().rotationToDirection())
+                  << std::endl;
+
+        dir = Geometry::Vec3Df(0,1,0);
+        dir2d = Geometry::Vec2Df(dir.getX(), dir.getY());
+        std::cout << dir2d.getOrientation() * 180.0 / M_PI << std::endl;
+        std::cout << "irrlicht: " << Geometry::fromIrrVector3df(
+                      Geometry::fromVec3Df(dir).getHorizontalAngle().rotationToDirection())
+                  << std::endl;
+
+        dir = Geometry::Vec3Df(-1,0,0);
+        dir2d = Geometry::Vec2Df(dir.getX(), dir.getY());
+        std::cout << dir2d.getOrientation() * 180.0 / M_PI << std::endl;
+        std::cout << "irrlicht: " << Geometry::fromIrrVector3df(
+                      Geometry::fromVec3Df(dir).getHorizontalAngle().rotationToDirection())
+                  << std::endl;
+
+        dir = Geometry::Vec3Df(0,-1,0);
+        dir2d = Geometry::Vec2Df(dir.getX(), dir.getY());
+        std::cout << dir2d.getOrientation() * 180.0 / M_PI << std::endl;
+        std::cout << "irrlicht: " << Geometry::fromIrrVector3df(
+                      Geometry::fromVec3Df(dir).getHorizontalAngle().rotationToDirection())
+                  << std::endl;
     }
 }

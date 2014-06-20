@@ -122,7 +122,7 @@ namespace Application
         );*/
         world.addComponent(
             entity,
-            new Character::CharacterComponent(2.0)
+            new Character::CharacterComponent(5.0)
         );
         world.addComponent(
             entity,
@@ -180,7 +180,7 @@ namespace Application
     void Application::startLoop()
     {
         //createMovingCube(ecsWorld_);
-        createPlayer(ecsWorld_, Geometry::Vec3Df(150,150,0), Geometry::Vec3Df(0,0,90));
+        createPlayer(ecsWorld_, Geometry::Vec3Df(150,150,0), Geometry::Vec3Df(0,0,0));
 
         running_ = true;
         while (running_)

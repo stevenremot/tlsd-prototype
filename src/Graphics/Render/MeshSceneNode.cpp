@@ -38,12 +38,12 @@ namespace Graphics
 
         void MeshSceneNode::removeIrrlichtSceneNode()
         {
-            dynamic_cast<irr::scene::IMeshSceneNode*>(irrlichtSceneNode_)->remove();
+            static_cast<irr::scene::IMeshSceneNode*>(irrlichtSceneNode_)->remove();
         }
 
         void MeshSceneNode::setIrrlichtSceneNode(irr::scene::IMeshSceneNode* node)
         {
-            irrlichtSceneNode_ = dynamic_cast<irr::scene::ISceneNode*>(node);
+            irrlichtSceneNode_ = static_cast<irr::scene::ISceneNode*>(node);
         }
 
         irr::scene::IMesh* MeshSceneNode::getIrrlichtMesh() const

@@ -23,12 +23,12 @@ namespace Geometry
 {
     Vec3Df fromIrrVector3df(const irr::core::vector3df& vec)
     {
-        return Vec3Df(vec.X, vec.Z, vec.Y);
+        return Vec3Df(vec.Z, vec.X, vec.Y);
     }
 
     irr::core::vector3df fromVec3Df(const Vec3Df& vec)
     {
-        return irr::core::vector3df(vec.getX(), vec.getZ(), vec.getY());
+        return irr::core::vector3df(vec.getY(), vec.getZ(), vec.getX());
     }
 
     Vec2Df fromIrrPosition2df(const irr::core::position2df& pos)

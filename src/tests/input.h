@@ -23,6 +23,8 @@
 namespace InputTest
 {
     void testPlayerSystem();
+
+    void testCoordinates();
 }
 
 #endif

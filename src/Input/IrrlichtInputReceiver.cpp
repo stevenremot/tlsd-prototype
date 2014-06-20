@@ -72,13 +72,13 @@ namespace Input
         Vec2Df direction(0,0);
 
         if (cursorKeys_[irr::EKA_MOVE_FORWARD])
-            direction += Vec2Df(0,-1);
-        if (cursorKeys_[irr::EKA_MOVE_BACKWARD])
-            direction += Vec2Df(0,1);
-        if (cursorKeys_[irr::EKA_STRAFE_LEFT])
             direction += Vec2Df(1,0);
-        if (cursorKeys_[irr::EKA_STRAFE_RIGHT])
+        if (cursorKeys_[irr::EKA_MOVE_BACKWARD])
             direction += Vec2Df(-1,0);
+        if (cursorKeys_[irr::EKA_STRAFE_LEFT])
+            direction += Vec2Df(0,-1);
+        if (cursorKeys_[irr::EKA_STRAFE_RIGHT])
+            direction += Vec2Df(0,1);
 
         if (direction != lastDirection_)
             eventQueue_ << new MoveEvent(direction);

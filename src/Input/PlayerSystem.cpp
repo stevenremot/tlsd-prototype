@@ -85,11 +85,6 @@ namespace Input
                     const Geometry::RotationComponent& component =
                         dynamic_cast<Geometry::RotationComponent&>(group->getComponent(Geometry::RotationComponent::Type));
 
-                    const Geometry::PositionComponent& positionComponent =
-                        dynamic_cast<Geometry::PositionComponent&>(
-                            group->getComponent(Geometry::PositionComponent::Type)
-                        );
-
                     PlayerComponent& playerComponent =
                         dynamic_cast<PlayerComponent&>(
                             group->getComponent(PlayerComponent::Type)
@@ -128,32 +123,9 @@ namespace Input
                         Graphics::Render::CameraSceneNode& camera =
                             playerComponent.getCamera();
 
-                        const Geometry::Vec3Df& playerPos =
-                            positionComponent.getPosition();
-                        const Geometry::Vec2Df playerPos2d = Geometry::Vec2Df(
-                            playerPos.getX(),
-                            playerPos.getY()
-                        );
+                        camera.updateTarget(cursorPos);
 
-                        const Geometry::Vec3Df target = camera.getTarget();
-                        const Geometry::Vec2Df target2d = Geometry::Vec2Df(
-                            target.getX(),
-                            target.getY()
-                        );
-                        const Geometry::Vec3Df newTarget = camera.computeNewTarget(
-                            cursorPos
-                        );
-
-                        const Geometry::Vec2Df newTarget2d = Geometry::Vec2Df(
-                            newTarget.getX(),
-                            newTarget.getY()
-                        );
-                        const Geometry::Vec2Df direction = target2d - playerPos2d;
-                        const Geometry::Vec2Df newDirection = newTarget2d - playerPos2d;
-
-                        const float newOrientation = camOrientation +
-                            newDirection.getOrientation() -
-                            direction.getOrientation();
+                        const float newOrientation = camera.getHorizontalRotation();// * 180.0f / M_PI;
 
                         action = new Character::LookAtAction(newOrientation);
                     }

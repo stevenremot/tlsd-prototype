@@ -116,8 +116,8 @@ namespace World
             vertices.push_back(Vec3Df(v3.getX(), v3.getY(), 0));
             vertices.push_back(Vec3Df(v4.getX(), v4.getY(), 0));
 
-            faces.push_back(Face(baseIndex, baseIndex + 1, baseIndex + 2, color_));
-            faces.push_back(Face(baseIndex + 1, baseIndex + 3, baseIndex + 2, color_));
+            faces.push_back(Face(baseIndex, baseIndex + 2, baseIndex + 1, color_));
+            faces.push_back(Face(baseIndex + 1, baseIndex + 2, baseIndex + 3, color_));
 
             baseIndex += 4;
         }
@@ -178,8 +178,8 @@ namespace World
                     faces.push_back(
                         Face(
                             baseIndex,
-                            baseIndex + index + 1,
                             baseIndex + index,
+                            baseIndex + index + 1,
                             color_
                         )
                     );

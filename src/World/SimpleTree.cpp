@@ -53,8 +53,8 @@ namespace World
             vertices.push_back(Vec3Df(p2.getX(), p2.getY(), truncHeight_));
             vertices.push_back(Vec3Df(p1.getX(), p1.getY(), truncHeight_));
 
-            faces.push_back(Face(baseIndex, baseIndex + 2, baseIndex + 1, truncColor_));
-            faces.push_back(Face(baseIndex, baseIndex + 3, baseIndex + 2, truncColor_));
+            faces.push_back(Face(baseIndex, baseIndex + 1, baseIndex + 2, truncColor_));
+            faces.push_back(Face(baseIndex, baseIndex + 2, baseIndex + 3, truncColor_));
             baseIndex += 4;
         }
 
@@ -70,7 +70,7 @@ namespace World
 
         for (unsigned int i = 0; i < leavesLength; i++)
         {
-            const Vec2Df& point = leavesBase[i]; 
+            const Vec2Df& point = leavesBase[i];
             vertices.push_back(Vec3Df(point.getX(), point.getY(), truncHeight_));
         }
 
@@ -78,8 +78,8 @@ namespace World
         {
             faces.push_back(Face(
                                 baseIndex,
-                                baseIndex + currentIndex,
                                 baseIndex + currentIndex + 1,
+                                baseIndex + currentIndex,
                                 leavesColor_
                             ));
         }
@@ -97,15 +97,15 @@ namespace World
             vertices.push_back(Vec3Df(p2.getX(), p2.getY(), truncHeight_ + leavesHeight_));
             vertices.push_back(Vec3Df(p1.getX(), p1.getY(), truncHeight_ + leavesHeight_));
 
-            faces.push_back(Face(baseIndex, baseIndex + 2, baseIndex + 1, leavesColor_));
-            faces.push_back(Face(baseIndex, baseIndex + 3, baseIndex + 2, leavesColor_));
+            faces.push_back(Face(baseIndex, baseIndex + 1, baseIndex + 2, leavesColor_));
+            faces.push_back(Face(baseIndex, baseIndex + 2, baseIndex + 3, leavesColor_));
             baseIndex += 4;
         }
 
         // Building leaves top
         for (unsigned int i = 0; i < leavesLength; i++)
         {
-            const Vec2Df& point = leavesBase[i]; 
+            const Vec2Df& point = leavesBase[i];
             vertices.push_back(Vec3Df(point.getX(), point.getY(), truncHeight_ + leavesHeight_));
         }
 
@@ -113,8 +113,8 @@ namespace World
         {
             faces.push_back(Face(
                                 baseIndex,
-                                baseIndex + currentIndex + 1,
                                 baseIndex + currentIndex,
+                                baseIndex + currentIndex + 1,
                                 leavesColor_
                             ));
         }

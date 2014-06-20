@@ -26,7 +26,6 @@
 #include "LightSceneNode.h"
 
 #include "ModelUtils.h"
-#include "../../Input/Events.h"
 #include "RenderEvents.h"
 #include "AnimationEvents.h"
 #include "../../Physics/EntityPositionChangedEvent.h"
@@ -60,7 +59,6 @@ namespace Graphics
         void Scene::registerListeners(Event::ListenerRegister& reg)
         {
             reg.put(Graphics::Render::InitSceneEvent::Type, this);
-            reg.put(Input::CameraEvent::Type, this);
             reg.put(Graphics::Render::RenderMeshFileEvent::Type, this);
             reg.put(Graphics::Render::RenderModel3DEvent::Type, this);
             reg.put(Graphics::Render::RenderAnimatedMeshFileEvent::Type, this);
@@ -77,13 +75,6 @@ namespace Graphics
             if (event.getType() == InitSceneEvent::Type)
             {
                 events_ << new InitSceneEvent(static_cast<const InitSceneEvent&>(event));
-            }
-            else if (event.getType() == Input::CameraEvent::Type)
-            {
-                if (camera_ != NULL)
-                {
-                    events_ << new Input::CameraEvent(static_cast<const Input::CameraEvent&>(event));
-                }
             }
             else if (event.getType() == RenderMeshFileEvent::Type)
             {
@@ -156,10 +147,6 @@ namespace Graphics
                     eventQueue_ << new Physics::InitCollisionEngineEvent(irrlichtSceneManager_, &data_);
 
                     std::cout << "[Scene]: init done" << std::endl;
-                }
-                else if (event->getType() == Input::CameraEvent::Type)
-                {
-                    camera_->updateTarget(dynamic_cast<Input::CameraEvent*>(event)->getCursorPosition());
                 }
                 else if (event->getType() == RenderMeshFileEvent::Type)
                 {
@@ -396,7 +383,7 @@ namespace Graphics
 
                     S3DVertex& irrVertex = currentMeshBuffer->Vertices[i];
                     irrVertex.Pos.set(Geometry::fromVec3Df(v));
-                    irrVertex.Normal.set(Geometry::fromVec3Df(n));
+                    irrVertex.Normal.set(Geometry::fromVec3Df(-n));
                     irrVertex.TCoords.set(v.getX()/512.0f, v.getY()/512.0f);
                 }
 
@@ -511,7 +498,7 @@ namespace Graphics
                 return false;
             else
             {
-                dynamic_cast<AnimatedMeshSceneNode*>(entityNode)->setAnimationMap(animationMap);
+                static_cast<AnimatedMeshSceneNode*>(entityNode)->setAnimationMap(animationMap);
                 return true;
             }
         }

@@ -45,12 +45,12 @@ namespace Graphics
              */
             Geometry::Vec3Df computeNewTarget(const Geometry::Vec2Df& cursorPos);
 
-            /*
+            /**
             *   This method fixes the camera target at each step of the rendering loop
             */
             void updateTarget(const Geometry::Vec2Df& cursorPos);
 
-            /*
+            /**
             *   Initialize the camera position (relative to the player's)
             */
             void initPositionAndTargetFromParent();
@@ -72,6 +72,7 @@ namespace Graphics
         private:
             float maxVerticalAngle_;
             float rotateSpeed_;
+            irr::core::vector3df nextTarget_;
         };
     }
 }

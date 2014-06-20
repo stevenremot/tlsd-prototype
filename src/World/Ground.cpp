@@ -72,9 +72,9 @@ namespace World
                 Graphics::Color color01 = (world.getBiome(x*chunkSize+i/period,y*chunkSize+(j+1)/period).getColor()+Geometry::Vec3Df(1,1,1)*groundTable[static_cast<int>(i)][static_cast<int>(j+1)]*1.0/300.0)/2;
                 Graphics::Color color11 = (world.getBiome(x*chunkSize+(i+1)/period,y*chunkSize+(j+1)/period).getColor()+Geometry::Vec3Df(1,1,1)*groundTable[static_cast<int>(i+1)][static_cast<int>(j+1)]*1.0/300.0)/2;
                 Graphics::Color color = (color00+color10+color01)/3.0;
-                faces.push_back(Graphics::Render::Face(baseIndex, baseIndex+2, baseIndex+1, color));
+                faces.push_back(Graphics::Render::Face(baseIndex, baseIndex+1, baseIndex+2, color));
                 color = (color11+color10+color01)/3.0;
-                faces.push_back(Graphics::Render::Face(baseIndex+3, baseIndex+1, baseIndex+2, color));
+                faces.push_back(Graphics::Render::Face(baseIndex+3, baseIndex+2, baseIndex+1, color));
 
                 baseIndex +=4;
 

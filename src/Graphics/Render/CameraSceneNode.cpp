@@ -19,9 +19,11 @@
 
 #include "CameraSceneNode.h"
 
+#include <iostream>
 #include <cmath>
 #include <irrlicht/SViewFrustum.h>
 #include <irrlicht/position2d.h>
+#include <irrlicht/IAnimatedMeshSceneNode.h>
 #include "../../Geometry/IrrlichtConversions.h"
 
 using irr::core::vector3df;
@@ -84,6 +86,14 @@ namespace Graphics
                 return;
 
             cameraNode->setTarget(target);
+
+            // set the new rotation for the scene node here, to avoid latency
+            irr::scene::ISceneNode* playerNode = cameraNode->getParent();
+            playerNode->setRotation(irr::core::vector3df(
+                                        playerNode->getRotation().X,
+                                        (cameraNode->getTarget()-cameraNode->getAbsolutePosition()).getHorizontalAngle().Y,
+                                        playerNode->getRotation().Z)
+                                   );
         }
 
         void CameraSceneNode::initPositionAndTargetFromParent()
@@ -91,9 +101,10 @@ namespace Graphics
             irr::scene::ICameraSceneNode* cameraNode = static_cast<irr::scene::ICameraSceneNode*>(irrlichtSceneNode_);
 
             // we use the parent of the irrlichtSceneNode_ to avoid translating the position in and from Vec3Df
-            irr::scene::ISceneNode* parent = irrlichtSceneNode_->getParent();
+            irr::scene::IAnimatedMeshSceneNode* parent = static_cast<irr::scene::IAnimatedMeshSceneNode*>(irrlichtSceneNode_->getParent());
+
             // put the camera behind the player
-            vector3df charDir = parent->getRotation().rotationToDirection(vector3df(-1,0,0));
+            vector3df charDir = parent->getRotation().rotationToDirection();
             vector3df charScale = parent->getScale();
             vector3df charDims = parent->getBoundingBox().getExtent();
             vector3df pos = vector3df(0,charDims.Y*1.2f,0) - 2.0f * vector3df(charDims.X*charDir.X,0,charDims.Z*charDir.Z);
@@ -116,10 +127,10 @@ namespace Graphics
             irr::scene::ICameraSceneNode* cameraNode = static_cast<irr::scene::ICameraSceneNode*>(getIrrlichtSceneNode());
 
             const irr::core::vector3df direction =
-                cameraNode->getTarget() - cameraNode->getPosition();
+                cameraNode->getTarget() - cameraNode->getAbsolutePosition();
 
             const Geometry::Vec2Df planeDirection =
-                Geometry::Vec2Df(direction.X, direction.Z);
+                Geometry::Vec2Df(direction.Z, direction.X);
 
             return planeDirection.getOrientation();
         }
