@@ -92,7 +92,7 @@ namespace Character
                         Vec3Df(
                             currentOrientation.getX(),
                             currentOrientation.getY(),
-                            orientation * 180.0 / M_PI
+                            orientation
                         )
                     );
 
@@ -101,7 +101,7 @@ namespace Character
                                             movementComponent.getVelocity().getY()
                                            );
                     float currentAngle = currentDirection.getOrientation();
-                    currentAngle += orientation - currentOrientation.getZ() * M_PI / 180;
+                    currentAngle += orientation - currentOrientation.getZ();
                     Vec2Df newDirection =
                         Geometry::Vec2Df::fromPolar(currentAngle, currentDirection.getLength());
 

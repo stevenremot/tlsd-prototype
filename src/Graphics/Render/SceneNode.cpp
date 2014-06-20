@@ -61,7 +61,7 @@ namespace Graphics
         Vec3Df SceneNode::getRotation() const
         {
             vector3df irrRotation = irrlichtSceneNode_->getRotation();
-            return Geometry::fromIrrVector3df(irrRotation);
+            return Geometry::fromIrrVector3df(irrRotation) * M_PI / 180.0;
         }
 
         Vec3Df SceneNode::getScale() const
@@ -83,7 +83,7 @@ namespace Graphics
             else
             {
                 vector3df irrRot = irrlichtSceneNode_->getAbsoluteTransformation().getRotationDegrees();
-                return Geometry::fromIrrVector3df(irrRot);
+                return Geometry::fromIrrVector3df(irrRot) * M_PI / 180.0;
             }
         }
 
@@ -96,7 +96,7 @@ namespace Graphics
 
         void SceneNode::setRotation(const Vec3Df& rot)
         {
-            vector3df irrRot = Geometry::fromVec3Df(rot);
+            vector3df irrRot = 180.0 / M_PI * Geometry::fromVec3Df(rot);
             irrlichtSceneNode_->setRotation(irrRot);
         }
 
@@ -135,7 +135,7 @@ namespace Graphics
 
         void SceneNode::setAbsoluteRotation(const Vec3Df& rot)
         {
-            vector3df irrRot = Geometry::fromVec3Df(rot);
+            vector3df irrRot = 180.0 / M_PI * Geometry::fromVec3Df(rot);
 
             if(getParent() != NULL)
             {

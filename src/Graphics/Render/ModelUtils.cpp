@@ -135,9 +135,6 @@ namespace Graphics
                 Vec3Df n = e01.cross(e02);
                 n.normalize();
 
-                // test
-                n = n * -1.0f;
-
                 normals[face[0]] += n;
                 normals[face[1]] += n;
                 normals[face[2]] += n;

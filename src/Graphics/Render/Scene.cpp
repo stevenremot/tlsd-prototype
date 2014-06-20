@@ -383,7 +383,7 @@ namespace Graphics
 
                     S3DVertex& irrVertex = currentMeshBuffer->Vertices[i];
                     irrVertex.Pos.set(Geometry::fromVec3Df(v));
-                    irrVertex.Normal.set(Geometry::fromVec3Df(-n));
+                    irrVertex.Normal.set(Geometry::fromVec3Df(n));
                     irrVertex.TCoords.set(v.getX()/512.0f, v.getY()/512.0f);
                 }
 

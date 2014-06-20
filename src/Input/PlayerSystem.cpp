@@ -91,7 +91,7 @@ namespace Input
                         );
 
                     const Geometry::Vec3Df& rotation = component.getRotation();
-                    const float camOrientation = rotation.getZ() / 180.0 * M_PI;
+                    const float camOrientation = rotation.getZ();
 
                     Character::Action* action = NULL;
                     if (event->getType() == MoveEvent::Type)
@@ -125,7 +125,7 @@ namespace Input
 
                         camera.updateTarget(cursorPos);
 
-                        const float newOrientation = camera.getHorizontalRotation();// * 180.0f / M_PI;
+                        const float newOrientation = camera.getHorizontalRotation();
 
                         action = new Character::LookAtAction(newOrientation);
                     }
