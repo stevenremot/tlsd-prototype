@@ -20,29 +20,21 @@
 #include "UpdateBoot.h"
 
 #include "Application.h"
-#include "../Physics/InitCollisionEngineEvent.h"
 #include "../Ecs/ComponentCreatedEvent.h"
 
 namespace Application
 {
     void UpdateBoot::start()
     {
-        Event::ListenerRegister& reg = getApplication().getEventManager().getListenerRegister();
         Event::EventQueue& queue = getApplication().getEventManager().getEventQueue();
 
         movementSystem_ = new Physics::MovementSystem(getApplication().getEcsWorld(), queue);
 
-        collisionEngine_ = new Physics::CollisionEngine();
-
         collisionSystem_ =
-            new Physics::CollisionSystem(getApplication().getEcsWorld(), queue, movementSystem_->getTimer(), *collisionEngine_);
-
-        reg.put(Physics::InitCollisionEngineEvent::Type, collisionEngine_);
-        reg.put(Ecs::ComponentCreatedEvent::Type, collisionSystem_);
+            new Physics::CollisionSystem(getApplication().getEcsWorld(), queue, movementSystem_->getTimer());
 
         std::vector<Threading::ThreadableInterface*> threadables;
         threadables.push_back(movementSystem_);
-        threadables.push_back(collisionEngine_);
         threadables.push_back(collisionSystem_);
 
         setThread(new Threading::Thread(threadables, 100));

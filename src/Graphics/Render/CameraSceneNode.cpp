@@ -27,17 +27,18 @@
 #include "../../Geometry/IrrlichtConversions.h"
 
 using irr::core::vector3df;
+using Geometry::Vec3Df;
 
 namespace Graphics
 {
     namespace Render
     {
         CameraSceneNode::CameraSceneNode(const SceneNode* parent) :
-            SceneNode(parent)
-        {
-            maxVerticalAngle_ = 45.0f;
-            rotateSpeed_ = 0.5f;
-        }
+            SceneNode(parent),
+            maxVerticalAngle_(45.0f),
+            rotateSpeed_(0.5f),
+            manualUpdate_(false)
+        {}
 
         CameraSceneNode::~CameraSceneNode()
         {
@@ -94,6 +95,26 @@ namespace Graphics
                                         (cameraNode->getTarget()-cameraNode->getAbsolutePosition()).getHorizontalAngle().Y,
                                         playerNode->getRotation().Z)
                                    );
+
+            manualUpdate_ = true;
+        }
+
+        void CameraSceneNode::updateFromMovement()
+        {
+            if (manualUpdate_)
+                return;
+
+            irr::scene::ICameraSceneNode* cameraNode = static_cast<irr::scene::ICameraSceneNode*>(irrlichtSceneNode_);
+
+            cameraNode->updateAbsolutePosition();
+
+            // we use the parent of the irrlichtSceneNode_ to avoid translating the position in and from Vec3Df
+            irr::scene::IAnimatedMeshSceneNode* parent = static_cast<irr::scene::IAnimatedMeshSceneNode*>(irrlichtSceneNode_->getParent());
+            vector3df charScale = parent->getScale();
+            vector3df charDims = parent->getBoundingBox().getExtent();
+
+            vector3df target = parent->getPosition() + vector3df(0,charScale.Y*charDims.Y,0);
+            cameraNode->setTarget(target);
         }
 
         void CameraSceneNode::initPositionAndTargetFromParent()
@@ -111,7 +132,7 @@ namespace Graphics
             cameraNode->setPosition(pos);
             cameraNode->updateAbsolutePosition();
 
-            vector3df target = parent->getPosition() + vector3df(0,charScale.Y*charDims.Y,0);// + 0.2f * core::vector3df(charDims.X*charDir.X,0,10.0f*charDims.Z*charDir.Z);
+            vector3df target = parent->getPosition() + vector3df(0,charScale.Y*charDims.Y,0);
             cameraNode->setTarget(target);
         }
 

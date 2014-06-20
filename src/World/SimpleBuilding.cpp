@@ -95,7 +95,7 @@ namespace World
                                    center.getY(),
                                    wallHeight_ + roofHeight_));
 
-            faces.push_back(Face(baseIndex, baseIndex + 2, baseIndex + 1, roofColor_));
+            faces.push_back(Face(baseIndex, baseIndex + 1, baseIndex + 2, roofColor_));
             baseIndex += 3;
         }
 

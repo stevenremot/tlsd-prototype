@@ -24,7 +24,6 @@
 
 #include "../Physics/MovementSystem.h"
 #include "../Physics/CollisionSystem.h"
-#include "../Physics/CollisionEngine.h"
 
 namespace Application
 {
@@ -34,7 +33,6 @@ namespace Application
         UpdateBoot(Callback callback, Application& application):
             BootInterface(callback, application),
             movementSystem_(NULL),
-            collisionEngine_(NULL),
             collisionSystem_(NULL)
         {}
 
@@ -43,7 +41,6 @@ namespace Application
             if (movementSystem_ != NULL)
             {
                 delete collisionSystem_;
-                delete collisionEngine_;
                 delete movementSystem_;
             }
         }
@@ -52,7 +49,6 @@ namespace Application
 
     private:
         Physics::MovementSystem* movementSystem_;
-        Physics::CollisionEngine* collisionEngine_;
         Physics::CollisionSystem* collisionSystem_;
     };
 }

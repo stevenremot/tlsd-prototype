@@ -64,6 +64,15 @@ namespace Graphics
             sceneNodeIdsByEntity_[entity] = getLastSceneNode()->getId();
         }
 
+        bool SceneData::hasId(const Ecs::Entity& entity, unsigned int id)
+        {
+            unsigned int eId = 0;
+            if (getEntitySceneNodeId(entity, eId))
+                return eId == id;
+            else
+                return false;
+        }
+
         bool SceneData::getEntitySceneNodeId(Ecs::Entity entity, unsigned int& id)
         {
             if (sceneNodeIdsByEntity_.find(entity) != sceneNodeIdsByEntity_.end())

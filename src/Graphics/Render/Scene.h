@@ -38,10 +38,6 @@
 #include "../../Threading/Channel.h"
 #include "../../Ecs/Entity.h"
 
-using std::string;
-using std::map;
-using std::vector;
-
 namespace Graphics
 {
     namespace Render
@@ -96,10 +92,27 @@ namespace Graphics
             bool initializeAnimationMap(const Ecs::Entity& entity, const AnimationMap& animationMap);
 
             void addCameraSceneNode(SceneNode* parent);
-            void addLightSceneNode(SceneNode* parent, const Vec3Df& position, float radiusOfInfluence);
-            void addMeshSceneNodeFromModel3D(SceneNode* parent, const Model3D& model3d, const Vec3Df& position, const Vec3Df& rotation);
-            void addMeshSceneNodeFromFile(SceneNode* parent, const string& meshFile, const string& textureFile, const Vec3Df& position, const Vec3Df& rotation);
-            void addAnimatedMeshSceneNodeFromFile(SceneNode* parent, const string& meshFile, const string& textureFile, const Vec3Df& position, const Vec3Df& rotation);
+            void addLightSceneNode(SceneNode* parent, const Geometry::Vec3Df& position, float radiusOfInfluence);
+            void addMeshSceneNodeFromModel3D(
+                SceneNode* parent,
+                const Model3D& model3d,
+                const Geometry::Vec3Df& position,
+                const Geometry::Vec3Df& rotation
+            );
+            void addMeshSceneNodeFromFile(
+                SceneNode* parent,
+                const std::string& meshFile,
+                const std::string& textureFile,
+                const Geometry::Vec3Df& position,
+                const Geometry::Vec3Df& rotation
+            );
+            void addAnimatedMeshSceneNodeFromFile(
+                SceneNode* parent,
+                const std::string& meshFile,
+                const std::string& textureFile,
+                const Geometry::Vec3Df& position,
+                const Geometry::Vec3Df& rotation
+            );
         protected:
         private:
             irr::scene::ISceneManager* irrlichtSceneManager_;

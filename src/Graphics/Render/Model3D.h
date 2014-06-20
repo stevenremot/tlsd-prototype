@@ -63,6 +63,16 @@ namespace Graphics
                 return faces_;
             }
 
+            void setVertices(const std::vector<Geometry::Vec3Df>& vertices)
+            {
+                vertices_ = vertices;
+            }
+
+            void setFaces(const std::vector<Face>& faces)
+            {
+                faces_ = faces;
+            }
+
             std::vector<Geometry::Vec3Df>& getVertices()
             {
                 return vertices_;

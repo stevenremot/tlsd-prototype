@@ -36,6 +36,9 @@
 // TODO: remove
 #include <iostream>
 
+using std::string;
+using Geometry::Vec3Df;
+
 namespace Graphics
 {
     namespace Render
@@ -111,8 +114,8 @@ namespace Graphics
             else if (event.getType() == Physics::EntityRotationChangedEvent::Type)
             {
                 events_ << new Physics::EntityRotationChangedEvent(
-                    dynamic_cast<const Physics::EntityRotationChangedEvent&>(event)
-                );
+                            dynamic_cast<const Physics::EntityRotationChangedEvent&>(event)
+                        );
             }
 
         }
@@ -249,6 +252,9 @@ namespace Graphics
                     {
                         entityNode->setAbsolutePosition(posChangedEvent->getPosition());
                     }
+                    if (camera_ != NULL &&
+                            data_.hasId(posChangedEvent->getEntity(), camera_->getParent()->getId()))
+                        camera_->updateFromMovement();
                 }
                 else if (event->getType() == Physics::EntityRotationChangedEvent::Type)
                 {
@@ -330,6 +336,7 @@ namespace Graphics
 
             node->setAbsolutePosition(position);
             node->setAbsoluteRotation(rotation);
+            node->setScale(Vec3Df(0.2,0.2,0.2));
         }
 
         void Scene::addMeshSceneNodeFromModel3D(

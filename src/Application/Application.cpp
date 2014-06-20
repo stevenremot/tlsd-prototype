@@ -69,7 +69,7 @@ namespace Application
         );
         world.addComponent(
             entity,
-            new Physics::CollisionComponent(Physics::AABBCollisionBody(bbox))
+            new Physics::CollisionComponent(new Physics::AABBCollisionBody(bbox))
         );
     }
 
@@ -111,15 +111,14 @@ namespace Application
             entity,
             new Physics::MovementComponent(Geometry::Vec3Df(0.0, 0.0, 0.0))
         );
-        // TODO: start applying gravity when the entity is renderered ?
-        /*world.addComponent(
+        world.addComponent(
             entity,
             new Physics::GravityComponent(1)
         );
         world.addComponent(
             entity,
-            new Physics::CollisionComponent(Physics::AABBCollisionBody(bbox))
-        );*/
+            new Physics::CollisionComponent(new Physics::AABBCollisionBody(bbox))
+        );
         world.addComponent(
             entity,
             new Character::CharacterComponent(5.0)
@@ -180,7 +179,7 @@ namespace Application
     void Application::startLoop()
     {
         //createMovingCube(ecsWorld_);
-        createPlayer(ecsWorld_, Geometry::Vec3Df(150,150,0), Geometry::Vec3Df(0,0,0));
+        createPlayer(ecsWorld_, Geometry::Vec3Df(150,150,300), Geometry::Vec3Df(0,0,0));
 
         running_ = true;
         while (running_)

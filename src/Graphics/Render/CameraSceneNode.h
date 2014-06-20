@@ -51,6 +51,11 @@ namespace Graphics
             void updateTarget(const Geometry::Vec2Df& cursorPos);
 
             /**
+            *   Update the position and target when the parent moves
+            */
+            void updateFromMovement();
+
+            /**
             *   Initialize the camera position (relative to the player's)
             */
             void initPositionAndTargetFromParent();
@@ -65,7 +70,7 @@ namespace Graphics
              */
             float getHorizontalRotation() const;
 
-            void initStaticCamera(const Vec3Df& position, const Vec3Df& target);
+            void initStaticCamera(const Geometry::Vec3Df& position, const Geometry::Vec3Df& target);
         protected:
             // override
             virtual void removeIrrlichtSceneNode();
@@ -73,6 +78,7 @@ namespace Graphics
             float maxVerticalAngle_;
             float rotateSpeed_;
             irr::core::vector3df nextTarget_;
+            bool manualUpdate_;
         };
     }
 }

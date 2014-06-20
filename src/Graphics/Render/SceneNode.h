@@ -29,8 +29,6 @@ namespace Graphics
 {
     namespace Render
     {
-        using Geometry::Vec3Df;
-
         /**
          * Class describing a node of the scene graph
          *
@@ -49,17 +47,17 @@ namespace Graphics
                 irr::scene::ISceneNode* getIrrlichtSceneNode() const;
                 void setIrrlichtSceneNode(irr::scene::ISceneNode* node);
 
-                void setPosition(const Vec3Df& pos);
-                void setRotation(const Vec3Df& rot);
-                void setScale(const Vec3Df& sca);
-                void setAbsolutePosition(const Vec3Df& pos);
-                void setAbsoluteRotation(const Vec3Df& rot);
+                void setPosition(const Geometry::Vec3Df& pos);
+                void setRotation(const Geometry::Vec3Df& rot);
+                void setScale(const Geometry::Vec3Df& sca);
+                void setAbsolutePosition(const Geometry::Vec3Df& pos);
+                void setAbsoluteRotation(const Geometry::Vec3Df& rot);
 
-                Vec3Df getPosition() const;
-                Vec3Df getRotation() const;
-                Vec3Df getScale() const;
-                Vec3Df getAbsolutePosition() const;
-                Vec3Df getAbsoluteRotation() const;
+                Geometry::Vec3Df getPosition() const;
+                Geometry::Vec3Df getRotation() const;
+                Geometry::Vec3Df getScale() const;
+                Geometry::Vec3Df getAbsolutePosition() const;
+                Geometry::Vec3Df getAbsoluteRotation() const;
 
                 void setId(unsigned int id);
 

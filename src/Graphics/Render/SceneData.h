@@ -50,6 +50,11 @@ namespace Graphics
             */
             void setLastSceneNodeEntity(const Ecs::Entity& entity);
 
+            /**
+            *   Check if an entity has the given id in the scene
+            */
+            bool hasId(const Ecs::Entity& entity, unsigned int id);
+
         private:
             /**
             *   @param[in] entity
