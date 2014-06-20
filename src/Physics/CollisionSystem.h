@@ -24,7 +24,6 @@
 #include "../Threading/ThreadableInterface.h"
 #include "../Event/EventManager.h"
 #include "MovementTimer.h"
-#include "CollisionEngine.h"
 
 namespace Physics
 {
