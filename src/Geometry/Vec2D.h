@@ -146,11 +146,6 @@ namespace Geometry
             return Vec2D(-x_, -y_);
         }
 
-        inline bool operator<(const Vec2D& vec) const
-        {
-            return x_ < vec.x_ || (x_ == vec.x_ && y_ < vec.y_);
-        }
-
         inline T dot(const Vec2D& vec) const
         {
             return x_ * vec.x_ + y_ * vec.y_;
