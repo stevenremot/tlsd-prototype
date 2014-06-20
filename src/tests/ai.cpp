@@ -11,9 +11,9 @@
 #include "../AI/SubSystems/TargetingSubsystem.h"
 #include "../AI/SubSystems/NavigationSubsystem.h"
 #include "../AI/AiSystem.h"
+#include "../AI/NavMesh/NavMeshContainer.h"
 
 #include "../Geometry/PositionComponent.h"
-#include "../Geometry/Vec3D.h"
 
 #include "../Physics/MovementComponent.h"
 #include "../Physics/MovementSystem.h"
@@ -44,18 +44,21 @@ using std::vector;
 
 namespace AITest
 {
+
     void testAI()
     {
         Ecs::World w = Ecs::World();
         // Create the unit with the ai module
         Ecs::Entity e1 = w.createEntity();
 
+        AI::NavMesh::NavMeshContainer navMeshes;
+
         Geometry::PositionComponent* positionComponentE1 = new Geometry::PositionComponent(Geometry::Vec3Df(0.f,0.f,0.0f));
         Physics::MovementComponent* movementComponentE1= new Physics::MovementComponent(Geometry::Vec3Df(0.f,0.f,0.0f));
         w.addComponent(e1, positionComponentE1);
         w.addComponent(e1, movementComponentE1);
 
-        AI::AiComponent* aiComponent = new AI::AiComponent(e1,w);
+        AI::AiComponent* aiComponent = new AI::AiComponent(e1,w, navMeshes);
         w.addComponent(e1, aiComponent);
 
         // Add a sight sensor

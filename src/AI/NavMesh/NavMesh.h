@@ -69,10 +69,14 @@ namespace AI
 
             void removeEdge(const Graph::PlanarEdge& edge);
 
+            /**
+             * Get the node containing the position
+             */
+            bool getNode(const Geometry::Vec2Df& position, Graph::PlanarNode& node);
+
+            // Getters
             PolygonsMap& getPolygonsMap() {return polygonsMap_;}
             const PolygonsMap& getPolygonsMap() const{return polygonsMap_;}
-
-
             const Geometry::Vec2Df& getVertexById(VertexIdGenerator::VertexId vertexId) const;
             const VerticesMap& getVerticesMap() const {return vertices_;}
 

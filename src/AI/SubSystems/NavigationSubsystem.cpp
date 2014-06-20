@@ -34,10 +34,12 @@ namespace AI
 
         NavigationSubSystem::NavigationSubSystem(Blackboard &blackboard,
                                                  Geometry::PositionComponent &positionComponent,
-                                                 Physics::MovementComponent& movementComponent)
+                                                 Physics::MovementComponent& movementComponent,
+                                                 const NavMesh::NavMeshContainer& navMeshes)
             : Subsystem(Type, blackboard),
               positionComponent_(positionComponent),
-              movementComponent_(movementComponent)
+              movementComponent_(movementComponent),
+              navMeshes_(navMeshes)
         {
         }
 
@@ -51,6 +53,12 @@ namespace AI
             navigationTarget_ = moveAction->getTargetPosition();
             // Compute the path to the target
 
+            const NavMesh::NavMesh* currentNavMesh = NULL;
+            Geometry::Vec3Df currentPosition = positionComponent_.getPosition();
+            if(navMeshes_.getNavMesh(Geometry::Vec2Df(currentPosition.getX(), currentPosition.getY()), currentNavMesh))
+            {
+                currentNavMesh->getGraph();
+            }
             // Move the target
             float margin = 10.f;
             float maxSpeed = 5;

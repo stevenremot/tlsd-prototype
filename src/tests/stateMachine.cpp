@@ -11,6 +11,7 @@
 #include "../AI/SubSystems/TargetingSubsystem.h"
 #include "../AI/Sensor/SightSensor.h"
 #include "../AI/AiSystem.h"
+#include "../AI/NavMesh/NavMeshContainer.h"
 
 #include "../Geometry/PositionComponent.h"
 #include "../Physics/MovementComponent.h"
@@ -81,6 +82,8 @@ namespace StateMachineTest
     {
 
         Ecs::World w = Ecs::World();
+        NavMesh::NavMeshContainer navMeshes;
+
         Ecs::Entity e1 = w.createEntity();
         // Create component for e1
         Geometry::PositionComponent* positionComponentE1 = new Geometry::PositionComponent(Geometry::Vec3Df(0.f,0.f,0.0f));
@@ -94,7 +97,7 @@ namespace StateMachineTest
 
         Ecs::ComponentGroup prototype(types);
         Ecs::ComponentGroup components = w.getEntityComponents(e1, prototype);
-        AI::AiComponent* aiComponent = new AI::AiComponent(e1,w);
+        AI::AiComponent* aiComponent = new AI::AiComponent(e1,w, navMeshes);
         BasicAiModule* aiModule = new BasicAiModule(components, aiComponent->getBlackboard(), Idle);
         setupStateMachine(*aiModule);
         aiComponent->setAiModule(aiModule);

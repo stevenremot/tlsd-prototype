@@ -20,6 +20,7 @@
 #include "AiSystem.h"
 
 #include "AiComponent.h"
+#include "../Threading/Thread.h"
 
 namespace AI
 {
@@ -58,6 +59,7 @@ namespace AI
                     // Send the action to the relevant object
                     subsystemsManager.dispatchAction(currentAction);
                     aiPlan->goToNextStep();
+                    Threading::sleep(0,50);
                 }
             }
 

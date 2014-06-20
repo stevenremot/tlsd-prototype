@@ -21,6 +21,8 @@
 #define AI_SUBSYSTEM_NAVIGATIONSUBSYSTEM_H
 
 #include "Subsystem.h"
+#include "../NavMesh/NavMeshContainer.h"
+
 
 #include "../../Geometry/PositionComponent.h"
 #include "../../Physics/MovementComponent.h"
@@ -43,7 +45,8 @@ namespace AI
 
             NavigationSubSystem(Blackboard& blackboard,
                                 Geometry::PositionComponent& positionComponent,
-                                Physics::MovementComponent& movementComponent);
+                                Physics::MovementComponent& movementComponent,
+                                const NavMesh::NavMeshContainer& navMeshes);
             ~NavigationSubSystem(){}
 
             void findPathToGoal();
@@ -53,6 +56,7 @@ namespace AI
         private:
             const Geometry::PositionComponent& positionComponent_;
             Physics::MovementComponent& movementComponent_;
+            const NavMesh::NavMeshContainer& navMeshes_;
             Geometry::Vec3Df navigationTarget_;
             bool isFinished_;
         };

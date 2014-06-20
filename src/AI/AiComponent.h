@@ -41,10 +41,10 @@ namespace AI
     public:
         static const Ecs::Component::Type Type;
 
-        AiComponent(Ecs::Entity entity, Ecs::World& world)
+        AiComponent(Ecs::Entity entity, Ecs::World& world, const NavMesh::NavMeshContainer& navMeshes)
             : Component(Type),
               entity_(entity), memory_(), blackboard_(),
-              subsystemsManager_(entity, world, blackboard_,memory_),
+              subsystemsManager_(entity, world, blackboard_,memory_, navMeshes),
               sensorsManager_(entity, world, memory_), aiModule_(NULL) {}
 
         ~AiComponent();

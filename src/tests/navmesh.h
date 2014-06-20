@@ -20,11 +20,18 @@
 #ifndef TESTS_NAVMESH_H
 #define TESTS_NAVMESH_H
 
+#include "../Ecs/World.h"
+#include "../Geometry/Vec3D.h"
+
 #include "../AI/NavMesh/NavMesh.h"
+#include "../AI/NavMesh/NavMeshContainer.h"
 #include"SvgDrawer.h"
 
 namespace NavMeshTest
 {
+
+    Ecs::Entity createNewCharacter(Ecs::World& w, const AI::NavMesh::NavMeshContainer& navMeshes, const Geometry::Vec3Df& position, const Geometry::Vec3Df& velocity, bool hasAI = false);
+
     void testNavMesh();
 
     void drawNavMesh(const AI::NavMesh::NavMesh& navMesh, Test::SvgDrawer& drawer);

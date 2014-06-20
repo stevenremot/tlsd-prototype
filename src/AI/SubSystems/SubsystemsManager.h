@@ -25,6 +25,7 @@
 #include "Subsystem.h"
 #include "../Blackboard.h"
 #include "../WorkingMemory.h"
+#include "../NavMesh/NavMeshContainer.h"
 
 #include "../Action/Action.h"
 
@@ -41,9 +42,15 @@ namespace AI
         class SubSystemsManager
         {
         public:
-            SubSystemsManager(Ecs::Entity entity, Ecs::World& world, Blackboard & blackboard, WorkingMemory& memory)
+            SubSystemsManager(Ecs::Entity entity,
+                              Ecs::World& world,
+                              Blackboard & blackboard,
+                              WorkingMemory& memory,
+                              const NavMesh::NavMeshContainer& navMeshes)
                 : entity_(entity), world_(world),
-                  blackboard_(blackboard), memory_(memory){}
+                  blackboard_(blackboard), memory_(memory),
+                  navMeshes_(navMeshes)
+            {}
 
             void addSubsystem(const Subsystem::SubsystemType & type);
             /**
@@ -65,6 +72,7 @@ namespace AI
             Ecs::World world_;
             Blackboard& blackboard_;
             WorkingMemory& memory_;
+            const NavMesh::NavMeshContainer& navMeshes_;
         };
     }
 

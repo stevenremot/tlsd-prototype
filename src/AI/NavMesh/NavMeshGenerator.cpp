@@ -164,6 +164,7 @@ namespace AI
             const NavMesh::VerticesMap& vertices = navMesh.getVerticesMap();
 
             NavMesh::PolygonsMap::const_iterator it;
+            Graph::PlanarGraph::NodeCollection nodesToRemove;
             for(it = polygonsMap.begin(); it != polygonsMap.end(); ++it)
             {
                 // get the lower-left and upper-right points of the polygonal node
@@ -179,8 +180,15 @@ namespace AI
                     divideCell(navMesh, verticesIds, obstacle);
 
                     // remove the node from the graph
-                    navMesh.removeNode(it->first);
+                    nodesToRemove.push_back(it->first);
+                    //navMesh.removeNode(it->first);
                 }
+            }
+            while(!nodesToRemove.empty())
+            {
+                navMesh.removeNode(nodesToRemove.back());
+                // remove the node from the graph
+                nodesToRemove.pop_back();
             }
             reconnectGraph(navMesh);
 

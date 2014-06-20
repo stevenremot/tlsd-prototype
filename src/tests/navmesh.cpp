@@ -21,15 +21,48 @@
 
 #include <vector>
 
+#include "../AI/AiComponent.h"
+#include "../AI/Sensor/SightSensor.h"
+#include "../AI/SubSystems/TargetingSubsystem.h"
+#include "../AI/SubSystems/NavigationSubsystem.h"
 #include "../AI/NavMesh/NavMeshGenerationEngine.h"
 #include "../AI/NavMesh/NavMeshGenerator.h"
+
 #include "../Graph/PathFinding.h"
+
 #include "../Event/EventManager.h"
 #include "SvgDrawer.h"
 using std::vector;
 
 namespace NavMeshTest
 {
+
+    Ecs::Entity createNewCharacter(Ecs::World& w, const AI::NavMesh::NavMeshContainer& navMeshes ,const Geometry::Vec3Df& position, const Geometry::Vec3Df& velocity, bool hasAI)
+    {
+        Ecs::Entity e = w.createEntity();
+
+        Geometry::PositionComponent* positionComponent = new Geometry::PositionComponent(position);
+        Physics::MovementComponent* movementComponent= new Physics::MovementComponent(velocity);
+        w.addComponent(e, positionComponent);
+        w.addComponent(e, movementComponent);
+
+        if(hasAI)
+        {
+            AI::AiComponent* aiComponent = new AI::AiComponent(e,w, navMeshes);
+            w.addComponent(e, aiComponent);
+
+            // Add a sight sensor
+            AI::Sensor::SensorsManager& sensorsManager = aiComponent->getSensorsManager();
+            sensorsManager.addSensor(AI::Sensor::SightSensor::Type);
+
+            // Add navigation and targeting subsytems
+            AI::Subsystem::SubSystemsManager& subsystemsManager = aiComponent->getSubsystemsManager();
+            subsystemsManager.addSubsystem(AI::Subsystem::TargetingSubsystem::Type);
+            subsystemsManager.addSubsystem(AI::Subsystem::NavigationSubSystem::Type);
+        }
+        return e;
+    }
+
     void testNavMesh()
     {
         Event::EventManager m;
@@ -73,8 +106,9 @@ namespace NavMeshTest
         eventThread.stop();
         generationThread.stop();
 
+        // Draw navMesh
         Test::SvgDrawer drawer(256,256);
-        AI::NavMesh::NavMeshContainer::NavMeshesList navMeshes = navMeshGenerationEngine.getNavMeshes().getNavMeshesList();
+        const AI::NavMesh::NavMeshContainer::NavMeshesList& navMeshes = navMeshGenerationEngine.getNavMeshes().getNavMeshesList();
 
         if(navMeshes.size() > 0)
         {
@@ -92,6 +126,8 @@ namespace NavMeshTest
             drawer.end();
             std::cout << drawer.getContent().str();
         }
+
+        // Test AI
     }
 
     void drawNavMesh(const AI::NavMesh::NavMesh& navMesh, Test::SvgDrawer& drawer)

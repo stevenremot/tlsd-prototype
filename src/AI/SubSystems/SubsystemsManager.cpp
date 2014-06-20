@@ -37,7 +37,7 @@ namespace AI
                 Ecs::ComponentGroup components = world_.getEntityComponents(entity_, prototype);
                 Geometry::PositionComponent& positionComponent = static_cast<Geometry::PositionComponent&>(components.getComponent(PositionComponent::Type));
                 Physics::MovementComponent& movementComponent = static_cast<Physics::MovementComponent&>(components.getComponent(MovementComponent::Type));
-                subSystemsList_.push_back(new NavigationSubSystem(blackboard_, positionComponent, movementComponent));
+                subSystemsList_.push_back(new NavigationSubSystem(blackboard_, positionComponent, movementComponent, navMeshes_));
             }
         }
 
