@@ -19,6 +19,8 @@
     
 #include "NavMesh.h"
 
+#include <stdexcept>
+
 using std::vector;
 
 namespace AI
@@ -32,9 +34,9 @@ namespace AI
         {
             // Check if the vertex is already in the map
             VerticesMap::const_iterator it;
-            for(it = vertices_.begin(); it != vertices_.end(); ++it)
+            for (it = vertices_.begin(); it != vertices_.end(); ++it)
             {
-                if(it->second == vertexPosition)
+                if (it->second == vertexPosition)
                     return it->first;
             }
             // If not, add it to the map
@@ -61,7 +63,7 @@ namespace AI
         void NavMesh::removeNode(const Graph::PlanarNode& node)
         {
             PolygonsMap::iterator it = polygonsMap_.find(node);
-            if(it == polygonsMap_.end())
+            if (it == polygonsMap_.end())
                 return;
             graph_.removeNode(node);
             polygonsMap_.erase(it);
@@ -78,6 +80,34 @@ namespace AI
         {
             // TODO : Exception handling
             return vertices_.at(vertexId);
+        }
+
+        bool NavMesh::getNode(const Geometry::Vec2Df& position, Graph::PlanarNode& node)
+        {
+            try
+            {
+                const Graph::PlanarGraph::NodeCollection& nodes = graph_.getNodes();
+                Graph::PlanarGraph::NodeCollection::const_iterator nodesIt;
+                for(nodesIt = nodes.begin(); nodesIt != nodes.end(); ++nodesIt)
+                {
+                    const Graph::PlanarNode& node = (*nodesIt);
+                    const VerticesIdsList& verticesIds = polygonsMap_.at(node);
+                    std::vector<Geometry::Vec2Df> vertices;
+                    for (VerticesIdsList::const_iterator verticesIt = verticesIds.begin(); verticesIt != verticesIds.end(); ++verticesIt)
+                    {
+                        const Geometry::Vec2Df& v = vertices_.at(*verticesIt);
+                        vertices.push_back(v);
+                    }
+                    Geometry::Polygon2D polygon(vertices);
+                    if(polygon.contains(position))
+                        return true;
+                }
+                return false;
+            }
+            catch (const std::out_of_range& e)
+            {
+                return false;
+            }
         }
 
     }

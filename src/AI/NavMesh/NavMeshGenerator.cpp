@@ -101,7 +101,7 @@ namespace AI
             nodesArray.clear();
         }
 
-        const float NavMeshGenerator::minSizeOfCell_ = 16;
+        const float NavMeshGenerator::minSizeOfCell_ = 8;
 
         NavMeshGenerator::NavMeshGenerator(NavMeshContainer& navMeshes) : navMeshes_(navMeshes)
         {
@@ -181,7 +181,6 @@ namespace AI
 
                     // remove the node from the graph
                     nodesToRemove.push_back(it->first);
-                    //navMesh.removeNode(it->first);
                 }
             }
             while(!nodesToRemove.empty())

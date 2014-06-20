@@ -140,7 +140,7 @@ namespace NavMeshTest
         for (unsigned int i = 0; i < nodes.size(); i++)
         {
             const Graph::PlanarNode& node = nodes[i];
-            const AI::NavMesh::NavMesh::VerticesIdsList verticesIds = polygonsMap.at(node);
+            const AI::NavMesh::NavMesh::VerticesIdsList& verticesIds = polygonsMap.at(node);
             for (unsigned int j = 0; j < verticesIds.size(); j++)
             {
                 if(j != verticesIds.size()-1)
