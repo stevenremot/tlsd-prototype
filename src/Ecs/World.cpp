@@ -78,7 +78,7 @@ namespace Ecs
 
             for (unsigned int i = 0; i < descriptor.getComponents().size(); i++)
             {
-                addComponent(entity, descriptor.getComponents()[i]);
+                addComponent(entity, descriptor.getComponents()[i]->clone());
             }
 
             descriptor.entity_ = entity;

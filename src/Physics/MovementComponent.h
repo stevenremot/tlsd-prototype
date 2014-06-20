@@ -41,6 +41,11 @@ namespace Physics
             velocity_(velocity)
         {}
 
+        virtual Component* clone() const
+        {
+            return new MovementComponent(velocity_);
+        }
+
         virtual const std::vector<Ecs::Component::Type>& getDependentComponents()
         {
             if (dependencies_.empty())

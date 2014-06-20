@@ -22,6 +22,11 @@ namespace Character
             walkingSpeed_(walkingSpeed)
         {}
 
+        virtual Component* clone() const
+        {
+            return new CharacterComponent(walkingSpeed_);
+        }
+
         virtual const std::vector<Ecs::Component::Type>& getDependentComponents()
         {
             if (Dependencies.empty())

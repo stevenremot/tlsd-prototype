@@ -11,10 +11,15 @@ namespace Physics
     public:
         static const Ecs::Component::Type Type;
 
-        CollisionComponent(CollisionBody collisionBody):
+        CollisionComponent(const CollisionBody& collisionBody):
             Ecs::Component(Type),
             collisionBody_(collisionBody)
-            {}
+        {}
+
+        virtual Component* clone() const
+        {
+            return new CollisionComponent(collisionBody_);
+        }
 
         virtual const std::vector<Ecs::Component::Type>& getDependentComponents();
 

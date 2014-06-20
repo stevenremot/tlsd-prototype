@@ -35,6 +35,11 @@ namespace Physics
         GravityComponent(float weight): Component(Type), weight_(weight)
         {}
 
+        virtual Component* clone() const
+        {
+            return new GravityComponent(weight_);
+        }
+
         virtual const std::vector<Ecs::Component::Type>& getDependentComponents();
 
         float getWeight() const

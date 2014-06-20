@@ -40,6 +40,11 @@ namespace Graphics
                 textureFileName_(textureFileName)
             {}
 
+            virtual Component* clone() const
+            {
+                return new RenderableComponent(model3d_, meshFileName_, textureFileName_);
+            }
+
             virtual const std::vector<Ecs::Component::Type>& getDependentComponents()
             {
                 if (Dependencies.empty())
