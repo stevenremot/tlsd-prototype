@@ -48,9 +48,9 @@ namespace Physics
 
         // Get all the entities with movement, position and collision component
         ComponentGroup::ComponentTypeCollection types;
+        types.insert(CollisionComponent::Type);
         types.insert(MovementComponent::Type);
         types.insert(PositionComponent::Type);
-        types.insert(CollisionComponent::Type);
 
         ComponentGroup prototype(types);
         World::ComponentGroupCollection groups = getWorld()->getComponents(prototype);
@@ -59,6 +59,14 @@ namespace Physics
         for (group = groups.begin(); group != groups.end(); ++group)
         {
             Ecs::Entity movingEntity = group->getEntity();
+
+            // do the collidable entity research before using the concurrent writer
+            ComponentGroup::ComponentTypeCollection types2;
+            types2.insert(CollisionComponent::Type);
+            types2.insert(PositionComponent::Type);
+            ComponentGroup prototype2(types2);
+            World::ComponentGroupCollection groups2 = getWorld()->getComponents(prototype2);
+            World::ComponentGroupCollection::iterator group2;
 
             Threading::ConcurrentWriter<PositionComponent> positionComponent =
                 Threading::getConcurrentWriter<Ecs::Component, PositionComponent>(
@@ -75,12 +83,6 @@ namespace Physics
             // might serve for mesh collisions
             //Vec3Df movementVector = movementComponent->getVelocity() * movementFactor;
 
-            ComponentGroup::ComponentTypeCollection types2;
-            types2.insert(CollisionComponent::Type);
-            types2.insert(PositionComponent::Type);
-            ComponentGroup prototype2(types2);
-            World::ComponentGroupCollection groups2 = getWorld()->getComponents(prototype2);
-            World::ComponentGroupCollection::iterator group2;
             for (group2 = groups2.begin(); group2 != groups2.end(); ++group2)
             {
                 Threading::ConcurrentReader<CollisionComponent> collisionComponent =

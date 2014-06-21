@@ -96,8 +96,8 @@ namespace Physics
         // Must be called before getting any writer to avoid deadlock
         bool hasGravity = world.hasComponent(entity, GravityComponent::Type);
 
-        Threading::ConcurrentWriter<MovementComponent> movementComponent =
-            Threading::getConcurrentWriter<Ecs::Component, MovementComponent>(group.getComponent(MovementComponent::Type));
+        Threading::ConcurrentRessource<Ecs::Component> movementComponentRessource =
+            Threading::ConcurrentRessource<Ecs::Component>(group.getComponent(MovementComponent::Type));
 
         const float factor = (static_cast<float>(delay) / 1000.0);
 
@@ -106,6 +106,9 @@ namespace Physics
             Threading::ConcurrentReader<GravityComponent> gravityComponent =
                 Threading::getConcurrentReader<Ecs::Component, GravityComponent>(world.getEntityComponent(entity, GravityComponent::Type));
 
+            Threading::ConcurrentWriter<MovementComponent> movementComponent =
+                Threading::getConcurrentWriter<Ecs::Component, MovementComponent>(movementComponentRessource);
+
             const Vec3Df& baseVelocity = movementComponent->getVelocity();
             movementComponent->setVelocity(
                 baseVelocity +
@@ -113,6 +116,6 @@ namespace Physics
             );
         }
 
-        return movementComponent->getVelocity() * factor;
+        return Threading::getConcurrentReader<Ecs::Component, MovementComponent>(movementComponentRessource)->getVelocity() * factor;
     }
 }

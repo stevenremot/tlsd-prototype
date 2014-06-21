@@ -35,6 +35,11 @@ namespace Physics
             collisionBody_(collisionBody)
         {}
 
+        virtual ~CollisionComponent()
+        {
+            delete collisionBody_;
+        }
+
         virtual Component* clone() const
         {
             return new CollisionComponent(collisionBody_);

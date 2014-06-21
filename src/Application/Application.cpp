@@ -111,7 +111,6 @@ namespace Application
             entity,
             new Physics::MovementComponent(Geometry::Vec3Df(0.0, 0.0, 0.0))
         );
-        /*
         world.addComponent(
             entity,
             new Physics::GravityComponent(1)
@@ -119,7 +118,7 @@ namespace Application
         world.addComponent(
             entity,
             new Physics::CollisionComponent(new Physics::AABBCollisionBody(bbox))
-        );*/
+        );
         world.addComponent(
             entity,
             new Character::CharacterComponent(100.0)
