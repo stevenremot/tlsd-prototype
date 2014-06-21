@@ -73,12 +73,12 @@ namespace Physics
                     if (movement != Geometry::Vec3Df(0,0,0))
                     {
                         eventQueue_ << new EntityPositionChangedEvent(group->getEntity(), positionComponent->getPosition());
-
-                        if (hasInput)
-                        {
-                            eventQueue_ << new Input::PlayerPositionChangedEvent(positionComponent->getPosition());
-                        }
                     }
+
+                if (hasInput)
+                {
+                    eventQueue_ << new Input::PlayerPositionChangedEvent(positionComponent->getPosition());
+                }
             }
         }
 
