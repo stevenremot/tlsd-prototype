@@ -35,6 +35,11 @@ namespace Physics
             boundingBox_(bbox)
         {}
 
+        virtual CollisionBody* clone()
+        {
+            return new AABBCollisionBody(boundingBox_);
+        }
+
         const Geometry::AxisAlignedBoundingBox& getBoundingBox() const
         {
             return boundingBox_;

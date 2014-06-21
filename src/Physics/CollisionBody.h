@@ -37,6 +37,8 @@ namespace Physics
 
         virtual ~CollisionBody() {}
 
+        virtual CollisionBody* clone() = 0;
+
         const Type& getType() const
         {
             return type_;

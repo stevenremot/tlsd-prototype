@@ -42,7 +42,7 @@ namespace Physics
 
         virtual Component* clone() const
         {
-            return new CollisionComponent(collisionBody_);
+            return new CollisionComponent(collisionBody_->clone());
         }
 
         virtual const std::vector<Ecs::Component::Type>& getDependentComponents();

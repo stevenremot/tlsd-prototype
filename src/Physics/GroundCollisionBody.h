@@ -46,6 +46,11 @@ namespace Physics
              heightmap_(heightmap)
         {}
 
+        virtual CollisionBody* clone()
+        {
+            return new GroundCollisionBody(chunkSize_, resolution_, heightmap_);
+        }
+
         void setChunkSize(float chunkSize)
         {
             chunkSize_ = chunkSize;
