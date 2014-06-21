@@ -71,7 +71,6 @@ namespace Graphics
             std::map<Ecs::Entity, unsigned int> sceneNodeIdsByEntity_;
             std::vector<SceneNode*> sceneNodes_;
 
-            unsigned long renderedEntitiesNumber_;
             SceneNode* lastSceneNode_;
         };
     }
