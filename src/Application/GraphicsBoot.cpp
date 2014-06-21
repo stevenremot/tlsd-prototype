@@ -29,7 +29,8 @@ namespace Application
 {
     void GraphicsBoot::start()
     {
-        Ecs::World& ecsWorld = getApplication().getEcsWorld();
+        Threading::ConcurrentRessource<Ecs::World>& ecsWorld =
+            getApplication().getEcsWorld();
         Event::ListenerRegister& reg = getApplication().getEventManager().getListenerRegister();
         Event::EventQueue& queue = getApplication().getEventManager().getEventQueue();
 

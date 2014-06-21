@@ -37,6 +37,13 @@ namespace Input
             camera_(NULL)
         {}
 
+        virtual Component* clone() const
+        {
+            PlayerComponent* comp = new PlayerComponent();
+            comp->setCamera(camera_);
+            return comp;
+        }
+
         virtual const std::vector<Component::Type>& getDependentComponents();
 
         Graphics::Render::CameraSceneNode& getCamera()

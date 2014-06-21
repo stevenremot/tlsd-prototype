@@ -17,35 +17,32 @@
     <http://www.gnu.org/licenses/>.
 */
 
-#ifndef PHYSICS_COLLISIONSYSTEM_H
-#define PHYSICS_COLLISIONSYSTEM_H
+#include "Lock.h"
 
-#include "../Ecs/System.h"
-#include "../Threading/ThreadableInterface.h"
-#include "../Event/EventManager.h"
-#include "MovementTimer.h"
-
-namespace Physics
+namespace Threading
 {
-    class CollisionSystem : public Ecs::System, public Threading::ThreadableInterface
+    Lock::Lock()
     {
-    public:
-        CollisionSystem(
-            Threading::ConcurrentRessource<Ecs::World>& world,
-            Event::EventQueue& queue,
-            const MovementTimer& timer
-        ):
-            Ecs::System(world),
-            eventQueue_(queue),
-            timer_(timer)
-        {}
+        pthread_mutex_init(&writeMutex_, NULL);
+    }
 
-        virtual void run();
+    void Lock::lockForReading()
+    {
+        lockForWriting();
+    }
 
-    private:
-        Event::EventQueue& eventQueue_;
-        const MovementTimer& timer_;
-    };
+    void Lock::unlockForReading()
+    {
+        unlockForWriting();
+    }
+
+    void Lock::lockForWriting()
+    {
+        pthread_mutex_lock(&writeMutex_);
+    }
+
+    void Lock::unlockForWriting()
+    {
+        pthread_mutex_unlock(&writeMutex_);
+    }
 }
-
-#endif // PHYSICS_COLLISIONSYSTEM_H

@@ -31,7 +31,7 @@ namespace Physics
     class MovementSystem : public Ecs::System, public Threading::ThreadableInterface
     {
     public:
-        MovementSystem(Ecs::World& world, Event::EventQueue& eventQueue):
+    MovementSystem(Threading::ConcurrentRessource<Ecs::World>& world, Event::EventQueue& eventQueue):
             System(world),
             eventQueue_(eventQueue)
         {
@@ -53,6 +53,7 @@ namespace Physics
         Event::EventQueue& eventQueue_;
         MovementTimer* timer_;
         Geometry::Vec3Df getMovement(
+            Ecs::World& world,
             Ecs::ComponentGroup& group,
             unsigned long delay
         );

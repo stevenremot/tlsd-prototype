@@ -71,34 +71,38 @@ namespace InputTest
     {
         Event::EventManager em;
 
-        Ecs::World w(em.getEventQueue());
+        Threading::ConcurrentRessource<Ecs::World> w(new Ecs::World(em.getEventQueue()));
 
-        const Ecs::Entity& entity = w.createEntity();
-        w.addComponent(entity, new Geometry::PositionComponent(Geometry::Vec3Df()));
-        w.addComponent(entity, new Geometry::RotationComponent(Geometry::Vec3Df(0, 0, 90)));
-        w.addComponent(entity, new Physics::MovementComponent(Geometry::Vec3Df()));
-        w.addComponent(
-            entity,
-            new Graphics::Render::RenderableComponent(Graphics::Render::Model3D())
-        );
-        Graphics::Render::AnimationMap animMap;
-        animMap[Graphics::Render::Idle] =
-            Graphics::Render::AnimationParameters(5.0f, true, Graphics::Render::NoAnimation);
-        animMap[Graphics::Render::Walk] =
-            Graphics::Render::AnimationParameters(5.0f, true, Graphics::Render::NoAnimation);
-        std::map<Character::Action::Type, Graphics::Render::AnimationType> animByAction;
-//       animByAction[0] = Graphics::Render::Idle;
-        animByAction[Character::MoveAction::Type] = Graphics::Render::Walk;
+        {
+            Threading::ConcurrentWriter<Ecs::World> ww = w.getWriter();
 
-        w.addComponent(
-            entity,
-            new Graphics::Render::AnimationComponent(animMap, animByAction)
-        );
+            const Ecs::Entity& entity = ww->createEntity();
+            ww->addComponent(entity, new Geometry::PositionComponent(Geometry::Vec3Df()));
+            ww->addComponent(entity, new Geometry::RotationComponent(Geometry::Vec3Df(0, 0, 90)));
+            ww->addComponent(entity, new Physics::MovementComponent(Geometry::Vec3Df()));
+            ww->addComponent(
+                entity,
+                new Graphics::Render::RenderableComponent(Graphics::Render::Model3D())
+            );
+            Graphics::Render::AnimationMap animMap;
+            animMap[Graphics::Render::Idle] =
+                Graphics::Render::AnimationParameters(5.0f, true, Graphics::Render::NoAnimation);
+            animMap[Graphics::Render::Walk] =
+                Graphics::Render::AnimationParameters(5.0f, true, Graphics::Render::NoAnimation);
+            std::map<Character::Action::Type, Graphics::Render::AnimationType> animByAction;
+            //       animByAction[0] = Graphics::Render::Idle;
+            animByAction[Character::MoveAction::Type] = Graphics::Render::Walk;
 
-        w.addComponent(
-            entity,
-            new Input::PlayerComponent
-        );
+            ww->addComponent(
+                entity,
+                new Graphics::Render::AnimationComponent(animMap, animByAction)
+            );
+
+            ww->addComponent(
+                entity,
+                new Input::PlayerComponent
+            );
+        }
 
         Input::PlayerSystem ps(w, em.getEventQueue());
 

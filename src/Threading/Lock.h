@@ -17,35 +17,39 @@
     <http://www.gnu.org/licenses/>.
 */
 
-#ifndef PHYSICS_COLLISIONSYSTEM_H
-#define PHYSICS_COLLISIONSYSTEM_H
+#ifndef THREADING_LOCK_H
+#define THREADING_LOCK_H
 
-#include "../Ecs/System.h"
-#include "../Threading/ThreadableInterface.h"
-#include "../Event/EventManager.h"
-#include "MovementTimer.h"
+#include <pthread.h>
 
-namespace Physics
+namespace Threading
 {
-    class CollisionSystem : public Ecs::System, public Threading::ThreadableInterface
+    /**
+     * Basic class for locking data for read / write
+     *
+     * TODO handle differently readers and writers
+     */
+    class Lock
     {
     public:
-        CollisionSystem(
-            Threading::ConcurrentRessource<Ecs::World>& world,
-            Event::EventQueue& queue,
-            const MovementTimer& timer
-        ):
-            Ecs::System(world),
-            eventQueue_(queue),
-            timer_(timer)
-        {}
+        Lock();
 
-        virtual void run();
+        void lockForReading();
+
+        void unlockForReading();
+
+        void lockForWriting();
+
+        void unlockForWriting();
 
     private:
-        Event::EventQueue& eventQueue_;
-        const MovementTimer& timer_;
+        pthread_mutex_t writeMutex_;
     };
 }
 
-#endif // PHYSICS_COLLISIONSYSTEM_H
+#endif
+
+// Emacs local variables
+// Local variables:
+// mode: c++
+// End:

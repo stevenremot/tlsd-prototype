@@ -55,6 +55,11 @@ namespace Graphics
             */
             bool hasId(const Ecs::Entity& entity, unsigned int id);
 
+            /**
+             * Remove the scene node corresponding to this entity.
+             */
+            void removeSceneNodeEntity(const Ecs::Entity& entity);
+
         private:
             /**
             *   @param[in] entity
@@ -67,6 +72,7 @@ namespace Graphics
             std::vector<SceneNode*> sceneNodes_;
 
             unsigned long renderedEntitiesNumber_;
+            SceneNode* lastSceneNode_;
         };
     }
 }

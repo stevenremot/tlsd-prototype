@@ -105,7 +105,7 @@ namespace RenderTest
     void testRenderSystem(int durationInSeconds)
     {
         Event::EventManager m;
-        Ecs::World w(m.getEventQueue());
+        Threading::ConcurrentRessource<Ecs::World> w(new Ecs::World(m.getEventQueue()));
 
         Random::NumberGenerator rng(1);
 
@@ -145,13 +145,14 @@ namespace RenderTest
         int imax = durationInSeconds * 1;
         for (int i = 0; i < imax && !cdl.closed_; i++)
         {
-            Ecs::Entity e = w.createEntity(i);
-            w.addComponent(e, new PositionComponent(Vec3Df(rng.getUniform(-5, 5), rng.getUniform(-5, 5), 0)));
-            w.addComponent(e, new RotationComponent(Vec3Df(0, 0, rng.getUniform(0, 360))));
+            Threading::ConcurrentWriter<Ecs::World> ww = w.getWriter();
+            Ecs::Entity e = ww->createEntity(i);
+            ww->addComponent(e, new PositionComponent(Vec3Df(rng.getUniform(-5, 5), rng.getUniform(-5, 5), 0)));
+            ww->addComponent(e, new RotationComponent(Vec3Df(0, 0, rng.getUniform(0, 360))));
             if (i % 2)
-                w.addComponent(e, new RenderableComponent(meshFile, ""));
+                ww->addComponent(e, new RenderableComponent(meshFile, ""));
             else
-                w.addComponent(e, new RenderableComponent(cube));
+                ww->addComponent(e, new RenderableComponent(cube));
 
             Threading::sleep(1,0);
         }

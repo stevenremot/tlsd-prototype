@@ -49,8 +49,6 @@ namespace Character
     {
         while (!eventHead_.isEmpty())
         {
-            Ecs::World& world = getWorld();
-
             Event::Event* event = NULL;
             eventHead_ >> event;
 
@@ -62,33 +60,57 @@ namespace Character
                 const Ecs::Entity& entity = actionEvent.getEntity();
                 const Character::Action& action = actionEvent.getAction();
 
-                const CharacterComponent& charComponent =
-                    dynamic_cast<const CharacterComponent&>(
-                        world.getEntityComponent(entity, CharacterComponent::Type)
+                Ecs::ComponentGroup::ComponentTypeCollection types;
+                types.insert(CharacterComponent::Type);
+                types.insert(Geometry::RotationComponent::Type);
+                types.insert(Physics::MovementComponent::Type);
+                Ecs::ComponentGroup prototype(types);
+                Ecs::ComponentGroup group =
+                    getWorld()->getEntityComponents(entity, prototype);
+
+                bool hasPlayer = getWorld()->hasComponent(entity, Input::PlayerComponent::Type);
+
+                Threading::ConcurrentReader<CharacterComponent> charComponent =
+                    Threading::getConcurrentReader<Ecs::Component, CharacterComponent>(
+                        group.getComponent(CharacterComponent::Type)
                     );
 
-                Geometry::RotationComponent& rotComponent =
-                    dynamic_cast<Geometry::RotationComponent&>(
-                        world.getEntityComponent(
-                            entity,
+                Threading::ConcurrentWriter<Geometry::RotationComponent> rotComponent =
+                    Threading::getConcurrentWriter<Ecs::Component, Geometry::RotationComponent>(
+                        group.getComponent(
                             Geometry::RotationComponent::Type
                         )
                     );
 
-                Physics::MovementComponent& movementComponent =
-                    dynamic_cast<Physics::MovementComponent&>(
-                        world.getEntityComponent(entity, Physics::MovementComponent::Type)
+                Threading::ConcurrentWriter<Physics::MovementComponent> movementComponent =
+                    Threading::getConcurrentWriter<Ecs::Component, Physics::MovementComponent>(
+                        group.getComponent(Physics::MovementComponent::Type)
                     );
 
-                if (action.getType() == LookAtAction::Type)
+                if (action.getType() == MoveAction::Type)
+                {
+                    Vec2Df direction2D = dynamic_cast<const MoveAction&>(action).getDirection();
+                    Vec3Df velocity =
+                        Vec3Df(direction2D.getX(), direction2D.getY(), 0) * charComponent->getWalkingSpeed();
+
+                    movementComponent->setVelocity(velocity);
+
+                    outsideQueue_ << new Graphics::Render::AnimateActionEvent(entity, MoveAction::Type);
+                }
+                else if (action.getType() == StopAction::Type)
+                {
+                    movementComponent->setVelocity(Vec3Df(0,0,0));
+
+                    outsideQueue_ << new Graphics::Render::AnimateActionEvent(entity, StopAction::Type);
+                }
+                else if (action.getType() == LookAtAction::Type)
                 {
                     const LookAtAction& lookAction =
                         dynamic_cast<const LookAtAction&>(action);
 
                     const float orientation = lookAction.getOrientation();
-
-                    Vec3Df currentOrientation = rotComponent.getRotation();
-                    rotComponent.setRotation(
+                    const Vec3Df& currentOrientation = rotComponent->getRotation();
+                    rotComponent->setRotation(
                         Vec3Df(
                             currentOrientation.getX(),
                             currentOrientation.getY(),
@@ -97,49 +119,29 @@ namespace Character
                     );
 
                     // update movement component orientation
-                    Vec2Df currentDirection(movementComponent.getVelocity().getX(),
-                                            movementComponent.getVelocity().getY()
+                    Vec2Df currentDirection(movementComponent->getVelocity().getX(),
+                                            movementComponent->getVelocity().getY()
                                            );
                     float currentAngle = currentDirection.getOrientation();
                     currentAngle += orientation - currentOrientation.getZ();
                     Vec2Df newDirection =
                         Geometry::Vec2Df::fromPolar(currentAngle, currentDirection.getLength());
 
-                    movementComponent.setVelocity(
+                    movementComponent->setVelocity(
                         Vec3Df(newDirection.getX(),
                                newDirection.getY(),
-                               movementComponent.getVelocity().getZ()
+                               movementComponent->getVelocity().getZ()
                               )
                     );
 
-                    if (!world.hasComponent(entity, Input::PlayerComponent::Type))
+                    if (!hasPlayer)
                     {
                         outsideQueue_ << new Physics::EntityRotationChangedEvent(
                                           entity,
-                                          rotComponent.getRotation()
+                                          rotComponent->getRotation()
                                       );
                     }
-
-                    // std::cout << "Look at : " << dynamic_cast<const LookAtAction&>(action).getOrientation() << std::endl;
                 }
-                else if (action.getType() == MoveAction::Type)
-                {
-                    Vec2Df direction2D =
-                        dynamic_cast<const MoveAction&>(action).getDirection() * charComponent.getWalkingSpeed();
-                    Vec3Df velocity =
-                        Vec3Df(direction2D.getX(), direction2D.getY(), movementComponent.getVelocity().getZ()) ;
-
-                    movementComponent.setVelocity(velocity);
-
-                    outsideQueue_ << new Graphics::Render::AnimateActionEvent(entity, MoveAction::Type);
-                }
-                else if (action.getType() == StopAction::Type)
-                {
-                    movementComponent.setVelocity(Vec3Df(0,0,0));
-
-                    outsideQueue_ << new Graphics::Render::AnimateActionEvent(entity, StopAction::Type);
-                }
-
             }
         }
     }

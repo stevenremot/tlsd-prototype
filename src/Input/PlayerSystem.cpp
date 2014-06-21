@@ -46,14 +46,14 @@ namespace Input
         else if (event.getType() == CameraEvent::Type)
         {
             eventQueue_ << new CameraEvent(
-                dynamic_cast<const CameraEvent&>(event)
-            );
+                            dynamic_cast<const CameraEvent&>(event)
+                        );
         }
         else if (event.getType() == CameraRenderedEvent::Type)
         {
             eventQueue_ << new CameraRenderedEvent(
-                dynamic_cast<const CameraRenderedEvent&>(event)
-            );
+                            dynamic_cast<const CameraRenderedEvent&>(event)
+                        );
         }
     }
 
@@ -66,8 +66,6 @@ namespace Input
 
             if (event != NULL)
             {
-                Ecs::World& world = getWorld();
-
                 Ecs::ComponentGroup::ComponentTypeCollection types;
                 types.insert(PlayerComponent::Type);
                 types.insert(Geometry::RotationComponent::Type);
@@ -75,29 +73,31 @@ namespace Input
 
                 Ecs::ComponentGroup prototype(types);
                 Ecs::World::ComponentGroupCollection groups =
-                    world.getComponents(prototype);
+                    getWorld()->getComponents(prototype);
 
                 Ecs::World::ComponentGroupCollection::iterator group;
                 for (group = groups.begin(); group != groups.end(); ++group)
                 {
                     const Ecs::Entity& entity = group->getEntity();
 
-                    const Geometry::RotationComponent& component =
-                        dynamic_cast<Geometry::RotationComponent&>(group->getComponent(Geometry::RotationComponent::Type));
 
-                    PlayerComponent& playerComponent =
-                        dynamic_cast<PlayerComponent&>(
-                            group->getComponent(PlayerComponent::Type)
-                        );
-
-                    const Geometry::Vec3Df& rotation = component.getRotation();
-                    const float camOrientation = rotation.getZ();
+                    Threading::ConcurrentWriter<PlayerComponent> playerComponent =
+                        Threading::getConcurrentWriter<Ecs::Component, PlayerComponent>(group->getComponent(PlayerComponent::Type));
 
                     Character::Action* action = NULL;
                     if (event->getType() == MoveEvent::Type)
                     {
                         const MoveEvent& evt =
                             dynamic_cast<const MoveEvent&>(*event);
+
+                        Threading::ConcurrentReader<Geometry::RotationComponent> component =
+                            Threading::getConcurrentReader<Ecs::Component, Geometry::RotationComponent>(group->getComponent(Geometry::RotationComponent::Type));
+
+                        Threading::ConcurrentReader<Geometry::PositionComponent> positionComponent =
+                            Threading::getConcurrentReader<Ecs::Component, Geometry::PositionComponent>(group->getComponent(Geometry::PositionComponent::Type));
+
+                        const Geometry::Vec3Df& rotation = component->getRotation();
+                        const float camOrientation = rotation.getZ();
 
                         if (evt.getDirection() == Geometry::Vec2Df(0,0))
                             action = new Character::StopAction();
@@ -116,12 +116,12 @@ namespace Input
                     }
                     else if (
                         event->getType() == CameraEvent::Type &&
-                        playerComponent.isCameraSet()
-                    ) {
+                        playerComponent->isCameraSet()
+                    )
+                    {
                         const CameraEvent& evt = dynamic_cast<const CameraEvent&>(*event);
                         const Geometry::Vec2Df& cursorPos = evt.getCursorPosition();
-                        Graphics::Render::CameraSceneNode& camera =
-                            playerComponent.getCamera();
+                        Graphics::Render::CameraSceneNode& camera = playerComponent->getCamera();
 
                         camera.updateTarget(cursorPos);
 
@@ -134,7 +134,7 @@ namespace Input
                         const CameraRenderedEvent& evt =
                             dynamic_cast<const CameraRenderedEvent&>(*event);
 
-                        playerComponent.setCamera(evt.getCamera());
+                        playerComponent->setCamera(evt.getCamera());
                     }
 
                     if (action != NULL)

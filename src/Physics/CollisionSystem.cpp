@@ -42,8 +42,6 @@ namespace Physics
 
     void CollisionSystem::run()
     {
-        World& world = getWorld();
-
         // might serve for mesh intersections
         //const float movementFactor =
         //    (static_cast<float>(timer_.getDelay()) / 1000.0);
@@ -55,50 +53,59 @@ namespace Physics
         types.insert(CollisionComponent::Type);
 
         ComponentGroup prototype(types);
-        World::ComponentGroupCollection groups = world.getComponents(prototype);
+        World::ComponentGroupCollection groups = getWorld()->getComponents(prototype);
 
         World::ComponentGroupCollection::iterator group;
         for (group = groups.begin(); group != groups.end(); ++group)
         {
             Ecs::Entity movingEntity = group->getEntity();
-            PositionComponent& positionComponent =
-                dynamic_cast<PositionComponent&>(group->getComponent(PositionComponent::Type));
+
+            Threading::ConcurrentWriter<PositionComponent> positionComponent =
+                Threading::getConcurrentWriter<Ecs::Component, PositionComponent>(
+                    group->getComponent(PositionComponent::Type)
+                );
 
             // might serve for mesh collisions
-            //const MovementComponent& movementComponent =
-            //    dynamic_cast<const MovementComponent&>(group->getComponent(MovementComponent::Type));
+            /*Threading::ConcurrentReader<MovementComponent> movementComponent =
+                Threading::getConcurrentReader<Ecs::Component, MovementComponent>(
+                    group->getComponent(MovementComponent::Type)
+                );*/
 
-            Vec3Df positionVector = positionComponent.getPosition();
-
+            Vec3Df positionVector = positionComponent->getPosition();
             // might serve for mesh collisions
-            //Vec3Df movementVector = movementComponent.getVelocity() * movementFactor;
+            //Vec3Df movementVector = movementComponent->getVelocity() * movementFactor;
 
             ComponentGroup::ComponentTypeCollection types2;
             types2.insert(CollisionComponent::Type);
             types2.insert(PositionComponent::Type);
             ComponentGroup prototype2(types2);
-            World::ComponentGroupCollection groups2 = world.getComponents(prototype2);
+            World::ComponentGroupCollection groups2 = getWorld()->getComponents(prototype2);
             World::ComponentGroupCollection::iterator group2;
             for (group2 = groups2.begin(); group2 != groups2.end(); ++group2)
             {
-                const CollisionComponent& collisionComponent =
-                    dynamic_cast<const CollisionComponent&>(group2->getComponent(CollisionComponent::Type));
+                Threading::ConcurrentReader<CollisionComponent> collisionComponent =
+                Threading::getConcurrentReader<Ecs::Component, CollisionComponent>(
+                    group2->getComponent(CollisionComponent::Type)
+                );
 
-                if (collisionComponent.getCollisionBody().getType() == GroundCollisionBody::Type)
+                if (collisionComponent->getCollisionBody().getType() == GroundCollisionBody::Type)
                 {
-                    const GroundCollisionBody& collBody =
-                        static_cast<const GroundCollisionBody&>(collisionComponent.getCollisionBody());
-                    const Vec3Df& groundPosition =
-                        dynamic_cast<const PositionComponent&>(group2->getComponent(PositionComponent::Type)).getPosition();
+                    Threading::ConcurrentReader<PositionComponent> groundPositionComponent =
+                        Threading::getConcurrentReader<Ecs::Component, PositionComponent>(
+                        group2->getComponent(PositionComponent::Type)
+                    );
 
-                    Vec2Df pos2d = getPosition2D(positionVector - groundPosition);
+                    const GroundCollisionBody& collBody =
+                        static_cast<const GroundCollisionBody&>(collisionComponent->getCollisionBody());
+
+                    Vec2Df pos2d = getPosition2D(positionVector - groundPositionComponent->getPosition());
                     if (collBody.isOnChunk(pos2d))
                     {
                         float height = collBody.getHeight(pos2d);
                         if (positionVector.getZ() < height)
                         {
                             positionVector.setZ(height);
-                            positionComponent.setPosition(positionVector);
+                            positionComponent->setPosition(positionVector);
                         }
                     }
                 }
@@ -106,9 +113,7 @@ namespace Physics
                 // if it is a static object, project the movementVector on the ground's plan
             }
 
-            eventQueue_ << new EntityPositionChangedEvent(movingEntity, positionComponent.getPosition());
+            eventQueue_ << new EntityPositionChangedEvent(movingEntity, positionComponent->getPosition());
         }
-
-
     }
 }

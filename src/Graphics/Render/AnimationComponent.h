@@ -52,7 +52,12 @@ namespace Graphics
                 Component(Type),
                 animationMap_(animationMap),
                 animationsByAction_(animationsByAction)
-                {}
+            {}
+
+            virtual Component* clone() const
+            {
+                return new AnimationComponent(animationMap_, animationsByAction_);
+            }
 
             virtual const std::vector<Ecs::Component::Type>& getDependentComponents()
             {

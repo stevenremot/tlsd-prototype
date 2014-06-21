@@ -87,12 +87,52 @@ namespace World
             }
 
             currentChunk.setFinalEntities(finalEntities);
+            Threading::ConcurrentWriter<Ecs::World> ecsWorld =
+                ecsWorld_.getWriter();
 
             for (unsigned int i = 0; i < finalEntities.size(); i++)
             {
-                ecsWorld_.loadDescriptor(*(finalEntities[i]));
+                ecsWorld->loadDescriptor(*(finalEntities[i]));
             }
 
+            world_.setChunk(x, y, currentChunk);
+        }
+
+        void ChunkGenerator::unGenerateChunk(int x, int y)
+        {
+            Chunk currentChunk;
+
+            if (world_.getChunk(x, y, currentChunk) &&
+                currentChunk.getState() == Chunk::GeneratedState)
+            {
+                Chunk::EntityCollection& finalEntities =
+                    currentChunk.getFinalEntities();
+
+                Threading::ConcurrentWriter<Ecs::World> ecsWorld =
+                    ecsWorld_.getWriter();
+
+                for (unsigned int i = 0; i < finalEntities.size(); i++)
+                {
+                    ecsWorld->unloadDescriptor(*(finalEntities[i]));
+                }
+
+                finalEntities.clear();
+                currentChunk.setState(Chunk::PreparedState);
+                world_.setChunk(x, y, currentChunk);
+            }
+        }
+
+        void ChunkGenerator::removeChunk(int x, int y)
+        {
+            for (int i = -1; i <= 1; i++)
+            {
+                for (int j = -1; j <= 1; j++)
+                {
+                    unGenerateChunk(x + i, y + j);
+                }
+            }
+
+            Chunk currentChunk;
             world_.setChunk(x, y, currentChunk);
         }
 
@@ -290,17 +330,15 @@ namespace World
                     ceil(offsetMax.getY())
                 );
 
-                for (int i = planMin.getX(); i <= planMax.getX(); i++)
+                for (int i = planMin.getX(); i < planMax.getX(); i++)
                 {
-                    for (int j = planMin.getY(); j <= planMax.getY(); j++)
+                    for (int j = planMin.getY(); j < planMax.getY(); j++)
                     {
                         Chunk chunk;
                         world_.getChunk(i, j, chunk); // Don't care if it fails
 
-                        Chunk::EntityCollection entities = chunk.getBaseEntities();
+                        Chunk::EntityCollection& entities = chunk.getBaseEntities();
                         entities.push_back(descriptor);
-                        chunk.setBaseEntities(entities);
-
                         world_.setChunk(i, j, chunk);
                     }
                 }

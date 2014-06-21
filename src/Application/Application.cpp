@@ -161,7 +161,7 @@ namespace Application
 
     Application::Application():
         eventBoot_(applicationEventBootCallback, *this),
-        ecsWorld_(eventBoot_.getEventManager().getEventQueue()),
+        ecsWorld_(new Ecs::World(eventBoot_.getEventManager().getEventQueue())),
         world_(),
         graphicsBoot_(applicationGraphicsBootCallback, *this),
         updateBoot_(applicationUpdateBootCallback, *this),
@@ -179,7 +179,11 @@ namespace Application
     void Application::startLoop()
     {
         //createMovingCube(ecsWorld_);
-        createPlayer(ecsWorld_, Geometry::Vec3Df(150,150,300), Geometry::Vec3Df(0,0,0));
+        // TODO set z at 0, not 150
+        {
+            Threading::ConcurrentWriter<Ecs::World> world = ecsWorld_.getWriter();
+            createPlayer(*world, Geometry::Vec3Df(150,150,150), Geometry::Vec3Df(0,0,0));
+        }
 
         running_ = true;
         while (running_)

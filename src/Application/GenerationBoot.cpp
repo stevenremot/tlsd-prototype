@@ -21,6 +21,8 @@
 
 #include "Application.h"
 
+#include <iostream> // TODO remove ?
+
 namespace Application
 {
     void GenerationBoot::start()
@@ -40,6 +42,8 @@ namespace Application
                 generator.generateChunk(i, j);
             }
         }
+
+        std::cout << "[Generation]: Base generated" << std::endl;
 
         // TODO Change world seed at each run :-)
         generationSystem_ =

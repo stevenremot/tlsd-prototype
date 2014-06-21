@@ -34,7 +34,10 @@ namespace Graphics
 {
     namespace Render
     {
-        AnimationSystem::AnimationSystem(World& world, Event::EventQueue& outsideQueue):
+        AnimationSystem::AnimationSystem(
+            Threading::ConcurrentRessource<World>& world,
+            Event::EventQueue& outsideQueue
+        ):
             System(world),
             outsideQueue_(outsideQueue)
         {
@@ -60,8 +63,6 @@ namespace Graphics
 
         void AnimationSystem::run()
         {
-            World& world = getWorld();
-
             while (!eventHead_.isEmpty())
             {
                 Event::Event* event = NULL;
@@ -80,11 +81,14 @@ namespace Graphics
                             types.insert(AnimationComponent::Type);
 
                             ComponentGroup prototype(types);
-                            ComponentGroup group = getWorld().getEntityComponents(entity, prototype);
+                            ComponentGroup group = getWorld()->getEntityComponents(entity, prototype);
 
-                            const AnimationComponent& animComponent = static_cast<const AnimationComponent&>(group.getComponent(AnimationComponent::Type));
+                            Threading::ConcurrentReader<AnimationComponent> animComponent =
+                                Threading::getConcurrentReader<Ecs::Component, AnimationComponent>(
+                                    group.getComponent(AnimationComponent::Type)
+                                );
 
-                            outsideQueue_ << new SetupAnimationEvent(animComponent.getAnimationMap(), entity);
+                            outsideQueue_ << new SetupAnimationEvent(animComponent->getAnimationMap(), entity);
                         }
                     }
                     else if (event->getType() == AnimateActionEvent::Type)
@@ -96,11 +100,13 @@ namespace Graphics
                         types.insert(AnimationComponent::Type);
 
                         ComponentGroup prototype(types);
-                        ComponentGroup group = getWorld().getEntityComponents(entity, prototype);
+                        ComponentGroup group = getWorld()->getEntityComponents(entity, prototype);
+                        Threading::ConcurrentWriter<AnimationComponent> animComponent =
+                            Threading::getConcurrentWriter<Ecs::Component, AnimationComponent>(
+                                group.getComponent(AnimationComponent::Type)
+                            );
 
-                        AnimationComponent& animComponent = static_cast<AnimationComponent&>(group.getComponent(AnimationComponent::Type));
-
-                        outsideQueue_ << new AnimateEvent(animComponent.getAnimationByAction(actionEvent.getAction()), entity);
+                        outsideQueue_ << new AnimateEvent(animComponent->getAnimationByAction(actionEvent.getAction()), entity);
                     }
                 }
             }
@@ -110,7 +116,7 @@ namespace Graphics
             types.insert(AnimationComponent::Type);
 
             Ecs::ComponentGroup prototype(types);
-            Ecs::World::ComponentGroupCollection groups = world.getComponents(prototype);
+            Ecs::World::ComponentGroupCollection groups = getWorld()->getComponents(prototype);
 
             // Send UpdateAnimationEvents
             Ecs::World::ComponentGroupCollection::iterator group;

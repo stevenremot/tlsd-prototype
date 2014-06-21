@@ -77,7 +77,7 @@ namespace AnimationTest
     void testAnimation()
     {
         Event::EventManager m;
-        Ecs::World w(m.getEventQueue());
+        Threading::ConcurrentRessource<Ecs::World> w(new Ecs::World(m.getEventQueue()));
 
         Device device(m.getEventQueue());
         Event::ListenerRegister& reg = m.getListenerRegister();
@@ -126,13 +126,14 @@ namespace AnimationTest
 
         std::string meshFile = "ninja.b3d";
 
+        Threading::ConcurrentWriter<Ecs::World> ww = w.getWriter();
         for (int i = 0; i < 15; i++)
         {
-            Ecs::Entity e = w.createEntity();
-            w.addComponent(e, new PositionComponent(Vec3Df(150+5*i,150,0)));
-            w.addComponent(e, new RotationComponent(Vec3Df()));
-            w.addComponent(e, new RenderableComponent(meshFile, ""));
-            w.addComponent(e, new AnimationComponent(animMap, animByAction));
+            Ecs::Entity e = ww->createEntity();
+            ww->addComponent(e, new PositionComponent(Vec3Df(150+5*i,150,0)));
+            ww->addComponent(e, new RotationComponent(Vec3Df()));
+            ww->addComponent(e, new RenderableComponent(meshFile, ""));
+            ww->addComponent(e, new AnimationComponent(animMap, animByAction));
         }
 
 

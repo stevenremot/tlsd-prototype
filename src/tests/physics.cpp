@@ -33,23 +33,29 @@ namespace PhysicsTest
     void testMovementSystem()
     {
         Event::EventManager em;
-        Ecs::World world(em.getEventQueue());
+        Threading::ConcurrentRessource<Ecs::World> world(new Ecs::World(em.getEventQueue()));
 
-        const Ecs::Entity& entity = world.createEntity();
-        Geometry::PositionComponent* pos = new Geometry::PositionComponent(
-            Geometry::Vec3Df()
-        );
-        world.addComponent(entity, pos);
-        world.addComponent(
-            entity,
-            new Physics::MovementComponent(
-                Geometry::Vec3Df(1.0, 0.0, 10.0)
-            )
-        );
-        world.addComponent(
-            entity,
-            new Physics::GravityComponent(1)
-        );
+        // Concurrent flow, avoid this in the actual code
+        Geometry::PositionComponent* pos;
+
+        {
+            Threading::ConcurrentWriter<Ecs::World> ww = world.getWriter();
+            const Ecs::Entity& entity = ww->createEntity();
+            pos = new Geometry::PositionComponent(
+                Geometry::Vec3Df()
+            );
+            ww->addComponent(entity, pos);
+            ww->addComponent(
+                entity,
+                new Physics::MovementComponent(
+                    Geometry::Vec3Df(1.0, 0.0, 10.0)
+                )
+            );
+            ww->addComponent(
+                entity,
+                new Physics::GravityComponent(1)
+            );
+        }
 
         Physics::MovementSystem movementSystem(world, em.getEventQueue());
 

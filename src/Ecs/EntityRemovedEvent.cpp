@@ -17,35 +17,9 @@
     <http://www.gnu.org/licenses/>.
 */
 
-#ifndef PHYSICS_COLLISIONSYSTEM_H
-#define PHYSICS_COLLISIONSYSTEM_H
+#include "EntityRemovedEvent.h"
 
-#include "../Ecs/System.h"
-#include "../Threading/ThreadableInterface.h"
-#include "../Event/EventManager.h"
-#include "MovementTimer.h"
-
-namespace Physics
+namespace Ecs
 {
-    class CollisionSystem : public Ecs::System, public Threading::ThreadableInterface
-    {
-    public:
-        CollisionSystem(
-            Threading::ConcurrentRessource<Ecs::World>& world,
-            Event::EventQueue& queue,
-            const MovementTimer& timer
-        ):
-            Ecs::System(world),
-            eventQueue_(queue),
-            timer_(timer)
-        {}
-
-        virtual void run();
-
-    private:
-        Event::EventQueue& eventQueue_;
-        const MovementTimer& timer_;
-    };
+    const Event::Event::Type EntityRemovedEvent::Type = "entity-removed";
 }
-
-#endif // PHYSICS_COLLISIONSYSTEM_H

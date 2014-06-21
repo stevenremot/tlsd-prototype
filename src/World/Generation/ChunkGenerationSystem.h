@@ -39,7 +39,7 @@ namespace World
             typedef Threading::ChannelInput<Geometry::Vec2Di> CommandQueue;
 
             ChunkGenerationSystem(
-                Ecs::World& world,
+                Threading::ConcurrentRessource<Ecs::World>& world,
                 ChunkGenerator chunkGenerator
             ): Ecs::System(world),
                chunkGenerator_(chunkGenerator)

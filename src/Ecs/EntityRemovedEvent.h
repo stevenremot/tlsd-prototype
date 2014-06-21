@@ -17,35 +17,37 @@
     <http://www.gnu.org/licenses/>.
 */
 
-#ifndef PHYSICS_COLLISIONSYSTEM_H
-#define PHYSICS_COLLISIONSYSTEM_H
+#ifndef ECS_ENTITY_REMOVED_EVENT_H
+#define ECS_ENTITY_REMOVED_EVENT_H
 
-#include "../Ecs/System.h"
-#include "../Threading/ThreadableInterface.h"
-#include "../Event/EventManager.h"
-#include "MovementTimer.h"
+#include "Entity.h"
+#include "../Event/Event.h"
 
-namespace Physics
+namespace Ecs
 {
-    class CollisionSystem : public Ecs::System, public Threading::ThreadableInterface
+    class EntityRemovedEvent: public Event::Event
     {
     public:
-        CollisionSystem(
-            Threading::ConcurrentRessource<Ecs::World>& world,
-            Event::EventQueue& queue,
-            const MovementTimer& timer
-        ):
-            Ecs::System(world),
-            eventQueue_(queue),
-            timer_(timer)
+        static const Type Type;
+
+        EntityRemovedEvent(const Entity& entity):
+            Event(Type),
+            entity_(entity)
         {}
 
-        virtual void run();
+        const Entity& getEntity() const
+        {
+            return entity_;
+        }
 
     private:
-        Event::EventQueue& eventQueue_;
-        const MovementTimer& timer_;
+        Entity entity_;
     };
 }
 
-#endif // PHYSICS_COLLISIONSYSTEM_H
+#endif
+
+// Emacs local variables
+// Local variables:
+// mode: c++
+// End:
