@@ -86,15 +86,14 @@ namespace Physics
             World::ComponentGroupCollection::iterator group2;
             for (group2 = groups2.begin(); group2 != groups2.end(); ++group2)
             {
-                Threading::ConcurrentReader<Ecs::Component> colComponentRdr =
-                    group2->getComponent(CollisionComponent::Type).getReader();
-
-                const CollisionComponent& collisionComponent =
-                    dynamic_cast<const CollisionComponent&>(*colComponentRdr);
+                Threading::ConcurrentReader<CollisionComponent> collisionComponent =
+                    Threading::getConcurrentReader<Ecs::Component, CollisionComponent>(
+                        group2->getComponent(CollisionComponent::Type)
+                    );
 
                 Ecs::Entity collisionEntity = group2->getEntity();
 
-                if (collisionComponent.getCollisionBody().getType() == GroundCollisionBody::Type)
+                if (collisionComponent->getCollisionBody().getType() == GroundCollisionBody::Type)
                 {
                     if (!engine_.getGroundCollisionResponse(movingEntity, collisionEntity, positionVector, movementVector))
                         positionComponent->setPosition(positionVector);
