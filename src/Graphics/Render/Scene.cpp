@@ -30,7 +30,6 @@
 #include "AnimationEvents.h"
 #include "../../Physics/EntityPositionChangedEvent.h"
 #include "../../Physics/EntityRotationChangedEvent.h"
-#include "../../Physics/InitCollisionEngineEvent.h"
 #include "../../Geometry/IrrlichtConversions.h"
 #include "../../Ecs/EntityRemovedEvent.h"
 
@@ -153,8 +152,6 @@ namespace Graphics
                     camera_->initStaticCamera(Vec3Df(160,160,10), Vec3Df(150,150,0));*/
 
                     addLightSceneNode(data_.getRootSceneNode(), Vec3Df(100,100,200), Light(Directional, 1000.0f, Color(1,1,1), Vec3Df(0,0,-1)));
-
-                    eventQueue_ << new Physics::InitCollisionEngineEvent(irrlichtSceneManager_, &data_);
 
                     std::cout << "[Scene]: init done" << std::endl;
                 }

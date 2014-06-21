@@ -23,6 +23,7 @@
 #include "../Graphics/Render/RenderableComponent.h"
 #include "Ground.h"
 #include "../Physics/GroundCollisionBody.h"
+#include "../Physics/Model3DCollisionBody.h"
 #include "../Physics/CollisionComponent.h"
 
 namespace World
@@ -96,6 +97,9 @@ namespace World
         entity->addComponent(
             new Graphics::Render::RenderableComponent(building.getModel())
         );
+        entity->addComponent(
+            new Physics::CollisionComponent(new Physics::Model3DCollisionBody(building.getModel()))
+        );
 
         return entity;
     }
@@ -114,6 +118,9 @@ namespace World
 
         entity->addComponent(
             new Graphics::Render::RenderableComponent(tree.getModel())
+        );
+        entity->addComponent(
+            new Physics::CollisionComponent(new Physics::Model3DCollisionBody(tree.getModel()))
         );
 
         return entity;
