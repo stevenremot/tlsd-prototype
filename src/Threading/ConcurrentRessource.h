@@ -143,14 +143,14 @@ namespace Threading
     template <typename T1, typename T2>
     ConcurrentReader<T2> getConcurrentReader(ConcurrentRessource<T1> res)
     {
-        return ConcurrentReader<T2>(*res.lock_, dynamic_cast<T2&>(*res.data_));
+        return ConcurrentReader<T2>(*res.lock_, static_cast<T2&>(*res.data_));
     }
 
 
     template <typename T1, typename T2>
     ConcurrentWriter<T2> getConcurrentWriter(ConcurrentRessource<T1> res)
     {
-        return ConcurrentWriter<T2>(*res.lock_, dynamic_cast<T2&>(*res.data_));
+        return ConcurrentWriter<T2>(*res.lock_, static_cast<T2&>(*res.data_));
     }
 }
 
