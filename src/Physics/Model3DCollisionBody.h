@@ -38,6 +38,13 @@ namespace Physics
             model_(model)
             {}
 
+        Model3DCollisionBody(const Graphics::Render::Model3D& model, const Geometry::Vec3Df& position):
+            CollisionBody(Type),
+            model_(model)
+            {
+                setAbsoluteCoordinates(position);
+            }
+
         virtual CollisionBody* clone()
         {
             return new Model3DCollisionBody(model_);
@@ -46,6 +53,14 @@ namespace Physics
         const Graphics::Render::Model3D& getModel() const
         {
             return model_;
+        }
+
+        void setAbsoluteCoordinates(const Geometry::Vec3Df& position)
+        {
+            for(unsigned int i = 0; i < model_.getVertices().size(); i++)
+            {
+                model_.getVertices()[i] += position;
+            }
         }
 
     private:

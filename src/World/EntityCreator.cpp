@@ -86,8 +86,10 @@ namespace World
     {
         Core::SharedPtr<Ecs::EntityDescriptor> entity(new Ecs::EntityDescriptor);
 
+        Geometry::Vec3Df pos = Geometry::Vec3Df(0.0, 0.0, 0.1);
+
         entity->addComponent(
-            new Geometry::PositionComponent(Geometry::Vec3Df(0.0, 0.0, 0.1))
+            new Geometry::PositionComponent(pos)
         );
 
         entity->addComponent(
@@ -98,7 +100,7 @@ namespace World
             new Graphics::Render::RenderableComponent(building.getModel())
         );
         entity->addComponent(
-            new Physics::CollisionComponent(new Physics::Model3DCollisionBody(building.getModel()))
+            new Physics::CollisionComponent(new Physics::Model3DCollisionBody(building.getModel(), pos))
         );
 
         return entity;
@@ -120,7 +122,7 @@ namespace World
             new Graphics::Render::RenderableComponent(tree.getModel())
         );
         entity->addComponent(
-            new Physics::CollisionComponent(new Physics::Model3DCollisionBody(tree.getModel()))
+            new Physics::CollisionComponent(new Physics::Model3DCollisionBody(tree.getModel(), position))
         );
 
         return entity;

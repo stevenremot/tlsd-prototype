@@ -7,7 +7,7 @@
 namespace Physics
 {
     /**
-    *   Simple collision engine using Irrlicht's CollisionManager
+    *   Collision Engine containing collision response functions and algorithm parameters
     */
     class CollisionEngine
     {
