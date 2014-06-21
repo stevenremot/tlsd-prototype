@@ -41,11 +41,24 @@ namespace Graphics
         SceneNode::~SceneNode()
         {
             // delete all the node's children
-            for(std::list<SceneNode*>::iterator it = children_.begin(); it != children_.end(); ++it)
+            for (std::list<SceneNode*>::iterator it = children_.begin(); it != children_.end(); ++it)
                 delete *it;
 
             // inherited classes have their own type of irrlicht scene node
             removeIrrlichtSceneNode();
+        }
+
+        void SceneNode::removeChild(unsigned int id)
+        {
+            for (std::list<SceneNode*>::iterator it = children_.begin(); it != children_.end(); ++it)
+            {
+                if ((*it)->getId() == id)
+                {
+                    delete *it;
+                    children_.erase(it);
+                    return;
+                }
+            }
         }
 
         void SceneNode::removeIrrlichtSceneNode()

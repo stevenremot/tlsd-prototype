@@ -20,6 +20,7 @@
 #ifndef GRAPHICS_RENDER_SCENEDATA_H
 #define GRAPHICS_RENDER_SCENEDATA_H
 
+#include <exception>
 #include <map>
 #include <vector>
 #include "../../Ecs/Entity.h"
@@ -29,6 +30,15 @@ namespace Graphics
 {
     namespace Render
     {
+        class NullNodeException : public std::exception
+        {
+            public:
+            const char* what() const throw()
+            {
+                return "This SceneNode should not be NULL";
+            }
+        };
+
         /**
         *   Contains the data of the Scene and provides access methods
         */

@@ -20,8 +20,10 @@
 #ifndef GRAPHICS_RENDER_LIGHTSCENENODE_H
 #define GRAPHICS_RENDER_LIGHTSCENENODE_H
 
-#include "SceneNode.h"
 #include <irrlicht/ILightSceneNode.h>
+
+#include "SceneNode.h"
+#include "Light.h"
 
 namespace Graphics
 {
@@ -34,6 +36,8 @@ namespace Graphics
             virtual ~LightSceneNode();
 
             void setIrrlichtSceneNode(irr::scene::ILightSceneNode* node);
+
+            void setLight(const Light& light);
         protected:
             // override
             virtual void removeIrrlichtSceneNode();

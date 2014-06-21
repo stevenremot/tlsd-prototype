@@ -30,6 +30,7 @@
 #include "Model3D.h"
 #include "Animation.h"
 #include "SceneData.h"
+#include "Light.h"
 #include "../../Event/Event.h"
 #include "../../Event/EventListenerInterface.h"
 #include "../../Event/ListenerRegister.h"
@@ -92,7 +93,7 @@ namespace Graphics
             bool initializeAnimationMap(const Ecs::Entity& entity, const AnimationMap& animationMap);
 
             void addCameraSceneNode(SceneNode* parent);
-            void addLightSceneNode(SceneNode* parent, const Geometry::Vec3Df& position, float radiusOfInfluence);
+            void addLightSceneNode(SceneNode* parent, const Geometry::Vec3Df& position, const Light& light);
             void addMeshSceneNodeFromModel3D(
                 SceneNode* parent,
                 const Model3D& model3d,

@@ -18,11 +18,32 @@
 */
 
 #include "LightSceneNode.h"
+#include "../../Geometry/IrrlichtConversions.h"
 
 namespace Graphics
 {
     namespace Render
     {
+        irr::video::SColorf fromColor(const Color& color)
+        {
+            return irr::video::SColorf(color.getX(), color.getY(), color.getZ(), 1.0f);
+        }
+
+        irr::video::E_LIGHT_TYPE fromLightType(const LightType& type)
+        {
+            switch (type)
+            {
+            case Point:
+                return irr::video::ELT_POINT;
+            case Directional:
+                return irr::video::ELT_DIRECTIONAL;
+            case Spot:
+                return irr::video::ELT_SPOT;
+            default:
+                return irr::video::ELT_POINT;
+            }
+        }
+
         LightSceneNode::LightSceneNode(const SceneNode& parent):
             SceneNode(parent)
         {
@@ -41,6 +62,23 @@ namespace Graphics
         void LightSceneNode::removeIrrlichtSceneNode()
         {
             static_cast<irr::scene::ILightSceneNode*>(irrlichtSceneNode_)->remove();
+        }
+
+        void LightSceneNode::setLight(const Light& light)
+        {
+            irr::video::SLight irrLight = irr::video::SLight();
+
+            irrLight.Type = fromLightType(light.getType());
+            irrLight.Radius = light.getRadius();
+            irrLight.DiffuseColor = fromColor(light.getColor());
+
+            irr::scene::ILightSceneNode* node
+                = static_cast<irr::scene::ILightSceneNode*>(irrlichtSceneNode_);
+
+            if (light.getType() == Directional)
+                node->setRotation(Geometry::fromVec3Df(light.getDirection()).getHorizontalAngle());
+
+            node->setLightData(irrLight);
         }
     }
 }

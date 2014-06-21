@@ -152,7 +152,7 @@ namespace Graphics
                     camera_ = dynamic_cast<CameraSceneNode*>(data_.getLastSceneNode());
                     camera_->initStaticCamera(Vec3Df(160,160,10), Vec3Df(150,150,0));*/
 
-                    addLightSceneNode(data_.getRootSceneNode(), Vec3Df(100,100,200), 500);
+                    addLightSceneNode(data_.getRootSceneNode(), Vec3Df(100,100,200), Light(Directional, 1000.0f, Color(1,1,1), Vec3Df(0,0,-1)));
 
                     eventQueue_ << new Physics::InitCollisionEngineEvent(irrlichtSceneManager_, &data_);
 
@@ -487,14 +487,12 @@ namespace Graphics
             parent->addChild(node);
         }
 
-        void Scene::addLightSceneNode(SceneNode* parent, const Vec3Df& position, float radiusOfInfluence)
+        void Scene::addLightSceneNode(SceneNode* parent, const Vec3Df& position, const Light& light)
         {
             irr::scene::ILightSceneNode* irrNode = irrlichtSceneManager_->addLightSceneNode(
                     NULL,
-                    Geometry::fromVec3Df(position),
-                    irr::video::SColorf(1.0f,1.0f,1.0f),
-                    radiusOfInfluence
-                                                   );
+                    Geometry::fromVec3Df(position)
+                );
 
             if (parent != NULL)
                 irrNode->setParent(parent->getIrrlichtSceneNode());
@@ -506,6 +504,7 @@ namespace Graphics
                 node = new LightSceneNode(parent);
 
             node->setIrrlichtSceneNode(irrNode);
+            node->setLight(light);
 
             data_.addSceneNode(node);
 

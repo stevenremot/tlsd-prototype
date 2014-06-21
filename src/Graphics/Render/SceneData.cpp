@@ -94,11 +94,16 @@ namespace Graphics
                 sceneNodeIdsByEntity_.erase(entity);
 
                 // TODO find a way to erase and synchronize
-                // the nodes witht the entities
+                // the nodes with the entities
                 sceneNodes_[id] = NULL;
 
                 if (node != NULL)
-                    delete node;
+                {
+                    unsigned int parentId = node->getParent()->getId();
+                    sceneNodes_[parentId]->removeChild(id);
+                }
+                else
+                    throw new NullNodeException();
             }
         }
 
