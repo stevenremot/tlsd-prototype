@@ -109,7 +109,7 @@ namespace Character
                         dynamic_cast<const LookAtAction&>(action);
 
                     const float orientation = lookAction.getOrientation();
-                    const Vec3Df& currentOrientation = rotComponent->getRotation();
+                    const Vec3Df currentOrientation = rotComponent->getRotation();
                     rotComponent->setRotation(
                         Vec3Df(
                             currentOrientation.getX(),
