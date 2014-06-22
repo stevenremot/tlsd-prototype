@@ -66,6 +66,7 @@ namespace Graphics
                 const SceneNode* getParent() const;
                 const std::list<SceneNode*>& getChildren() const;
 
+                void removeChild(unsigned int id);
             protected:
                 virtual void removeIrrlichtSceneNode();
 

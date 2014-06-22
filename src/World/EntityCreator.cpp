@@ -23,6 +23,7 @@
 #include "../Graphics/Render/RenderableComponent.h"
 #include "Ground.h"
 #include "../Physics/GroundCollisionBody.h"
+#include "../Physics/Model3DCollisionBody.h"
 #include "../Physics/CollisionComponent.h"
 
 namespace World
@@ -85,8 +86,10 @@ namespace World
     {
         Core::SharedPtr<Ecs::EntityDescriptor> entity(new Ecs::EntityDescriptor);
 
+        Geometry::Vec3Df pos = Geometry::Vec3Df(0.0, 0.0, 0.1);
+
         entity->addComponent(
-            new Geometry::PositionComponent(Geometry::Vec3Df(0.0, 0.0, 0.1))
+            new Geometry::PositionComponent(pos)
         );
 
         entity->addComponent(
@@ -95,6 +98,9 @@ namespace World
 
         entity->addComponent(
             new Graphics::Render::RenderableComponent(building.getModel())
+        );
+        entity->addComponent(
+            new Physics::CollisionComponent(new Physics::Model3DCollisionBody(building.getModel(), pos))
         );
 
         return entity;
@@ -114,6 +120,9 @@ namespace World
 
         entity->addComponent(
             new Graphics::Render::RenderableComponent(tree.getModel())
+        );
+        entity->addComponent(
+            new Physics::CollisionComponent(new Physics::Model3DCollisionBody(tree.getModel(), position))
         );
 
         return entity;

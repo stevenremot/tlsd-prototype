@@ -1,59 +1,38 @@
 #ifndef PHYSICS_COLLISIONENGINE_H
 #define PHYSICS_COLLISIONENGINE_H
 
-#include <map>
-#include <irrlicht/ISceneManager.h>
-#include <irrlicht/ITriangleSelector.h>
-#include "../Ecs/Entity.h"
-#include "../Geometry/Vec3D.h"
-#include "../Graphics/Render/SceneData.h"
-#include "../Event/EventListenerInterface.h"
-#include "../Threading/Channel.h"
+#include "AABBCollisionBody.h"
+#include "Model3DCollisionBody.h"
 
 namespace Physics
 {
     /**
-    *   Simple collision engine using Irrlicht's CollisionManager
+    *   Collision Engine containing collision response functions and algorithm parameters
     */
-    class CollisionEngine : public Event::EventListenerInterface, public Threading::ThreadableInterface
+    class CollisionEngine
     {
     public:
-        CollisionEngine():
-            irrlichtSceneManager_(NULL),
-            data_(NULL)
-            {}
-
-        virtual void call(const Event::Event& event);
-
-        virtual void run();
+        CollisionEngine();
 
         /**
-        * Apply collision response to the movingEntity against the groundEntity
-        * @return true if there was a collision
-        * The input position Vec3Df is updated at its new position
+        *   Apply sliding ellipsoid against polygons collision response
         */
-        bool getGroundCollisionResponse(
-            const Ecs::Entity& movingEntity,
-            const Ecs::Entity& groundEntity,
+        bool getAABBAgainstModel3DCollisionResponse(
+            const AABBCollisionBody& aabbBody,
+            const Model3DCollisionBody& modelBody,
             Geometry::Vec3Df& position,
-            const Geometry::Vec3Df& movementVector
+            Geometry::Vec3Df& movementVector
         );
 
-        void addSelectorCreationCommand(const Ecs::Entity& entity);
-
-        bool isInitialized() const
-        {
-            return data_ != NULL;
-        }
-    private:
-        bool addSelector(const Ecs::Entity& groundEntity);
-
-        irr::scene::ISceneManager* irrlichtSceneManager_;
-        std::map<Ecs::Entity, irr::scene::ITriangleSelector*> selectors_;
-
-        Graphics::Render::SceneData* data_;
-
-        Threading::Channel<Ecs::Entity> selectorCreationCommands_;
+        /**
+        *   Simple AABB based collision response
+        */
+        bool getAABBAgainstAABBCollisionResponse(
+            const AABBCollisionBody& aabbBody1,
+            const AABBCollisionBody& aabbBody2,
+            Geometry::Vec3Df& position1,
+            const Geometry::Vec3Df& position2
+        );
     };
 }
 

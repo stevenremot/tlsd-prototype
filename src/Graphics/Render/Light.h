@@ -31,31 +31,38 @@ namespace Graphics
         class Light
         {
         public:
-            Light(const LightType& type, float radius, const Color& color):
+            Light(const LightType& type, float radius, const Color& color, const Geometry::Vec3Df& direction):
                 type_(type),
                 radius_(radius),
-                color_(color)
+                color_(color),
+                direction_(direction)
                 {}
 
-            const LightType& getType()
+            const LightType& getType() const
             {
                 return type_;
             }
 
-            float getRadius()
+            float getRadius() const
             {
                 return radius_;
             }
 
-            const Color& getColor()
+            const Color& getColor() const
             {
                 return color_;
+            }
+
+            const Geometry::Vec3Df& getDirection() const
+            {
+                return direction_;
             }
 
         private:
             LightType type_;
             float radius_;
             Color color_;
+            Geometry::Vec3Df direction_;
         };
     }
 }
