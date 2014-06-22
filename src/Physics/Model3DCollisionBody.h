@@ -59,7 +59,7 @@ namespace Physics
         {
             for(unsigned int i = 0; i < model_.getVertices().size(); i++)
             {
-                model_.getVertices()[i] += position;
+                model_.getVertices().at(i) += position;
             }
         }
 
