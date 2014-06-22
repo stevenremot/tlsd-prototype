@@ -20,11 +20,12 @@
 #include "NavigationSubsystem.h"
 
 #include "../Action/MoveCloseToTargetAction.h"
+#include "../../Graph/PathFinding.h"
 
 using AI::Subsystem::Subsystem;
 using AI::Blackboard;
 
-using Geometry::Vec3Df;
+//using Geometry::Vec3Df;
 
 namespace AI
 {
@@ -51,24 +52,59 @@ namespace AI
         {
             Action::MoveCloseToTargetAction* moveAction =static_cast<Action::MoveCloseToTargetAction*>(action);
             navigationTarget_ = moveAction->getTargetPosition();
+            const Geometry::Vec3Df& currentPosition = positionComponent_.getPosition();
             // Compute the path to the target
 
+            Graph::PlanarGraph::NodeCollection path;
             const NavMesh::NavMesh* currentNavMesh = NULL;
-            Geometry::Vec3Df currentPosition = positionComponent_.getPosition();
-            if(navMeshes_.getNavMesh(Geometry::Vec2Df(currentPosition.getX(), currentPosition.getY()), currentNavMesh))
+            Geometry::Vec2Df currentPosition2D = Geometry::Vec2Df(currentPosition.getX(), currentPosition.getY());
+            Geometry::Vec2Df targetPosition2D = Geometry::Vec2Df(navigationTarget_.getX(), navigationTarget_.getY());
+            if(navMeshes_.getNavMesh(currentPosition2D, currentNavMesh))
             {
-                currentNavMesh->getGraph();
+
+                Graph::PlanarNode startNode;
+                Graph::PlanarNode endNode;
+                if(currentNavMesh->getNode(currentPosition2D, startNode)
+                        && currentNavMesh->getNode(targetPosition2D, endNode))
+                {
+                    // If a path exists add the current position of the cgaracter and its target position to the path
+                    if(Graph::BasicAStar(currentNavMesh->getGraph(), startNode, endNode, path))
+                    {
+                        //path.insert(path.begin(), startNode);
+                        path.push_back(targetPosition2D);
+                    }
+                }
             }
             // Move the target
-            float margin = 10.f;
-            float maxSpeed = 5;
-            while(!moveAction->isFinished())
+            float margin = 2.f;
+            float maxSpeed = 1.0f;
+            //while(!moveAction->isFinished())
+            //{
+            while(!path.empty())
             {
+                Geometry::Vec2Df currentTarget2D = path.front().getPosition();
+                Geometry::Vec3Df currentTarget = Geometry::Vec3Df(currentTarget2D.getX(), currentTarget2D.getY(), 0.0);
+                float distanceToNextTarget = (positionComponent_.getPosition()- currentTarget).getLength();
+                // Wait until the character reach the target point
+                while(distanceToNextTarget > margin)
+                {
+                    distanceToNextTarget = (positionComponent_.getPosition()- currentTarget).getLength();
+                    const Geometry::Vec3Df& dir = currentTarget - positionComponent_.getPosition();
+                    Geometry::Vec3Df velocity = dir*(maxSpeed/distanceToNextTarget);
+                    movementComponent_.setVelocity(velocity);
+                }
+                movementComponent_.setVelocity(Geometry::Vec3Df(0.f,0.f,0.f));
+                // Erase the point from the path
+                path.erase(path.begin());
+            }
+            moveAction->setFinished(true);
+            movementComponent_.setVelocity(Geometry::Vec3Df(0.f,0.f,0.f));
+                /*
                 float distanceToTarget = (positionComponent_.getPosition()- navigationTarget_).getLength();
                 if( distanceToTarget < margin)
                 {
                     moveAction->setFinished(true);
-                    movementComponent_.setVelocity(Vec3Df(0.f,0.f,0.f));
+                    movementComponent_.setVelocity(Geometry::Vec3Df(0.f,0.f,0.f));
                 }
                 else
                 {
@@ -76,7 +112,8 @@ namespace AI
                     Geometry::Vec3Df velocity = test*(maxSpeed/distanceToTarget);
                     movementComponent_.setVelocity(velocity);
                 }
-            }
+                */
+            //}
 
         }
     }

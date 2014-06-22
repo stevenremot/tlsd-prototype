@@ -23,7 +23,7 @@ using std::vector;
 
 namespace AI
 {
-    AiModule::AiModule(Ecs::ComponentGroup& components, Blackboard &blackboard)
+    AiModule::AiModule(const Ecs::ComponentGroup &components, Blackboard &blackboard)
         : components_(components), blackboard_(blackboard), aiPlan_(NULL)
     {
     }

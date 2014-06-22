@@ -38,7 +38,7 @@ namespace AI
 
             static const Sensor::SensorType Type;
 
-            SightSensor(Ecs::Entity entity, Ecs::World& world,WorkingMemory& memory, int detectionRadius = 100);
+            SightSensor(Ecs::Entity entity, Ecs::World& world,WorkingMemory& memory, int detectionRadius = 120);
 
             /**
              * Check if a  ententy entered the detection area of the current entity

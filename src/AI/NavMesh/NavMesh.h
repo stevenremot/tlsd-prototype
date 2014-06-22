@@ -72,7 +72,7 @@ namespace AI
             /**
              * Get the node containing the position
              */
-            bool getNode(const Geometry::Vec2Df& position, Graph::PlanarNode& node);
+            bool getNode(const Geometry::Vec2Df& position, Graph::PlanarNode& node) const;
 
             // Getters
             PolygonsMap& getPolygonsMap() {return polygonsMap_;}

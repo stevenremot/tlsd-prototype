@@ -63,12 +63,13 @@ namespace AI
         {
             if(action == NULL)
                 return;
-            Subsystem::SubsystemType subsystemType;
+            Subsystem::SubsystemType subsystemType = "None";
             if(action->getType() == Action::MoveCloseToTargetAction::Type)
             {
                 subsystemType = NavigationSubSystem::Type;
             }
-            getSubsystemByType(subsystemType)->executeAction(action);
+            if(!(subsystemType == "None"))
+                getSubsystemByType(subsystemType)->executeAction(action);
         }
     }
 

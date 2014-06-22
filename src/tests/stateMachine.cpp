@@ -49,7 +49,7 @@ namespace StateMachineTest
     float toCloseToTarget(Ecs::ComponentGroup& components, const Blackboard& blackboard)
     {
         Geometry::PositionComponent& positionComponent = static_cast<Geometry::PositionComponent&>(components.getComponent(Geometry::PositionComponent::Type));
-        float maxDistance = 110.f;
+        float maxDistance = 120.f;
         if((blackboard.getNavigationTarget()-positionComponent.getPosition()).getLength() < maxDistance)
         {
             return 1.0f;

@@ -39,7 +39,7 @@ namespace AI
     class AiModule
     {
     public:
-        AiModule(Ecs::ComponentGroup &components, Blackboard& blackboard);
+        AiModule(const Ecs::ComponentGroup &components, Blackboard& blackboard);
 
         virtual ~AiModule(){}
 
@@ -74,7 +74,7 @@ namespace AI
         const std::vector<Action::Action::ActionType>& getAvailableActions() const {return availableActions_;}
 
     private:
-        Ecs::ComponentGroup& components_;
+        Ecs::ComponentGroup components_;
         Blackboard& blackboard_;
         std::vector<Action::Action::ActionType> availableActions_;
         Plan::AiPlan* aiPlan_;

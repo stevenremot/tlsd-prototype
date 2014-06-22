@@ -46,7 +46,7 @@ namespace AI
             void registerListeners(Event::ListenerRegister& listener);
 
             const NavMeshContainer& getNavMeshes() const {return navMeshes_;}
-            NavMeshContainer getNavMeshes() {return navMeshes_;}
+            NavMeshContainer& getNavMeshes() {return navMeshes_;}
 
         private:
             NavMeshContainer navMeshes_;

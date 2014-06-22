@@ -22,15 +22,21 @@
 #include <vector>
 
 #include "../AI/AiComponent.h"
+#include "../AI/BasicAiModule.h"
+#include "../AI/AiSystem.h"
 #include "../AI/Sensor/SightSensor.h"
 #include "../AI/SubSystems/TargetingSubsystem.h"
 #include "../AI/SubSystems/NavigationSubsystem.h"
 #include "../AI/NavMesh/NavMeshGenerationEngine.h"
 #include "../AI/NavMesh/NavMeshGenerator.h"
 
+#include "../Event/EventManager.h"
+
 #include "../Graph/PathFinding.h"
 
-#include "../Event/EventManager.h"
+#include "../Physics/MovementSystem.h"
+
+#include "stateMachine.h"
 #include "SvgDrawer.h"
 using std::vector;
 
@@ -49,6 +55,18 @@ namespace NavMeshTest
         if(hasAI)
         {
             AI::AiComponent* aiComponent = new AI::AiComponent(e,w, navMeshes);
+            // Set up the ai module
+
+            Ecs::ComponentGroup::ComponentTypeCollection types;
+            types.insert(Physics::MovementComponent::Type);
+            types.insert(Geometry::PositionComponent::Type);
+
+            Ecs::ComponentGroup prototype(types);
+            const Ecs::ComponentGroup& components = w.getEntityComponents(e, prototype);
+
+            AI::BasicAiModule* aiModule = new AI::BasicAiModule(components, aiComponent->getBlackboard(), StateMachineTest::Idle);
+            StateMachineTest::setupStateMachine(*aiModule);
+            aiComponent->setAiModule(aiModule);
             w.addComponent(e, aiComponent);
 
             // Add a sight sensor
@@ -128,6 +146,46 @@ namespace NavMeshTest
         }
 
         // Test AI
+        // Create entity
+        Ecs::World w = Ecs::World();
+        Ecs::Entity e1 = createNewCharacter(w, navMeshGenerationEngine.getNavMeshes(), Geometry::Vec3Df(0.0,0.0,0.0), Geometry::Vec3Df(0.0,0.0,0.0), true);
+        Ecs::Entity e2 = createNewCharacter(w, navMeshGenerationEngine.getNavMeshes(), Geometry::Vec3Df(80.0,80.0,0.0), Geometry::Vec3Df(0.0,0.0,0.0));
+        // Create thrads for systems
+        AI::AiSystem aiSystem(w);
+        Physics::MovementSystem movementSystem(w);
+
+        vector<Threading::ThreadableInterface*> aiSystemVector;
+        vector<Threading::ThreadableInterface*> movementSystemVector;
+        aiSystemVector.push_back(&aiSystem);
+        movementSystemVector.push_back(&movementSystem);
+
+        Threading::Thread aiThread(aiSystemVector, 10);
+        Threading::Thread movementThread(movementSystemVector, 20);
+
+        // Get the position component of e1
+        Ecs::ComponentGroup::ComponentTypeCollection types;
+        //types.insert(Physics::MovementComponent::Type);
+        types.insert(Geometry::PositionComponent::Type);
+        //types.insert(AI::AiComponent::Type);
+
+
+        Ecs::ComponentGroup prototype(types);
+        Ecs::ComponentGroup componentsE1 = w.getEntityComponents(e1, prototype);
+        const Geometry::PositionComponent& positionComponentE1 = static_cast<const Geometry::PositionComponent&>(componentsE1.getComponent(Geometry::PositionComponent::Type));
+        Ecs::ComponentGroup componentsE2 = w.getEntityComponents(e2, prototype);
+        const Geometry::PositionComponent& positionComponentE2 = static_cast<const Geometry::PositionComponent&>(componentsE2.getComponent(Geometry::PositionComponent::Type));
+
+        aiThread.start();
+        movementThread.start();
+        bool b = true;
+        while(b)
+        {
+            if((positionComponentE1.getPosition()-positionComponentE2.getPosition()).getLength() < 2.f)
+                b = false;
+        }
+
+        aiThread.stop();
+        movementThread.stop();
     }
 
     void drawNavMesh(const AI::NavMesh::NavMesh& navMesh, Test::SvgDrawer& drawer)

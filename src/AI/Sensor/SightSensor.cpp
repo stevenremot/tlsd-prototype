@@ -57,7 +57,7 @@ namespace AI
             // Get all the entity with the component "position"
             Ecs::ComponentGroup::ComponentTypeCollection types;
             types.insert(PositionComponent::Type);
-            types.insert(MovementComponent::Type);
+            //types.insert(MovementComponent::Type);
             Ecs::ComponentGroup prototype(types);
             //world_.getEntityComponents(1,prototype);
             Ecs::World::ComponentGroupCollection groupCollection = world_.getComponents(prototype);

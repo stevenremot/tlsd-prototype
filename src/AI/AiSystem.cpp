@@ -59,7 +59,7 @@ namespace AI
                     // Send the action to the relevant object
                     subsystemsManager.dispatchAction(currentAction);
                     aiPlan->goToNextStep();
-                    Threading::sleep(0,50);
+                    //Threading::sleep(0,50);
                 }
             }
 

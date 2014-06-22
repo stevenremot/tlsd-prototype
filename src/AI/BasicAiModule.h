@@ -84,7 +84,7 @@ namespace AI
             TransitionFunction transitionFunction_;
         };
 
-        BasicAiModule(Ecs::ComponentGroup& components, Blackboard& blackboard, const BasicStateMachine::State& initialState)
+        BasicAiModule(const Ecs::ComponentGroup& components, Blackboard& blackboard, const BasicStateMachine::State& initialState)
             : AiModule(components, blackboard), stateMachine_(initialState) {}
 
         /**

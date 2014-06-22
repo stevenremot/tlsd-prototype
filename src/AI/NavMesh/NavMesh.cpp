@@ -21,6 +21,8 @@
 
 #include <stdexcept>
 
+#include "../../Geometry/Polygon2D.h"
+
 using std::vector;
 
 namespace AI
@@ -82,7 +84,7 @@ namespace AI
             return vertices_.at(vertexId);
         }
 
-        bool NavMesh::getNode(const Geometry::Vec2Df& position, Graph::PlanarNode& node)
+        bool NavMesh::getNode(const Geometry::Vec2Df& position, Graph::PlanarNode& node) const
         {
             try
             {
@@ -90,8 +92,8 @@ namespace AI
                 Graph::PlanarGraph::NodeCollection::const_iterator nodesIt;
                 for(nodesIt = nodes.begin(); nodesIt != nodes.end(); ++nodesIt)
                 {
-                    const Graph::PlanarNode& node = (*nodesIt);
-                    const VerticesIdsList& verticesIds = polygonsMap_.at(node);
+                    const Graph::PlanarNode& currentNode = (*nodesIt);
+                    VerticesIdsList verticesIds = polygonsMap_.at(currentNode);
                     std::vector<Geometry::Vec2Df> vertices;
                     for (VerticesIdsList::const_iterator verticesIt = verticesIds.begin(); verticesIt != verticesIds.end(); ++verticesIt)
                     {
@@ -100,7 +102,10 @@ namespace AI
                     }
                     Geometry::Polygon2D polygon(vertices);
                     if(polygon.contains(position))
+                    {
+                        node = currentNode;
                         return true;
+                    }
                 }
                 return false;
             }
