@@ -45,9 +45,9 @@ namespace GraphTest
     void testPlanarGraph()
     {
         PlanarGraph g;
-        PlanarNode& n1 = g.addNode(Vec2Df(0, 0));
-        PlanarNode& n2 = g.addNode(Vec2Df(2, 2));
-        PlanarNode& n3 = g.addNode(Vec2Df(0, 1));
+        PlanarNode n1 = g.addNode(Vec2Df(0, 0));
+        PlanarNode n2 = g.addNode(Vec2Df(2, 2));
+        PlanarNode n3 = g.addNode(Vec2Df(0, 1));
 
         // Test duplicate :
         g.addNode(Vec2Df(0, 1));
