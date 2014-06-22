@@ -46,6 +46,16 @@ namespace World
         Chunk(): coefficients_(), state_(NotLoadedState)
         {}
 
+        Chunk& operator=(const Chunk& chunk)
+        {
+            baseEntities_ = chunk.baseEntities_;
+            finalEntities_ = chunk.finalEntities_;
+            coefficients_ = chunk.coefficients_;
+            state_ = chunk.state_;
+
+            return *this;
+        }
+
         const EntityCollection& getBaseEntities() const { return baseEntities_; }
         const EntityCollection& getFinalEntities() const { return finalEntities_; }
         const GroundCoefficients& getCoefficients() const { return coefficients_; }

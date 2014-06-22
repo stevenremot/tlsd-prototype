@@ -50,7 +50,7 @@ int main()
     // GeometryTest::testVectors();
     // GeometryTest::testPolygons();
     // RandomTest::testNumberGenerator();
-    GraphTest::testPlanarGraph();
+    // GraphTest::testPlanarGraph();
     // GraphTest::testIsBetween();
     // GraphTest::testPrimitiveExtraction();
     // GraphTest::testPlanarCopy();
@@ -69,8 +69,8 @@ int main()
     //InputTest::testPlayerSystem();
     // InputTest::testCoordinates();
 
-    // Application::Application app;
-    // app.start();
+    Application::Application app;
+    app.start();
 
     return 0;
 }
