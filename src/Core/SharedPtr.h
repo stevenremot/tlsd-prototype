@@ -56,6 +56,8 @@ namespace Core
             data_ = data;
             refs_ = new unsigned int;
             *refs_ = 1;
+
+            return *this;
         }
 
         SharedPtr& operator=(const SharedPtr& ptr)
@@ -91,12 +93,12 @@ namespace Core
         {
             (*refs_) -= 1;
 
-            if (*refs_ == 0)
+            if (*refs_ == 0 && refs_ != NULL)
             {
-                delete refs_;
                 delete data_;
-                refs_ = NULL;
+                delete refs_;
                 data_ = NULL;
+                refs_ = NULL;
             }
         }
     };
