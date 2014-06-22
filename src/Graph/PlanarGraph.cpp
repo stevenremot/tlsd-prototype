@@ -79,7 +79,7 @@ namespace Graph
         }
     }
 
-    PlanarNode& PlanarGraph::addNode(const Vec2Df& position)
+    PlanarNode PlanarGraph::addNode(const Vec2Df& position)
     {
         for (unsigned int i = 0; i < nodeCache_.size(); i++)
         {
