@@ -34,6 +34,8 @@ namespace Threading
     public:
         Lock();
 
+        ~Lock();
+
         void lockForReading();
 
         void unlockForReading();
@@ -44,6 +46,7 @@ namespace Threading
 
     private:
         pthread_mutex_t writeMutex_;
+        bool locked_;
     };
 }
 

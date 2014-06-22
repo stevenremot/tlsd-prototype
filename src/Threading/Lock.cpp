@@ -21,9 +21,15 @@
 
 namespace Threading
 {
-    Lock::Lock()
+
+    Lock::Lock(): locked_(false)
     {
         pthread_mutex_init(&writeMutex_, NULL);
+    }
+
+    Lock::~Lock()
+    {
+        pthread_mutex_destroy(&writeMutex_);
     }
 
     void Lock::lockForReading()
@@ -39,10 +45,15 @@ namespace Threading
     void Lock::lockForWriting()
     {
         pthread_mutex_lock(&writeMutex_);
+        locked_ = true;
     }
 
     void Lock::unlockForWriting()
     {
-        pthread_mutex_unlock(&writeMutex_);
+        if (locked_)
+        {
+            locked_ = false;
+            pthread_mutex_unlock(&writeMutex_);
+        }
     }
 }
