@@ -36,6 +36,7 @@ namespace Input
     const Event::Event::Type InputInitializedEvent::Type = "input_initialized";
 
     IrrlichtInputReceiver::IrrlichtInputReceiver(Event::EventQueue& eventQueue):
+        cursorControl_(NULL),
         lastDirection_(Vec2Df(0,0)),
         eventQueue_(eventQueue)
     {
