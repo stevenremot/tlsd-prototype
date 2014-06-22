@@ -32,6 +32,7 @@
 #include "../../Physics/EntityRotationChangedEvent.h"
 #include "../../Geometry/IrrlichtConversions.h"
 #include "../../Ecs/EntityRemovedEvent.h"
+#include "../../Threading/Channel.h"
 
 // TODO: remove
 #include <iostream>
@@ -52,7 +53,7 @@ namespace Graphics
             camera_(NULL),
             eventQueue_(eventQueue)
         {
-
+            Threading::createChannel< Event::Event* >(internEventQueue_, internEventHead_);
         }
 
         Scene::~Scene()
@@ -78,49 +79,49 @@ namespace Graphics
         {
             if (event.getType() == InitSceneEvent::Type)
             {
-                events_ << new InitSceneEvent(static_cast<const InitSceneEvent&>(event));
+                internEventQueue_ << new InitSceneEvent(static_cast<const InitSceneEvent&>(event));
             }
             else if (event.getType() == RenderMeshFileEvent::Type)
             {
-                events_ << new RenderMeshFileEvent(static_cast<const RenderMeshFileEvent&>(event));
+                internEventQueue_ << new RenderMeshFileEvent(static_cast<const RenderMeshFileEvent&>(event));
             }
             else if (event.getType() == RenderAnimatedMeshFileEvent::Type)
             {
-                events_ << new RenderAnimatedMeshFileEvent(static_cast<const RenderAnimatedMeshFileEvent&>(event));
+                internEventQueue_ << new RenderAnimatedMeshFileEvent(static_cast<const RenderAnimatedMeshFileEvent&>(event));
             }
             else if (event.getType() == RenderModel3DEvent::Type)
             {
-                events_ << new RenderModel3DEvent(static_cast<const RenderModel3DEvent&>(event));
+                internEventQueue_ << new RenderModel3DEvent(static_cast<const RenderModel3DEvent&>(event));
             }
             else if (event.getType() == RenderCameraEvent::Type)
             {
-                events_ << new RenderCameraEvent(static_cast<const RenderCameraEvent&>(event));
+                internEventQueue_ << new RenderCameraEvent(static_cast<const RenderCameraEvent&>(event));
             }
             else if (event.getType() == AnimateEvent::Type)
             {
-                events_ << new AnimateEvent(static_cast<const AnimateEvent&>(event));
+                internEventQueue_ << new AnimateEvent(static_cast<const AnimateEvent&>(event));
             }
             else if (event.getType() == SetupAnimationEvent::Type)
             {
-                events_ << new SetupAnimationEvent(static_cast<const SetupAnimationEvent&>(event));
+                internEventQueue_ << new SetupAnimationEvent(static_cast<const SetupAnimationEvent&>(event));
             }
             else if (event.getType() == UpdateAnimationEvent::Type)
             {
-                events_ << new UpdateAnimationEvent(static_cast<const UpdateAnimationEvent&>(event));
+                internEventQueue_ << new UpdateAnimationEvent(static_cast<const UpdateAnimationEvent&>(event));
             }
             else if (event.getType() == Physics::EntityPositionChangedEvent::Type)
             {
-                events_ << new Physics::EntityPositionChangedEvent(static_cast<const Physics::EntityPositionChangedEvent&>(event));
+                internEventQueue_ << new Physics::EntityPositionChangedEvent(static_cast<const Physics::EntityPositionChangedEvent&>(event));
             }
             else if (event.getType() == Physics::EntityRotationChangedEvent::Type)
             {
-                events_ << new Physics::EntityRotationChangedEvent(
+                internEventQueue_ << new Physics::EntityRotationChangedEvent(
                             dynamic_cast<const Physics::EntityRotationChangedEvent&>(event)
                         );
             }
             else if (event.getType() == Ecs::EntityRemovedEvent::Type)
             {
-                events_ << new Ecs::EntityRemovedEvent(
+                internEventQueue_ << new Ecs::EntityRemovedEvent(
                     dynamic_cast<const Ecs::EntityRemovedEvent&>(event)
                 );
             }
@@ -130,10 +131,10 @@ namespace Graphics
         {
             std::vector<Event::Event*> delayedEvents;
 
-            while (!events_.isEmpty())
+            while (!internEventHead_.isEmpty())
             {
                 Event::Event* event = NULL;
-                events_ >> event;
+                internEventHead_ >> event;
 
                 if (event->getType() == InitSceneEvent::Type)
                 {
@@ -284,7 +285,7 @@ namespace Graphics
             }
 
             for (unsigned int i =0; i < delayedEvents.size(); i++)
-                events_ << delayedEvents[i];
+                internEventQueue_ << delayedEvents[i];
         }
 
         void Scene::addMeshSceneNodeFromFile(
@@ -396,7 +397,7 @@ namespace Graphics
 
                 for (unsigned int i = 0; i < currentVerticeNumber; i++)
                 {
-                    const Vec3Df& v = model.getVertices()[buffer*verticesPerMeshBuffer_+i];
+                    const Vec3Df& v = model.getVertices().at(buffer*verticesPerMeshBuffer_+i);
                     const Vec3Df& n = normals[buffer*verticesPerMeshBuffer_+i];
 
                     S3DVertex& irrVertex = currentMeshBuffer->Vertices[i];
@@ -407,7 +408,7 @@ namespace Graphics
 
                 for (unsigned int t = 0; t < currentTriangleNumber; t++)
                 {
-                    const Face& face = model.getFaces()[buffer*trianglesPerMeshBuffer + t];
+                    const Face& face = model.getFaces().at(buffer*trianglesPerMeshBuffer + t);
 
                     currentMeshBuffer->Indices[3*t] = face[0] - buffer*verticesPerMeshBuffer_;
                     currentMeshBuffer->Indices[3*t+1] = face[1] - buffer*verticesPerMeshBuffer_;

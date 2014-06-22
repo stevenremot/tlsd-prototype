@@ -36,7 +36,6 @@
 #include "../../Event/ListenerRegister.h"
 #include "../../Event/EventManager.h"
 #include "../../Threading/ThreadableInterface.h"
-#include "../../Threading/Channel.h"
 #include "../../Ecs/Entity.h"
 
 namespace Graphics
@@ -123,7 +122,8 @@ namespace Graphics
             SceneData data_;
             CameraSceneNode* camera_;
 
-            Threading::Channel<Event::Event*> events_;
+            Event::EventHead internEventHead_;
+            Event::EventQueue internEventQueue_;
             Event::EventQueue& eventQueue_;
         };
     }
