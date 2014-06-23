@@ -154,7 +154,7 @@ namespace World
             currentChunk.setState(Chunk::PreparedState);
             world_.setChunk(x, y, currentChunk);
 
-            if ((x == 0 && y == 0) || rng.getUniform(0, 50) < 1)
+            if ((x == 0 && y == 0) || rng.getUniform(0, 20) < 1)
             {
                 generateCity(x, y, rng);
             }
