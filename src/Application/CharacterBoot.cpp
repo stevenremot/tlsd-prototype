@@ -23,6 +23,17 @@
 
 namespace Application
 {
+    CharacterBoot::~CharacterBoot()
+    {
+        if (characterSystem_ != NULL)
+        {
+            characterSystem_->unregisterListeners(
+                getApplication().getEventManager().getListenerRegister()
+            );
+            delete characterSystem_;
+        }
+    }
+
     void CharacterBoot::start()
     {
         Event::ListenerRegister& reg = getApplication().getEventManager().getListenerRegister();

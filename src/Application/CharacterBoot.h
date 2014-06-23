@@ -34,13 +34,7 @@ namespace Application
             characterSystem_(NULL)
         {}
 
-        virtual ~CharacterBoot()
-        {
-            if (characterSystem_ != NULL)
-            {
-                delete characterSystem_;
-            }
-        }
+        virtual ~CharacterBoot();
 
         virtual void start();
 

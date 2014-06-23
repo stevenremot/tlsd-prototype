@@ -48,6 +48,7 @@ namespace Character
             virtual void run();
 
             void registerListeners(Event::ListenerRegister& reg);
+            void unregisterListeners(Event::ListenerRegister& reg);
 
         private:
             Event::EventQueue eventQueue_;
