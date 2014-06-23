@@ -25,6 +25,17 @@
 
 namespace Application
 {
+    GenerationBoot::~GenerationBoot()
+    {
+        if (generationSystem_ != NULL)
+        {
+            generationSystem_->unregisterListeners(
+                getApplication().getEventManager().getListenerRegister()
+            );
+            delete generationSystem_;
+        }
+    }
+
     void GenerationBoot::start()
     {
         // TODO should this manual generation remain ?

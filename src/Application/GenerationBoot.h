@@ -33,13 +33,7 @@ namespace Application
             generationSystem_(NULL)
         {}
 
-        virtual ~GenerationBoot()
-        {
-            if (generationSystem_ != NULL)
-            {
-                delete generationSystem_;
-            }
-        }
+        virtual ~GenerationBoot();
 
         virtual void start();
 
