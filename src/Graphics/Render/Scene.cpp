@@ -152,7 +152,8 @@ namespace Graphics
                     camera_ = dynamic_cast<CameraSceneNode*>(data_.getLastSceneNode());
                     camera_->initStaticCamera(Vec3Df(160,160,10), Vec3Df(150,150,0));*/
 
-                    addLightSceneNode(data_.getRootSceneNode(), Vec3Df(100,100,200), Light(Directional, 1000.0f, Color(1,1,1), Vec3Df(0,0,-1)));
+                    addLightSceneNode(data_.getRootSceneNode(), Vec3Df(100,100,200), Light(Directional, 1000.0f, Color(1,1,1), Vec3Df(-1, -0.5, -1)));
+                    addLightSceneNode(data_.getRootSceneNode(), Vec3Df(100,100,200), Light(Directional, 1000.0f, Color(1,1,1), Vec3Df(0.5, 1, -1)));
 
                     std::cout << "[Scene]: init done" << std::endl;
                 }
