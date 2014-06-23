@@ -68,7 +68,7 @@ namespace World
         Core::SharedPtr<Ecs::EntityDescriptor> entity(new Ecs::EntityDescriptor);
 
         entity->addComponent(
-            new Geometry::PositionComponent(Geometry::Vec3Df(0.0, 0.0, 0.1))
+            new Geometry::PositionComponent(Geometry::Vec3Df(0.0, 0.0, 0.01))
         );
 
         entity->addComponent(
@@ -86,7 +86,7 @@ namespace World
     {
         Core::SharedPtr<Ecs::EntityDescriptor> entity(new Ecs::EntityDescriptor);
 
-        Geometry::Vec3Df pos = Geometry::Vec3Df(0.0, 0.0, 0.1);
+        Geometry::Vec3Df pos = Geometry::Vec3Df(0.0, 0.0, 0.0);
 
         entity->addComponent(
             new Geometry::PositionComponent(pos)

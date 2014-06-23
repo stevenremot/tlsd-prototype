@@ -54,7 +54,7 @@ namespace World
         }
 
         // Building roof
-        Polygon2D roofBase = base_.offset(0.2)[0];
+        Polygon2D roofBase = base_.offset(0.5)[0];
         Vec2Df center;
 
         const std::vector<Vec2Df>& roofPoints = roofBase.getPoints();
@@ -74,8 +74,8 @@ namespace World
         {
             faces.push_back(Face(
                                 baseIndex,
-                                baseIndex + currentIndex,
                                 baseIndex + currentIndex + 1,
+                                baseIndex + currentIndex,
                                 roofColor_
                             ));
         }
