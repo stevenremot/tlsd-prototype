@@ -38,6 +38,7 @@ namespace World
     public:
         static const unsigned int ChunkSize;
         static const unsigned int TreeDensity;
+        static const unsigned int MaximalHeight;
 
         /**
          * Return the chunk at indexes (x, y)

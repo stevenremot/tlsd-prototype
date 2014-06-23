@@ -38,6 +38,7 @@ namespace World
     )
     {
         float chunkSize = World::ChunkSize;
+        float maxHeight = World::MaximalHeight;
 
         Chunk chunk;
         if (!world.getChunk(x, y, chunk))
@@ -85,9 +86,9 @@ namespace World
                 vertices.push_back(Geometry::Vec3Df((i+1)/period,j/period,groundTable[static_cast<int>(i+1)][static_cast<int>(j)]));
                 vertices.push_back(Geometry::Vec3Df(i/period,(j+1)/period,groundTable[static_cast<int>(i)][static_cast<int>(j+1)]));
                 vertices.push_back(Geometry::Vec3Df((i+1)/period,(j+1)/period,groundTable[static_cast<int>(i+1)][static_cast<int>(j+1)]));
-                Graphics::Color color00 = (world.getBiome(x*chunkSize+i/period,y*chunkSize+j/period).getColor()+Geometry::Vec3Df(1,1,1)*groundTable[static_cast<int>(i)][static_cast<int>(j)]*1.0/300.0)/2;
-                Graphics::Color color10 = (world.getBiome(x*chunkSize+(i+1)/period,y*chunkSize+j/period).getColor()+Geometry::Vec3Df(1,1,1)*groundTable[static_cast<int>(i+1)][static_cast<int>(j)]*1.0/300.0)/2;
-                Graphics::Color color01 = (world.getBiome(x*chunkSize+i/period,y*chunkSize+(j+1)/period).getColor()+Geometry::Vec3Df(1,1,1)*groundTable[static_cast<int>(i)][static_cast<int>(j+1)]*1.0/300.0)/2;
+                Graphics::Color color00 = (world.getBiome(x*chunkSize+i/period,y*chunkSize+j/period).getColor()+Geometry::Vec3Df(1,1,1)*groundTable[static_cast<int>(i)][static_cast<int>(j)]*1.0/maxHeight)/2;
+                Graphics::Color color10 = (world.getBiome(x*chunkSize+(i+1)/period,y*chunkSize+j/period).getColor()+Geometry::Vec3Df(1,1,1)*groundTable[static_cast<int>(i+1)][static_cast<int>(j)]*1.0/maxHeight)/2;
+                Graphics::Color color01 = (world.getBiome(x*chunkSize+i/period,y*chunkSize+(j+1)/period).getColor()+Geometry::Vec3Df(1,1,1)*groundTable[static_cast<int>(i)][static_cast<int>(j+1)]*1.0/maxHeight)/2;
                 Graphics::Color color11 = (world.getBiome(x*chunkSize+(i+1)/period,y*chunkSize+(j+1)/period).getColor()+Geometry::Vec3Df(1,1,1)*groundTable[static_cast<int>(i+1)][static_cast<int>(j+1)]*1.0/300.0)/2;
                 Graphics::Color color = (color00+color10+color01)/3.0;
                 faces.push_back(Graphics::Render::Face(baseIndex, baseIndex+1, baseIndex+2, color));

@@ -44,62 +44,62 @@ namespace Threading
     class ConcurrentReader
     {
     public:
-        ConcurrentReader(Lock& lock, const T& data):
+        ConcurrentReader(const Core::SharedPtr<Lock>& lock, const Core::SharedPtr<T>& data):
             lock_(lock),
             data_(data)
         {
-            lock_.lockForReading();
+            lock_->lockForReading();
         }
 
         ~ConcurrentReader()
         {
-            lock_.unlockForReading();
+            lock_->unlockForReading();
         }
 
         const T& operator*()
         {
-            return data_;
+            return *data_;
         }
 
         const T* operator->()
         {
-            return &data_;
+            return &*data_;
         }
 
     private:
-        Lock& lock_;
-        const T& data_;
+        Core::SharedPtr<Lock> lock_;
+        Core::SharedPtr<T> data_;
     };
 
     template<typename T>
     class ConcurrentWriter
     {
     public:
-        ConcurrentWriter(Lock& lock, T& data):
+        ConcurrentWriter(const Core::SharedPtr<Lock>& lock, const Core::SharedPtr<T>& data):
             lock_(lock),
             data_(data)
         {
-            lock_.lockForWriting();
+            lock_->lockForWriting();
         }
 
         ~ConcurrentWriter()
         {
-            lock_.unlockForWriting();
+            lock_->unlockForWriting();
         }
 
         T& operator*()
         {
-            return data_;
+            return *data_;
         }
 
         T* operator->()
         {
-            return &data_;
+            return &*data_;
         }
 
     private:
-        Lock& lock_;
-        T& data_;
+        Core::SharedPtr<Lock> lock_;
+        Core::SharedPtr<T> data_;
     };
 
     /**
@@ -121,12 +121,12 @@ namespace Threading
 
         ConcurrentReader<T> getReader()
         {
-            return ConcurrentReader<T>(*lock_, *data_);
+            return ConcurrentReader<T>(lock_, data_);
         }
 
         ConcurrentWriter<T> getWriter()
         {
-            return ConcurrentWriter<T>(*lock_, *data_);
+            return ConcurrentWriter<T>(lock_, data_);
         }
 
         template<typename U, typename V>
@@ -143,14 +143,20 @@ namespace Threading
     template <typename T1, typename T2>
     ConcurrentReader<T2> getConcurrentReader(ConcurrentRessource<T1> res)
     {
-        return ConcurrentReader<T2>(*res.lock_, static_cast<T2&>(*res.data_));
+        return ConcurrentReader<T2>(
+            res.lock_,
+            Core::castSharedPtr<T1, T2>(res.data_)
+        );
     }
 
 
     template <typename T1, typename T2>
     ConcurrentWriter<T2> getConcurrentWriter(ConcurrentRessource<T1> res)
     {
-        return ConcurrentWriter<T2>(*res.lock_, static_cast<T2&>(*res.data_));
+        return ConcurrentWriter<T2>(
+            res.lock_,
+            Core::castSharedPtr<T1, T2>(res.data_)
+        );
     }
 }
 

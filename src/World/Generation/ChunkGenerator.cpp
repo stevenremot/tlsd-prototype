@@ -63,7 +63,7 @@ namespace World
             currentChunk.setState(Chunk::GeneratedState);
             world_.setChunk(x, y, currentChunk);
 
-            Chunk::EntityCollection finalEntities;
+            Chunk::EntityCollection& finalEntities = currentChunk.getFinalEntities();
             const Chunk::EntityCollection& baseEntities =
                 currentChunk.getBaseEntities();
 
@@ -86,7 +86,6 @@ namespace World
                 finalEntities.push_back(createTree(positions[i], *(trees[i])));
             }
 
-            currentChunk.setFinalEntities(finalEntities);
             Threading::ConcurrentWriter<Ecs::World> ecsWorld =
                 ecsWorld_.getWriter();
 
