@@ -95,8 +95,8 @@ namespace World
             );
             return new SimpleBuilding(
                 base,
-                height * 0.75,
-                height * 0.25,
+                height * 0.70,
+                height * 0.30,
                 parameters.getWallColor(),
                 parameters.getRoofColor()
             );
