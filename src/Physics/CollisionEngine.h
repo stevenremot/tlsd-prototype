@@ -12,7 +12,8 @@ namespace Physics
     class CollisionEngine
     {
     public:
-        CollisionEngine();
+        CollisionEngine()
+        {}
 
         /**
         *   Apply sliding ellipsoid against polygons collision response
@@ -33,6 +34,8 @@ namespace Physics
             Geometry::Vec3Df& position1,
             const Geometry::Vec3Df& position2
         );
+
+        bool getAABBCollision(const Geometry::AxisAlignedBoundingBox& aabb1, const Geometry::AxisAlignedBoundingBox& aabb2);
     };
 }
 
