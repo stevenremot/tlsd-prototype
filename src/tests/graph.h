@@ -23,6 +23,10 @@
 namespace GraphTest
 {
     void testPlanarGraph();
+    void testIsBetween();
+    void testPlanarCopy();
+    void testPrimitiveExtraction();
+    void testFilamentInCycleExtraction();
 }
 
 #endif

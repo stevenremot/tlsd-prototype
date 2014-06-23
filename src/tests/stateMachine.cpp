@@ -36,9 +36,9 @@ namespace StateMachineTest
 
     float toOnAttack(Ecs::ComponentGroup& components, const Blackboard& blackboard)
     {
-        Geometry::PositionComponent& positionComponent = static_cast<Geometry::PositionComponent&>(components.getComponent(Geometry::PositionComponent::Type));
+        Threading::ConcurrentWriter<Geometry::PositionComponent> positionComponent = Threading::getConcurrentWriter<Ecs::Component, Geometry::PositionComponent>(components.getComponent(Geometry::PositionComponent::Type));
         float maxDistance = 10.f;
-        if((blackboard.getNavigationTarget()-positionComponent.getPosition()).getLength() < maxDistance)
+        if((blackboard.getNavigationTarget()-positionComponent->getPosition()).getLength() < maxDistance)
         {
             return 1.0f;
         }
@@ -47,9 +47,9 @@ namespace StateMachineTest
 
     float toCloseToTarget(Ecs::ComponentGroup& components, const Blackboard& blackboard)
     {
-        Geometry::PositionComponent& positionComponent = static_cast<Geometry::PositionComponent&>(components.getComponent(Geometry::PositionComponent::Type));
+        Threading::ConcurrentWriter<Geometry::PositionComponent> positionComponent = Threading::getConcurrentWriter<Ecs::Component, Geometry::PositionComponent>(components.getComponent(Geometry::PositionComponent::Type));
         float maxDistance = 110.f;
-        if((blackboard.getNavigationTarget()-positionComponent.getPosition()).getLength() < maxDistance)
+        if((blackboard.getNavigationTarget()-positionComponent->getPosition()).getLength() < maxDistance)
         {
             return 1.0f;
         }
@@ -79,26 +79,26 @@ namespace StateMachineTest
 
     void testStateMachine()
     {
-
-        Ecs::World w = Ecs::World();
-        Ecs::Entity e1 = w.createEntity();
+        Event::EventManager em;
+        Threading::ConcurrentRessource<Ecs::World> w(new Ecs::World(em.getEventQueue()));
+        Ecs::Entity e1 = w.getWriter()->createEntity();
         // Create component for e1
         Geometry::PositionComponent* positionComponentE1 = new Geometry::PositionComponent(Geometry::Vec3Df(0.f,0.f,0.0f));
         Physics::MovementComponent* movementComponentE1= new Physics::MovementComponent(Geometry::Vec3Df(0.f,0.f,0.0f));
-        w.addComponent(e1, positionComponentE1);
-        w.addComponent(e1, movementComponentE1);
+        w.getWriter()->addComponent(e1, positionComponentE1);
+        w.getWriter()->addComponent(e1, movementComponentE1);
 
         Ecs::ComponentGroup::ComponentTypeCollection types;
         types.insert(Physics::MovementComponent::Type);
         types.insert(Geometry::PositionComponent::Type);
 
         Ecs::ComponentGroup prototype(types);
-        Ecs::ComponentGroup components = w.getEntityComponents(e1, prototype);
-        AI::AiComponent* aiComponent = new AI::AiComponent(e1,w);
+        Ecs::ComponentGroup components = w.getWriter()->getEntityComponents(e1, prototype);
+        AI::AiComponent* aiComponent = new AI::AiComponent(e1,*w.getWriter());
         BasicAiModule* aiModule = new BasicAiModule(components, aiComponent->getBlackboard(), Idle);
         setupStateMachine(*aiModule);
         aiComponent->setAiModule(aiModule);
-        w.addComponent(e1, aiComponent);
+        w.getWriter()->addComponent(e1, aiComponent);
 
         // Add a sight sensor
         AI::Sensor::SensorsManager& sensorsManager = aiComponent->getSensorsManager();
@@ -110,14 +110,14 @@ namespace StateMachineTest
         subsystemsManager.addSubsystem(AI::Subsystem::NavigationSubSystem::Type);
 
         // Create an other entity
-        Ecs::Entity e2 = w.createEntity();
+        Ecs::Entity e2 = w.getWriter()->createEntity();
         Geometry::PositionComponent* positionComponent = new Geometry::PositionComponent(Geometry::Vec3Df(0.f,80.f,0.0f));
-        w.addComponent(e2, positionComponent);
-        w.addComponent(e2, new Physics::MovementComponent(Geometry::Vec3Df(0.f,0.f,0.0f)));
+        w.getWriter()->addComponent(e2, positionComponent);
+        w.getWriter()->addComponent(e2, new Physics::MovementComponent(Geometry::Vec3Df(0.f,0.f,0.0f)));
 
         // Create the systems for ai and movement
         AI::AiSystem aiSystem(w);
-        Physics::MovementSystem movementSystem(w);
+        Physics::MovementSystem movementSystem(w, em.getEventQueue());
 
         vector<Threading::ThreadableInterface*> aiSystemVector;
         vector<Threading::ThreadableInterface*> movementSystemVector;
@@ -139,6 +139,5 @@ namespace StateMachineTest
         aiThread.stop();
         movementThread.stop();
         aiModule->computeNewPlan();
-        int k = 0;
     }
 }

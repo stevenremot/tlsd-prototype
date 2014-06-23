@@ -22,13 +22,29 @@ namespace AI
     public:
         static const Ecs::Component::Type Type;
 
+        // TODO use a concurrent ressource here
         AiComponent(Ecs::Entity entity, Ecs::World& world)
             : Component(Type),
               entity_(entity), memory_(), blackboard_(),
               subsystemsManager_(entity, world, blackboard_,memory_),
               sensorsManager_(entity, world, memory_), aiModule_(NULL) {}
 
+        AiComponent(const AiComponent& aiComp):
+            Component(Type),
+            entity_(aiComp.entity_),
+            memory_(aiComp.memory_),
+            blackboard_(aiComp.blackboard_),
+            subsystemsManager_(aiComp.subsystemsManager_),
+            sensorsManager_(aiComp.sensorsManager_),
+            aiModule_(aiComp.aiModule_)
+        {}
+
         ~AiComponent();
+
+        virtual Component* clone() const
+        {
+            return new AiComponent(*this);
+        }
 
         virtual const std::vector<Ecs::Component::Type>& getDependentComponents()
         {

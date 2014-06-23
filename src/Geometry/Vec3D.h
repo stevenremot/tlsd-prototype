@@ -71,6 +71,11 @@ namespace Geometry
             return x_ == vec.x_ && y_ == vec.y_ && z_ == vec.z_;
         }
 
+        inline bool operator!=(const Vec3D& vec) const
+        {
+            return x_ != vec.x_ || y_ != vec.y_ || z_ != vec.z_;
+        }
+
         inline Vec3D operator+(const Vec3D& vec) const
         {
             return Vec3D(x_ + vec.x_,
@@ -131,6 +136,21 @@ namespace Geometry
             return *this;
         }
 
+        inline Vec3D operator/(T t) const
+        {
+            return Vec3D(x_ / t,
+                         y_ / t,
+                         z_ / t);
+        }
+
+        inline Vec3D& operator /=(T t)
+        {
+            x_ /= t;
+            y_ /= t;
+            z_ /= t;
+            return *this;
+        }
+
         inline Vec3D operator-() const
         {
             return Vec3D(-x_, -y_, -z_);
@@ -139,6 +159,11 @@ namespace Geometry
         inline T dot(const Vec3D& vec) const
         {
             return x_ * vec.x_ + y_ * vec.y_ + z_ * vec.z_;
+        }
+
+        inline Vec3D cross(const Vec3D& vec) const
+        {
+            return Vec3D(y_*vec.z_ - z_* vec.y_, z_*vec.x_ - x_*vec.z_, x_*vec.y_ - y_*vec.x_);
         }
 
         // Vector function
@@ -150,6 +175,15 @@ namespace Geometry
         inline T getLength() const
         {
             return std::sqrt(getSquaredLength());
+        }
+
+        inline void normalize()
+        {
+            T length = this->getLength();
+
+            x_ /= length;
+            y_ /= length;
+            z_ /= length;
         }
 
     private:

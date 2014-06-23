@@ -7,27 +7,27 @@ namespace AI
     void AiSystem::run()
     {
         // Get all the entities which have an ai component
-        Ecs::World world = getWorld();
 
         Ecs::ComponentGroup::ComponentTypeCollection types;
         types.insert(AiComponent::Type);
         Ecs::ComponentGroup prototype(types);
-        Ecs::World::ComponentGroupCollection groups = world.getComponents(prototype);
+        Ecs::World::ComponentGroupCollection groups = getWorld()->getComponents(prototype);
 
         // Update their positions
         Ecs::World::ComponentGroupCollection::iterator group;
         for (group = groups.begin(); group != groups.end(); ++group)
         {
-            AiComponent& aiComponent = static_cast<AiComponent &>(group->getComponent(AiComponent::Type));
+            Threading::ConcurrentWriter<AiComponent> aiComponent =
+                Threading::getConcurrentWriter<Ecs::Component, AiComponent>(group->getComponent(AiComponent::Type));
             // update all the sensors
-            Sensor::SensorsManager& sensorsManager = aiComponent.getSensorsManager();
+            Sensor::SensorsManager& sensorsManager = aiComponent->getSensorsManager();
             sensorsManager.updateSensors();
             // update the subsystems
-            Subsystem::SubSystemsManager& subsystemsManager = aiComponent.getSubsystemsManager();
+            Subsystem::SubSystemsManager& subsystemsManager = aiComponent->getSubsystemsManager();
             subsystemsManager.updateSubsystems();
 
             // If the plan is over, compute a new one.
-            AiModule* aiModule = aiComponent.getAiModule();
+            AiModule* aiModule = aiComponent->getAiModule();
             aiModule->computeNewPlan();
             // Get the actions sequence and dispatch them between subsystems
             Plan::AiPlan* aiPlan = aiModule->getPlan();

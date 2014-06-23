@@ -28,17 +28,18 @@ namespace AITest
 {
     void testAI()
     {
-        Ecs::World w = Ecs::World();
+        Event::EventManager em;
+        Threading::ConcurrentRessource<Ecs::World> w(new Ecs::World(em.getEventQueue()));
         // Create the unit with the ai module
-        Ecs::Entity e1 = w.createEntity();
+        Ecs::Entity e1 = w.getWriter()->createEntity();
 
         Geometry::PositionComponent* positionComponentE1 = new Geometry::PositionComponent(Geometry::Vec3Df(0.f,0.f,0.0f));
         Physics::MovementComponent* movementComponentE1= new Physics::MovementComponent(Geometry::Vec3Df(0.f,0.f,0.0f));
-        w.addComponent(e1, positionComponentE1);
-        w.addComponent(e1, movementComponentE1);
+        w.getWriter()->addComponent(e1, positionComponentE1);
+        w.getWriter()->addComponent(e1, movementComponentE1);
 
-        AI::AiComponent* aiComponent = new AI::AiComponent(e1,w);
-        w.addComponent(e1, aiComponent);
+        AI::AiComponent* aiComponent = new AI::AiComponent(e1,*w.getWriter());
+        w.getWriter()->addComponent(e1, aiComponent);
 
         // Add a sight sensor
         AI::Sensor::SensorsManager& sensorsManager = aiComponent->getSensorsManager();
@@ -51,14 +52,14 @@ namespace AITest
         subsystemsManager.addSubsystem(AI::Subsystem::NavigationSubSystem::Type);
 
         // Create an other unit
-        Ecs::Entity e2 = w.createEntity();
+        Ecs::Entity e2 = w.getWriter()->createEntity();
         Geometry::PositionComponent* positionComponent = new Geometry::PositionComponent(Geometry::Vec3Df(0.f,200.f,0.0f));
-        w.addComponent(e2, positionComponent);
-        w.addComponent(e2, new Physics::MovementComponent(Geometry::Vec3Df(0.f,-20.f,0.0f)));
+        w.getWriter()->addComponent(e2, positionComponent);
+        w.getWriter()->addComponent(e2, new Physics::MovementComponent(Geometry::Vec3Df(0.f,-20.f,0.0f)));
 
         // Create the systems for ai and movement
         AI::AiSystem aiSystem(w);
-        Physics::MovementSystem movementSystem(w);
+        Physics::MovementSystem movementSystem(w, em.getEventQueue());
 
         vector<Threading::ThreadableInterface*> systems;
         systems.push_back(&aiSystem);

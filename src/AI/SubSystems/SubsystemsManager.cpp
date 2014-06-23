@@ -35,9 +35,10 @@ namespace AI
                 types.insert(MovementComponent::Type);
                 Ecs::ComponentGroup prototype(types);
                 Ecs::ComponentGroup components = world_.getEntityComponents(entity_, prototype);
-                Geometry::PositionComponent& positionComponent = static_cast<Geometry::PositionComponent&>(components.getComponent(PositionComponent::Type));
-                Physics::MovementComponent& movementComponent = static_cast<Physics::MovementComponent&>(components.getComponent(MovementComponent::Type));
-                subSystemsList_.push_back(new NavigationSubSystem(blackboard_, positionComponent, movementComponent));
+                Threading::ConcurrentWriter<Geometry::PositionComponent> positionComponent = Threading::getConcurrentWriter<Ecs::Component, Geometry::PositionComponent>(components.getComponent(PositionComponent::Type));
+                Threading::ConcurrentWriter<Physics::MovementComponent> movementComponent = Threading::getConcurrentWriter<Ecs::Component, Physics::MovementComponent>(components.getComponent(MovementComponent::Type));
+
+                subSystemsList_.push_back(new NavigationSubSystem(blackboard_, *positionComponent, *movementComponent));
             }
         }
 

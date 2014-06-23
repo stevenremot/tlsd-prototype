@@ -35,11 +35,26 @@ namespace Graphics
         {
         public:
             Face(unsigned int v1, unsigned int v2, unsigned int v3, const Color& color):
-                color_(color)
+                color_(color),
+                vertices_(new unsigned int[3])
             {
                 vertices_[0] = v1;
                 vertices_[1] = v2;
                 vertices_[2] = v3;
+            }
+
+            Face(const Face& face):
+                color_(face.color_),
+                vertices_(new unsigned int[3])
+            {
+                vertices_[0] = face.vertices_[0];
+                vertices_[1] = face.vertices_[1];
+                vertices_[2] = face.vertices_[2];
+            }
+
+            ~Face()
+            {
+                delete[] vertices_;
             }
 
             unsigned int& operator[](unsigned int i)
@@ -66,8 +81,8 @@ namespace Graphics
             }
 
         private:
-            unsigned int vertices_[3];
             Color color_;
+            unsigned int* vertices_;
         };
     }
 }

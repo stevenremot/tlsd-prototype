@@ -21,10 +21,18 @@
 
 #include <algorithm>
 
+#include "ComponentCreatedEvent.h"
+#include "EntityRemovedEvent.h"
+
 using std::map;
 
 namespace Ecs
 {
+    void removeEntity(World& world, Entity entity)
+    {
+        world.removeEntity(entity);
+    }
+
     Entity World::createEntity()
     {
         Entity currentId = 0;
@@ -47,16 +55,60 @@ namespace Ecs
         return entity;
     }
 
+    SharedEntity World::createSharedEntity()
+    {
+        return shareEntity(createEntity());
+    }
+
+    SharedEntity World::createSharedEntity(const Entity& entity)
+    {
+        return shareEntity(createEntity(entity));
+    }
+
+    SharedEntity World::shareEntity(const Entity& entity)
+    {
+        return SharedEntity(*this, entity, &Ecs::removeEntity);
+    }
+
+    Entity World::loadDescriptor(EntityDescriptor& descriptor)
+    {
+        if (descriptor.references_ == 0)
+        {
+            const Entity& entity = createEntity();
+
+            for (unsigned int i = 0; i < descriptor.getComponents().size(); i++)
+            {
+                addComponent(entity, descriptor.getComponents()[i]->clone());
+            }
+
+            descriptor.entity_ = entity;
+        }
+
+        descriptor.references_ += 1;
+
+        return descriptor.entity_;
+    }
+
+    void World::unloadDescriptor(EntityDescriptor& descriptor)
+    {
+        descriptor.references_ -= 1;
+
+        if (descriptor.references_ == 0)
+        {
+            removeEntity(descriptor.entity_);
+        }
+    }
+
     void World::addComponent(const Entity& entity, Component* component)
     {
         ComponentCollection& components = components_.at(entity);
         std::vector<Component::Type> dependencies =
             component->getDependentComponents();
 
-        ComponentCollection::const_iterator comp;
+        ComponentCollection::iterator comp;
         for (comp = components.begin(); comp != components.end(); ++comp)
         {
-            Component::Type type = (*comp)->getType();
+            Component::Type type = comp->getReader()->getType();
             if (type == component->getType())
             {
                 throw AlreadySetComponentException();
@@ -77,24 +129,44 @@ namespace Ecs
         }
 
         components.push_back(component);
+
+        eventQueue_ << new ComponentCreatedEvent(entity, component);
     }
 
     ComponentGroup World::getEntityComponents(const Entity& entity,
                                               const ComponentGroup& prototype)
     {
-        ComponentCollection & components = components_.at(entity);
+        ComponentCollection& components = components_.at(entity);
 
         try
         {
             return prototype.clone(entity, components);
         }
-        catch (const ComponentGroup::DoesNotSatisfyException & e)
+        catch (const ComponentGroup::DoesNotSatisfyException& e)
         {
             throw DoesNotSatisfyException();
         }
     }
 
-    World::ComponentGroupCollection World::getComponents(const ComponentGroup & prototype)
+    Threading::ConcurrentRessource<Component>& World::getEntityComponent(
+        const Entity& entity,
+        const Component::Type& type
+    ) {
+        ComponentCollection& components = components_.at(entity);
+
+        ComponentCollection::iterator component;
+        for (component = components.begin(); component != components.end(); ++component)
+        {
+            if (component->getReader()->getType() == type)
+            {
+                return *component;
+            }
+        }
+
+        throw DoesNotSatisfyException();
+    }
+
+    World::ComponentGroupCollection World::getComponents(const ComponentGroup& prototype)
     {
         ComponentGroupCollection groups;
 
@@ -113,5 +185,25 @@ namespace Ecs
         }
 
         return groups;
+    }
+
+    void World::removeEntity(const Entity& entity)
+    {
+        components_.erase(entity);
+        eventQueue_ << new EntityRemovedEvent(entity);
+    }
+
+    bool World::hasComponent(const Entity& entity, Component::Type type)
+    {
+        ComponentCollection& components = components_.at(entity);
+
+        ComponentCollection::iterator comp;
+        for (comp = components.begin(); comp != components.end(); ++comp)
+        {
+            if (comp->getReader()->getType() == type)
+                return true;
+        }
+
+        return false;
     }
 }

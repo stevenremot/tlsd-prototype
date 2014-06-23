@@ -1,5 +1,6 @@
-env = Environment()
+import os
 
+env= Environment()
 env.Append(CXXFLAGS = ["-Wall"])
 
 if ARGUMENTS.get("debug", 0):
@@ -12,11 +13,18 @@ if ARGUMENTS.get("clang", 0):
 
 libs = []
 if env['PLATFORM'] == 'win32':
-	libs = ["pthreadGC2","lemon"]
+	env = Environment(Env=os.environ, tools=['mingw'])
+	libs = ["pthreadGC2","lemon","Irrlicht"]
 elif env['PLATFORM'] == 'posix':
-	libs = ["pthread","emon"]
-					
-env.Program('program', Glob('src/*.cpp') + Glob('src/**/*.cpp'), LIBS=libs)
+	libs = ["pthread","emon","Irrlicht","X11"]
+
+env.Append(CPPPATH=['libs'])
+
+sources = Glob('src/*/*.cpp') + Glob('src/*/*/*.cpp') + Glob('src/*/*/*/*.cpp')
+includedLibs = Glob('libs/*.cpp')
+main = Glob('src/main.cpp')
+
+env.Program('program', sources + includedLibs + main, LIBS=libs)
 
 # Emacs local variables
 # Local variables:

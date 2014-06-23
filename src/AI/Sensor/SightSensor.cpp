@@ -50,7 +50,7 @@ namespace AI
                 const Ecs::Entity & entity = group->getEntity();
                 if(entity != entity_)
                 {
-                    const Vec3Df & entityPosition = static_cast<PositionComponent &>(group->getComponent(PositionComponent::Type)).getPosition();
+                    const Vec3Df & entityPosition = Threading::getConcurrentWriter<Ecs::Component, PositionComponent>(group->getComponent(PositionComponent::Type))->getPosition();
                     // Check if the entity is already in the memory of the sensor's owner
                     MemoryFact* oldFactForEntity = NULL;
                     for(unsigned int i =0; i < sightFacts.size(); i++)
