@@ -88,6 +88,7 @@ namespace Graphics
             virtual void run();
 
             void registerListeners(Event::ListenerRegister& reg);
+            void unregisterListeners(Event::ListenerRegister& reg);
 
             bool initializeAnimationMap(const Ecs::Entity& entity, const AnimationMap& animationMap);
 

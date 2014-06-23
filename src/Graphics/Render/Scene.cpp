@@ -75,6 +75,11 @@ namespace Graphics
             reg.put(Ecs::EntityRemovedEvent::Type, this);
         }
 
+        void Scene::unregisterListeners(Event::ListenerRegister& reg)
+        {
+            reg.remove(this);
+        }
+
         void Scene::call(const Event::Event& event)
         {
             if (event.getType() == InitSceneEvent::Type)

@@ -47,17 +47,7 @@ namespace Application
             renderSystem_(NULL)
         {}
 
-        virtual ~GraphicsBoot()
-        {
-            if (device_ != NULL)
-            {
-                delete scene_;
-                delete receiver_;
-                delete playerSystem_;
-                delete renderSystem_;
-                delete device_;
-            }
-        }
+        virtual ~GraphicsBoot();
 
         virtual void start();
     private:
