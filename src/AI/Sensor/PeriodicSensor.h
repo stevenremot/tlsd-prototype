@@ -13,10 +13,9 @@ namespace AI
         class PeriodicSensor : public Sensor
         {
         public:
-            PeriodicSensor(SensorType sensorType, Ecs::Entity entity, Ecs::World& world, WorkingMemory& memory, int updateRate = 100);
+            PeriodicSensor(SensorType sensorType, Ecs::Entity entity, Ecs::World& world, WorkingMemory& memory);
             virtual ~PeriodicSensor();
         private:
-            int updateRate_;
         };
     }
 }
