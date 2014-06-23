@@ -84,6 +84,7 @@ namespace World
             for (unsigned int i = 0; i < length; i++)
             {
                 finalEntities.push_back(createTree(positions[i], *(trees[i])));
+                delete trees[i];
             }
 
             Threading::ConcurrentWriter<Ecs::World> ecsWorld =
