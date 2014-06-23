@@ -27,6 +27,27 @@
 
 namespace Application
 {
+    GraphicsBoot::~GraphicsBoot()
+    {
+        if (device_ != NULL)
+        {
+            Event::ListenerRegister& reg =
+                getApplication().getEventManager().getListenerRegister();
+
+            scene_->unregisterListeners(reg);
+            playerSystem_->unregisterListeners(reg);
+            reg.remove(device_);
+            reg.remove(receiver_);
+            reg.remove(renderSystem_);
+
+            delete scene_;
+            delete receiver_;
+            delete playerSystem_;
+            delete renderSystem_;
+            delete device_;
+        }
+    }
+
     void GraphicsBoot::start()
     {
         Threading::ConcurrentRessource<Ecs::World>& ecsWorld =

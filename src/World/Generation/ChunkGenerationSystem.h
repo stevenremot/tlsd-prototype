@@ -32,6 +32,8 @@ namespace World
 {
     namespace Generation
     {
+        class ChunkGenerationListener;
+
         class ChunkGenerationSystem: public Ecs::System,
                                      public Threading::ThreadableInterface
         {
@@ -41,14 +43,9 @@ namespace World
             ChunkGenerationSystem(
                 Threading::ConcurrentRessource<Ecs::World>& world,
                 ChunkGenerator chunkGenerator
-            ): Ecs::System(world),
-               chunkGenerator_(chunkGenerator)
-            {
-                Threading::createChannel<Geometry::Vec2Di>(
-                    channelInput_,
-                    channelOutput_
-                );
-            }
+            );
+
+            virtual ~ChunkGenerationSystem();
 
             CommandQueue& getCommandQueue()
             {
@@ -56,6 +53,7 @@ namespace World
             }
 
             void registerListeners(Event::ListenerRegister& reg);
+            void unregisterListeners(Event::ListenerRegister& reg);
 
             virtual void run();
 
@@ -63,6 +61,7 @@ namespace World
             CommandQueue channelInput_;
             Threading::ChannelOutput<Geometry::Vec2Di> channelOutput_;
             ChunkGenerator chunkGenerator_;
+            ChunkGenerationListener* listener_;
         };
     }
 }

@@ -150,4 +150,9 @@ namespace Character
     {
         reg.put(ActionPerformedEvent::Type, this);
     }
+
+    void CharacterSystem::unregisterListeners(Event::ListenerRegister& reg)
+    {
+        reg.remove(this);
+    }
 }

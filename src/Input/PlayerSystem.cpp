@@ -156,4 +156,9 @@ namespace Input
         listener.put(CameraEvent::Type, this);
         listener.put(CameraRenderedEvent::Type, this);
     }
+
+    void PlayerSystem::unregisterListeners(Event::ListenerRegister& listener)
+    {
+        listener.remove(this);
+    }
 }

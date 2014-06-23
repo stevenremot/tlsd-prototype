@@ -131,5 +131,10 @@ namespace Graphics
             reg.put(Ecs::ComponentCreatedEvent::Type, this);
             reg.put(AnimateActionEvent::Type, this);
         }
+
+        void AnimationSystem::unregisterListeners(Event::ListenerRegister& reg)
+        {
+            reg.remove(this);
+        }
     }
 }

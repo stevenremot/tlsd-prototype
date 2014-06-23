@@ -173,13 +173,16 @@ namespace World
             }
             else
             {
+                // TODO We should not restrain to center of the chunk,
+                //      This is done to avoid inconsistent chunk generation.
+                //      chunk generation should be improved to be more robust
                 centerX = rng.getUniform(
-                    floatX * chunkSize,
-                    (floatX + 1) * chunkSize
+                    (floatX + 0.33) * chunkSize,
+                    (floatX + 0.66) * chunkSize
                 );
                 centerY = rng.getUniform(
-                    floatY * chunkSize,
-                    (floatY + 1) * chunkSize
+                    (floatY + 0.33) * chunkSize,
+                    (floatY + 0.66) * chunkSize
                 );
             }
 

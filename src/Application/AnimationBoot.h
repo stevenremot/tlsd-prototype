@@ -33,13 +33,7 @@ namespace Application
             animationSystem_(NULL)
         {}
 
-        virtual ~AnimationBoot()
-        {
-            if (animationSystem_ != NULL)
-            {
-                delete animationSystem_;
-            }
-        }
+        virtual ~AnimationBoot();
 
         virtual void start();
 

@@ -23,6 +23,18 @@
 
 namespace Application
 {
+    AnimationBoot::~AnimationBoot()
+    {
+        if (animationSystem_ != NULL)
+        {
+            animationSystem_->unregisterListeners(
+                getApplication().getEventManager().getListenerRegister()
+            );
+
+            delete animationSystem_;
+        }
+    }
+
     void AnimationBoot::start()
     {
         animationSystem_ = new Graphics::Render::AnimationSystem(

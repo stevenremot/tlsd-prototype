@@ -49,6 +49,7 @@ namespace Input
         virtual void run();
 
         void registerListeners(Event::ListenerRegister& listener);
+        void unregisterListeners(Event::ListenerRegister& listener);
 
     private:
         Event::EventQueue eventQueue_;
