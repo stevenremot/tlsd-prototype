@@ -20,6 +20,7 @@
 #ifndef CHARACTER_CHARACTERCOMPONENT_H
 #define CHARACTER_CHARACTERCOMPONENT_H
 
+#include "../Ecs/Entity.h"
 #include "../Ecs/Component.h"
 #include "../Graphics/Render/AnimationComponent.h"
 
@@ -38,7 +39,9 @@ namespace Character
 
         CharacterComponent(float walkingSpeed):
             Component(Type),
-            walkingSpeed_(walkingSpeed)
+            walkingSpeed_(walkingSpeed),
+            hasGroup_(false),
+            group_()
         {}
 
         virtual Component* clone() const
@@ -60,9 +63,32 @@ namespace Character
             return walkingSpeed_;
         }
 
+        bool hasGroup() const
+        {
+            return hasGroup_;
+        }
+
+        const Ecs::Entity& getGroup() const
+        {
+            return group_;
+        }
+
+        void setGroup(const Ecs::Entity& group)
+        {
+            hasGroup_ = true;
+            group_ = group;
+        }
+
     private:
         float walkingSpeed_;
+        bool hasGroup_;
+        Ecs::Entity group_;
     };
 }
 
 #endif // CHARACTER_CHARACTERCOMPONENT_H
+
+// Emacs local variables
+// Local variables:
+// mode: c++
+// End:

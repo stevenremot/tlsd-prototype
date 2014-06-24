@@ -36,6 +36,10 @@
 #include "../Physics/AABBCollisionBody.h"
 #include "../Geometry/AxisAlignedBoundingBox.h"
 
+// TODO includes for group, remove later
+#include "../Character/GroupComponent.h"
+#include "../Character/GroupUtil.h"
+
 namespace Application
 {
     // TODO method for tests, to be removed
@@ -73,7 +77,7 @@ namespace Application
         );
     }
 
-    void createPlayer(Ecs::World& world, const Geometry::Vec3Df& position, const Geometry::Vec3Df& rotation)
+    Ecs::Entity createPlayer(Ecs::World& world, const Geometry::Vec3Df& position, const Geometry::Vec3Df& rotation)
     {
         // TODO: method AABB from model 3d
         Geometry::AxisAlignedBoundingBox bbox(Geometry::Vec3Df(150.0, 150.0, 0.0), Geometry::Vec3Df(150.5, 150.5, 1.0));
@@ -127,6 +131,62 @@ namespace Application
             entity,
             new Input::PlayerComponent()
         );
+
+        return entity;
+    }
+
+    Ecs::Entity createBuddy(Ecs::World& world, const Geometry::Vec3Df& position, const Geometry::Vec3Df& rotation)
+    {
+        // TODO: method AABB from model 3d
+        Geometry::AxisAlignedBoundingBox bbox(Geometry::Vec3Df(150.0, 150.0, 0.0), Geometry::Vec3Df(150.5, 150.5, 1.0));
+
+        Graphics::Render::AnimationMap animMap;
+        animMap[Graphics::Render::Idle] =
+            Graphics::Render::AnimationParameters(5.0f, true, Graphics::Render::NoAnimation);
+        animMap[Graphics::Render::Walk] =
+            Graphics::Render::AnimationParameters(5.0f, true, Graphics::Render::NoAnimation);
+
+        std::map<Character::Action::Type, Graphics::Render::AnimationType> animByAction;
+        animByAction[Character::MoveAction::Type] = Graphics::Render::Walk;
+        animByAction[Character::StopAction::Type] = Graphics::Render::Idle;
+
+        const Ecs::Entity& entity = world.createEntity();
+        world.addComponent(
+            entity,
+            new Geometry::PositionComponent(position)
+        );
+        world.addComponent(
+            entity,
+            new Geometry::RotationComponent(rotation)
+        );
+        world.addComponent(
+            entity,
+            new Graphics::Render::RenderableComponent(
+                "ninja.b3d", ""
+            )
+        );
+        world.addComponent(
+            entity,
+            new Graphics::Render::AnimationComponent(animMap, animByAction)
+        );
+        world.addComponent(
+            entity,
+            new Physics::MovementComponent(Geometry::Vec3Df(0.0, 0.0, 0.0))
+        );
+        world.addComponent(
+            entity,
+            new Physics::GravityComponent(1)
+        );
+        world.addComponent(
+            entity,
+            new Physics::CollisionComponent(new Physics::AABBCollisionBody(bbox))
+        );
+        world.addComponent(
+            entity,
+            new Character::CharacterComponent(5.0)
+        );
+
+        return entity;
     }
 
     void applicationEventBootCallback(Application& application, BootInterface& eventBoot)
@@ -182,7 +242,22 @@ namespace Application
         // TODO set z at 0, not 150
         {
             Threading::ConcurrentWriter<Ecs::World> world = ecsWorld_.getWriter();
-            createPlayer(*world, Geometry::Vec3Df(150,150,150), Geometry::Vec3Df(0,0,0));
+            Ecs::Entity player = createPlayer(
+                *world,
+                Geometry::Vec3Df(150,150,150),
+                Geometry::Vec3Df(0,0,0)
+            );
+            Ecs::Entity buddy = createBuddy(
+                *world,
+                Geometry::Vec3Df(160, 160, 150),
+                Geometry::Vec3Df(0, 0, 0)
+            );
+
+            Ecs::Entity group = world->createEntity();
+            world->addComponent(group, new Character::GroupComponent());
+
+            Character::associateToGroup(world, player, group);
+            Character::associateToGroup(world, buddy, group);
         }
 
         running_ = true;
