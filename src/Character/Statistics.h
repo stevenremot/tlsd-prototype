@@ -31,6 +31,18 @@ namespace Character
     {
     public:
         Statistics(
+            unsigned int health,
+            unsigned int attack,
+            unsigned int defense,
+            unsigned int speed
+        ):
+            health_(health),
+            attack_(attack),
+            defense_(defense),
+            speed_(speed)
+        {}
+
+        Statistics(
             const StatisticSlot& health,
             const StatisticSlot& attack,
             const StatisticSlot& defense,

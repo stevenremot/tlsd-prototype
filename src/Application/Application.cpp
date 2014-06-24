@@ -22,6 +22,7 @@
 // TODO: includes for createPlayer, remove later
 #include "../Character/MoveAction.h"
 #include "../Character/StopAction.h"
+#include "../Character/StatisticsComponent.h"
 #include "../Character/CharacterComponent.h"
 #include "../Input/PlayerComponent.h"
 
@@ -125,6 +126,12 @@ namespace Application
         );
         world.addComponent(
             entity,
+            new Character::StatisticsComponent(
+                Character::Statistics(100, 20, 20, 20)
+            )
+        );
+        world.addComponent(
+            entity,
             new Character::CharacterComponent(5.0)
         );
         world.addComponent(
@@ -180,6 +187,12 @@ namespace Application
         world.addComponent(
             entity,
             new Physics::CollisionComponent(new Physics::AABBCollisionBody(bbox))
+        );
+        world.addComponent(
+            entity,
+            new Character::StatisticsComponent(
+                Character::Statistics(100, 20, 20, 20)
+            )
         );
         world.addComponent(
             entity,

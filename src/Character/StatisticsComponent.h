@@ -38,6 +38,11 @@ namespace Character
             statistics_(statistics)
         {}
 
+        virtual Component* clone() const
+        {
+            return new StatisticsComponent(statistics_);
+        }
+
         virtual const std::vector<Component::Type>& getDependentComponents()
         {
             return dependentComponents_;

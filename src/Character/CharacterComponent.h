@@ -23,6 +23,7 @@
 #include "../Ecs/Entity.h"
 #include "../Ecs/Component.h"
 #include "../Graphics/Render/AnimationComponent.h"
+#include "StatisticsComponent.h"
 
 namespace Character
 {
@@ -54,6 +55,7 @@ namespace Character
             if (Dependencies.empty())
             {
                 Dependencies.push_back(Graphics::Render::AnimationComponent::Type);
+                Dependencies.push_back(StatisticsComponent::Type);
             }
             return Dependencies;
         }
@@ -80,6 +82,7 @@ namespace Character
         }
 
     private:
+        // TODO replace with statistics field ?
         float walkingSpeed_;
         bool hasGroup_;
         Ecs::Entity group_;
