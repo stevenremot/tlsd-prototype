@@ -22,6 +22,7 @@
 
 #include "CollisionBody.h"
 #include "../Graphics/Render/Model3D.h"
+#include "../Geometry/AxisAlignedBoundingBox.h"
 
 namespace Physics
 {
@@ -33,21 +34,24 @@ namespace Physics
     public:
         static const Type Type;
 
-        Model3DCollisionBody(const Graphics::Render::Model3D& model):
+        Model3DCollisionBody(const Graphics::Render::Model3D& model, const Geometry::AxisAlignedBoundingBox& aabb):
             CollisionBody(Type),
-            model_(model)
-            {}
+            model_(model),
+            aabb_(aabb)
+        {}
 
         Model3DCollisionBody(const Graphics::Render::Model3D& model, const Geometry::Vec3Df& position):
             CollisionBody(Type),
-            model_(model)
-            {
-                setAbsoluteCoordinates(position);
-            }
+            model_(model),
+            aabb_(Geometry::Vec3Df(), Geometry::Vec3Df())
+        {
+            setAbsoluteCoordinates(position);
+            computeAABB();
+        }
 
         virtual CollisionBody* clone()
         {
-            return new Model3DCollisionBody(model_);
+            return new Model3DCollisionBody(model_, aabb_);
         }
 
         const Graphics::Render::Model3D& getModel() const
@@ -55,16 +59,58 @@ namespace Physics
             return model_;
         }
 
+        const Geometry::AxisAlignedBoundingBox& getAABB() const
+        {
+            return aabb_;
+        }
+
+    private:
         void setAbsoluteCoordinates(const Geometry::Vec3Df& position)
         {
-            for(unsigned int i = 0; i < model_.getVertices().size(); i++)
+            for (unsigned int i = 0; i < model_.getVertices().size(); i++)
             {
                 model_.getVertices().at(i) += position;
             }
         }
 
-    private:
+        void computeAABB()
+        {
+            Geometry::Vec3Df origin = model_.getVertices()[0];
+            float minX = origin.getX();
+            float maxX = origin.getX();
+            float minY = origin.getY();
+            float maxY = origin.getY();
+            float minZ = origin.getZ();
+            float maxZ = origin.getZ();
+
+            for (unsigned int i = 0; i < model_.getVertices().size(); i++)
+            {
+                Geometry::Vec3Df current = model_.getVertices()[i];
+
+                if (current.getX() < minX)
+                    minX = current.getX();
+                else if (current.getX() > maxX)
+                    maxX = current.getX();
+
+                if (current.getY() < minY)
+                    minY = current.getY();
+                else if (current.getY() > maxY)
+                    maxY = current.getY();
+
+                if (current.getZ() < minZ)
+                    minZ = current.getZ();
+                else if (current.getZ() > maxZ)
+                    maxZ = current.getZ();
+            }
+
+            origin = Geometry::Vec3Df(minX, minY, minZ);
+            Geometry::Vec3Df offset(maxX, maxY, maxZ);
+
+            aabb_ = Geometry::AxisAlignedBoundingBox(origin, offset);
+        }
+
         Graphics::Render::Model3D model_;
+        Geometry::AxisAlignedBoundingBox aabb_; // AABB for quick checks
     };
 }
 

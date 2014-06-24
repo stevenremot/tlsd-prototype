@@ -80,7 +80,7 @@ namespace Application
     Ecs::Entity createPlayer(Ecs::World& world, const Geometry::Vec3Df& position, const Geometry::Vec3Df& rotation)
     {
         // TODO: method AABB from model 3d
-        Geometry::AxisAlignedBoundingBox bbox(Geometry::Vec3Df(150.0, 150.0, 0.0), Geometry::Vec3Df(150.5, 150.5, 1.0));
+        Geometry::AxisAlignedBoundingBox bbox(Geometry::Vec3Df(0.0, 0.0, 0.0), Geometry::Vec3Df(0.5, 0.5, 1.0));
 
         Graphics::Render::AnimationMap animMap;
         animMap[Graphics::Render::Idle] =
