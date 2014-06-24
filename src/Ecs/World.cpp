@@ -136,7 +136,14 @@ namespace Ecs
     ComponentGroup World::getEntityComponents(const Entity& entity,
                                               const ComponentGroup& prototype)
     {
-        ComponentCollection& components = components_.at(entity);
+        std::map< Entity, ComponentCollection >::iterator pos;
+        pos = components_.find(entity);
+        if (pos == components_.end())
+        {
+            throw NoEntityException();
+        }
+
+        ComponentCollection& components = pos->second;
 
         try
         {
@@ -152,7 +159,14 @@ namespace Ecs
         const Entity& entity,
         const Component::Type& type
     ) {
-        ComponentCollection& components = components_.at(entity);
+        std::map< Entity, ComponentCollection >::iterator pos;
+        pos = components_.find(entity);
+        if (pos == components_.end())
+        {
+            throw NoEntityException();
+        }
+
+        ComponentCollection& components = pos->second;
 
         ComponentCollection::iterator component;
         for (component = components.begin(); component != components.end(); ++component)
@@ -195,7 +209,14 @@ namespace Ecs
 
     bool World::hasComponent(const Entity& entity, Component::Type type)
     {
-        ComponentCollection& components = components_.at(entity);
+        std::map< Entity, ComponentCollection >::iterator pos;
+        pos = components_.find(entity);
+        if (pos == components_.end())
+        {
+            throw NoEntityException();
+        }
+
+        ComponentCollection& components = pos->second;
 
         ComponentCollection::iterator comp;
         for (comp = components.begin(); comp != components.end(); ++comp)

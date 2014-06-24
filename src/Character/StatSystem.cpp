@@ -1,20 +1,20 @@
 /*
-   This file is part of The Lost Souls Downfall prototype.
+  This file is part of The Lost Souls Downfall prototype.
 
-    The Lost Souls Downfall prototype is free software: you can
-    redistribute it and/or modify it under the terms of the GNU
-    General Public License as published by the Free Software
-    Foundation, either version 3 of the License, or (at your option)
-    any later version.
+  The Lost Souls Downfall prototype is free software: you can
+  redistribute it and/or modify it under the terms of the GNU
+  General Public License as published by the Free Software
+  Foundation, either version 3 of the License, or (at your option)
+  any later version.
 
-    The Lost Souls Downfall prototype is distributed in the hope that
-    it will be useful, but WITHOUT ANY WARRANTY; without even the
-    implied warranty of MERCHANTABILITY or FITNESS FOR A PARTICULAR
-    PURPOSE.  See the GNU General Public License for more details.
+  The Lost Souls Downfall prototype is distributed in the hope that
+  it will be useful, but WITHOUT ANY WARRANTY; without even the
+  implied warranty of MERCHANTABILITY or FITNESS FOR A PARTICULAR
+  PURPOSE.  See the GNU General Public License for more details.
 
-    You should have received a copy of the GNU General Public License
-    along with The Lost Souls Downfall prototype.  If not, see
-    <http://www.gnu.org/licenses/>.
+  You should have received a copy of the GNU General Public License
+  along with The Lost Souls Downfall prototype.  If not, see
+  <http://www.gnu.org/licenses/>.
 */
 
 #include "StatSystem.h"
@@ -51,15 +51,16 @@ namespace Character
             {
                 if (event->getType() == HurtEvent::Type)
                 {
+                    Threading::ConcurrentWriter<Ecs::World> world = getWorld();
+
                     const HurtEvent& evt = dynamic_cast<const HurtEvent&>(*event);
                     const Ecs::Entity& attacker = evt.getAttacker();
                     const Ecs::Entity& receiver = evt.getReceiver();
-
                     Threading::ConcurrentRessource<Ecs::Component> harmComponentRessource =
-                        getWorld()->getEntityComponent(attacker, HarmComponent::Type);
+                        world->getEntityComponent(attacker, HarmComponent::Type);
 
                     Threading::ConcurrentRessource<Ecs::Component> statComponentRessource =
-                        getWorld()->getEntityComponent(receiver, StatisticsComponent::Type);
+                        world->getEntityComponent(receiver, StatisticsComponent::Type);
 
                     Threading::ConcurrentReader<HarmComponent> harmComponent =
                         Threading::getConcurrentReader<Ecs::Component, HarmComponent>(
@@ -90,7 +91,6 @@ namespace Character
                             new DieAction()
                         );
                     }
-
                 }
 
                 delete event;
