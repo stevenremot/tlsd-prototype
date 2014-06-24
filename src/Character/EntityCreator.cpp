@@ -47,8 +47,8 @@ namespace Character
     ) {
         // TODO: method AABB from model 3d
         Geometry::AxisAlignedBoundingBox bbox(
-            position + Geometry::Vec3Df(0.0, 0.0, 0.0),
-            position + Geometry::Vec3Df(0.5, 0.5, 1.0)
+            Geometry::Vec3Df(-0.5, -0.5, 0.0),
+            Geometry::Vec3Df(0.5, 0.5, 2.0)
         );
 
         Graphics::Render::AnimationMap animMap;

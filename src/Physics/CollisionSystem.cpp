@@ -25,6 +25,9 @@
 #include "../Geometry/PositionComponent.h"
 #include "GroundCollisionBody.h"
 #include "EntityPositionChangedEvent.h"
+#include "../Character/HarmComponent.h"
+#include "../Character/StatisticsComponent.h"
+#include "../Character/HurtEvent.h"
 
 using Ecs::ComponentCreatedEvent;
 using Ecs::ComponentGroup;
@@ -68,30 +71,50 @@ namespace Physics
             World::ComponentGroupCollection groups2 = getWorld()->getComponents(prototype2);
             World::ComponentGroupCollection::iterator group2;
 
-            Threading::ConcurrentWriter<PositionComponent> positionComponent =
-                Threading::getConcurrentWriter<Ecs::Component, PositionComponent>(
-                    group->getComponent(PositionComponent::Type)
-                );
 
-            // might serve for mesh collisions
-            Threading::ConcurrentReader<MovementComponent> movementComponent =
-                Threading::getConcurrentReader<Ecs::Component, MovementComponent>(
-                    group->getComponent(MovementComponent::Type)
-                );
+            bool hasStats = getWorld()->hasComponent(
+                movingEntity,
+                Character::StatisticsComponent::Type
+            );
 
-            Threading::ConcurrentReader<CollisionComponent> movingCollisionComponent =
-                Threading::getConcurrentReader<Ecs::Component, CollisionComponent>(
-                    group->getComponent(CollisionComponent::Type)
-                );
+            Threading::ConcurrentRessource<Ecs::Component> positionComponentRessource =
+                group->getComponent(PositionComponent::Type);
 
-            Vec3Df positionVector = positionComponent->getPosition();
-            // might serve for mesh collisions
-            Vec3Df movementVector = movementComponent->getVelocity() * movementFactor;
+            Threading::ConcurrentRessource<Ecs::Component> movementComponentRessource =
+                group->getComponent(MovementComponent::Type);
+
+            Threading::ConcurrentRessource<Ecs::Component> movingCollisionComponentRessource =
+                group->getComponent(CollisionComponent::Type);
 
             for (group2 = groups2.begin(); group2 != groups2.end(); ++group2)
             {
                 if (group2->getEntity() == movingEntity)
                     continue;
+
+                bool hasHarm = getWorld()->hasComponent(
+                    group2->getEntity(),
+                    Character::HarmComponent::Type
+                );
+
+                Threading::ConcurrentWriter<PositionComponent> positionComponent =
+                    Threading::getConcurrentWriter<Ecs::Component, PositionComponent>(
+                        positionComponentRessource
+                    );
+
+                // might serve for mesh collisions
+                Threading::ConcurrentReader<MovementComponent> movementComponent =
+                    Threading::getConcurrentReader<Ecs::Component, MovementComponent>(
+                        movementComponentRessource
+                    );
+
+                Threading::ConcurrentReader<CollisionComponent> movingCollisionComponent =
+                    Threading::getConcurrentReader<Ecs::Component, CollisionComponent>(
+                        movingCollisionComponentRessource
+                    );
+
+                Vec3Df positionVector = positionComponent->getPosition();
+                // might serve for mesh collisions
+                Vec3Df movementVector = movementComponent->getVelocity() * movementFactor;
 
                 Threading::ConcurrentReader<CollisionComponent> collisionComponent =
                     Threading::getConcurrentReader<Ecs::Component, CollisionComponent>(
@@ -141,9 +164,45 @@ namespace Physics
                     )
                         positionComponent->setPosition(positionVector);
                 }
+                else if (collisionComponent->getCollisionBody().getType() == AABBCollisionBody::Type)
+                {
+                    Threading::ConcurrentReader<PositionComponent> positionComponent =
+                        Threading::getConcurrentReader<Ecs::Component, PositionComponent>(
+                            group2->getComponent(PositionComponent::Type)
+                        );
+
+                    const AABBCollisionBody& movingBody =
+                        static_cast<const AABBCollisionBody&>(
+                            movingCollisionComponent->getCollisionBody()
+                        );
+
+                    const AABBCollisionBody& collBody =
+                        static_cast<const AABBCollisionBody&>(
+                            collisionComponent->getCollisionBody()
+                        );
+
+                    if (hasStats && hasHarm &&
+                        engine_.getAABBAgainstAABBCollisionResponse(
+                            movingBody,
+                            collBody,
+                            positionVector,
+                            positionComponent->getPosition()
+                        )
+                    ) {
+                        eventQueue_ << new Character::HurtEvent(
+                            group2->getEntity(),
+                            movingEntity
+                        );
+                    }
+                }
             }
 
-            eventQueue_ << new EntityPositionChangedEvent(movingEntity, positionComponent->getPosition());
+            eventQueue_ << new EntityPositionChangedEvent(
+                movingEntity,
+                Threading::getConcurrentWriter<Ecs::Component, PositionComponent>(
+                    positionComponentRessource
+                )->getPosition()
+            );
         }
     }
 }

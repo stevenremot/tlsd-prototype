@@ -48,8 +48,9 @@ namespace Application
         unsigned int damages
     ) {
         Geometry::AxisAlignedBoundingBox bbox(
-            position + Geometry::Vec3Df(0.0, 0.0, 0.0),
-            position + Geometry::Vec3Df(1.0, 1.0, 1.0));
+            Geometry::Vec3Df(0.0, 0.0, 0.0),
+            Geometry::Vec3Df(1.0, 1.0, 1.0)
+        );
 
         Ecs::Entity entity = world->createEntity();
 
