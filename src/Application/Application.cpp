@@ -19,188 +19,14 @@
 
 #include "Application.h"
 
-// TODO: includes for createPlayer, remove later
-#include "../Character/MoveAction.h"
-#include "../Character/StopAction.h"
-#include "../Character/StatisticsComponent.h"
-#include "../Character/CharacterComponent.h"
-#include "../Input/PlayerComponent.h"
-
-// TODO includes for createMovingCube, remove later
-#include "../Geometry/PositionComponent.h"
-#include "../Geometry/RotationComponent.h"
-#include "../Graphics/Render/RenderableComponent.h"
-#include "../Graphics/Render/ModelUtils.h"
-#include "../Physics/MovementComponent.h"
-#include "../Physics/GravityComponent.h"
-#include "../Physics/CollisionComponent.h"
-#include "../Physics/AABBCollisionBody.h"
-#include "../Geometry/AxisAlignedBoundingBox.h"
-
 // TODO includes for group, remove later
 #include "../Character/GroupComponent.h"
 #include "../Character/GroupUtil.h"
+#include "../Character/EntityCreator.h"
+#include "../Character/Statistics.h"
 
 namespace Application
 {
-    // TODO method for tests, to be removed
-    void createMovingCube(Ecs::World& world)
-    {
-        // TODO: method AABB from model 3d
-        Geometry::AxisAlignedBoundingBox bbox(Geometry::Vec3Df(50.0, 50.0, 145.0), Geometry::Vec3Df(55.0, 55.0, 150.0));
-
-        const Ecs::Entity& entity = world.createEntity();
-        world.addComponent(
-            entity,
-            new Geometry::PositionComponent(Geometry::Vec3Df(50.0, 50.0, 145.0))
-        );
-        world.addComponent(
-            entity,
-            new Geometry::RotationComponent(Geometry::Vec3Df())
-        );
-        world.addComponent(
-            entity,
-            new Graphics::Render::RenderableComponent(
-                Graphics::Render::createPrettyCubeModel()
-            )
-        );
-        world.addComponent(
-            entity,
-            new Physics::MovementComponent(Geometry::Vec3Df(1.0, 1.0, 20.0))
-        );
-        world.addComponent(
-            entity,
-            new Physics::GravityComponent(1)
-        );
-        world.addComponent(
-            entity,
-            new Physics::CollisionComponent(new Physics::AABBCollisionBody(bbox))
-        );
-    }
-
-    Ecs::Entity createPlayer(Ecs::World& world, const Geometry::Vec3Df& position, const Geometry::Vec3Df& rotation, const Ecs::Entity& group)
-    {
-        // TODO: method AABB from model 3d
-        Geometry::AxisAlignedBoundingBox bbox(Geometry::Vec3Df(150.0, 150.0, 0.0), Geometry::Vec3Df(150.5, 150.5, 1.0));
-
-        Graphics::Render::AnimationMap animMap;
-        animMap[Graphics::Render::Idle] =
-            Graphics::Render::AnimationParameters(5.0f, true, Graphics::Render::NoAnimation);
-        animMap[Graphics::Render::Walk] =
-            Graphics::Render::AnimationParameters(5.0f, true, Graphics::Render::NoAnimation);
-
-        std::map<Character::Action::Type, Graphics::Render::AnimationType> animByAction;
-        animByAction[Character::MoveAction::Type] = Graphics::Render::Walk;
-        animByAction[Character::StopAction::Type] = Graphics::Render::Idle;
-
-        const Ecs::Entity& entity = world.createEntity();
-        world.addComponent(
-            entity,
-            new Geometry::PositionComponent(position)
-        );
-        world.addComponent(
-            entity,
-            new Geometry::RotationComponent(rotation)
-        );
-        world.addComponent(
-            entity,
-            new Graphics::Render::RenderableComponent(
-                "ninja.b3d", ""
-            )
-        );
-        world.addComponent(
-            entity,
-            new Graphics::Render::AnimationComponent(animMap, animByAction)
-        );
-        world.addComponent(
-            entity,
-            new Physics::MovementComponent(Geometry::Vec3Df(0.0, 0.0, 0.0))
-        );
-        world.addComponent(
-            entity,
-            new Physics::GravityComponent(1)
-        );
-        world.addComponent(
-            entity,
-            new Physics::CollisionComponent(new Physics::AABBCollisionBody(bbox))
-        );
-        world.addComponent(
-            entity,
-            new Character::StatisticsComponent(
-                Character::Statistics(100, 20, 20, 20)
-            )
-        );
-        world.addComponent(
-            entity,
-            new Character::CharacterComponent(5.0, group)
-        );
-        world.addComponent(
-            entity,
-            new Input::PlayerComponent()
-        );
-
-        return entity;
-    }
-
-    Ecs::Entity createBuddy(Ecs::World& world, const Geometry::Vec3Df& position, const Geometry::Vec3Df& rotation, const Ecs::Entity& group)
-    {
-        // TODO: method AABB from model 3d
-        Geometry::AxisAlignedBoundingBox bbox(Geometry::Vec3Df(150.0, 150.0, 0.0), Geometry::Vec3Df(150.5, 150.5, 1.0));
-
-        Graphics::Render::AnimationMap animMap;
-        animMap[Graphics::Render::Idle] =
-            Graphics::Render::AnimationParameters(5.0f, true, Graphics::Render::NoAnimation);
-        animMap[Graphics::Render::Walk] =
-            Graphics::Render::AnimationParameters(5.0f, true, Graphics::Render::NoAnimation);
-
-        std::map<Character::Action::Type, Graphics::Render::AnimationType> animByAction;
-        animByAction[Character::MoveAction::Type] = Graphics::Render::Walk;
-        animByAction[Character::StopAction::Type] = Graphics::Render::Idle;
-
-        const Ecs::Entity& entity = world.createEntity();
-        world.addComponent(
-            entity,
-            new Geometry::PositionComponent(position)
-        );
-        world.addComponent(
-            entity,
-            new Geometry::RotationComponent(rotation)
-        );
-        world.addComponent(
-            entity,
-            new Graphics::Render::RenderableComponent(
-                "ninja.b3d", ""
-            )
-        );
-        world.addComponent(
-            entity,
-            new Graphics::Render::AnimationComponent(animMap, animByAction)
-        );
-        world.addComponent(
-            entity,
-            new Physics::MovementComponent(Geometry::Vec3Df(0.0, 0.0, 0.0))
-        );
-        world.addComponent(
-            entity,
-            new Physics::GravityComponent(1)
-        );
-        world.addComponent(
-            entity,
-            new Physics::CollisionComponent(new Physics::AABBCollisionBody(bbox))
-        );
-        world.addComponent(
-            entity,
-            new Character::StatisticsComponent(
-                Character::Statistics(100, 20, 20, 20)
-            )
-        );
-        world.addComponent(
-            entity,
-            new Character::CharacterComponent(5.0, group)
-        );
-
-        return entity;
-    }
 
     void applicationEventBootCallback(Application& application, BootInterface& eventBoot)
     {
@@ -251,7 +77,6 @@ namespace Application
 
     void Application::startLoop()
     {
-        //createMovingCube(ecsWorld_);
         // TODO set z at 0, not 150
         {
             Threading::ConcurrentWriter<Ecs::World> world = ecsWorld_.getWriter();
@@ -261,16 +86,18 @@ namespace Application
             Character::GroupComponent* groupComponent = new Character::GroupComponent();
             world->addComponent(group, groupComponent);
 
-            Ecs::Entity player = createPlayer(
+            Ecs::Entity player = Character::createPlayer(
                 *world,
                 Geometry::Vec3Df(150,150,150),
                 Geometry::Vec3Df(0,0,0),
+                Character::Statistics(100, 20, 20, 5),
                 group
             );
-            Ecs::Entity buddy = createBuddy(
+            Ecs::Entity buddy = Character::createCharacter(
                 *world,
                 Geometry::Vec3Df(160, 160, 150),
                 Geometry::Vec3Df(0, 0, 0),
+                Character::Statistics(70, 20, 20, 5),
                 group
             );
 
