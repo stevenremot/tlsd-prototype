@@ -40,6 +40,9 @@ namespace AI
         typedef std::map<MemoryFact::MemoryFactType, MemoryFactsList> MemoryFactsMap;
 
         WorkingMemory();
+        /**
+          * Clean all the remaining memory facts
+          */
         ~WorkingMemory();
         void addMemoryFact(MemoryFact* fact);
         void removeMemoryFact(MemoryFact* fact);

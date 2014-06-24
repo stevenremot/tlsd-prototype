@@ -40,7 +40,7 @@ namespace AI
             }
             //if(sensorType == "sightSensor")
             if(sensorType == SightSensor::Type)
-                sensorsList_.push_back(new SightSensor(entity_, world_, memory_));
+                sensorsList_.push_back(new SightSensor(entity_));
         }
 
         void SensorsManager::removeSensor(const Sensor::SensorType &sensorType)
@@ -56,12 +56,12 @@ namespace AI
             }
         }
 
-        void SensorsManager::updateSensors()
+        void SensorsManager::updateSensors(Ecs::World& world, WorkingMemory& memory)
         {
             vector<Sensor*>::iterator sensor;
             for(sensor = sensorsList_.begin(); sensor != sensorsList_.end(); ++sensor)
             {
-                (*sensor)->update();
+                (*sensor)->update(world, memory);
             }
         }
     }

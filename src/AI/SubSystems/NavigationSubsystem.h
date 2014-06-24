@@ -51,14 +51,17 @@ namespace AI
 
             void findPathToGoal();
             virtual bool update();
-            virtual void executeAction(Action::Action *action);
+            virtual void executeAction(Action::Action* action);
+
+            bool isValid() const {return isValid_;}
+            void setValid(bool isValid) {isValid_ = isValid;}
 
         private:
             const Geometry::PositionComponent& positionComponent_;
             Physics::MovementComponent& movementComponent_;
             const NavMesh::NavMeshContainer& navMeshes_;
-            Geometry::Vec3Df navigationTarget_;
             bool isFinished_;
+            bool isValid_;
         };
     }
 }

@@ -19,7 +19,10 @@
 
 #include "NavigationSubsystem.h"
 
+#include <typeinfo>
+
 #include "../Action/MoveCloseToTargetAction.h"
+#include "../Action/NoAction.h"
 #include "../../Graph/PathFinding.h"
 
 using AI::Subsystem::Subsystem;
@@ -40,7 +43,8 @@ namespace AI
             : Subsystem(Type, blackboard),
               positionComponent_(positionComponent),
               movementComponent_(movementComponent),
-              navMeshes_(navMeshes)
+              navMeshes_(navMeshes),
+              isValid_(true)
         {
         }
 
@@ -48,17 +52,19 @@ namespace AI
         {
             return false;
         }
-        void NavigationSubSystem::executeAction(Action::Action *action)
+        void NavigationSubSystem::executeAction(Action::Action* action)
         {
-            Action::MoveCloseToTargetAction* moveAction =static_cast<Action::MoveCloseToTargetAction*>(action);
-            navigationTarget_ = moveAction->getTargetPosition();
+            Action::MoveCloseToTargetAction* moveAction = dynamic_cast<Action::MoveCloseToTargetAction*>(action);
+            if(moveAction == NULL)
+                return;
+            Geometry::Vec3Df navigationTarget = moveAction->getTargetPosition();
             const Geometry::Vec3Df& currentPosition = positionComponent_.getPosition();
             // Compute the path to the target
 
             Graph::PlanarGraph::NodeCollection path;
             const NavMesh::NavMesh* currentNavMesh = NULL;
             Geometry::Vec2Df currentPosition2D = Geometry::Vec2Df(currentPosition.getX(), currentPosition.getY());
-            Geometry::Vec2Df targetPosition2D = Geometry::Vec2Df(navigationTarget_.getX(), navigationTarget_.getY());
+            Geometry::Vec2Df targetPosition2D = Geometry::Vec2Df(navigationTarget.getX(), navigationTarget.getY());
             if(navMeshes_.getNavMesh(currentPosition2D, currentNavMesh))
             {
 
@@ -78,43 +84,27 @@ namespace AI
             // Move the target
             float margin = 2.f;
             float maxSpeed = 1.0f;
-            //while(!moveAction->isFinished())
-            //{
-            while(!path.empty())
+            while(!path.empty() && isValid_)
             {
                 Geometry::Vec2Df currentTarget2D = path.front().getPosition();
                 Geometry::Vec3Df currentTarget = Geometry::Vec3Df(currentTarget2D.getX(), currentTarget2D.getY(), 0.0);
                 float distanceToNextTarget = (positionComponent_.getPosition()- currentTarget).getLength();
                 // Wait until the character reach the target point
-                while(distanceToNextTarget > margin)
+                while(distanceToNextTarget > margin && isValid_)
                 {
                     distanceToNextTarget = (positionComponent_.getPosition()- currentTarget).getLength();
                     const Geometry::Vec3Df& dir = currentTarget - positionComponent_.getPosition();
                     Geometry::Vec3Df velocity = dir*(maxSpeed/distanceToNextTarget);
                     movementComponent_.setVelocity(velocity);
                 }
+                if(!isValid_)
+                    break;
                 movementComponent_.setVelocity(Geometry::Vec3Df(0.f,0.f,0.f));
                 // Erase the point from the path
                 path.erase(path.begin());
             }
-            moveAction->setFinished(true);
+            //moveAction.setFinished(true);
             movementComponent_.setVelocity(Geometry::Vec3Df(0.f,0.f,0.f));
-                /*
-                float distanceToTarget = (positionComponent_.getPosition()- navigationTarget_).getLength();
-                if( distanceToTarget < margin)
-                {
-                    moveAction->setFinished(true);
-                    movementComponent_.setVelocity(Geometry::Vec3Df(0.f,0.f,0.f));
-                }
-                else
-                {
-                    const Geometry::Vec3Df& test = navigationTarget_ - positionComponent_.getPosition();
-                    Geometry::Vec3Df velocity = test*(maxSpeed/distanceToTarget);
-                    movementComponent_.setVelocity(velocity);
-                }
-                */
-            //}
-
         }
     }
 }

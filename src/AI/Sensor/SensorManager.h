@@ -38,8 +38,8 @@ namespace AI
         class SensorsManager
         {
         public:
-            SensorsManager(Ecs::Entity entity, Ecs::World & world, WorkingMemory& memory)
-                : entity_(entity), world_(world), memory_(memory){}
+            SensorsManager(Ecs::Entity entity)
+                : entity_(entity){}
 
             /**
              * Add a new sensor. If the sensor is already in the list, it's not added.
@@ -51,15 +51,13 @@ namespace AI
              */
             void removeSensor(const AI::Sensor::Sensor::SensorType & sensorType);
 
-            void updateSensors();
+            void updateSensors(Ecs::World& world, WorkingMemory& memory);
 
         private:
             typedef vector<Sensor*> SensorsList;
 
             const Ecs::Entity entity_;
-            Ecs::World& world_;
             SensorsList sensorsList_;
-            WorkingMemory& memory_;
         };
     }
 }

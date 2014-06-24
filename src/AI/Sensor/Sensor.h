@@ -40,10 +40,10 @@ namespace AI
         public:
             typedef std::string SensorType;
 
-            Sensor(SensorType sensorType, Ecs::Entity entity, Ecs::World& world, WorkingMemory& memory)
-                : sensorType_(sensorType), entity_(entity), world_(world), memory_(memory){}
+            Sensor(SensorType sensorType, Ecs::Entity entity)
+                : sensorType_(sensorType), entity_(entity){}
             virtual ~Sensor(){}
-            virtual bool update() = 0;
+            virtual bool update(Ecs::World& world, WorkingMemory& memory) = 0;
             virtual void cleanMemory() = 0;
 
             bool hasBeenUpdated() const {return hasBeenUpdated_;}
@@ -52,8 +52,6 @@ namespace AI
         protected:
             SensorType sensorType_;
             Ecs::Entity entity_;
-            Ecs::World& world_;
-            WorkingMemory& memory_;
             bool hasBeenUpdated_;
         };
     }

@@ -29,6 +29,20 @@ namespace AI
 {
     namespace Action
     {
+
+        /**
+         * This exception is raised when trying to provide components
+         * that do not satisfy types requirements.
+         */
+        class NoSuchActionException: public std::exception
+        {
+        public:
+            const char * what() const throw()
+            {
+                return "Tried to create an action of unknown type";
+            }
+        };
+
         class ActionFactory
         {
         public:
@@ -42,7 +56,8 @@ namespace AI
                 {
                     return new NoAction();
                 }
-                return NULL;
+                throw NoSuchActionException();
+                //return NoAction();
             }
         private:
         };

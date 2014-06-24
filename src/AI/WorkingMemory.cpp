@@ -10,6 +10,14 @@ namespace AI
 
     WorkingMemory::~WorkingMemory()
     {
+        memoryFactsMap_.clear();
+        while (!memoryFacts_.empty())
+        {
+            MemoryFact* fact = memoryFacts_.back();
+            if (fact != NULL)
+                delete fact;
+            memoryFacts_.pop_back();
+        }
     }
 
     void WorkingMemory::addMemoryFact(MemoryFact *fact)

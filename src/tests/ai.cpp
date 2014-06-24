@@ -58,18 +58,17 @@ namespace AITest
         w.addComponent(e1, positionComponentE1);
         w.addComponent(e1, movementComponentE1);
 
-        AI::AiComponent* aiComponent = new AI::AiComponent(e1,w, navMeshes);
+        AI::AiComponent* aiComponent = new AI::AiComponent(e1, navMeshes);
         w.addComponent(e1, aiComponent);
 
         // Add a sight sensor
-        AI::Sensor::SensorsManager& sensorsManager = aiComponent->getSensorsManager();
-        //AI::Sensor::SightSensor::Type sightSensorType;
-        sensorsManager.addSensor(AI::Sensor::SightSensor::Type);
+        //AI::Sensor::SensorsManager& sensorsManager = aiComponent->getSensorsManager();
+        //sensorsManager.addSensor(AI::Sensor::SightSensor::Type);
 
         // Add navigation and targeting subsytems
         AI::Subsystem::SubSystemsManager& subsystemsManager = aiComponent->getSubsystemsManager();
-        subsystemsManager.addSubsystem(AI::Subsystem::TargetingSubsystem::Type);
-        subsystemsManager.addSubsystem(AI::Subsystem::NavigationSubSystem::Type);
+        subsystemsManager.addSubsystem(AI::Subsystem::TargetingSubsystem::Type, w);
+        subsystemsManager.addSubsystem(AI::Subsystem::NavigationSubSystem::Type, w);
 
         // Create an other unit
         Ecs::Entity e2 = w.createEntity();

@@ -41,18 +41,18 @@ namespace AI
 
         const Sensor::SensorType SightSensor::Type = "SigthSensor";
 
-        SightSensor::SightSensor(Ecs::Entity entity, Ecs::World& world, WorkingMemory&memory, int detectionRadius)
-            : Sensor(Type, entity, world, memory), detectionRadius_(detectionRadius)
+        SightSensor::SightSensor(Ecs::Entity entity, int detectionRadius)
+            : Sensor(Type, entity), detectionRadius_(detectionRadius)
         {
         }
         /**
          * Current implementation : check whether a other agent has entered the agent's detection area
          */
-        bool SightSensor::update()
+        bool SightSensor::update(Ecs::World& world, WorkingMemory& memory)
         {
             // Get all the memory facts of type "sight fact" already registered in memory
             vector<MemoryFact*> sightFacts;
-            memory_.getMemoryFactsByType("sightFact", sightFacts);
+            memory.getMemoryFactsByType("sightFact", sightFacts);
 
             // Get all the entity with the component "position"
             Ecs::ComponentGroup::ComponentTypeCollection types;
@@ -60,7 +60,7 @@ namespace AI
             //types.insert(MovementComponent::Type);
             Ecs::ComponentGroup prototype(types);
             //world_.getEntityComponents(1,prototype);
-            Ecs::World::ComponentGroupCollection groupCollection = world_.getComponents(prototype);
+            Ecs::World::ComponentGroupCollection groupCollection = world.getComponents(prototype);
             Ecs::World::ComponentGroupCollection::iterator group;
 
             for(group = groupCollection.begin(); group != groupCollection.end(); ++group)
@@ -92,12 +92,12 @@ namespace AI
                         }
                         else
                         {
-                            memory_.addMemoryFact(new SeeEntityFact(entity, entityPosition, belief));
+                            memory.addMemoryFact(new SeeEntityFact(entity, entityPosition, belief));
                         }
                     }
                     else if(oldFactForEntity != NULL)
                     {
-                        memory_.removeMemoryFact(oldFactForEntity);
+                        memory.removeMemoryFact(oldFactForEntity);
                     }
                 }
             }

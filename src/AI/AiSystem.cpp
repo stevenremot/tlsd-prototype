@@ -39,28 +39,26 @@ namespace AI
         for (group = groups.begin(); group != groups.end(); ++group)
         {
             AiComponent& aiComponent = static_cast<AiComponent &>(group->getComponent(AiComponent::Type));
-            // update all the sensors
-            Sensor::SensorsManager& sensorsManager = aiComponent.getSensorsManager();
-            sensorsManager.updateSensors();
+
             // update the subsystems
             Subsystem::SubSystemsManager& subsystemsManager = aiComponent.getSubsystemsManager();
             subsystemsManager.updateSubsystems();
 
             // If the plan is over, compute a new one.
             AiModule* aiModule = aiComponent.getAiModule();
-            aiModule->computeNewPlan();
             // Get the actions sequence and dispatch them between subsystems
             Plan::AiPlan* aiPlan = aiModule->getPlan();
-            if(aiPlan != NULL)
+            if(aiPlan != NULL && !aiPlan->isPlanCompleted())
             {
-                while(!aiPlan->isPlanCompleted())
-                {
-                    Action::Action* currentAction = aiPlan->getCurrentAction();
-                    // Send the action to the relevant object
-                    subsystemsManager.dispatchAction(currentAction);
-                    aiPlan->goToNextStep();
-                    //Threading::sleep(0,50);
-                }
+                Action::Action* currentAction = aiPlan->getCurrentAction();
+                // Send the action to the relevant object
+                subsystemsManager.dispatchAction(currentAction);
+                aiPlan->goToNextStep();
+                //Threading::sleep(0,50);
+            }
+            else
+            {
+                aiModule->computeNewPlan();
             }
 
         }

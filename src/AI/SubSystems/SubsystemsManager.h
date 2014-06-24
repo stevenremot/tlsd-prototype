@@ -43,16 +43,17 @@ namespace AI
         {
         public:
             SubSystemsManager(Ecs::Entity entity,
-                              Ecs::World& world,
                               Blackboard & blackboard,
                               WorkingMemory& memory,
                               const NavMesh::NavMeshContainer& navMeshes)
-                : entity_(entity), world_(world),
+                : entity_(entity),
                   blackboard_(blackboard), memory_(memory),
                   navMeshes_(navMeshes)
             {}
 
-            void addSubsystem(const Subsystem::SubsystemType & type);
+            ~SubSystemsManager();
+
+            void addSubsystem(const Subsystem::SubsystemType & type, Ecs::World& world);
             /**
              * @return NULL if there is no subsystem with this type registered in the manager.
              */
@@ -69,7 +70,6 @@ namespace AI
         private:
             std::vector<Subsystem*> subSystemsList_;
             const Ecs::Entity entity_;
-            Ecs::World world_;
             Blackboard& blackboard_;
             WorkingMemory& memory_;
             const NavMesh::NavMeshContainer& navMeshes_;

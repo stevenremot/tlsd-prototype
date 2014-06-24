@@ -97,20 +97,20 @@ namespace StateMachineTest
 
         Ecs::ComponentGroup prototype(types);
         Ecs::ComponentGroup components = w.getEntityComponents(e1, prototype);
-        AI::AiComponent* aiComponent = new AI::AiComponent(e1,w, navMeshes);
+        AI::AiComponent* aiComponent = new AI::AiComponent(e1, navMeshes);
         BasicAiModule* aiModule = new BasicAiModule(components, aiComponent->getBlackboard(), Idle);
         setupStateMachine(*aiModule);
         aiComponent->setAiModule(aiModule);
         w.addComponent(e1, aiComponent);
 
         // Add a sight sensor
-        AI::Sensor::SensorsManager& sensorsManager = aiComponent->getSensorsManager();
-        sensorsManager.addSensor(AI::Sensor::SightSensor::Type);
+        //AI::Sensor::SensorsManager& sensorsManager = aiComponent->getSensorsManager();
+        //sensorsManager.addSensor(AI::Sensor::SightSensor::Type);
 
         // Add navigation and targeting subsytems
         AI::Subsystem::SubSystemsManager& subsystemsManager = aiComponent->getSubsystemsManager();
-        subsystemsManager.addSubsystem(AI::Subsystem::TargetingSubsystem::Type);
-        subsystemsManager.addSubsystem(AI::Subsystem::NavigationSubSystem::Type);
+        subsystemsManager.addSubsystem(AI::Subsystem::TargetingSubsystem::Type, w);
+        subsystemsManager.addSubsystem(AI::Subsystem::NavigationSubSystem::Type, w);
 
         // Create an other entity
         Ecs::Entity e2 = w.createEntity();

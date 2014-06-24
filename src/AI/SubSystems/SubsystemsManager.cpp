@@ -20,7 +20,18 @@ namespace AI
 {
     namespace Subsystem
     {
-        void SubSystemsManager::addSubsystem(const Subsystem::SubsystemType& type)
+        SubSystemsManager::~SubSystemsManager()
+        {
+            while(!subSystemsList_.empty())
+            {
+                Subsystem* subSystem = subSystemsList_.back();
+                if(NULL != subSystem)
+                    delete subSystem;
+                subSystemsList_.pop_back();
+            }
+        }
+
+        void SubSystemsManager::addSubsystem(const Subsystem::SubsystemType& type, Ecs::World& world)
         {
             // TO DO : factory
             if(type == TargetingSubsystem::Type)
@@ -34,7 +45,7 @@ namespace AI
                 types.insert(PositionComponent::Type);
                 types.insert(MovementComponent::Type);
                 Ecs::ComponentGroup prototype(types);
-                Ecs::ComponentGroup components = world_.getEntityComponents(entity_, prototype);
+                Ecs::ComponentGroup components = world.getEntityComponents(entity_, prototype);
                 Geometry::PositionComponent& positionComponent = static_cast<Geometry::PositionComponent&>(components.getComponent(PositionComponent::Type));
                 Physics::MovementComponent& movementComponent = static_cast<Physics::MovementComponent&>(components.getComponent(MovementComponent::Type));
                 subSystemsList_.push_back(new NavigationSubSystem(blackboard_, positionComponent, movementComponent, navMeshes_));
@@ -61,8 +72,6 @@ namespace AI
 
         void SubSystemsManager::dispatchAction(Action::Action* action)
         {
-            if(action == NULL)
-                return;
             Subsystem::SubsystemType subsystemType = "None";
             if(action->getType() == Action::MoveCloseToTargetAction::Type)
             {

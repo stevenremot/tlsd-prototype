@@ -1,56 +1,41 @@
 /*
    This file is part of The Lost Souls Downfall prototype.
-
+   
     The Lost Souls Downfall prototype is free software: you can
     redistribute it and/or modify it under the terms of the GNU
     General Public License as published by the Free Software
     Foundation, either version 3 of the License, or (at your option)
     any later version.
-
+    
     The Lost Souls Downfall prototype is distributed in the hope that
     it will be useful, but WITHOUT ANY WARRANTY; without even the
     implied warranty of MERCHANTABILITY or FITNESS FOR A PARTICULAR
     PURPOSE.  See the GNU General Public License for more details.
-
+    
     You should have received a copy of the GNU General Public License
     along with The Lost Souls Downfall prototype.  If not, see
     <http://www.gnu.org/licenses/>.
 */
 
-#ifndef AI_ACTION_ACTION_H
-#define AI_ACTION_ACTION_H
+#ifndef AI_SENSOR_SENSORSYSTEM_H
+#define AI_SENSOR_SENSORSYSTEM_H
 
-#include <string>
+#include "../../Ecs/System.h"
+#include "../../Ecs/World.h"
+
+#include "../../Threading/ThreadableInterface.h"
 
 namespace AI
 {
-    namespace Action
+    namespace Sensor
     {
-        /**
-         * Base class for actions. Overload it to define custom actions.
-         */
-        class Action
+        class SensorSystem : public Ecs::System, public Threading::ThreadableInterface
         {
         public:
+            SensorSystem(Ecs::World& world) : System(world) {}
 
-            typedef std::string ActionType;
-
-            Action(const ActionType& type) : type_(type){}
-            Action(const Action& action)
-                : type_(action.getType()), finished_(action.isFinished()) {}
-
-            virtual ~Action(){}
-
-            const ActionType& getType() const {return type_;}
-
-            bool isFinished() const {return finished_;}
-            void setFinished(bool finished) {finished_ = finished;}
-
-        private:
-            ActionType type_;
-            bool finished_;
+            virtual void run();
         };
     }
 }
-
-#endif // AI_ACTION_ACTION_H
+#endif // AI_SENSOR_SENSORSYSTEM_H

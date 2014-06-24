@@ -38,13 +38,13 @@ namespace AI
 
             static const Sensor::SensorType Type;
 
-            SightSensor(Ecs::Entity entity, Ecs::World& world,WorkingMemory& memory, int detectionRadius = 120);
+            SightSensor(Ecs::Entity entity, int detectionRadius = 120);
 
             /**
              * Check if a  ententy entered the detection area of the current entity
              * TO DO : implement field of view
              */
-            virtual bool update();
+            virtual bool update(Ecs::World& world, WorkingMemory& memory);
             /**
              * TO DO
              */

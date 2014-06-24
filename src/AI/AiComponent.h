@@ -20,13 +20,15 @@
 #ifndef AI_AICOMPONENT_H
 #define AI_AICOMPONENT_H
 
-#include "../Ecs/Component.h"
 #include "WorkingMemory.h"
 #include "Blackboard.h"
-#include "Sensor/SensorManager.h"
+//#include "Sensor/SensorManager.h"
+
 #include "SubSystems/SubsystemsManager.h"
 #include "AiModule.h"
+//#include "Sensor/SensorComponent.h"
 
+#include "../Ecs/Component.h"
 #include "../Geometry/PositionComponent.h"
 #include "../Physics/MovementComponent.h"
 
@@ -41,11 +43,11 @@ namespace AI
     public:
         static const Ecs::Component::Type Type;
 
-        AiComponent(Ecs::Entity entity, Ecs::World& world, const NavMesh::NavMeshContainer& navMeshes)
+        AiComponent(Ecs::Entity entity, const NavMesh::NavMeshContainer& navMeshes)
             : Component(Type),
               entity_(entity), memory_(), blackboard_(),
-              subsystemsManager_(entity, world, blackboard_,memory_, navMeshes),
-              sensorsManager_(entity, world, memory_), aiModule_(NULL) {}
+              subsystemsManager_(entity, blackboard_,memory_, navMeshes),
+              aiModule_(NULL) {}
 
         ~AiComponent();
 
@@ -55,6 +57,7 @@ namespace AI
             {
                 Dependencies.push_back(Geometry::PositionComponent::Type);
                 Dependencies.push_back(Physics::MovementComponent::Type);
+                //Dependencies.push_back(Sensor::SensorComponent::Type);
             }
             return Dependencies;
         }
@@ -63,15 +66,18 @@ namespace AI
         AiModule* getAiModule() {return aiModule_;}
 
         Blackboard& getBlackboard() {return blackboard_;}
+        WorkingMemory& getMemory() {return memory_;}
 
         Subsystem::SubSystemsManager& getSubsystemsManager()
         {
             return subsystemsManager_;
         }
+        /*
         Sensor::SensorsManager& getSensorsManager()
         {
             return sensorsManager_;
         }
+        */
 
     private:
         static std::vector<Ecs::Component::Type> Dependencies;
@@ -80,7 +86,7 @@ namespace AI
         WorkingMemory memory_;
         Blackboard blackboard_;
         Subsystem::SubSystemsManager subsystemsManager_;
-        Sensor::SensorsManager sensorsManager_;
+        //Sensor::SensorsManager sensorsManager_;
         AiModule* aiModule_;
 
     };

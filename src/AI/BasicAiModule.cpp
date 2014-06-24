@@ -119,9 +119,19 @@ namespace AI
                 actionType = transition.actionType_;
             }
         }
-        newPlan.push_back(Action::ActionFactory::createAction(actionType, getBlackboard()));
-        stateMachine_.goToState(nextState);
-        setPlan(new Plan::AiPlan(newPlan));
+        try
+        {
+            /**
+              * Add the action to the plan if n exception is raised ?
+              */
+            newPlan.push_back(Action::ActionFactory::createAction(actionType, getBlackboard()));
+            stateMachine_.goToState(nextState);
+            setPlan(new Plan::AiPlan(newPlan));
+        }
+        catch (const Action::NoSuchActionException e)
+        {
+            return;
+        }
 
     }
 

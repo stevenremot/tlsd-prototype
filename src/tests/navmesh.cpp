@@ -20,10 +20,13 @@
 #include "navmesh.h"
 
 #include <vector>
+#include <iostream>
 
 #include "../AI/AiComponent.h"
 #include "../AI/BasicAiModule.h"
 #include "../AI/AiSystem.h"
+#include "../AI/Sensor/SensorSystem.h"
+#include "../AI/Sensor/SensorComponent.h"
 #include "../AI/Sensor/SightSensor.h"
 #include "../AI/SubSystems/TargetingSubsystem.h"
 #include "../AI/SubSystems/NavigationSubsystem.h"
@@ -39,6 +42,8 @@
 #include "stateMachine.h"
 #include "SvgDrawer.h"
 using std::vector;
+using std::cout;
+using std::endl;
 
 namespace NavMeshTest
 {
@@ -54,8 +59,8 @@ namespace NavMeshTest
 
         if(hasAI)
         {
-            AI::AiComponent* aiComponent = new AI::AiComponent(e,w, navMeshes);
-            // Set up the ai module
+            // Set up the ai component
+            AI::AiComponent* aiComponent = new AI::AiComponent(e, navMeshes);
 
             Ecs::ComponentGroup::ComponentTypeCollection types;
             types.insert(Physics::MovementComponent::Type);
@@ -69,14 +74,17 @@ namespace NavMeshTest
             aiComponent->setAiModule(aiModule);
             w.addComponent(e, aiComponent);
 
+            AI::Sensor::SensorComponent* sensorComponent = new AI::Sensor::SensorComponent(e);
+            w.addComponent(e, sensorComponent);
+
             // Add a sight sensor
-            AI::Sensor::SensorsManager& sensorsManager = aiComponent->getSensorsManager();
+            AI::Sensor::SensorsManager& sensorsManager = sensorComponent->getSensorsManager();
             sensorsManager.addSensor(AI::Sensor::SightSensor::Type);
 
             // Add navigation and targeting subsytems
             AI::Subsystem::SubSystemsManager& subsystemsManager = aiComponent->getSubsystemsManager();
-            subsystemsManager.addSubsystem(AI::Subsystem::TargetingSubsystem::Type);
-            subsystemsManager.addSubsystem(AI::Subsystem::NavigationSubSystem::Type);
+            subsystemsManager.addSubsystem(AI::Subsystem::TargetingSubsystem::Type, w);
+            subsystemsManager.addSubsystem(AI::Subsystem::NavigationSubSystem::Type, w);
         }
         return e;
     }
@@ -152,10 +160,12 @@ namespace NavMeshTest
         Ecs::Entity e2 = createNewCharacter(w, navMeshGenerationEngine.getNavMeshes(), Geometry::Vec3Df(80.0,80.0,0.0), Geometry::Vec3Df(0.0,0.0,0.0));
         // Create thrads for systems
         AI::AiSystem aiSystem(w);
+        AI::Sensor::SensorSystem sensorSystem(w);
         Physics::MovementSystem movementSystem(w);
 
         vector<Threading::ThreadableInterface*> aiSystemVector;
         vector<Threading::ThreadableInterface*> movementSystemVector;
+        aiSystemVector.push_back(&sensorSystem);
         aiSystemVector.push_back(&aiSystem);
         movementSystemVector.push_back(&movementSystem);
 
@@ -186,6 +196,7 @@ namespace NavMeshTest
 
         aiThread.stop();
         movementThread.stop();
+        //cout << "Navigation over" << endl;
     }
 
     void drawNavMesh(const AI::NavMesh::NavMesh& navMesh, Test::SvgDrawer& drawer)
