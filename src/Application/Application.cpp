@@ -26,8 +26,47 @@
 #include "../Character/EntityCreator.h"
 #include "../Character/Statistics.h"
 
+// TODO incudes forcube, remove later
+#include "../Geometry/PositionComponent.h"
+#include "../Geometry/RotationComponent.h"
+#include "../Geometry/AxisAlignedBoundingBox.h"
+#include "../Physics/CollisionComponent.h"
+#include "../Physics/AABBCollisionBody.h"
+#include "../Character/HarmComponent.h"
+#include "../Graphics/Render/RenderableComponent.h"
+#include "../Graphics/Render/ModelUtils.h"
+
 namespace Application
 {
+    /**
+     * Dangerous cube for testing
+     * TODO remove
+     */
+    Ecs::Entity createDangerousCube(
+        Threading::ConcurrentWriter<Ecs::World>& world,
+        const Geometry::Vec3Df& position,
+        unsigned int damages
+    ) {
+        Geometry::AxisAlignedBoundingBox bbox(
+            position + Geometry::Vec3Df(0.0, 0.0, 0.0),
+            position + Geometry::Vec3Df(1.0, 1.0, 1.0));
+
+        Ecs::Entity entity = world->createEntity();
+
+        world->addComponent(entity, new Geometry::PositionComponent(position));
+        world->addComponent(entity, new Geometry::RotationComponent(
+            Geometry::Vec3Df(0, 0, 0)
+        ));
+        world->addComponent(entity, new Physics::CollisionComponent(
+            new Physics::AABBCollisionBody(bbox)
+        ));
+        world->addComponent(entity, new Character::HarmComponent(damages));
+        world->addComponent(entity, new Graphics::Render::RenderableComponent(
+            Graphics::Render::createPrettyCubeModel()
+        ));
+
+        return entity;
+    }
 
     void applicationEventBootCallback(Application& application, BootInterface& eventBoot)
     {
@@ -101,6 +140,8 @@ namespace Application
                 Character::Statistics(70, 20, 20, 5),
                 group
             );
+
+            createDangerousCube(world, Geometry::Vec3Df(200, 200, 0), 20);
 
             std::cout << groupComponent->getCurrentHealth() << std::endl;
         }
