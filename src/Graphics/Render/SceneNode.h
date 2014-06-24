@@ -24,6 +24,7 @@
 #include <irrlicht/ISceneNode.h>
 
 #include "../../Geometry/Vec3D.h"
+#include "../../Geometry/AxisAlignedBoundingBox.h"
 
 namespace Graphics
 {
@@ -58,6 +59,8 @@ namespace Graphics
                 Geometry::Vec3Df getScale() const;
                 Geometry::Vec3Df getAbsolutePosition() const;
                 Geometry::Vec3Df getAbsoluteRotation() const;
+
+                Geometry::AxisAlignedBoundingBox getBoundingBox() const;
 
                 void setId(unsigned int id);
 

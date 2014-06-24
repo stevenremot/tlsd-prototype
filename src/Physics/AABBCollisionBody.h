@@ -45,6 +45,14 @@ namespace Physics
             return boundingBox_;
         }
 
+        Geometry::AxisAlignedBoundingBox getTranslatedBoundingBox(const Geometry::Vec3Df& translation) const
+        {
+            return Geometry::AxisAlignedBoundingBox(
+                       boundingBox_.getOrigin() + translation,
+                       boundingBox_.getOffset() + translation
+                   );
+        }
+
     private:
         Geometry::AxisAlignedBoundingBox boundingBox_;
     };

@@ -21,6 +21,7 @@
 #include "../../Geometry/IrrlichtConversions.h"
 
 #include <irrlicht/matrix4.h>
+#include <irrlicht/aabbox3d.h>
 
 using Geometry::Vec3Df;
 
@@ -100,6 +101,14 @@ namespace Graphics
                 vector3df irrRot = irrlichtSceneNode_->getAbsoluteTransformation().getRotationDegrees();
                 return Geometry::fromIrrVector3df(irrRot) * M_PI / 180.0;
             }
+        }
+
+        Geometry::AxisAlignedBoundingBox SceneNode::getBoundingBox() const
+        {
+            irr::core::aabbox3df bbox = irrlichtSceneNode_->getBoundingBox();
+            return Geometry::AxisAlignedBoundingBox(
+                                                    Geometry::fromIrrVector3df(bbox.MinEdge) * getScale(),
+                                                    Geometry::fromIrrVector3df(bbox.MaxEdge) * getScale());
         }
 
         void SceneNode::setPosition(const Vec3Df& pos)

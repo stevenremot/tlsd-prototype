@@ -43,8 +43,8 @@ namespace Physics
     void CollisionSystem::run()
     {
         // might serve for mesh intersections
-        //const float movementFactor =
-        //    (static_cast<float>(timer_.getDelay()) / 1000.0);
+        const float movementFactor =
+            (static_cast<float>(timer_.getDelay()) / 1000.0);
 
         // Get all the entities with movement, position and collision component
         ComponentGroup::ComponentTypeCollection types;
@@ -74,28 +74,36 @@ namespace Physics
                 );
 
             // might serve for mesh collisions
-            /*Threading::ConcurrentReader<MovementComponent> movementComponent =
+            Threading::ConcurrentReader<MovementComponent> movementComponent =
                 Threading::getConcurrentReader<Ecs::Component, MovementComponent>(
                     group->getComponent(MovementComponent::Type)
-                );*/
+                );
+
+            Threading::ConcurrentReader<CollisionComponent> movingCollisionComponent =
+                Threading::getConcurrentReader<Ecs::Component, CollisionComponent>(
+                    group->getComponent(CollisionComponent::Type)
+                );
 
             Vec3Df positionVector = positionComponent->getPosition();
             // might serve for mesh collisions
-            //Vec3Df movementVector = movementComponent->getVelocity() * movementFactor;
+            Vec3Df movementVector = movementComponent->getVelocity() * movementFactor;
 
             for (group2 = groups2.begin(); group2 != groups2.end(); ++group2)
             {
+                if (group2->getEntity() == movingEntity)
+                    continue;
+
                 Threading::ConcurrentReader<CollisionComponent> collisionComponent =
-                Threading::getConcurrentReader<Ecs::Component, CollisionComponent>(
-                    group2->getComponent(CollisionComponent::Type)
-                );
+                    Threading::getConcurrentReader<Ecs::Component, CollisionComponent>(
+                        group2->getComponent(CollisionComponent::Type)
+                    );
 
                 if (collisionComponent->getCollisionBody().getType() == GroundCollisionBody::Type)
                 {
                     Threading::ConcurrentReader<PositionComponent> groundPositionComponent =
                         Threading::getConcurrentReader<Ecs::Component, PositionComponent>(
-                        group2->getComponent(PositionComponent::Type)
-                    );
+                            group2->getComponent(PositionComponent::Type)
+                        );
 
                     const GroundCollisionBody& collBody =
                         static_cast<const GroundCollisionBody&>(collisionComponent->getCollisionBody());
@@ -111,8 +119,28 @@ namespace Physics
                         }
                     }
                 }
-                // TODO: else
-                // if it is a static object, project the movementVector on the ground's plan
+                else if (collisionComponent->getCollisionBody().getType() == Model3DCollisionBody::Type)
+                {
+                    const AABBCollisionBody& movingBody =
+                        static_cast<const AABBCollisionBody&>(
+                            movingCollisionComponent->getCollisionBody()
+                        );
+
+                    const Model3DCollisionBody& collBody =
+                        static_cast<const Model3DCollisionBody&>(
+                            collisionComponent->getCollisionBody()
+                        );
+
+                    if (
+                        engine_.getAABBAgainstModel3DCollisionResponse(
+                            movingBody,
+                            collBody,
+                            positionVector,
+                            movementVector
+                        )
+                    )
+                        positionComponent->setPosition(positionVector);
+                }
             }
 
             eventQueue_ << new EntityPositionChangedEvent(movingEntity, positionComponent->getPosition());

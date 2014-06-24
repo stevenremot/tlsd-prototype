@@ -228,17 +228,18 @@ namespace World
                 // Generate the parameters
                 float localX = rng.getUniform(0,chunkSize);
                 float localY = rng.getUniform(0,chunkSize);
-                float truncHeight = rng.getUniform(4,10);
-                float truncWidth = rng.getUniform(0.5,3);
-                float leavesHeight = rng.getUniform(1,3);
-                float leavesWidth = rng.getUniform(truncWidth+2,truncWidth+5);
-                float offset = rng.getUniform(0,0.3);
-                float truncR = rng.getUniform(0.2,0.4);
-                float truncG = rng.getUniform(0.05,0.15);
-                float truncB = rng.getUniform(0.01,0.04);
-                float leavesR = rng.getUniform(0.05,0.15);
-                float leavesG = rng.getUniform(0.2,0.6);
-                float leavesB = rng.getUniform(0.1,0.2);
+                const TreeParameters treeParameters = world_.getBiome(x*chunkSize+localX, y*chunkSize+localY).getTreeParameters();
+                float trunkHeight = rng.getUniform(treeParameters.getMinTrunkHeight(),treeParameters.getMaxTrunkHeight());
+                float trunkWidth = rng.getUniform(treeParameters.getMinTrunkWidth(),treeParameters.getMaxTrunkWidth());
+                float leavesHeight = rng.getUniform(treeParameters.getMinLeavesHeight(),treeParameters.getMaxLeavesHeight());
+                float leavesWidth = rng.getUniform(treeParameters.getMinLeavesWidth(),treeParameters.getMaxLeavesWidth());
+                float offset = rng.getUniform(treeParameters.getMinOffset(),treeParameters.getMaxOffset());
+                float trunkR = rng.getUniform(treeParameters.getMinTrunkColor().getX(),treeParameters.getMaxTrunkColor().getX());
+                float trunkG = rng.getUniform(treeParameters.getMinTrunkColor().getY(),treeParameters.getMaxTrunkColor().getY());
+                float trunkB = rng.getUniform(treeParameters.getMinTrunkColor().getZ(),treeParameters.getMaxTrunkColor().getZ());
+                float leavesR = rng.getUniform(treeParameters.getMinLeavesColor().getX(),treeParameters.getMaxLeavesColor().getX());
+                float leavesG = rng.getUniform(treeParameters.getMinLeavesColor().getY(),treeParameters.getMaxLeavesColor().getY());
+                float leavesB = rng.getUniform(treeParameters.getMinLeavesColor().getZ(),treeParameters.getMaxLeavesColor().getZ());
                 const std::vector<Geometry::Polygon2D> cityPolygons = world_.getBiomeMap().getCityPolygons();
                 unsigned int length = cityPolygons.size();
                 // Test to see if the future tree will be in a city
@@ -254,7 +255,7 @@ namespace World
                 if (!isInACity)
                 {
                     positions.push_back(Vec3Df(localX + floatX*chunkSize, localY + floatY*chunkSize, computeHeight(world_, floatX*chunkSize + localX, floatY*chunkSize + localY)));
-                    SimpleTree *tree = new SimpleTree(truncHeight,truncWidth,leavesHeight,leavesWidth,offset,Graphics::Color(truncR,truncG,truncB),Graphics::Color(leavesR,leavesG,leavesB));
+                    SimpleTree *tree = new SimpleTree(trunkHeight,trunkWidth,leavesHeight,leavesWidth,offset,Graphics::Color(trunkR,trunkG,trunkB),Graphics::Color(leavesR,leavesG,leavesB));
                     trees.push_back(tree);
                 }
             }

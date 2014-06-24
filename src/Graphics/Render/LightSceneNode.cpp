@@ -72,6 +72,9 @@ namespace Graphics
             irrLight.Radius = light.getRadius();
             irrLight.DiffuseColor = fromColor(light.getColor());
 
+            if (light.getType() == Directional)
+                irrLight.AmbientColor = fromColor(light.getColor() * 0.1);
+
             irr::scene::ILightSceneNode* node
                 = static_cast<irr::scene::ILightSceneNode*>(irrlichtSceneNode_);
 

@@ -23,6 +23,7 @@
 #include <string>
 
 #include "../Graphics/Color.h"
+#include "Generation/TreeParameters.h"
 
 namespace World
 {
@@ -47,8 +48,9 @@ namespace World
          * Return the principal color of a biome
          *
          */
-        virtual Graphics::Color getColor() =0;
-        virtual const Type& getType() {return type_;}
+        virtual Graphics::Color getColor() = 0;
+        const Type& getType() {return type_;}
+        virtual const Generation::TreeParameters getTreeParameters() = 0;
     private:
         Type type_;
     };

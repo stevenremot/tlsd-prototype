@@ -24,6 +24,7 @@
 #include "../Threading/ThreadableInterface.h"
 #include "../Event/EventManager.h"
 #include "MovementTimer.h"
+#include "CollisionEngine.h"
 
 namespace Physics
 {
@@ -37,7 +38,8 @@ namespace Physics
         ):
             Ecs::System(world),
             eventQueue_(queue),
-            timer_(timer)
+            timer_(timer),
+            engine_()
         {}
 
         virtual void run();
@@ -45,6 +47,7 @@ namespace Physics
     private:
         Event::EventQueue& eventQueue_;
         const MovementTimer& timer_;
+        CollisionEngine engine_;
     };
 }
 
