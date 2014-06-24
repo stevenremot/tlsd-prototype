@@ -15,8 +15,19 @@ namespace Physics
                    aabb2.getOrigin().getX() < aabb1.getOffset().getX() &&
                    aabb2.getOrigin().getY() < aabb1.getOffset().getY() &&
                    aabb2.getOrigin().getZ() < aabb1.getOffset().getZ();
-
     }
+
+    bool CollisionEngine::getAABBAgainstAABBCollisionResponse(
+        const AABBCollisionBody& aabbBody1,
+        const AABBCollisionBody& aabbBody2,
+        Geometry::Vec3Df& position1,
+        const Geometry::Vec3Df& position2)
+    {
+        AxisAlignedBoundingBox movingAABB = aabbBody1.getTranslatedBoundingBox(position1);
+        AxisAlignedBoundingBox otherAABB = aabbBody2.getTranslatedBoundingBox(position2);
+        return getAABBCollision(movingAABB, otherAABB);
+    }
+
 
     bool CollisionEngine::getAABBAgainstModel3DCollisionResponse(
         const AABBCollisionBody& aabbBody,
@@ -246,15 +257,15 @@ namespace Physics
     }
 
     void CollisionEngine::resolveEdgeCollision(
-                const Geometry::Vec3Df& e,
-                const Geometry::Vec3Df& p,
-                const Geometry::Vec3Df& ellipsoidCenter,
-                const Geometry::Vec3Df& velocity,
-                const float& velocitySquaredLength,
-                const float& velocityLength,
-                Geometry::Vec3Df& intersectionPoint,
-                float& intersectionDistance,
-                float& t)
+        const Geometry::Vec3Df& e,
+        const Geometry::Vec3Df& p,
+        const Geometry::Vec3Df& ellipsoidCenter,
+        const Geometry::Vec3Df& velocity,
+        const float& velocitySquaredLength,
+        const float& velocityLength,
+        Geometry::Vec3Df& intersectionPoint,
+        float& intersectionDistance,
+        float& t)
     {
         float edgeSquaredLength = e.getSquaredLength();
         Vec3Df baseToVertex = p - ellipsoidCenter;
