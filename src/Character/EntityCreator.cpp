@@ -33,11 +33,12 @@
 #include "../Character/StatisticsComponent.h"
 #include "../Character/CharacterComponent.h"
 #include "../Input/PlayerComponent.h"
+#include "GroupUtil.h"
 
 namespace Character
 {
     Ecs::Entity createCharacter(
-        Ecs::World& world,
+        Threading::ConcurrentWriter<Ecs::World>& world,
         const Geometry::Vec3Df& position,
         const Geometry::Vec3Df& rotation,
         const Statistics& statistics,
@@ -56,44 +57,44 @@ namespace Character
         animByAction[Character::MoveAction::Type] = Graphics::Render::Walk;
         animByAction[Character::StopAction::Type] = Graphics::Render::Idle;
 
-        const Ecs::Entity& entity = world.createEntity();
-        world.addComponent(
+        const Ecs::Entity& entity = world->createEntity();
+        world->addComponent(
             entity,
             new Geometry::PositionComponent(position)
         );
-        world.addComponent(
+        world->addComponent(
             entity,
             new Geometry::RotationComponent(rotation)
         );
-        world.addComponent(
+        world->addComponent(
             entity,
             new Graphics::Render::RenderableComponent(
                 "ninja.b3d", ""
             )
         );
-        world.addComponent(
+        world->addComponent(
             entity,
             new Graphics::Render::AnimationComponent(animMap, animByAction)
         );
-        world.addComponent(
+        world->addComponent(
             entity,
             new Physics::MovementComponent(Geometry::Vec3Df(0.0, 0.0, 0.0))
         );
-        world.addComponent(
+        world->addComponent(
             entity,
             new Physics::GravityComponent(1)
         );
-        world.addComponent(
+        world->addComponent(
             entity,
             new Physics::CollisionComponent(new Physics::AABBCollisionBody(bbox))
         );
-        world.addComponent(
+        world->addComponent(
             entity,
             new Character::StatisticsComponent(
                 statistics
             )
         );
-        world.addComponent(
+        world->addComponent(
             entity,
             new Character::CharacterComponent(
                 statistics.getSpeed().getBaseValue(),
@@ -101,11 +102,13 @@ namespace Character
             )
         );
 
+        associateToGroup(world, entity, group);
+
         return entity;
     }
 
     Ecs::Entity createPlayer(
-        Ecs::World& world,
+        Threading::ConcurrentWriter<Ecs::World>& world,
         const Geometry::Vec3Df& position,
         const Geometry::Vec3Df& rotation,
         const Statistics& statistics,
@@ -120,7 +123,7 @@ namespace Character
         );
 
 
-        world.addComponent(
+        world->addComponent(
             entity,
             new Input::PlayerComponent()
         );

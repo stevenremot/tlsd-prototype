@@ -19,6 +19,8 @@
 
 #include "Application.h"
 
+#include <iostream> // TODO remove
+
 // TODO includes for group, remove later
 #include "../Character/GroupComponent.h"
 #include "../Character/GroupUtil.h"
@@ -86,25 +88,24 @@ namespace Application
             Character::GroupComponent* groupComponent = new Character::GroupComponent();
             world->addComponent(group, groupComponent);
 
-            Ecs::Entity player = Character::createPlayer(
-                *world,
+            Character::createPlayer(
+                world,
                 Geometry::Vec3Df(150,150,150),
                 Geometry::Vec3Df(0,0,0),
                 Character::Statistics(100, 20, 20, 5),
                 group
             );
-            Ecs::Entity buddy = Character::createCharacter(
-                *world,
+            Character::createCharacter(
+                world,
                 Geometry::Vec3Df(160, 160, 150),
                 Geometry::Vec3Df(0, 0, 0),
                 Character::Statistics(70, 20, 20, 5),
                 group
             );
 
-            Character::associateToGroup(world, player, group);
-            Character::associateToGroup(world, buddy, group);
-
             Character::initGroupHealth(world, group);
+
+            std::cout << groupComponent->getCurrentHealth() << std::endl;
         }
 
         running_ = true;

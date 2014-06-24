@@ -23,12 +23,13 @@
 #include "../Ecs/Entity.h"
 #include "../Ecs/World.h"
 #include "../Geometry/Vec3D.h"
+#include "../Threading/ConcurrentRessource.h"
 #include "Statistics.h"
 
 namespace Character
 {
     Ecs::Entity createCharacter(
-        Ecs::World& world,
+        Threading::ConcurrentWriter<Ecs::World>& world,
         const Geometry::Vec3Df& position,
         const Geometry::Vec3Df& rotation,
         const Statistics& statistics,
@@ -36,7 +37,7 @@ namespace Character
     );
 
     Ecs::Entity createPlayer(
-        Ecs::World& world,
+        Threading::ConcurrentWriter<Ecs::World>& world,
         const Geometry::Vec3Df& position,
         const Geometry::Vec3Df& rotation,
         const Statistics& statistics,
