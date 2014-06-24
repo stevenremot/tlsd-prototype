@@ -17,31 +17,31 @@
     <http://www.gnu.org/licenses/>.
 */
 
-#include "MovementTimer.h"
-#include "../Core/Time.h"
+#ifndef CORE_TIME_H
+#define CORE_TIME_H
 
-namespace Physics
+#include <ctime>
+
+namespace Core
 {
-    void MovementTimer::updateCurrentTime()
-    {
-        struct timespec time;
-        Core::getTime(time);
-        currentTime_ = time.tv_sec * 1000L + time.tv_nsec / 1000000L;
-        delay_ = currentTime_ - lastTime_;
-    }
+    /**
+     * Return the time elapsed in milliseconds since an arbitrary and constant start
+     *
+     * @param[out] time
+     *
+     * @return 0 on success
+     */
+    int getTime(struct timespec& time);
 
-    void MovementTimer::updateLastTime()
-    {
-        lastTime_ = currentTime_;
-    }
-
-    unsigned long MovementTimer::getLastTime() const
-    {
-        return lastTime_;
-    }
-
-    unsigned long MovementTimer::getDelay() const
-    {
-        return delay_;
-    }
+    /**
+     *  Difference of timespec structs : end - start
+     */
+    struct timespec difference(struct timespec start, struct timespec end);
 }
+
+#endif
+
+// Emacs local variables
+// Local variables:
+// mode: c++
+// End:

@@ -36,20 +36,6 @@ namespace Threading
     int sleep(long seconds, long milliseconds);
 
     /**
-     * Return the time elapsed in milliseconds since an arbitrary and constant start
-     *
-     * @param[out] time
-     *
-     * @return 0 on success
-     */
-    int getTime(struct timespec& time);
-
-    /**
-     *  Difference of timespec structs : end - start
-     */
-    struct timespec difference(struct timespec start, struct timespec end);
-
-    /**
      * Class that can run multiple threadable objects.
      *
      * *Caution*: Does not own threadables' memory.

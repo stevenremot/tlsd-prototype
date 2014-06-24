@@ -7,10 +7,15 @@
 #include <windows.h>
 #endif
 
+#include "../Core/Time.h"
+
 using std::cout;
 using std::endl;
 
 using std::vector;
+
+using Core::getTime;
+using Core::difference;
 
 namespace Threading
 {
@@ -25,38 +30,6 @@ namespace Threading
         tim.tv_nsec = milliseconds * 1000000L;
         return nanosleep(&tim, NULL);
 #endif
-    }
-
-    int getTime(struct timespec& time)
-    {
-#ifdef _WIN32
-        SYSTEMTIME st;
-        GetSystemTime(&st);
-
-        time.tv_sec = st.wSecond;
-        time.tv_nsec = st.wMilliseconds * 1000000L;
-
-        return 0;
-#else
-        return clock_gettime(CLOCK_MONOTONIC, &time);
-#endif
-    }
-
-    // end - start
-    struct timespec difference(struct timespec start, struct timespec end)
-    {
-        struct timespec temp;
-        if (end.tv_nsec-start.tv_nsec < 0)
-        {
-            temp.tv_sec = end.tv_sec - start.tv_sec-1;
-            temp.tv_nsec = 1000000000L + end.tv_nsec-start.tv_nsec;
-        }
-        else
-        {
-            temp.tv_sec = end.tv_sec - start.tv_sec;
-            temp.tv_nsec = end.tv_nsec - start.tv_nsec;
-        }
-        return temp;
     }
 
     void Thread::start()
