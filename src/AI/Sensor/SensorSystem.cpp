@@ -20,7 +20,8 @@
 #include "SensorSystem.h"
 
 #include "SensorComponent.h"
-#include "../AiComponent.h"
+#include "../MemoryComponent.h"
+//#include "../AiComponent.h"
 
 namespace AI
 {
@@ -33,7 +34,7 @@ namespace AI
 
             Ecs::ComponentGroup::ComponentTypeCollection types;
             types.insert(SensorComponent::Type);
-            types.insert(AiComponent::Type);
+            types.insert(MemoryComponent::Type);
             Ecs::ComponentGroup prototype(types);
             Ecs::World::ComponentGroupCollection groups = world.getComponents(prototype);
 
@@ -42,10 +43,14 @@ namespace AI
             for (group = groups.begin(); group != groups.end(); ++group)
             {
                 SensorComponent& sensorComponent = static_cast<SensorComponent &>(group->getComponent(SensorComponent::Type));
-                AiComponent& aiComponent = static_cast<AiComponent &>(group->getComponent(AiComponent::Type));
+                MemoryComponent& memoryComponent = static_cast<MemoryComponent &>(group->getComponent(MemoryComponent::Type));
+
+                memoryComponent.cleanMemory();
                 // update all the sensors
                 SensorsManager& sensorsManager = sensorComponent.getSensorsManager();
-                sensorsManager.updateSensors(world, aiComponent.getMemory());
+                MemoryComponent::MemoryFactsList newFacts = sensorsManager.updateSensors(world);
+                for(unsigned int i = 0; i < newFacts.size(); i++)
+                    memoryComponent.addMemoryFact(newFacts.at(i));
             }
         }
     }

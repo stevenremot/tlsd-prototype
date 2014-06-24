@@ -17,49 +17,59 @@
     <http://www.gnu.org/licenses/>.
 */
 
-#ifndef AI_SENSOR_SENSORCOMPONENT_H
-#define AI_SENSOR_SENSORCOMPONENT_H
+#ifndef AI_SUBSYSTEM_TARGETINGCOMPONENT_H
+#define AI_SUBSYSTEM_TARGETINGCOMPONENT_H
 
-#include "SensorManager.h"
-#include "../WorkingMemory.h"
+//#include "../AiComponent.h"
 #include "../MemoryComponent.h"
+
 #include "../../Ecs/Component.h"
+#include "../../Geometry/Vec3D.h"
 
 namespace AI
 {
-    namespace Sensor
+    namespace Subsystem
     {
-        /**
-         * Component for entities with sensors
-         */
-        class SensorComponent : public Ecs::Component
+        class TargetingComponent : public Ecs::Component
         {
         public:
 
             static const Ecs::Component::Type Type;
 
-            SensorComponent(Ecs::Entity entity)
-                : Ecs::Component(Type),
-                  sensorsManager_(entity)
-            {
-            }
+            TargetingComponent() : Component(Type), hasValidTarget_(false) {}
 
             virtual const std::vector<Ecs::Component::Type>& getDependentComponents()
             {
                 if(Dependencies.empty())
                 {
+                    //Dependencies.push_back(AiComponent::Type);
                     Dependencies.push_back(MemoryComponent::Type);
                 }
                 return Dependencies;
             }
 
-            SensorsManager& getSensorsManager() {return sensorsManager_;}
+            /**
+             * return true if the target isn't too far from the target in the targeting component
+             */
+            bool isTargetValid(const Geometry::Vec3Df& targetPosition) const;
+
+            Geometry::Vec3Df getTargetPosition() const {return targetPosition_;}
+            void setTargetPosition(const Geometry::Vec3Df& targetPosition) {targetPosition_ = targetPosition;}
+
+            Ecs::Entity getTargetEntity() const {return targetEntity_;}
+            void setTargetEntity(Ecs::Entity targetEntity) {targetEntity_ = targetEntity;}
+
+            bool hasValidTarget() const {return hasValidTarget_;}
+            void setHasValidTarget(bool hasValidTarget) {hasValidTarget_ = hasValidTarget;}
 
         private:
             static std::vector<Ecs::Component::Type> Dependencies;
-            SensorsManager sensorsManager_;
+
+            Geometry::Vec3Df targetPosition_;
+            Ecs::Entity targetEntity_;
+            bool hasValidTarget_;
         };
     }
 }
 
-#endif // AI_SENSOR_SENSORCOMPONENT_H
+#endif // AI_SUBSYSTEM_TARGETINGCOMPONENT_H

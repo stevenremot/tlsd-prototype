@@ -21,11 +21,15 @@
 #define AI_SUBSYSTEM_SUBSYSTEM_H
 
 #include <string>
+#include <vector>
 
 #include "../Blackboard.h"
 #include "../MemoryFact.h"
 
 #include "../Action/Action.h"
+
+#include "../../Ecs/ComponentGroup.h"
+//#include "../../Ecs/Component.h"
 
 /**
  * Base class for the subsystems of the AI module.
@@ -40,11 +44,11 @@ namespace AI
         public:
             typedef std::string SubsystemType;
 
-            Subsystem(const SubsystemType & subsystemType, Blackboard& blackboard)
-                : subsystemType_(subsystemType), blackboard_(blackboard) {}
+            Subsystem(const SubsystemType & subsystemType)
+                : subsystemType_(subsystemType){}
             virtual ~Subsystem(){}
-            virtual bool update() = 0;
-            virtual void executeAction(Action::Action* action) = 0;
+            virtual bool update(std::vector<Ecs::Component&>& components) = 0;
+            virtual void executeAction(Action::Action* action, Ecs::ComponentGroup& components) = 0;
 
             const SubsystemType & getSubsystemType() const
             {
@@ -53,7 +57,6 @@ namespace AI
 
         protected:
             SubsystemType subsystemType_;
-            AI::Blackboard& blackboard_;
         };
     }
 }

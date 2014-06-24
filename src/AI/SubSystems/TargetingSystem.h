@@ -17,28 +17,24 @@
     <http://www.gnu.org/licenses/>.
 */
 
-#ifndef AI_SENSOR_SENSORSYSTEM_H
-#define AI_SENSOR_SENSORSYSTEM_H
+#ifndef AI_SUBSYSTEM_TARGETINGSYSTEM_H
+#define AI_SUBSYSTEM_TARGETINGSYSTEM_H
 
 #include "../../Ecs/System.h"
-#include "../../Ecs/World.h"
-
 #include "../../Threading/ThreadableInterface.h"
 
 namespace AI
 {
-    namespace Sensor
+    namespace Subsystem
     {
-        /**
-         * Update all the sensors and the memory of entities
-         */
-        class SensorSystem : public Ecs::System, public Threading::ThreadableInterface
+        class TargetingSystem : public Ecs::System, public Threading::ThreadableInterface
         {
         public:
-            SensorSystem(Ecs::World& world) : System(world) {}
+            TargetingSystem(Ecs::World& world) : System(world) {}
 
             virtual void run();
         };
     }
 }
-#endif // AI_SENSOR_SENSORSYSTEM_H
+
+#endif // AI_SUBSYSTEM_TARGETINGSYSTEM_H

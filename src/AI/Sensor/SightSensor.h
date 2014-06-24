@@ -20,7 +20,7 @@
 #ifndef AI_SENSOR_SIGHTSENSOR_H
 #define AI_SENSOR_SIGHTSENSOR_H
 
-#include "PeriodicSensor.h"
+#include "Sensor.h"
 #include "../../Ecs/Entity.h"
 #include "../../Geometry/Vec3D.h"
 
@@ -44,7 +44,7 @@ namespace AI
              * Check if a  ententy entered the detection area of the current entity
              * TO DO : implement field of view
              */
-            virtual bool update(Ecs::World& world, WorkingMemory& memory);
+            std::vector<MemoryFact*> update(Ecs::World& world);
             /**
              * TO DO
              */

@@ -9,6 +9,7 @@
 #include "../AI/Action/NoAction.h"
 #include "../AI/SubSystems/NavigationSubsystem.h"
 #include "../AI/SubSystems/TargetingSubsystem.h"
+#include "../AI/SubSystems/TargetingComponent.h"
 #include "../AI/Sensor/SightSensor.h"
 #include "../AI/AiSystem.h"
 #include "../AI/NavMesh/NavMeshContainer.h"
@@ -30,31 +31,50 @@ using std::vector;
 namespace StateMachineTest
 {
 
-    float toIdleState(Ecs::ComponentGroup& , const AI::Blackboard&)
+    float toIdleState(const Ecs::ComponentGroup& )
     {
         return 0.1f;
     }
 
-    float toOnAttack(Ecs::ComponentGroup& components, const Blackboard& blackboard)
+    float toOnAttack(const Ecs::ComponentGroup& components)
     {
-        Geometry::PositionComponent& positionComponent = static_cast<Geometry::PositionComponent&>(components.getComponent(Geometry::PositionComponent::Type));
-        float maxDistance = 10.f;
-        if((blackboard.getNavigationTarget()-positionComponent.getPosition()).getLength() < maxDistance)
+        try
         {
-            return 1.0f;
+            const Geometry::PositionComponent& positionComponent = static_cast<const Geometry::PositionComponent&>(components.getComponent(Geometry::PositionComponent::Type));
+            const Subsystem::TargetingComponent& targetingComponent = static_cast<const Subsystem::TargetingComponent&>(components.getComponent(Subsystem::TargetingComponent::Type));
+
+            float maxDistance = 10.f;
+            if((targetingComponent.getTargetPosition()- positionComponent.getPosition()).getLength() < maxDistance)
+            {
+                return 1.0f;
+            }
+            return 0.f;
+
         }
-        return 0.f;
+        catch (const Ecs::ComponentGroup::UnexistingComponentException& e)
+        {
+            return 0.f;
+        }
     }
 
-    float toCloseToTarget(Ecs::ComponentGroup& components, const Blackboard& blackboard)
+    float toCloseToTarget(const Ecs::ComponentGroup& components)
     {
-        Geometry::PositionComponent& positionComponent = static_cast<Geometry::PositionComponent&>(components.getComponent(Geometry::PositionComponent::Type));
-        float maxDistance = 120.f;
-        if((blackboard.getNavigationTarget()-positionComponent.getPosition()).getLength() < maxDistance)
+        try
         {
-            return 1.0f;
+            const Geometry::PositionComponent& positionComponent = static_cast<const Geometry::PositionComponent&>(components.getComponent(Geometry::PositionComponent::Type));
+            const Subsystem::TargetingComponent& targetingComponent = static_cast<const Subsystem::TargetingComponent&>(components.getComponent(Subsystem::TargetingComponent::Type));
+
+            float maxDistance = 120.f;
+            if((targetingComponent.getTargetPosition() - positionComponent.getPosition()).getLength() < maxDistance)
+            {
+                return 1.0f;
+            }
+            return 0.f;
         }
-        return 0.f;
+        catch (const Ecs::ComponentGroup::UnexistingComponentException& e)
+        {
+            return 0.f;
+        }
     }
 
     void setupStateMachine(BasicAiModule& aiModule)
@@ -91,14 +111,16 @@ namespace StateMachineTest
         w.addComponent(e1, positionComponentE1);
         w.addComponent(e1, movementComponentE1);
 
+        /*
         Ecs::ComponentGroup::ComponentTypeCollection types;
         types.insert(Physics::MovementComponent::Type);
         types.insert(Geometry::PositionComponent::Type);
 
         Ecs::ComponentGroup prototype(types);
         Ecs::ComponentGroup components = w.getEntityComponents(e1, prototype);
+        */
         AI::AiComponent* aiComponent = new AI::AiComponent(e1, navMeshes);
-        BasicAiModule* aiModule = new BasicAiModule(components, aiComponent->getBlackboard(), Idle);
+        BasicAiModule* aiModule = new BasicAiModule(Idle);
         setupStateMachine(*aiModule);
         aiComponent->setAiModule(aiModule);
         w.addComponent(e1, aiComponent);
@@ -141,6 +163,6 @@ namespace StateMachineTest
 
         aiThread.stop();
         movementThread.stop();
-        aiModule->computeNewPlan();
+        //aiModule->computeNewPlan();
     }
 }

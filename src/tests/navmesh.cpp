@@ -25,11 +25,13 @@
 #include "../AI/AiComponent.h"
 #include "../AI/BasicAiModule.h"
 #include "../AI/AiSystem.h"
+#include "../AI/MemoryComponent.h"
 #include "../AI/Sensor/SensorSystem.h"
 #include "../AI/Sensor/SensorComponent.h"
 #include "../AI/Sensor/SightSensor.h"
 #include "../AI/SubSystems/TargetingSubsystem.h"
 #include "../AI/SubSystems/NavigationSubsystem.h"
+#include "../AI/SubSystems/TargetingSystem.h"
 #include "../AI/NavMesh/NavMeshGenerationEngine.h"
 #include "../AI/NavMesh/NavMeshGenerator.h"
 
@@ -61,21 +63,18 @@ namespace NavMeshTest
         {
             // Set up the ai component
             AI::AiComponent* aiComponent = new AI::AiComponent(e, navMeshes);
+            AI::MemoryComponent* memoryComponent = new AI::MemoryComponent();
+            AI::Sensor::SensorComponent* sensorComponent = new AI::Sensor::SensorComponent(e);
+            AI::Subsystem::TargetingComponent* targetingComponent = new AI::Subsystem::TargetingComponent();
 
-            Ecs::ComponentGroup::ComponentTypeCollection types;
-            types.insert(Physics::MovementComponent::Type);
-            types.insert(Geometry::PositionComponent::Type);
+            w.addComponent(e, memoryComponent);
+            w.addComponent(e, sensorComponent);
+            w.addComponent(e, targetingComponent);
 
-            Ecs::ComponentGroup prototype(types);
-            const Ecs::ComponentGroup& components = w.getEntityComponents(e, prototype);
-
-            AI::BasicAiModule* aiModule = new AI::BasicAiModule(components, aiComponent->getBlackboard(), StateMachineTest::Idle);
+            AI::BasicAiModule* aiModule = new AI::BasicAiModule(StateMachineTest::Idle);
             StateMachineTest::setupStateMachine(*aiModule);
             aiComponent->setAiModule(aiModule);
             w.addComponent(e, aiComponent);
-
-            AI::Sensor::SensorComponent* sensorComponent = new AI::Sensor::SensorComponent(e);
-            w.addComponent(e, sensorComponent);
 
             // Add a sight sensor
             AI::Sensor::SensorsManager& sensorsManager = sensorComponent->getSensorsManager();
@@ -83,7 +82,7 @@ namespace NavMeshTest
 
             // Add navigation and targeting subsytems
             AI::Subsystem::SubSystemsManager& subsystemsManager = aiComponent->getSubsystemsManager();
-            subsystemsManager.addSubsystem(AI::Subsystem::TargetingSubsystem::Type, w);
+            //subsystemsManager.addSubsystem(AI::Subsystem::TargetingSubsystem::Type, w);
             subsystemsManager.addSubsystem(AI::Subsystem::NavigationSubSystem::Type, w);
         }
         return e;
@@ -162,22 +161,27 @@ namespace NavMeshTest
         AI::AiSystem aiSystem(w);
         AI::Sensor::SensorSystem sensorSystem(w);
         Physics::MovementSystem movementSystem(w);
+        AI::Subsystem::TargetingSystem targetingSystem(w);
 
         vector<Threading::ThreadableInterface*> aiSystemVector;
         vector<Threading::ThreadableInterface*> movementSystemVector;
-        aiSystemVector.push_back(&sensorSystem);
+        vector<Threading::ThreadableInterface*> targetingSystemVector;
+        vector<Threading::ThreadableInterface*> sensorSystemVector;
+
+        sensorSystemVector.push_back(&sensorSystem);
+        targetingSystemVector.push_back(&targetingSystem);
         aiSystemVector.push_back(&aiSystem);
         movementSystemVector.push_back(&movementSystem);
 
         Threading::Thread aiThread(aiSystemVector, 10);
-        Threading::Thread movementThread(movementSystemVector, 20);
+        Threading::Thread sensorThread(sensorSystemVector, 5);
+        Threading::Thread targetingThread(targetingSystemVector, 5);
+
+        Threading::Thread movementThread(movementSystemVector, 30);
 
         // Get the position component of e1
         Ecs::ComponentGroup::ComponentTypeCollection types;
-        //types.insert(Physics::MovementComponent::Type);
         types.insert(Geometry::PositionComponent::Type);
-        //types.insert(AI::AiComponent::Type);
-
 
         Ecs::ComponentGroup prototype(types);
         Ecs::ComponentGroup componentsE1 = w.getEntityComponents(e1, prototype);
@@ -185,18 +189,21 @@ namespace NavMeshTest
         Ecs::ComponentGroup componentsE2 = w.getEntityComponents(e2, prototype);
         const Geometry::PositionComponent& positionComponentE2 = static_cast<const Geometry::PositionComponent&>(componentsE2.getComponent(Geometry::PositionComponent::Type));
 
+        sensorThread.start();
+        targetingThread.start();
         aiThread.start();
         movementThread.start();
         bool b = true;
         while(b)
         {
-            if((positionComponentE1.getPosition()-positionComponentE2.getPosition()).getLength() < 2.f)
+            if((positionComponentE1.getPosition()-positionComponentE2.getPosition()).getLength() < 4.f)
                 b = false;
         }
 
         aiThread.stop();
+        sensorThread.stop();
+        targetingThread.stop();
         movementThread.stop();
-        //cout << "Navigation over" << endl;
     }
 
     void drawNavMesh(const AI::NavMesh::NavMesh& navMesh, Test::SvgDrawer& drawer)

@@ -23,8 +23,8 @@ using std::vector;
 
 namespace AI
 {
-    AiModule::AiModule(const Ecs::ComponentGroup &components, Blackboard &blackboard)
-        : components_(components), blackboard_(blackboard), aiPlan_(NULL)
+    AiModule::AiModule()
+        : aiPlan_(NULL)
     {
     }
 
@@ -40,13 +40,4 @@ namespace AI
         // Add the action's type to the list of available actions
         availableActions_.push_back(actionType);
     }
-
-    /*
-    void AiModule::executePlan()
-    {
-        if(aiPlan_ ==  NULL || aiPlan_->isPlanCompleted())
-            return;
-
-    }
-    */
 }

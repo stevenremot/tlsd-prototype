@@ -32,8 +32,8 @@ namespace AI
     namespace Sensor
     {
         /**
-         * Add, remove or update (?) the sensors
-         * Run it in a thread and sequentially update all sensors or run all sensors in different threads ?
+         * Add, remove or update the sensors
+         * Update all the sensors in a row
          */
         class SensorsManager
         {
@@ -51,7 +51,10 @@ namespace AI
              */
             void removeSensor(const AI::Sensor::Sensor::SensorType & sensorType);
 
-            void updateSensors(Ecs::World& world, WorkingMemory& memory);
+            /**
+             * Update all the sensors and return the new memory facts to be added in memory
+             */
+            std::vector<MemoryFact*> updateSensors(Ecs::World& world);
 
         private:
             typedef vector<Sensor*> SensorsList;

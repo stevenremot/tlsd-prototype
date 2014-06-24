@@ -20,13 +20,16 @@
 #ifndef AI_AICOMPONENT_H
 #define AI_AICOMPONENT_H
 
+//#include "Sensor/SensorComponent.h"
+#include "SubSystems/TargetingComponent.h"
+#include "SubSystems/SubsystemsManager.h"
 #include "WorkingMemory.h"
 #include "Blackboard.h"
 //#include "Sensor/SensorManager.h"
 
-#include "SubSystems/SubsystemsManager.h"
+
 #include "AiModule.h"
-//#include "Sensor/SensorComponent.h"
+
 
 #include "../Ecs/Component.h"
 #include "../Geometry/PositionComponent.h"
@@ -45,8 +48,8 @@ namespace AI
 
         AiComponent(Ecs::Entity entity, const NavMesh::NavMeshContainer& navMeshes)
             : Component(Type),
-              entity_(entity), memory_(), blackboard_(),
-              subsystemsManager_(entity, blackboard_,memory_, navMeshes),
+              entity_(entity),
+              subsystemsManager_(entity, navMeshes),
               aiModule_(NULL) {}
 
         ~AiComponent();
@@ -57,7 +60,7 @@ namespace AI
             {
                 Dependencies.push_back(Geometry::PositionComponent::Type);
                 Dependencies.push_back(Physics::MovementComponent::Type);
-                //Dependencies.push_back(Sensor::SensorComponent::Type);
+                Dependencies.push_back(Subsystem::TargetingComponent::Type);
             }
             return Dependencies;
         }
@@ -65,8 +68,10 @@ namespace AI
         void setAiModule(AiModule* aiModule) {aiModule_ = aiModule;}
         AiModule* getAiModule() {return aiModule_;}
 
+        /*
         Blackboard& getBlackboard() {return blackboard_;}
         WorkingMemory& getMemory() {return memory_;}
+        */
 
         Subsystem::SubSystemsManager& getSubsystemsManager()
         {
@@ -83,8 +88,8 @@ namespace AI
         static std::vector<Ecs::Component::Type> Dependencies;
 
         const Ecs::Entity entity_;
-        WorkingMemory memory_;
-        Blackboard blackboard_;
+        //WorkingMemory memory_;
+        //Blackboard blackboard_;
         Subsystem::SubSystemsManager subsystemsManager_;
         //Sensor::SensorsManager sensorsManager_;
         AiModule* aiModule_;

@@ -39,12 +39,12 @@ namespace AI
 
             static const Subsystem::SubsystemType Type;
 
-            TargetingSubsystem(Blackboard& blackboard, WorkingMemory& memory);
+            TargetingSubsystem(WorkingMemory& memory);
             ~TargetingSubsystem();
 
             virtual void executeAction(Action::Action*){}
 
-            virtual bool update();
+            virtual bool update(Ecs::ComponentGroup& components);
 
         private:
             WorkingMemory& memory_;

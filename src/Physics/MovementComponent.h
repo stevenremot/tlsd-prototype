@@ -7,8 +7,6 @@
 
 namespace Physics
 {
-  using Geometry::Vec3Df;
-
   /**
    * Component for moving entities
    */
@@ -17,7 +15,7 @@ namespace Physics
   public:
       static const Ecs::Component::Type Type;
 
-      MovementComponent(const Vec3Df& velocity):
+      MovementComponent(const Geometry::Vec3Df& velocity):
           Component(Type),
           velocity_(velocity)
       {}
@@ -31,20 +29,20 @@ namespace Physics
           return Dependencies;
       }
 
-      const Vec3Df& getVelocity() const
+      const Geometry::Vec3Df& getVelocity() const
       {
           return velocity_;
       }
 
-      void setVelocity(const Vec3Df& velocity)
+      void setVelocity(const Geometry::Vec3Df& velocity)
       {
           velocity_ = velocity;
       }
 
   private:
-      Vec3Df velocity_;
-
       static std::vector<Ecs::Component::Type> Dependencies;
+
+      Geometry::Vec3Df velocity_;
   };
 }
 #endif // MOVEMENTCOMPONENT_H

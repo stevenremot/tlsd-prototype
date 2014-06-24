@@ -23,8 +23,10 @@
 #include "Action.h"
 #include "MoveCloseToTargetAction.h"
 #include "NoAction.h"
-#include "../Blackboard.h"
 
+#include "../SubSystems/TargetingComponent.h"
+
+#include "../../Ecs/ComponentGroup.h"
 namespace AI
 {
     namespace Action
@@ -34,7 +36,7 @@ namespace AI
          * This exception is raised when trying to provide components
          * that do not satisfy types requirements.
          */
-        class NoSuchActionException: public std::exception
+        class CannotCreateActionException: public std::exception
         {
         public:
             const char * what() const throw()
@@ -46,18 +48,25 @@ namespace AI
         class ActionFactory
         {
         public:
-            static Action* createAction(const Action::ActionType type, const Blackboard& blackboard)
+            static Action* createAction(const Action::ActionType type, const Ecs::ComponentGroup& components)
             {
-                if(type == MoveCloseToTargetAction::Type)
+                try
                 {
-                    return new MoveCloseToTargetAction(blackboard.getNavigationTarget());
+                    if(type == MoveCloseToTargetAction::Type)
+                    {
+                        const Subsystem::TargetingComponent& targetingComponent = static_cast<const Subsystem::TargetingComponent&>(components.getComponent(Subsystem::TargetingComponent::Type));
+                        return new MoveCloseToTargetAction(targetingComponent.getTargetPosition());
+                    }
+                    else if (type == NoAction::Type)
+                    {
+                        return new NoAction();
+                    }
                 }
-                else if (type == NoAction::Type)
+                catch (const Ecs::ComponentGroup::UnexistingComponentException& e)
                 {
-                    return new NoAction();
+                    throw CannotCreateActionException();
                 }
-                throw NoSuchActionException();
-                //return NoAction();
+                throw CannotCreateActionException();
             }
         private:
         };

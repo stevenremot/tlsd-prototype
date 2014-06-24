@@ -23,9 +23,6 @@
 #include "Subsystem.h"
 #include "../NavMesh/NavMeshContainer.h"
 
-
-#include "../../Geometry/PositionComponent.h"
-#include "../../Physics/MovementComponent.h"
 #include "../../Geometry/Vec3D.h"
 
 
@@ -43,22 +40,17 @@ namespace AI
         public:
             static const Subsystem::SubsystemType Type;
 
-            NavigationSubSystem(Blackboard& blackboard,
-                                Geometry::PositionComponent& positionComponent,
-                                Physics::MovementComponent& movementComponent,
-                                const NavMesh::NavMeshContainer& navMeshes);
+            NavigationSubSystem(const NavMesh::NavMeshContainer& navMeshes);
             ~NavigationSubSystem(){}
 
             void findPathToGoal();
-            virtual bool update();
-            virtual void executeAction(Action::Action* action);
+            virtual bool update(std::vector<Ecs::Component&>& components);
+            virtual void executeAction(Action::Action* action, Ecs::ComponentGroup& components);
 
             bool isValid() const {return isValid_;}
             void setValid(bool isValid) {isValid_ = isValid;}
 
         private:
-            const Geometry::PositionComponent& positionComponent_;
-            Physics::MovementComponent& movementComponent_;
             const NavMesh::NavMeshContainer& navMeshes_;
             bool isFinished_;
             bool isValid_;

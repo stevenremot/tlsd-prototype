@@ -22,7 +22,6 @@
 
 #include <string>
 
-//#include "../MemoryFact.h"
 #include "../WorkingMemory.h"
 #include "../../Ecs/World.h"
 
@@ -43,7 +42,7 @@ namespace AI
             Sensor(SensorType sensorType, Ecs::Entity entity)
                 : sensorType_(sensorType), entity_(entity){}
             virtual ~Sensor(){}
-            virtual bool update(Ecs::World& world, WorkingMemory& memory) = 0;
+            virtual std::vector<MemoryFact*> update(Ecs::World& world) = 0;
             virtual void cleanMemory() = 0;
 
             bool hasBeenUpdated() const {return hasBeenUpdated_;}

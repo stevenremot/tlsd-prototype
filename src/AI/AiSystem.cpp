@@ -40,9 +40,15 @@ namespace AI
         {
             AiComponent& aiComponent = static_cast<AiComponent &>(group->getComponent(AiComponent::Type));
 
-            // update the subsystems
             Subsystem::SubSystemsManager& subsystemsManager = aiComponent.getSubsystemsManager();
-            subsystemsManager.updateSubsystems();
+
+            Ecs::ComponentGroup::ComponentTypeCollection types2;
+            types2.insert(Subsystem::TargetingComponent::Type);
+            types2.insert(Geometry::PositionComponent::Type);
+            types2.insert(Physics::MovementComponent::Type);
+
+            Ecs::ComponentGroup prototype2(types2);
+            Ecs::ComponentGroup components = world.getEntityComponents((*group).getEntity(),prototype2);
 
             // If the plan is over, compute a new one.
             AiModule* aiModule = aiComponent.getAiModule();
@@ -52,13 +58,12 @@ namespace AI
             {
                 Action::Action* currentAction = aiPlan->getCurrentAction();
                 // Send the action to the relevant object
-                subsystemsManager.dispatchAction(currentAction);
+                subsystemsManager.dispatchAction(currentAction, components);
                 aiPlan->goToNextStep();
-                //Threading::sleep(0,50);
             }
             else
             {
-                aiModule->computeNewPlan();
+                aiModule->computeNewPlan(components);
             }
 
         }

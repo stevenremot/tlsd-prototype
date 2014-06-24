@@ -23,8 +23,6 @@
 #include <vector>
 
 #include "Subsystem.h"
-#include "../Blackboard.h"
-#include "../WorkingMemory.h"
 #include "../NavMesh/NavMeshContainer.h"
 
 #include "../Action/Action.h"
@@ -43,11 +41,8 @@ namespace AI
         {
         public:
             SubSystemsManager(Ecs::Entity entity,
-                              Blackboard & blackboard,
-                              WorkingMemory& memory,
                               const NavMesh::NavMeshContainer& navMeshes)
                 : entity_(entity),
-                  blackboard_(blackboard), memory_(memory),
                   navMeshes_(navMeshes)
             {}
 
@@ -59,19 +54,17 @@ namespace AI
              */
             Subsystem* getSubsystemByType(const Subsystem::SubsystemType& type);
 
-            void updateSubsystems();
+            void updateSubsystems(std::vector<Ecs::Component&> &components);
 
             /**
              * Send the action to the subsystem which can execute it.
              */
-            void dispatchAction(Action::Action* action);
+            void dispatchAction(Action::Action* action, Ecs::ComponentGroup& components);
 
 
         private:
             std::vector<Subsystem*> subSystemsList_;
             const Ecs::Entity entity_;
-            Blackboard& blackboard_;
-            WorkingMemory& memory_;
             const NavMesh::NavMeshContainer& navMeshes_;
         };
     }

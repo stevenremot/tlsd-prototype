@@ -39,7 +39,7 @@ namespace AI
     class AiModule
     {
     public:
-        AiModule(const Ecs::ComponentGroup &components, Blackboard& blackboard);
+        AiModule();
 
         virtual ~AiModule(){}
 
@@ -52,7 +52,7 @@ namespace AI
          * Compute the next sequence of action to execute.
          * Clean up the former plan so you should check if it has been fully executed before computing a new one.
          */
-        virtual void computeNewPlan() = 0;
+        virtual void computeNewPlan(const Ecs::ComponentGroup& components) = 0;
 
         //void executePlan();
         //std::vector<Action*> getNewPlan() const {return newPlan_;}
@@ -69,13 +69,9 @@ namespace AI
         Plan::AiPlan* getPlan() {return aiPlan_;}
 
     protected:
-        Ecs::ComponentGroup& getComponents() {return components_;}
-        Blackboard& getBlackboard() {return blackboard_;}
         const std::vector<Action::Action::ActionType>& getAvailableActions() const {return availableActions_;}
 
     private:
-        Ecs::ComponentGroup components_;
-        Blackboard& blackboard_;
         std::vector<Action::Action::ActionType> availableActions_;
         Plan::AiPlan* aiPlan_;
     };

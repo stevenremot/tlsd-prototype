@@ -17,28 +17,18 @@
     <http://www.gnu.org/licenses/>.
 */
 
-#ifndef AI_SENSOR_SENSORSYSTEM_H
-#define AI_SENSOR_SENSORSYSTEM_H
-
-#include "../../Ecs/System.h"
-#include "../../Ecs/World.h"
-
-#include "../../Threading/ThreadableInterface.h"
-
+#include "TargetingComponent.h"
 namespace AI
 {
-    namespace Sensor
+    namespace Subsystem
     {
-        /**
-         * Update all the sensors and the memory of entities
-         */
-        class SensorSystem : public Ecs::System, public Threading::ThreadableInterface
-        {
-        public:
-            SensorSystem(Ecs::World& world) : System(world) {}
+        const Ecs::Component::Type TargetingComponent::Type = "targeting";
 
-            virtual void run();
-        };
+        std::vector<Ecs::Component::Type> TargetingComponent::Dependencies;
+
+        bool TargetingComponent::isTargetValid(const Geometry::Vec3Df& targetPosition) const
+        {
+            return hasValidTarget_ && ((targetPosition - targetPosition_).getLength() < 5.0f);
+        }
     }
 }
-#endif // AI_SENSOR_SENSORSYSTEM_H

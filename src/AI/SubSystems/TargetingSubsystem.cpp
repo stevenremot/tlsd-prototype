@@ -35,15 +35,15 @@ namespace AI
 
         const Subsystem::SubsystemType TargetingSubsystem::Type = "TargetingSubsystem";
 
-        TargetingSubsystem::TargetingSubsystem(Blackboard&blackboard, WorkingMemory&memory)
-            : Subsystem(Type, blackboard), memory_(memory), targetId_(-1)
+        TargetingSubsystem::TargetingSubsystem(WorkingMemory&memory)
+            : Subsystem(Type), memory_(memory), targetId_(-1)
         {
         }
 
         TargetingSubsystem::~TargetingSubsystem()
         {}
 
-        bool TargetingSubsystem::update()
+        bool TargetingSubsystem::update(Ecs::ComponentGroup& components)
         {
             MemoryFact::MemoryFactType factType = "sightFact";
             vector<MemoryFact*> ennemyFacts;
@@ -67,11 +67,9 @@ namespace AI
                         targetId_ = ennemyFact->getCharacterId();
                         currentFactBelief = factBelief;
                         currentDistance = distance;
-                        blackboard_.setNavigationTarget(position);
                     }
                 }
             }
-            blackboard_.setTargetId(targetId_);
             return true;
         }
     }

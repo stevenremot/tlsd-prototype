@@ -92,7 +92,7 @@ namespace AI
 
     // Ai module's implementation
 
-    void BasicAiModule::computeNewPlan()
+    void BasicAiModule::computeNewPlan(const Ecs::ComponentGroup& components)
     {
         if(getPlan() != NULL && !getPlan()->isPlanCompleted())
             return;
@@ -111,7 +111,7 @@ namespace AI
         for(it = nextStates.begin(); it != nextStates.end(); ++it)
         {
             const Transition& transition = transitions_.at(std::make_pair(currentState, (*it)));
-            float weight = (*transition.transitionFunction_)( getComponents(), getBlackboard());
+            float weight = (*transition.transitionFunction_)(components);
             if(weight > maxWeight)
             {
                 maxWeight = weight;
@@ -124,11 +124,11 @@ namespace AI
             /**
               * Add the action to the plan if n exception is raised ?
               */
-            newPlan.push_back(Action::ActionFactory::createAction(actionType, getBlackboard()));
+            newPlan.push_back(Action::ActionFactory::createAction(actionType, components));
             stateMachine_.goToState(nextState);
             setPlan(new Plan::AiPlan(newPlan));
         }
-        catch (const Action::NoSuchActionException e)
+        catch (const Action::CannotCreateActionException e)
         {
             return;
         }

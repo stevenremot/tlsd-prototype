@@ -39,6 +39,17 @@ namespace AI
 
             NavMeshContainer();
 
+            ~NavMeshContainer()
+            {
+                for(NavMeshesMap::iterator it = navMeshesMap_.begin(); it != navMeshesMap_.end(); ++it)
+                {
+                    NavMesh* navMesh = it->second;
+                    if(navMesh != NULL)
+                        delete navMesh;
+                }
+                navMeshesMap_.clear();
+            }
+
             bool getNavMesh(const Geometry::Vec2Df& position, const NavMesh*& pNavMesh) const
             {
                 for(NavMeshesMap::const_iterator it = navMeshesMap_.begin(); it != navMeshesMap_.end(); ++it)
