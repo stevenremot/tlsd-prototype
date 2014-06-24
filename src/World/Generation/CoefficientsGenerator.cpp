@@ -23,10 +23,12 @@ namespace World
 {
     namespace Generation
     {
-        Geometry::Vec2Df generatePerlinCoefficient(Random::NumberGenerator& rng)
+        std::vector<Geometry::Vec2Df> generatePerlinCoefficient(Random::NumberGenerator& rng)
         {
-
-            return Geometry::Vec2Df(rng.getUniform(-1, 1), rng.getUniform(-1, 1));
+            std::vector<Geometry::Vec2Df> perlinCoefs;
+            perlinCoefs.push_back(Geometry::Vec2Df(rng.getUniform(-1.0, 1.0), rng.getUniform(-1.0, 1.0)));
+            perlinCoefs.push_back(Geometry::Vec2Df(rng.getUniform(-1.0, 1.0), rng.getUniform(-1.0, 1.0)));
+            return perlinCoefs;
 
         }
 
@@ -35,13 +37,13 @@ namespace World
 
             GroundCoefficients groundCoefficients;
             // Generate the first octave
-            groundCoefficients.setCoefficient(1, 0, 0, rng.getUniform(-1, 1));
+            groundCoefficients.setCoefficient(1, 0, 0, rng.getUniform(-1.0, 1.0));
             // Generate the second octave
             for (unsigned int i = 0; i < 2; i++)
             {
                 for (unsigned int j = 0; j < 2; j++)
                 {
-                    groundCoefficients.setCoefficient(2,i,j,rng.getUniform(-1,1));
+                    groundCoefficients.setCoefficient(2,i,j,rng.getUniform(-1.0,1.0));
                 }
             }
             // Generate the third octave
@@ -49,7 +51,7 @@ namespace World
             {
                 for (unsigned int j = 0; j < 4; j++)
                 {
-                    groundCoefficients.setCoefficient(3,i,j,rng.getUniform(-1,1));
+                    groundCoefficients.setCoefficient(3,i,j,rng.getUniform(-1.0,1.0));
                 }
             }
             return groundCoefficients;

@@ -21,10 +21,12 @@
 #define WORLD_BIOME_MAP_H
 
 #include <map>
+#include <vector>
 
 #include "MountainBiome.h"
 #include "CityBiome.h"
 #include "PlainBiome.h"
+#include "DesertBiome.h"
 #include "../Geometry/Vec2D.h"
 #include "../Geometry/Polygon2D.h"
 
@@ -52,7 +54,7 @@ namespace World
             }
         };
 
-        void setPerlinCoef(int x, int y, const Geometry::Vec2Df& perlinCoef)
+        void setPerlinCoef(int x, int y, const std::vector<Geometry::Vec2Df>& perlinCoef)
         {
             perlinCoefs_[Geometry::Vec2Di(x, y)] = perlinCoef;
         }
@@ -67,12 +69,14 @@ namespace World
         const std::vector<Geometry::Polygon2D>& getCityPolygons() {return cityPolygons_;}
 
     private:
-        std::map<Geometry::Vec2Di, Geometry::Vec2Df> perlinCoefs_;
+        std::map<Geometry::Vec2Di, std::vector<Geometry::Vec2Df> > perlinCoefs_;
         std::vector<Geometry::Polygon2D> cityPolygons_;
         std::vector<Geometry::Polygon2D> cityPolygonsExtended_;
         CityBiome cityBiome_;
         MountainBiome mountainBiome_;
         PlainBiome plainBiome_;
+        DesertBiome desertBiome_;
+        float computePerlinNoise(const Geometry::Vec2Df& position, const Geometry::Vec2Df& perlinCoefficient00, const Geometry::Vec2Df& perlinCoefficient10, const Geometry::Vec2Df& perlinCoefficient01, const Geometry::Vec2Df& perlinCoefficient11);
     };
 }
 
