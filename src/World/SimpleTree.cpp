@@ -33,11 +33,11 @@ namespace World
         std::vector<Face> faces;
         std::vector<Vec2Df> base;
 
-        // Building trunc
-        base.push_back(Vec2Df(-truncWidth_/2.0, -truncWidth_/2.0));
-        base.push_back(Vec2Df(truncWidth_/2.0, -truncWidth_/2.0));
-        base.push_back(Vec2Df(truncWidth_/2.0, truncWidth_/2.0));
-        base.push_back(Vec2Df(-truncWidth_/2.0, truncWidth_/2.0));
+        // Building trunk
+        base.push_back(Vec2Df(-trunkWidth_/2.0, -trunkWidth_/2.0));
+        base.push_back(Vec2Df(trunkWidth_/2.0, -trunkWidth_/2.0));
+        base.push_back(Vec2Df(trunkWidth_/2.0, trunkWidth_/2.0));
+        base.push_back(Vec2Df(-trunkWidth_/2.0, trunkWidth_/2.0));
 
         const unsigned int length = base.size();
 
@@ -48,13 +48,13 @@ namespace World
             const Vec2Df& p1 = base[i];
             const Vec2Df& p2 = base[(i + 1) % length];
 
-            vertices.push_back(Vec3Df(p1.getX(), p1.getY(), -2));
-            vertices.push_back(Vec3Df(p2.getX(), p2.getY(), -2));
-            vertices.push_back(Vec3Df(p2.getX(), p2.getY(), truncHeight_));
-            vertices.push_back(Vec3Df(p1.getX(), p1.getY(), truncHeight_));
+            vertices.push_back(Vec3Df(p1.getX(), p1.getY(), -4));
+            vertices.push_back(Vec3Df(p2.getX(), p2.getY(), -4));
+            vertices.push_back(Vec3Df(p2.getX(), p2.getY(), trunkHeight_));
+            vertices.push_back(Vec3Df(p1.getX(), p1.getY(), trunkHeight_));
 
-            faces.push_back(Face(baseIndex, baseIndex + 1, baseIndex + 2, truncColor_));
-            faces.push_back(Face(baseIndex, baseIndex + 2, baseIndex + 3, truncColor_));
+            faces.push_back(Face(baseIndex, baseIndex + 1, baseIndex + 2, trunkColor_));
+            faces.push_back(Face(baseIndex, baseIndex + 2, baseIndex + 3, trunkColor_));
             baseIndex += 4;
         }
 
@@ -71,7 +71,7 @@ namespace World
         for (unsigned int i = 0; i < leavesLength; i++)
         {
             const Vec2Df& point = leavesBase[i];
-            vertices.push_back(Vec3Df(point.getX(), point.getY(), truncHeight_));
+            vertices.push_back(Vec3Df(point.getX(), point.getY(), trunkHeight_));
         }
 
         for (unsigned int currentIndex = 1; currentIndex < leavesLength - 1; currentIndex++)
@@ -92,10 +92,10 @@ namespace World
             const Vec2Df& p1 = leavesBase[i];
             const Vec2Df& p2 = leavesBase[(i + 1) % leavesLength];
 
-            vertices.push_back(Vec3Df(p1.getX(), p1.getY(), truncHeight_));
-            vertices.push_back(Vec3Df(p2.getX(), p2.getY(), truncHeight_));
-            vertices.push_back(Vec3Df(p2.getX(), p2.getY(), truncHeight_ + leavesHeight_));
-            vertices.push_back(Vec3Df(p1.getX(), p1.getY(), truncHeight_ + leavesHeight_));
+            vertices.push_back(Vec3Df(p1.getX(), p1.getY(), trunkHeight_));
+            vertices.push_back(Vec3Df(p2.getX(), p2.getY(), trunkHeight_));
+            vertices.push_back(Vec3Df(p2.getX(), p2.getY(), trunkHeight_ + leavesHeight_));
+            vertices.push_back(Vec3Df(p1.getX(), p1.getY(), trunkHeight_ + leavesHeight_));
 
             faces.push_back(Face(baseIndex, baseIndex + 1, baseIndex + 2, leavesColor_));
             faces.push_back(Face(baseIndex, baseIndex + 2, baseIndex + 3, leavesColor_));
@@ -106,7 +106,7 @@ namespace World
         for (unsigned int i = 0; i < leavesLength; i++)
         {
             const Vec2Df& point = leavesBase[i];
-            vertices.push_back(Vec3Df(point.getX(), point.getY(), truncHeight_ + leavesHeight_));
+            vertices.push_back(Vec3Df(point.getX(), point.getY(), trunkHeight_ + leavesHeight_));
         }
 
         for (unsigned int currentIndex = 1; currentIndex < leavesLength - 1; currentIndex++)

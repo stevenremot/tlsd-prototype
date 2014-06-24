@@ -33,4 +33,24 @@ namespace World
         return Graphics::Color(0.25,0.25,0.25);
     }
 
+    const Generation::TreeParameters MountainBiome::getTreeParameters()
+    {
+        return Generation::TreeParameters(
+            2.5,
+            4.0,
+            2.5,
+            5.0,
+            15.0,
+            25.0,
+            8.0,
+            12.0,
+            0,
+            0,
+            Graphics::Color(0.3,0.1,0.02),
+            Graphics::Color(0.5,0.2,0.06),
+            Graphics::Color(0,0.4,0),
+            Graphics::Color(0.05,0.5,0.1)
+        );
+    }
+
 }

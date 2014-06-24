@@ -32,31 +32,31 @@ namespace World
     {
     public:
         SimpleTree(
-            float truncHeight,
-            float truncWidth,
+            float trunkHeight,
+            float trunkWidth,
             float leavesHeight,
             float leavesWidth,
             float offset,
-            const Graphics::Color& truncColor,
+            const Graphics::Color& trunkColor,
             const Graphics::Color& leavesColor
         ):
-            truncHeight_(truncHeight),
+            trunkHeight_(trunkHeight),
             leavesHeight_(leavesHeight),
-            truncWidth_(truncWidth),
+            trunkWidth_(trunkWidth),
             leavesWidth_(leavesWidth),
             offset_(offset),
-            truncColor_(truncColor),
+            trunkColor_(trunkColor),
             leavesColor_(leavesColor)
         {
             updateModel();
         }
 
         SimpleTree(const SimpleTree& tree):
-            truncHeight_(tree.truncHeight_),
+            trunkHeight_(tree.trunkHeight_),
             leavesHeight_(tree.leavesHeight_),
-            truncWidth_(tree.truncWidth_),
+            trunkWidth_(tree.trunkWidth_),
             leavesWidth_(tree.leavesWidth_),
-            truncColor_(tree.truncColor_),
+            trunkColor_(tree.trunkColor_),
             leavesColor_(tree.leavesColor_)
         {
         }
@@ -67,12 +67,12 @@ namespace World
         }
 
     private:
-        float truncHeight_;
+        float trunkHeight_;
         float leavesHeight_;
-        float truncWidth_;
+        float trunkWidth_;
         float leavesWidth_;
         float offset_;
-        Graphics::Color truncColor_;
+        Graphics::Color trunkColor_;
         Graphics::Color leavesColor_;
 
         Graphics::Render::Model3D model_;

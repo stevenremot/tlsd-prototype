@@ -34,6 +34,7 @@ namespace World
         CityBiome(): BiomeInterface(Type){}
         virtual float transformCoefficient(float coefficient);
         virtual Graphics::Color getColor();
+        virtual const Generation::TreeParameters getTreeParameters();
     };
 
 }

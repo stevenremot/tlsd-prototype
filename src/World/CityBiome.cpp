@@ -33,5 +33,25 @@ namespace World
         return Graphics::Color(0,1,0);
     }
 
-
+    // We don't care about the tree parameters for the city
+    // Actually we do care a bit
+    const Generation::TreeParameters CityBiome::getTreeParameters()
+    {
+        return Generation::TreeParameters(
+            3.0,
+            4.0,
+            1.5,
+            2.5,
+            5.0,
+            10.0,
+            5.0,
+            10.0,
+            -0.3,
+            0.3,
+            Graphics::Color(0.5,0.25,0.15),
+            Graphics::Color(0.7,0.35,0.25),
+            Graphics::Color(0.15,0.7,0.15),
+            Graphics::Color(0.25,0.9,0.25)
+        );
+    }
 }
