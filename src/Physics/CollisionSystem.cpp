@@ -119,7 +119,6 @@ namespace Physics
                         }
                     }
                 }
-                /* WIP
                 else if (collisionComponent->getCollisionBody().getType() == Model3DCollisionBody::Type)
                 {
                     const AABBCollisionBody& movingBody =
@@ -141,7 +140,7 @@ namespace Physics
                         )
                     )
                         positionComponent->setPosition(positionVector);
-                }*/
+                }
             }
 
             eventQueue_ << new EntityPositionChangedEvent(movingEntity, positionComponent->getPosition());
