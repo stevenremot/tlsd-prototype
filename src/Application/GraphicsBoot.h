@@ -47,9 +47,12 @@ namespace Application
             renderSystem_(NULL)
         {}
 
-        virtual ~GraphicsBoot();
 
         virtual void start();
+    protected:
+
+        virtual void cleanUp();
+
     private:
         Graphics::Device* device_;
         Graphics::Render::Scene* scene_;

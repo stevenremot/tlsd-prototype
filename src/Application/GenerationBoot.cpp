@@ -25,7 +25,7 @@
 
 namespace Application
 {
-    GenerationBoot::~GenerationBoot()
+    void GenerationBoot::cleanUp()
     {
         if (generationSystem_ != NULL)
         {

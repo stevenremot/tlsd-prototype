@@ -36,7 +36,11 @@ namespace Application
             collisionSystem_(NULL)
         {}
 
-        virtual ~UpdateBoot()
+        virtual void start();
+
+    protected:
+
+        virtual void cleanUp()
         {
             if (movementSystem_ != NULL)
             {
@@ -44,8 +48,6 @@ namespace Application
                 delete movementSystem_;
             }
         }
-
-        virtual void start();
 
     private:
         Physics::MovementSystem* movementSystem_;

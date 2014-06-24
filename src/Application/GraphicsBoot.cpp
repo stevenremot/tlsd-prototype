@@ -27,7 +27,7 @@
 
 namespace Application
 {
-    GraphicsBoot::~GraphicsBoot()
+    void GraphicsBoot::cleanUp()
     {
         if (device_ != NULL)
         {

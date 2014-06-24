@@ -23,7 +23,7 @@
 
 namespace Application
 {
-    AnimationBoot::~AnimationBoot()
+    void AnimationBoot::cleanUp()
     {
         if (animationSystem_ != NULL)
         {

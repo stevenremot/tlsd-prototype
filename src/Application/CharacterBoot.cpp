@@ -23,7 +23,7 @@
 
 namespace Application
 {
-    CharacterBoot::~CharacterBoot()
+    void CharacterBoot::cleanUp()
     {
         if (characterSystem_ != NULL)
         {

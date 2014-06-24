@@ -46,6 +46,7 @@ namespace Application
             if (thread_ != NULL)
             {
                 thread_->stop();
+                cleanUp();
                 delete thread_;
             }
         }
@@ -67,6 +68,7 @@ namespace Application
 
     protected:
         void setThread(Threading::Thread* thread) { thread_ = thread; }
+        virtual void cleanUp() {};
 
     private:
         typedef struct CallbackStruct {

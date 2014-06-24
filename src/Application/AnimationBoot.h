@@ -33,9 +33,10 @@ namespace Application
             animationSystem_(NULL)
         {}
 
-        virtual ~AnimationBoot();
-
         virtual void start();
+
+    protected:
+        virtual void cleanUp();
 
     private:
         Graphics::Render::AnimationSystem* animationSystem_;

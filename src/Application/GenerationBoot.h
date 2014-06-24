@@ -33,9 +33,11 @@ namespace Application
             generationSystem_(NULL)
         {}
 
-        virtual ~GenerationBoot();
-
         virtual void start();
+
+    protected:
+
+        virtual void cleanUp();
 
     private:
         World::Generation::ChunkGenerationSystem* generationSystem_;

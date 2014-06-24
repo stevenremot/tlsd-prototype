@@ -34,9 +34,10 @@ namespace Application
             characterSystem_(NULL)
         {}
 
-        virtual ~CharacterBoot();
-
         virtual void start();
+
+    protected:
+        virtual void cleanUp();
 
     private:
         Character::CharacterSystem* characterSystem_;
