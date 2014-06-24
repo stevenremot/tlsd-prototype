@@ -20,6 +20,7 @@
 #include "ListenerRegister.h"
 
 #include <stdexcept>
+#include <algorithm>
 
 using std::out_of_range;
 
@@ -28,6 +29,25 @@ namespace Event
     void ListenerRegister::put(Event::Type type, EventListenerInterface* listener)
     {
         listeners_[type].push_back(listener);
+    }
+
+    void ListenerRegister::remove(EventListenerInterface* listener)
+    {
+        std::map< Event::Type, EventListenerList >::iterator pair;
+        for (pair = listeners_.begin(); pair != listeners_.end(); ++pair)
+        {
+            EventListenerList& listeners = pair->second;
+            EventListenerList::iterator pos = std::find(
+                listeners.begin(),
+                listeners.end(),
+                listener
+            );
+
+            if (pos != listeners.end())
+            {
+                listeners.erase(pos);
+            }
+        }
     }
 
     const ListenerRegister::EventListenerList ListenerRegister::getListeners(Event::Type type) const

@@ -24,7 +24,7 @@
 #include <exception>
 
 #include "Thread.h"
-#include "../Core/SharedPtr.h"
+#include "ConcurrentRessource.h"
 
 namespace Threading
 {
@@ -45,7 +45,9 @@ namespace Threading
     class Channel
     {
     public:
-        Channel() {}
+        Channel():
+            data_()
+        {}
 
         void operator<<(const T& data)
         {
@@ -61,6 +63,11 @@ namespace Threading
 
             data = data_.front();
             data_.pop_front();
+        }
+
+        bool isEmpty() const
+        {
+            return data_.empty();
         }
 
     private:
@@ -80,7 +87,7 @@ namespace Threading
             channel_(new Channel<T>)
         {};
 
-        ChannelInput(Core::SharedPtr< Channel<T> >& channel):
+        ChannelInput(ConcurrentRessource< Channel<T> >& channel):
             channel_(channel)
         {}
 
@@ -101,11 +108,11 @@ namespace Threading
          */
         void operator<<(const T& data)
         {
-            (*channel_) << data;
+            (*channel_.getWriter()) << data;
         }
 
     private:
-        Core::SharedPtr< Channel<T> > channel_;
+        ConcurrentRessource< Channel<T> > channel_;
     };
 
     /**
@@ -119,7 +126,7 @@ namespace Threading
             channel_(new Channel<T>)
         {};
 
-        ChannelOutput(Core::SharedPtr< Channel<T> > channel):
+        ChannelOutput(ConcurrentRessource< Channel<T> > channel):
             channel_(channel)
         {}
 
@@ -140,11 +147,16 @@ namespace Threading
          */
         void operator>>(T& data)
         {
-            (*channel_) >> data;
+            (*channel_.getWriter()) >> data;
+        }
+
+        bool isEmpty()
+        {
+            return channel_.getReader()->isEmpty();
         }
 
     private:
-        Core::SharedPtr< Channel<T> > channel_;
+        ConcurrentRessource< Channel<T> > channel_;
     };
 
     /**
@@ -159,7 +171,7 @@ namespace Threading
     void createChannel(ChannelInput<T>& input,
                        ChannelOutput<T>& output)
     {
-        Core::SharedPtr< Channel<T> > channel(new Channel<T>);
+        ConcurrentRessource< Channel<T> > channel(new Channel<T>);
         input = ChannelInput<T>(channel);
         output = ChannelOutput<T>(channel);
     }

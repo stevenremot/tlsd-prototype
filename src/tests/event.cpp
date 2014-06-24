@@ -32,8 +32,8 @@ using std::vector;
 namespace EventTest
 {
 
-    const Event::Event::Type QuitEvent::TYPE = "quit";
-    const Event::Event::Type PrintEvent::TYPE = "print";
+    const Event::Event::Type QuitEvent::Type = "quit";
+    const Event::Event::Type PrintEvent::Type = "print";
 
     void PrintListener::call(const Event::Event & event)
     {
@@ -52,8 +52,8 @@ namespace EventTest
         Event::EventManager m;
         Event::ListenerRegister & reg = m.getListenerRegister();
 
-        reg.put(PrintEvent::TYPE, new PrintListener());
-        reg.put(QuitEvent::TYPE, new QuitListener());
+        reg.put(PrintEvent::Type, new PrintListener());
+        reg.put(QuitEvent::Type, new QuitListener());
 
         vector<Threading::ThreadableInterface*> threadables;
         threadables.push_back(&m);

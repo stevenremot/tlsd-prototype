@@ -27,6 +27,11 @@
 #include "Entity.h"
 #include "Component.h"
 #include "ComponentGroup.h"
+#include "SharedEntity.h"
+#include "EntityDescriptor.h"
+
+#include "../Threading/ConcurrentRessource.h"
+#include "../Event/EventManager.h"
 
 
 namespace Ecs
@@ -56,7 +61,7 @@ namespace Ecs
         public:
             const char* what() const throw()
             {
-                return "Entity's components does not satisfy group requirements.";
+                return "Entity's components does not satisfy requirements.";
             }
         };
 
@@ -82,6 +87,14 @@ namespace Ecs
         };
 
         /**
+         *  Initialize the World by giving it a reference to the eventQueue
+         *
+         */
+         World(Event::EventQueue& eventQueue):
+             eventQueue_(eventQueue)
+             {}
+
+        /**
          * Create a new entity with no components.
          *
          * The entity has an arbitrary value. Do not use it on the client, where
@@ -96,7 +109,37 @@ namespace Ecs
          *
          * Use it for synchronizations with the server.
          */
-        Entity createEntity(const Entity & entity);
+        Entity createEntity(const Entity& entity);
+
+        /**
+         * Create a shared entity with no components.
+         */
+        SharedEntity createSharedEntity();
+
+        /**
+         * Register a new entity in the database.
+         *
+         * Return it as a shared entity.
+         */
+        SharedEntity createSharedEntity(const Entity& entity);
+
+        /**
+         * Transform an entity into a shared entity.
+         */
+        SharedEntity shareEntity(const Entity& entity);
+
+        /**
+         * Create an entity based on the descriptor if necesary
+         *
+         * If an entity based on this descriptor has already been loaded,
+         * return it.
+         */
+        Entity loadDescriptor(EntityDescriptor& descriptor);
+
+        /**
+         * Delete the entity in the descriptor if nobody else needs it.
+         */
+        void unloadDescriptor(EntityDescriptor& descriptor);
 
         /**
          * Add an association between an entity and a component.
@@ -104,7 +147,7 @@ namespace Ecs
          * @throw AlreadySetComponentException when entity is already associated
          *                                     with a component of the same type
          */
-        void addComponent(const Entity & entity, Component * component);
+        void addComponent(const Entity& entity, Component* component);
 
         /**
          * Return a ComponentGroup filled with entity and matching components.
@@ -113,19 +156,38 @@ namespace Ecs
          *                                prototype.
          */
         ComponentGroup getEntityComponents(
-            const Entity & entity,
-            const ComponentGroup & prototype
+            const Entity& entity,
+            const ComponentGroup& prototype
         );
+
+        /**
+         * Return the component of type type associated to entity
+         *
+         * @throw DoesNotSatisfyException when entity has no such component
+         */
+        Threading::ConcurrentRessource<Component>& getEntityComponent(
+            const Entity& entity,
+            const Component::Type& type
+        );
+
+        bool hasComponent(const Entity& entity, Component::Type type);
 
         /**
          * Return components groups for entities matching prototype.
          */
-        ComponentGroupCollection getComponents(const ComponentGroup & prototypes);
+        ComponentGroupCollection getComponents(const ComponentGroup& prototypes);
+
+        /**
+         * Remove an entity from the world.
+         */
+        void removeEntity(const Entity& entity);
 
     private:
-        typedef std::list<Component *> ComponentCollection;
+        typedef std::list< Threading::ConcurrentRessource<Component> > ComponentCollection;
 
         std::map< Entity, ComponentCollection > components_;
+
+        Event::EventQueue& eventQueue_;
     };
 }
 

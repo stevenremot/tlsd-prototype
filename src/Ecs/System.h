@@ -21,6 +21,7 @@
 #define ECS_SYSTEM_H
 
 #include "World.h"
+#include "../Threading/ConcurrentRessource.h"
 
 namespace Ecs
 {
@@ -35,21 +36,16 @@ namespace Ecs
     class System
     {
     public:
-        System(World & world): world_(world)
+        System(Threading::ConcurrentRessource<World>& world): world_(world)
         {}
 
-        World & getWorld()
+        Threading::ConcurrentWriter<World> getWorld()
         {
-            return world_;
-        }
-
-        const World & getWorld() const
-        {
-            return world_;
+            return world_.getWriter();
         }
 
     private:
-        World & world_;
+        Threading::ConcurrentRessource<World>& world_;
     };
 }
 

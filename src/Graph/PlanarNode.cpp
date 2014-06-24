@@ -1,3 +1,4 @@
+
 /*
    This file is part of The Lost Souls Downfall prototype.
 
@@ -51,5 +52,10 @@ namespace Graph
     bool PlanarNode::operator==(const PlanarNode& node) const
     {
         return position_ == node.position_;
+    }
+
+    bool PlanarNode::operator!=(const PlanarNode& node) const
+    {
+        return position_ != node.position_;
     }
 }
