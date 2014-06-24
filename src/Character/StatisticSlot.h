@@ -52,6 +52,19 @@ namespace Character
             currentValue_ = std::min(baseValue_, currentValue);
         }
 
+        void addToValue(int diff)
+        {
+            int cur = currentValue_;
+            if (-diff > cur)
+            {
+                currentValue_ = 0;
+            }
+            else
+            {
+                setCurrentValue(cur + diff);
+            }
+        }
+
     private:
         unsigned int baseValue_;
         unsigned int currentValue_;
