@@ -17,30 +17,23 @@
     <http://www.gnu.org/licenses/>.
 */
 
-#ifndef WORLD_COEFFICIENTS_GENERATOR_H
-#define WORLD_COEFFICIENTS_GENERATOR_H
+#ifndef WORLD_DESERT_BIOME_H
+#define WORLD_DESERT_BIOME_H
 
-#include <vector>
-
-#include "../../Random/NumberGenerator.h"
-#include "../GroundCoefficients.h"
-#include "../../Geometry/Vec2D.h"
+#include "BiomeInterface.h"
 
 namespace World
 {
-
-    namespace Generation
+    class DesertBiome : public BiomeInterface
     {
-        /*
-         * Generate a random 2D vector to be used as gradient 
-         */
-        std::vector<Geometry::Vec2Df> generatePerlinCoefficient(Random::NumberGenerator& rng);
-        /*
-         * Generate 3 octaves of coefficients for the simplex noise
-         */
-        GroundCoefficients generateGroundCoefficients(Random::NumberGenerator& rng);
-    }
+    public:
+        static const Type Type;
+        DesertBiome(): BiomeInterface(Type){}
+        virtual float transformCoefficient(float coefficient);
+        virtual Graphics::Color getColor();
+    };
 
 }
+
 
 #endif
