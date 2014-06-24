@@ -45,7 +45,9 @@ namespace Threading
     class Channel
     {
     public:
-        Channel() {}
+        Channel():
+            data_()
+        {}
 
         void operator<<(const T& data)
         {
