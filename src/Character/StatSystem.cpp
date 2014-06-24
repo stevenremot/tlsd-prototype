@@ -25,6 +25,8 @@
 #include "HurtEvent.h"
 #include "HarmComponent.h"
 #include "StatisticsComponent.h"
+#include "DieAction.h"
+#include "ActionPerformedEvent.h"
 
 namespace Character
 {
@@ -79,7 +81,16 @@ namespace Character
                         )
                     );
 
+                    // TODO remove
                     std::cout << "Health : " << stats.getHealth().getCurrentValue() << std::endl;
+                    if (stats.getHealth().getCurrentValue() == 0)
+                    {
+                        outsideQueue_ << new ActionPerformedEvent(
+                            receiver,
+                            new DieAction()
+                        );
+                    }
+
                 }
 
                 delete event;
