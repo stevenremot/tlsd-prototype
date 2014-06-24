@@ -28,12 +28,13 @@
 #include "../Physics/GravityComponent.h"
 #include "../Physics/CollisionComponent.h"
 #include "../Physics/AABBCollisionBody.h"
-#include "../Character/MoveAction.h"
-#include "../Character/StopAction.h"
-#include "../Character/StatisticsComponent.h"
-#include "../Character/CharacterComponent.h"
 #include "../Input/PlayerComponent.h"
+#include "GroupComponent.h"
 #include "GroupUtil.h"
+#include "MoveAction.h"
+#include "StopAction.h"
+#include "StatisticsComponent.h"
+#include "CharacterComponent.h"
 
 namespace Character
 {
@@ -103,6 +104,16 @@ namespace Character
         );
 
         associateToGroup(world, entity, group);
+
+        Threading::ConcurrentWriter<GroupComponent> groupComponent =
+            Threading::getConcurrentWriter<Ecs::Component, GroupComponent>(
+                world->getEntityComponent(group, GroupComponent::Type)
+            );
+
+        groupComponent->setCurrentHealth(
+            groupComponent->getCurrentHealth() +
+            statistics.getHealth().getBaseValue()
+        );
 
         return entity;
     }

@@ -23,7 +23,6 @@
 
 // TODO includes for group, remove later
 #include "../Character/GroupComponent.h"
-#include "../Character/GroupUtil.h"
 #include "../Character/EntityCreator.h"
 #include "../Character/Statistics.h"
 
@@ -102,8 +101,6 @@ namespace Application
                 Character::Statistics(70, 20, 20, 5),
                 group
             );
-
-            Character::initGroupHealth(world, group);
 
             std::cout << groupComponent->getCurrentHealth() << std::endl;
         }
