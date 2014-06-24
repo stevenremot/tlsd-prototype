@@ -131,7 +131,7 @@ namespace Physics
                             collisionComponent->getCollisionBody()
                         );
 
-                    /*if (
+                    if (
                         engine_.getAABBAgainstModel3DCollisionResponse(
                             movingBody,
                             collBody,
@@ -139,7 +139,7 @@ namespace Physics
                             movementVector
                         )
                     )
-                        positionComponent->setPosition(positionVector);*/
+                        positionComponent->setPosition(positionVector);
                 }
             }
 

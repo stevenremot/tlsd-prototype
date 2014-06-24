@@ -60,6 +60,11 @@ namespace Geometry
             offset_ = offset;
         }
 
+        Vec3Df getExtent() const
+        {
+            return Vec3Df(offset_ - origin_);
+        }
+
     private:
         Vec3Df origin_;
         Vec3Df offset_;

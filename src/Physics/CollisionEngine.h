@@ -35,7 +35,47 @@ namespace Physics
             const Geometry::Vec3Df& position2
         );
 
-        bool getAABBCollision(const Geometry::AxisAlignedBoundingBox& aabb1, const Geometry::AxisAlignedBoundingBox& aabb2);
+        inline bool getAABBCollision(const Geometry::AxisAlignedBoundingBox& aabb1, const Geometry::AxisAlignedBoundingBox& aabb2);
+
+        /**
+        *   Intermediate function for the sliding ellipsoid method
+        */
+        void computeT0AndT1(
+            const Geometry::Vec3Df& position,
+            const Geometry::Vec3Df& velocity,
+            const Geometry::Vec3Df& normal,
+            const Geometry::Vec3Df& planePoint,
+            float& t0,
+            float& t1);
+
+        /**
+        *   Solve the quadratic equation a t² + b t + c = 0
+        *   @return true if there is one or two solutions
+        *   @param[in] a : supposed > 0
+        *   @param[out] t1 : lowest root
+        */
+        bool solveQuadraticEquation(float a, float b, float c, float& x0);
+
+        void resolveVertexCollision(
+            const Geometry::Vec3Df& v,
+            const Geometry::Vec3Df& ellipsoidCenter,
+            const Geometry::Vec3Df& velocity,
+            const float& velocitySquaredLength,
+            const float& velocityLength,
+            Geometry::Vec3Df& intersectionPoint,
+            float& intersectionDistance,
+            float& t);
+
+        void resolveEdgeCollision(
+            const Geometry::Vec3Df& edge,
+            const Geometry::Vec3Df& point,
+            const Geometry::Vec3Df& ellispoidCenter,
+            const Geometry::Vec3Df& velocity,
+            const float& velocitySquaredLength,
+            const float& velocityLength,
+            Geometry::Vec3Df& intersectionPoint,
+            float& intersectionDistance,
+            float& t);
     };
 }
 
