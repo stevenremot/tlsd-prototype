@@ -132,8 +132,11 @@ namespace World
                 }
             }
 
-            Chunk currentChunk;
-            world_.setChunk(x, y, currentChunk);
+            // TODO Chunk should be totally unloaded, but
+            // it causes problems when half of a city is unloaded.
+            // CHunk generation is planned to be revised.
+            // Chunk currentChunk;
+            // world_.setChunk(x, y, currentChunk);
         }
 
         void ChunkGenerator::prepareChunk(int x, int y)
