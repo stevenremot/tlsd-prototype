@@ -25,6 +25,7 @@
 #include "DieAction.h"
 #include "ActionPerformedEvent.h"
 #include "CharacterComponent.h"
+#include "GroupComponent.h"
 #include "../Input/PlayerComponent.h"
 #include "../Physics/MovementComponent.h"
 #include "../Physics/EntityRotationChangedEvent.h"
@@ -61,19 +62,21 @@ namespace Character
                 const Ecs::Entity& entity = actionEvent.getEntity();
                 const Character::Action& action = actionEvent.getAction();
 
-                Ecs::ComponentGroup::ComponentTypeCollection types;
-                types.insert(CharacterComponent::Type);
-                types.insert(Geometry::RotationComponent::Type);
-                types.insert(Physics::MovementComponent::Type);
-                Ecs::ComponentGroup prototype(types);
-                Ecs::ComponentGroup group =
-                    getWorld()->getEntityComponents(entity, prototype);
+                bool isGroup = getWorld()->hasComponent(entity, GroupComponent::Type);
 
-                bool hasPlayer = getWorld()->hasComponent(entity, Input::PlayerComponent::Type);
-
-                bool removeEntity = false;
-
+                if (!isGroup)
                 {
+
+                    Ecs::ComponentGroup::ComponentTypeCollection types;
+                    types.insert(CharacterComponent::Type);
+                    types.insert(Geometry::RotationComponent::Type);
+                    types.insert(Physics::MovementComponent::Type);
+                    Ecs::ComponentGroup prototype(types);
+                    Ecs::ComponentGroup group =
+                        getWorld()->getEntityComponents(entity, prototype);
+
+                    bool hasPlayer = getWorld()->hasComponent(entity, Input::PlayerComponent::Type);
+
                     Threading::ConcurrentReader<CharacterComponent> charComponent =
                         Threading::getConcurrentReader<Ecs::Component, CharacterComponent>(
                             group.getComponent(CharacterComponent::Type)
@@ -146,19 +149,36 @@ namespace Character
                             );
                         }
                     }
-                    else if(action.getType() == DieAction::Type)
-                    {
-                        if (hasPlayer)
-                        {
-                            std::cout << "You died, noob." << std::endl;
-                        }
-                        removeEntity = true;
-                    }
                 }
-
-                if (removeEntity)
+                else
                 {
-                    getWorld()->removeEntity(entity);
+                    std::list<Ecs::Entity> entitiesToRemove;
+                    {
+                        Threading::ConcurrentReader<GroupComponent> groupComponent =
+                            Threading::getConcurrentReader<Ecs::Component, GroupComponent>(
+                                getWorld()->getEntityComponent(entity, GroupComponent::Type)
+                            );
+
+
+                        if(action.getType() == DieAction::Type)
+                        {
+                            entitiesToRemove.push_back(entity);
+                            const GroupComponent::EntityCollection& entities =
+                                groupComponent->getEntities();
+                            GroupComponent::EntityCollection::const_iterator ent;
+
+                            for (ent = entities.begin(); ent != entities.end(); ++ent)
+                            {
+                                entitiesToRemove.push_back(*ent);
+                            }
+                        }
+                    }
+
+                    std::list<Ecs::Entity>::iterator ent;
+                    for (ent = entitiesToRemove.begin(); ent != entitiesToRemove.end(); ++ent)
+                    {
+                        getWorld()->removeEntity(*ent);
+                    }
                 }
             }
         }

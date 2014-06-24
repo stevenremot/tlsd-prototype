@@ -24,9 +24,10 @@
 
 #include "HurtEvent.h"
 #include "HarmComponent.h"
-#include "StatisticsComponent.h"
+#include "CharacterComponent.h"
 #include "DieAction.h"
 #include "ActionPerformedEvent.h"
+#include "GroupComponent.h"
 
 namespace Character
 {
@@ -59,38 +60,53 @@ namespace Character
                     Threading::ConcurrentRessource<Ecs::Component> harmComponentRessource =
                         world->getEntityComponent(attacker, HarmComponent::Type);
 
+                    Threading::ConcurrentRessource<Ecs::Component> charComponentRessource =
+                        world->getEntityComponent(receiver, CharacterComponent::Type);
+
                     Threading::ConcurrentRessource<Ecs::Component> statComponentRessource =
                         world->getEntityComponent(receiver, StatisticsComponent::Type);
+
+                    const Ecs::Entity& group =
+                        Threading::getConcurrentReader<Ecs::Component, CharacterComponent>(
+                            charComponentRessource
+                        )->getGroup();
+
+                    Threading::ConcurrentWriter<GroupComponent> groupComponent =
+                        Threading::getConcurrentWriter<Ecs::Component, GroupComponent>(
+                            world->getEntityComponent(group, GroupComponent::Type)
+                        );
 
                     Threading::ConcurrentReader<HarmComponent> harmComponent =
                         Threading::getConcurrentReader<Ecs::Component, HarmComponent>(
                             harmComponentRessource
                         );
-
                     Threading::ConcurrentWriter<StatisticsComponent> statComponent =
                         Threading::getConcurrentWriter<Ecs::Component, StatisticsComponent>(
                             statComponentRessource
                         );
 
-                    Statistics& stats = statComponent->getStatistics();
-
-                    stats.getHealth().addToValue(
-                        -std::max<int>(
-                            static_cast<float>(harmComponent->getDamages()) -
-                            static_cast<float>(stats.getDefense().getCurrentValue()),
-                            1
-                        )
+                    int currentHealth = groupComponent->getCurrentHealth();
+                    int damages = std::max<int>(
+                        static_cast<float>(harmComponent->getDamages()) -
+                        static_cast<float>(statComponent->getStatistics().getDefense().getCurrentValue()),
+                        1
                     );
 
-                    // TODO remove
-                    std::cout << "Health : " << stats.getHealth().getCurrentValue() << std::endl;
-                    if (stats.getHealth().getCurrentValue() == 0)
+                    if (damages > currentHealth)
                     {
+                        groupComponent->setCurrentHealth(0);
                         outsideQueue_ << new ActionPerformedEvent(
-                            receiver,
+                            group,
                             new DieAction()
                         );
                     }
+                    else
+                    {
+                        groupComponent->setCurrentHealth(currentHealth - damages);
+                    }
+
+                    // TODO remove
+                    std::cout << "Health : " << groupComponent->getCurrentHealth() << std::endl;
                 }
 
                 delete event;
