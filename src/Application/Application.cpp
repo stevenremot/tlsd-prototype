@@ -142,7 +142,7 @@ namespace Application
                 group
             );
 
-            createDangerousCube(world, Geometry::Vec3Df(200, 200, 0), 20);
+            createDangerousCube(world, Geometry::Vec3Df(160, 160, 0), 20);
 
             std::cout << groupComponent->getCurrentHealth() << std::endl;
         }
