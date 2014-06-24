@@ -267,10 +267,13 @@ namespace Application
             );
 
             Ecs::Entity group = world->createEntity();
-            world->addComponent(group, new Character::GroupComponent());
+            Character::GroupComponent* groupComponent = new Character::GroupComponent();
+            world->addComponent(group, groupComponent);
 
             Character::associateToGroup(world, player, group);
             Character::associateToGroup(world, buddy, group);
+
+            Character::initGroupHealth(world, group);
         }
 
         running_ = true;

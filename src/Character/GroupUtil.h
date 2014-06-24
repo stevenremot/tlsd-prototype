@@ -32,10 +32,15 @@ namespace Character
         const Ecs::Entity& group
     );
 
-    // unsigned int computeMaxHeight(
-    //     Threading::ConcurrentWriter<Ecs::World>& world,
-    //     const Ecs::Entity& group
-    // );
+    unsigned int computeMaxHealth(
+        Threading::ConcurrentWriter<Ecs::World>& world,
+        const Ecs::Entity& group
+    );
+
+    void initGroupHealth(
+        Threading::ConcurrentWriter<Ecs::World>& world,
+        const Ecs::Entity& group
+    );
 }
 
 #endif

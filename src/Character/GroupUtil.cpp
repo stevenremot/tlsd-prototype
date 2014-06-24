@@ -21,6 +21,7 @@
 
 #include "CharacterComponent.h"
 #include "GroupComponent.h"
+#include "StatisticsComponent.h"
 
 namespace Character
 {
@@ -55,5 +56,47 @@ namespace Character
 
         characterComponent->setGroup(group);
         groupComponent->addEntity(entity);
+    }
+
+    unsigned int computeMaxHealth(
+        Threading::ConcurrentWriter<Ecs::World>& world,
+        const Ecs::Entity& group
+    ) {
+        unsigned int health = 0;
+
+        Threading::ConcurrentReader<GroupComponent> groupComponent =
+            Threading::getConcurrentReader<Ecs::Component, GroupComponent>(
+                world->getEntityComponent(group, GroupComponent::Type)
+            );
+
+        const GroupComponent::EntityCollection& entities =
+            groupComponent->getEntities();
+
+        GroupComponent::EntityCollection::const_iterator entity;
+        for (entity = entities.begin(); entity != entities.end(); ++entity)
+        {
+            Threading::ConcurrentReader<StatisticsComponent> statisticsComponent =
+                Threading::getConcurrentReader<Ecs::Component, StatisticsComponent>(
+                    world->getEntityComponent(*entity, StatisticsComponent::Type)
+                );
+
+            health += statisticsComponent->getStatistics().getHealth().getBaseValue();
+        }
+
+        return health;
+    }
+
+    void initGroupHealth(
+        Threading::ConcurrentWriter<Ecs::World>& world,
+        const Ecs::Entity& group
+    ) {
+        unsigned int maxHealth = computeMaxHealth(world, group);
+
+        Threading::ConcurrentWriter<GroupComponent> groupComponent =
+            Threading::getConcurrentWriter<Ecs::Component, GroupComponent>(
+                world->getEntityComponent(group, GroupComponent::Type)
+            );
+
+        groupComponent->setCurrentHealth(maxHealth);
     }
 }
