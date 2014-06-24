@@ -32,6 +32,8 @@ namespace Character
                       public Threading::ThreadableInterface
     {
     public:
+        static const unsigned int InvincibilityPeriod;
+
         StatSystem(
             Threading::ConcurrentRessource<Ecs::World>& world,
             const Event::EventQueue& outsideQueue

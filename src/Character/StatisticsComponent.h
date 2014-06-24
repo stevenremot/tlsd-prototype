@@ -20,6 +20,8 @@
 #ifndef CHARACTER_STATISTICS_COMPONENT_H
 #define CHARACTER_STATISTICS_COMPONENT_H
 
+#include <ctime>
+
 #include "../Ecs/Component.h"
 #include "Statistics.h"
 
@@ -35,7 +37,8 @@ namespace Character
 
         StatisticsComponent(const Statistics& statistics):
             Component(Type),
-            statistics_(statistics)
+            statistics_(statistics),
+            lastTimeHurt_()
         {}
 
         virtual Component* clone() const
@@ -51,9 +54,20 @@ namespace Character
         Statistics& getStatistics() { return statistics_; }
         const Statistics& getStatistics() const { return statistics_; }
 
+        const struct timespec& getLastTimeHurt()
+        {
+            return lastTimeHurt_;
+        }
+
+        void setLastTimeHurt(const struct timespec& lastTimeHurt)
+        {
+            lastTimeHurt_ = lastTimeHurt;
+        }
+
     private:
         static const std::vector<Component::Type> dependentComponents_;
         Statistics statistics_;
+        struct timespec lastTimeHurt_;
     };
 }
 

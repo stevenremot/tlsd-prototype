@@ -28,9 +28,12 @@
 #include "DieAction.h"
 #include "ActionPerformedEvent.h"
 #include "GroupComponent.h"
+#include "../Core/Time.h"
 
 namespace Character
 {
+    const unsigned int StatSystem::InvincibilityPeriod = 500;
+
     void StatSystem::call(const Event::Event& event)
     {
         if (event.getType() == HurtEvent::Type)
@@ -85,28 +88,38 @@ namespace Character
                             statComponentRessource
                         );
 
-                    int currentHealth = groupComponent->getCurrentHealth();
-                    int damages = std::max<int>(
-                        static_cast<float>(harmComponent->getDamages()) -
-                        static_cast<float>(statComponent->getStatistics().getDefense().getCurrentValue()),
-                        1
-                    );
+                    struct timespec lastTimeHurt = statComponent->getLastTimeHurt();
+                    struct timespec currentTime;
+                    Core::getTime(currentTime);
+                    struct timespec diff = Core::difference(lastTimeHurt, currentTime);
+                    unsigned int period = diff.tv_sec * 1000L + diff.tv_nsec / 1000000L;
 
-                    if (damages > currentHealth)
+                    if (period > InvincibilityPeriod)
                     {
-                        groupComponent->setCurrentHealth(0);
-                        outsideQueue_ << new ActionPerformedEvent(
-                            group,
-                            new DieAction()
+                        statComponent->setLastTimeHurt(currentTime);
+                        int currentHealth = groupComponent->getCurrentHealth();
+                        int damages = std::max<int>(
+                            static_cast<float>(harmComponent->getDamages()) -
+                            static_cast<float>(statComponent->getStatistics().getDefense().getCurrentValue()),
+                            1
                         );
-                    }
-                    else
-                    {
-                        groupComponent->setCurrentHealth(currentHealth - damages);
-                    }
 
-                    // TODO remove
-                    std::cout << "Health : " << groupComponent->getCurrentHealth() << std::endl;
+                        if (damages > currentHealth)
+                        {
+                            groupComponent->setCurrentHealth(0);
+                            outsideQueue_ << new ActionPerformedEvent(
+                                group,
+                                new DieAction()
+                            );
+                        }
+                        else
+                        {
+                            groupComponent->setCurrentHealth(currentHealth - damages);
+                        }
+
+                        // TODO remove
+                        std::cout << "Health : " << groupComponent->getCurrentHealth() << std::endl;
+                    }
                 }
 
                 delete event;
