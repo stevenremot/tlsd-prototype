@@ -78,7 +78,7 @@ namespace Application
         );
     }
 
-    Ecs::Entity createPlayer(Ecs::World& world, const Geometry::Vec3Df& position, const Geometry::Vec3Df& rotation)
+    Ecs::Entity createPlayer(Ecs::World& world, const Geometry::Vec3Df& position, const Geometry::Vec3Df& rotation, const Ecs::Entity& group)
     {
         // TODO: method AABB from model 3d
         Geometry::AxisAlignedBoundingBox bbox(Geometry::Vec3Df(150.0, 150.0, 0.0), Geometry::Vec3Df(150.5, 150.5, 1.0));
@@ -132,7 +132,7 @@ namespace Application
         );
         world.addComponent(
             entity,
-            new Character::CharacterComponent(5.0)
+            new Character::CharacterComponent(5.0, group)
         );
         world.addComponent(
             entity,
@@ -142,7 +142,7 @@ namespace Application
         return entity;
     }
 
-    Ecs::Entity createBuddy(Ecs::World& world, const Geometry::Vec3Df& position, const Geometry::Vec3Df& rotation)
+    Ecs::Entity createBuddy(Ecs::World& world, const Geometry::Vec3Df& position, const Geometry::Vec3Df& rotation, const Ecs::Entity& group)
     {
         // TODO: method AABB from model 3d
         Geometry::AxisAlignedBoundingBox bbox(Geometry::Vec3Df(150.0, 150.0, 0.0), Geometry::Vec3Df(150.5, 150.5, 1.0));
@@ -196,7 +196,7 @@ namespace Application
         );
         world.addComponent(
             entity,
-            new Character::CharacterComponent(5.0)
+            new Character::CharacterComponent(5.0, group)
         );
 
         return entity;
@@ -255,20 +255,24 @@ namespace Application
         // TODO set z at 0, not 150
         {
             Threading::ConcurrentWriter<Ecs::World> world = ecsWorld_.getWriter();
-            Ecs::Entity player = createPlayer(
-                *world,
-                Geometry::Vec3Df(150,150,150),
-                Geometry::Vec3Df(0,0,0)
-            );
-            Ecs::Entity buddy = createBuddy(
-                *world,
-                Geometry::Vec3Df(160, 160, 150),
-                Geometry::Vec3Df(0, 0, 0)
-            );
+
 
             Ecs::Entity group = world->createEntity();
             Character::GroupComponent* groupComponent = new Character::GroupComponent();
             world->addComponent(group, groupComponent);
+
+            Ecs::Entity player = createPlayer(
+                *world,
+                Geometry::Vec3Df(150,150,150),
+                Geometry::Vec3Df(0,0,0),
+                group
+            );
+            Ecs::Entity buddy = createBuddy(
+                *world,
+                Geometry::Vec3Df(160, 160, 150),
+                Geometry::Vec3Df(0, 0, 0),
+                group
+            );
 
             Character::associateToGroup(world, player, group);
             Character::associateToGroup(world, buddy, group);

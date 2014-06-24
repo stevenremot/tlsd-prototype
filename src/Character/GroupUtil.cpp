@@ -40,18 +40,15 @@ namespace Character
                 world->getEntityComponent(group, GroupComponent::Type)
             );
 
-        if (characterComponent->hasGroup())
-        {
-            Ecs::Entity oldGroup = characterComponent->getGroup();
+        Ecs::Entity oldGroup = characterComponent->getGroup();
 
-            if (oldGroup != group) {
-                Threading::ConcurrentWriter<GroupComponent> oldGroupComponent =
-                    Threading::getConcurrentWriter<Ecs::Component, GroupComponent>(
-                        world->getEntityComponent(oldGroup, GroupComponent::Type)
-                    );
+        if (oldGroup != group) {
+            Threading::ConcurrentWriter<GroupComponent> oldGroupComponent =
+                Threading::getConcurrentWriter<Ecs::Component, GroupComponent>(
+                    world->getEntityComponent(oldGroup, GroupComponent::Type)
+                );
 
-                oldGroupComponent->removeEntity(entity);
-            }
+            oldGroupComponent->removeEntity(entity);
         }
 
         characterComponent->setGroup(group);
