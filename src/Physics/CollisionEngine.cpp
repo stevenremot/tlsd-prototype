@@ -1,3 +1,5 @@
+#include <iostream>
+
 #include "CollisionEngine.h"
 
 using Geometry::AxisAlignedBoundingBox;
@@ -32,7 +34,8 @@ namespace Physics
         const std::vector<Vec3Df>& vertices = modelBody.getModel().getVertices();
         const std::vector<Graphics::Render::Face>& faces = modelBody.getModel().getFaces();
 
-        position -= movementVector;
+        Vec3Df lastPosition = position - movementVector;
+        movingAABB = aabbBody.getTranslatedBoundingBox(lastPosition);
         Vec3Df ellipsoidRadius = movingAABB.getExtent() * 0.5;
         Vec3Df ellipsoidCenter = (movingAABB.getOrigin() + ellipsoidRadius) / ellipsoidRadius;
         Vec3Df velocity = movementVector / ellipsoidRadius;
@@ -41,10 +44,13 @@ namespace Physics
         float velocitySquaredLength = velocity.getSquaredLength();
         float velocityLength = std::sqrt(velocitySquaredLength);
 
+        Vec3Df intersectionPoint = Vec3Df();
+        float intersectionDistance = 10000;
+
         for (unsigned int tri = 0; tri < faces.size(); tri++)
         {
-            Vec3Df intersectionPoint = Vec3Df();
-            float intersectionDistance = 0;
+            Vec3Df intersectionPointTri = Vec3Df();
+            float intersectionDistanceTri = 10000;
 
             // to work in the ellipsoid space, positions are divised by ellipsoid radius
             Vec3Df p0 = vertices[faces[tri][0]] / ellipsoidRadius;
@@ -52,7 +58,7 @@ namespace Physics
             Vec3Df p2 = vertices[faces[tri][2]] / ellipsoidRadius;
 
             Vec3Df v0 = p1 - p0;
-            Vec3Df v1 = p2 - p1;
+            Vec3Df v1 = p2 - p0;
 
             Vec3Df n = v0.cross(v1);
             n.normalize();
@@ -86,112 +92,89 @@ namespace Physics
             if (u > 0 && v > 0 && w > 0)
             {
                 // the point in inside the triangle
-                intersectionPoint = planeIntersectionPoint;
-                intersectionDistance = t0 * velocityLength;
+                intersectionPointTri = planeIntersectionPoint;
+                intersectionDistanceTri = t0 * velocityLength;
             }
             else
             {
-                // sweep test with vertices
-                // quadratic equation : a t^2 + b t + c = 0
-                float a = velocitySquaredLength;
-                float b = 2 * (velocity.dot(ellipsoidCenter - p0));
-                float c = (ellipsoidCenter - p0).getSquaredLength() - 1;
                 float t = t1;
-                if (solveQuadraticEquation(a,b,c,t))
-                {
-                    intersectionPoint = p0;
-                    intersectionDistance = t * velocityLength;
-                }
 
-                b = 2 * (velocity.dot(ellipsoidCenter - p1));
-                c = (ellipsoidCenter - p1).getSquaredLength() - 1;
-                if (solveQuadraticEquation(a,b,c,t))
-                {
-                    intersectionPoint = p1;
-                    intersectionDistance = t * velocityLength;
-                }
+                resolveVertexCollision(
+                    p0,
+                    ellipsoidCenter,
+                    velocity,
+                    velocitySquaredLength,
+                    velocityLength,
+                    intersectionPointTri,
+                    intersectionDistanceTri,
+                    t);
 
-                b = 2 * (velocity.dot(ellipsoidCenter - p2));
-                c = (ellipsoidCenter - p2).getSquaredLength() - 1;
-                if (solveQuadraticEquation(a,b,c,t))
-                {
-                    intersectionPoint = p2;
-                    intersectionDistance = t * velocityLength;
-                }
+                resolveVertexCollision(
+                    p1,
+                    ellipsoidCenter,
+                    velocity,
+                    velocitySquaredLength,
+                    velocityLength,
+                    intersectionPointTri,
+                    intersectionDistanceTri,
+                    t);
 
-                // sweep test with edges
-                float edgeSquaredLength = v0.getSquaredLength();
-                Vec3Df baseToVertex = p0 - ellipsoidCenter;
-                float doteb = v0.dot(baseToVertex);
-                float dotev = v0.dot(velocity);
-                a = edgeSquaredLength * velocitySquaredLength - dotev*dotev;
-                b = 2 * (dotev*doteb)
-                    - edgeSquaredLength * 2 * (velocity.dot(baseToVertex));
-                c = doteb*doteb - edgeSquaredLength * (1 - baseToVertex.getSquaredLength());
+                resolveVertexCollision(
+                    p2,
+                    ellipsoidCenter,
+                    velocity,
+                    velocitySquaredLength,
+                    velocityLength,
+                    intersectionPointTri,
+                    intersectionDistanceTri,
+                    t);
 
-                float lastT = t;
-                if (solveQuadraticEquation(a,b,c,t))
-                {
-                    float lineCoordinate = (dotev * t - doteb) / edgeSquaredLength;
-                    if (lineCoordinate > 0 && lineCoordinate < 1)
-                    {
-                        intersectionPoint = p0 + v0 * lineCoordinate;
-                        intersectionDistance = t * velocityLength;
-                    }
-                    else
-                        t = lastT;
-                }
+                resolveEdgeCollision(
+                    v0,
+                    p0,
+                    ellipsoidCenter,
+                    velocity,
+                    velocitySquaredLength,
+                    velocityLength,
+                    intersectionPointTri,
+                    intersectionDistanceTri,
+                    t);
 
-                // sweep test with edges
-                edgeSquaredLength = v1.getSquaredLength();
-                baseToVertex = p0 - ellipsoidCenter;
-                doteb = v1.dot(baseToVertex);
-                dotev = v1.dot(velocity);
-                a = edgeSquaredLength * velocitySquaredLength - dotev*dotev;
-                b = 2 * (dotev*doteb)
-                    - edgeSquaredLength * 2 * (velocity.dot(baseToVertex));
-                c = doteb*doteb - edgeSquaredLength * (1 - baseToVertex.getSquaredLength());
+                resolveEdgeCollision(
+                    v1,
+                    p0,
+                    ellipsoidCenter,
+                    velocity,
+                    velocitySquaredLength,
+                    velocityLength,
+                    intersectionPointTri,
+                    intersectionDistanceTri,
+                    t);
 
-                lastT = t;
-                if (solveQuadraticEquation(a,b,c,t))
-                {
-                    float lineCoordinate = (dotev * t - doteb) / edgeSquaredLength;
-                    if (lineCoordinate > 0 && lineCoordinate < 1)
-                    {
-                        intersectionPoint = p0 + v1 * lineCoordinate;
-                        intersectionDistance = t * velocityLength;
-                    }
-                    else
-                        t = lastT;
-                }
-
-                // sweep test with edges
-                v2 = p2 - p1;
-                edgeSquaredLength = v2.getSquaredLength();
-                baseToVertex = p1 - ellipsoidCenter;
-                doteb = v2.dot(baseToVertex);
-                dotev = v2.dot(velocity);
-                a = edgeSquaredLength * velocitySquaredLength - dotev*dotev;
-                b = 2 * (dotev*doteb)
-                    - edgeSquaredLength * 2 * (velocity.dot(baseToVertex));
-                c = doteb*doteb - edgeSquaredLength * (1 - baseToVertex.getSquaredLength());
-
-                lastT = t;
-                if (solveQuadraticEquation(a,b,c,t))
-                {
-                    float lineCoordinate = (dotev * t - doteb) / edgeSquaredLength;
-                    if (lineCoordinate > 0 && lineCoordinate < 1)
-                    {
-                        intersectionPoint = p0 + v2 * lineCoordinate;
-                        intersectionDistance = t * velocityLength;
-                    }
-                    else
-                        t = lastT;
-                }
+                resolveEdgeCollision(
+                    p2 - p1,
+                    p1,
+                    ellipsoidCenter,
+                    velocity,
+                    velocitySquaredLength,
+                    velocityLength,
+                    intersectionPointTri,
+                    intersectionDistanceTri,
+                    t);
             }
 
+            if (intersectionDistanceTri < intersectionDistance)
+            {
+                intersectionPoint = intersectionPointTri;
+                intersectionDistance = intersectionDistanceTri;
+            }
         }
 
+        if (intersectionDistance < 10000)
+        {
+            std::cout << "Collision found : " << intersectionPoint << std::endl;
+            // TODO: collision response
+        }
 
         return false;
     }
@@ -199,7 +182,7 @@ namespace Physics
     void CollisionEngine::computeT0AndT1(
         const Geometry::Vec3Df& position,
         const Geometry::Vec3Df& velocity,
-        const Geometry::Vec3Df& normal,const Geometry::Vec3Df& ellipsoidCenter,
+        const Geometry::Vec3Df& normal,
         const Geometry::Vec3Df& planePoint,
         float& t0,
         float& t1)
@@ -241,7 +224,7 @@ namespace Physics
         float& x)
     {
         float delta = b*b - 4*a*c;
-        float root = 0;const Geometry::Vec3Df& ellipsoidCenter,
+        float root = 0;
 
         if (delta < 0)
             return false;
@@ -258,18 +241,20 @@ namespace Physics
             x = root;
             return true;
         }
+
+        return false;
     }
 
-    void CollisionEngine::resolveEdgeCollisionconst Geometry::Vec3Df& ellipsoidCenter,(
-        const Geometry::Vec3Df& e,
-        const Geometry::Vec3Df& p,
-        const Geometry::Vec3Df& ellipsoidCenter,
-        const Geometry::Vec3Df& velocity,
-        const float& velocitySquaredLength,
-        const float& velocityLength,
-        Geometry::Vec3Df& intersectionPoint,
-        float& intersectionDistance,
-        float& t)
+    void CollisionEngine::resolveEdgeCollision(
+                const Geometry::Vec3Df& e,
+                const Geometry::Vec3Df& p,
+                const Geometry::Vec3Df& ellipsoidCenter,
+                const Geometry::Vec3Df& velocity,
+                const float& velocitySquaredLength,
+                const float& velocityLength,
+                Geometry::Vec3Df& intersectionPoint,
+                float& intersectionDistance,
+                float& t)
     {
         float edgeSquaredLength = e.getSquaredLength();
         Vec3Df baseToVertex = p - ellipsoidCenter;
