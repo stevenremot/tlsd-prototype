@@ -17,41 +17,39 @@
     <http://www.gnu.org/licenses/>.
 */
 
-#ifndef ECS_SYSTEM_H
-#define ECS_SYSTEM_H
+#ifndef GRAPHICS_GUI_INIT_GUI_EVENT_H_H
+#define GRAPHICS_GUI_INIT_GUI_EVENT_H_H
 
-#include "World.h"
-#include "../Threading/ConcurrentRessource.h"
+#include <irrlicht/IGUIEnvironment.h>
 
-namespace Ecs
+#include "../../Event/Event.h"
+
+namespace Graphics
 {
-    /**
-     * Base class for systems.
-     *
-     * A system is just an object that can query a World for its components,
-     * and may modify them.
-     *
-     * Try to write one component type with only one system!
-     */
-    class System
+    namespace Gui
     {
-    public:
-        System(Threading::ConcurrentRessource<World>& world): world_(world)
-        {}
-
-        Threading::ConcurrentWriter<World> getWorld()
+        /**
+         * Dispatched when gui has been initialized.
+         */
+        class InitGuiEvent: public Event::Event
         {
-            return world_.getWriter();
-        }
+        public:
+            static const Type Type;
 
-        Threading::ConcurrentRessource<World>& getWorldRessource()
-        {
-            return world_;
-        }
+            InitGuiEvent(irr::gui::IGUIEnvironment* guiEnvironment):
+                Event(Type),
+                guiEnvironment_(guiEnvironment)
+            {}
 
-    private:
-        Threading::ConcurrentRessource<World>& world_;
-    };
+            irr::gui::IGUIEnvironment* getGuiEnvironment() const
+            {
+                return guiEnvironment_;
+            }
+
+        private:
+            irr::gui::IGUIEnvironment* guiEnvironment_;
+        };
+    }
 }
 
 #endif

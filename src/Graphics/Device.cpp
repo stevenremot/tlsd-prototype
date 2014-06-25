@@ -29,6 +29,7 @@
 #endif // _WIN32
 
 #include "Render/Scene.h"
+#include "Gui/InitGuiEvent.h"
 #include "../Input/IrrlichtInputReceiver.h"
 #include "CloseDeviceEvent.h"
 
@@ -59,6 +60,7 @@ namespace Graphics
             initialized_ = true;
             eventQueue_ << new Render::InitSceneEvent(irrlichtDevice_->getSceneManager(), irrlichtDevice_->getVideoDriver());
             eventQueue_ << new Input::InitInputEvent(irrlichtDevice_->getCursorControl());
+            eventQueue_ << new Gui::InitGuiEvent(irrlichtDevice_->getGUIEnvironment());
             std::cout << "[Device]: init done" << std::endl;
             return;
         }

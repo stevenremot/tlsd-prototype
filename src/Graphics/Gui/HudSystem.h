@@ -17,41 +17,38 @@
     <http://www.gnu.org/licenses/>.
 */
 
-#ifndef ECS_SYSTEM_H
-#define ECS_SYSTEM_H
+#ifndef GRAPHICS_GUI_HUD_SYSTEM_H
+#define GRAPHICS_GUI_HUD_SYSTEM_H
 
-#include "World.h"
-#include "../Threading/ConcurrentRessource.h"
+#include <irrlicht/IVideoDriver.h>
 
-namespace Ecs
+#include "../../Ecs/System.h"
+#include "../../Event/EventListenerInterface.h"
+#include "../../Event/ListenerRegister.h"
+
+namespace Graphics
 {
-    /**
-     * Base class for systems.
-     *
-     * A system is just an object that can query a World for its components,
-     * and may modify them.
-     *
-     * Try to write one component type with only one system!
-     */
-    class System
+    namespace Gui
     {
-    public:
-        System(Threading::ConcurrentRessource<World>& world): world_(world)
-        {}
-
-        Threading::ConcurrentWriter<World> getWorld()
+        /**
+         * System for displaying HUD
+         *
+         * Temporary implementation
+         */
+        class HudSystem: public Ecs::System,
+                         public Event::EventListenerInterface
         {
-            return world_.getWriter();
-        }
+        public:
+            HudSystem(Threading::ConcurrentRessource<Ecs::World> world):
+                System(world)
+            {}
 
-        Threading::ConcurrentRessource<World>& getWorldRessource()
-        {
-            return world_;
-        }
+            virtual void call(const Event::Event& event);
 
-    private:
-        Threading::ConcurrentRessource<World>& world_;
-    };
+            void registerListeners(Event::ListenerRegister& reg);
+            void unregisterListeners(Event::ListenerRegister& reg);
+        };
+    }
 }
 
 #endif

@@ -20,7 +20,6 @@
 #include "StatSystem.h"
 
 #include <algorithm>
-#include <iostream>
 
 #include "HurtEvent.h"
 #include "HarmComponent.h"
@@ -116,9 +115,6 @@ namespace Character
                         {
                             groupComponent->setCurrentHealth(currentHealth - damages);
                         }
-
-                        // TODO remove
-                        std::cout << "Health : " << groupComponent->getCurrentHealth() << std::endl;
                     }
                 }
 

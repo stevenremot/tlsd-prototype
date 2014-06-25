@@ -39,12 +39,14 @@ namespace Application
             reg.remove(device_);
             reg.remove(receiver_);
             reg.remove(renderSystem_);
+            hudSystem_->unregisterListeners(reg);
 
             delete scene_;
             delete receiver_;
             delete playerSystem_;
             delete renderSystem_;
             delete device_;
+            delete hudSystem_;
         }
     }
 
@@ -62,6 +64,9 @@ namespace Application
 
         scene_ = new Graphics::Render::Scene(queue);
         scene_->registerListeners(reg);
+
+        hudSystem_ = new Graphics::Gui::HudSystem(ecsWorld);
+        hudSystem_->registerListeners(reg);
 
         receiver_ = new Input::IrrlichtInputReceiver(queue);
         reg.put(Input::InitInputEvent::Type, receiver_);
