@@ -17,31 +17,27 @@
     <http://www.gnu.org/licenses/>.
 */
 
-#include "MovementTimer.h"
-#include "../Core/Time.h"
+#ifndef CHARACTER_DIE_ACTION_H
+#define CHARACTER_DIE_ACTION_H
 
-namespace Physics
+#include "Action.h"
+
+namespace Character
 {
-    void MovementTimer::updateCurrentTime()
+    class DieAction: public Action
     {
-        struct timespec time;
-        Core::getTime(time);
-        currentTime_ = time.tv_sec * 1000L + time.tv_nsec / 1000000L;
-        delay_ = currentTime_ - lastTime_;
-    }
+    public:
+        static const Type Type;
 
-    void MovementTimer::updateLastTime()
-    {
-        lastTime_ = currentTime_;
-    }
-
-    unsigned long MovementTimer::getLastTime() const
-    {
-        return lastTime_;
-    }
-
-    unsigned long MovementTimer::getDelay() const
-    {
-        return delay_;
-    }
+        DieAction():
+            Action(Type)
+        {}
+    };
 }
+
+#endif
+
+// Emacs local variables
+// Local variables:
+// mode: c++
+// End:

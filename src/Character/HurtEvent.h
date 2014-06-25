@@ -17,31 +17,44 @@
     <http://www.gnu.org/licenses/>.
 */
 
-#include "MovementTimer.h"
-#include "../Core/Time.h"
+#ifndef CHARACTER_HURT_EVENT_H
+#define CHARACTER_HURT_EVENT_H
 
-namespace Physics
+#include "../Event/Event.h"
+#include "../Ecs/Entity.h"
+
+namespace Character
 {
-    void MovementTimer::updateCurrentTime()
+    class HurtEvent: public Event::Event
     {
-        struct timespec time;
-        Core::getTime(time);
-        currentTime_ = time.tv_sec * 1000L + time.tv_nsec / 1000000L;
-        delay_ = currentTime_ - lastTime_;
-    }
+    public:
+        static const Type Type;
 
-    void MovementTimer::updateLastTime()
-    {
-        lastTime_ = currentTime_;
-    }
+        HurtEvent(const Ecs::Entity& attacker, const Ecs::Entity& receiver):
+            Event(Type),
+            attacker_(attacker),
+            receiver_(receiver)
+        {}
 
-    unsigned long MovementTimer::getLastTime() const
-    {
-        return lastTime_;
-    }
+        const Ecs::Entity& getAttacker() const
+        {
+            return attacker_;
+        }
 
-    unsigned long MovementTimer::getDelay() const
-    {
-        return delay_;
-    }
+        const Ecs::Entity& getReceiver() const
+        {
+            return receiver_;
+        }
+
+    private:
+        Ecs::Entity attacker_;
+        Ecs::Entity receiver_;
+    };
 }
+
+#endif
+
+// Emacs local variables
+// Local variables:
+// mode: c++
+// End:

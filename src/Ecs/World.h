@@ -80,9 +80,17 @@ namespace Ecs
          */
         class AlreadySetComponentException: public std::exception
         {
-            const char * what() const throw()
+            const char* what() const throw()
             {
                 return "Trying to add to an entity a component it already has.";
+            }
+        };
+
+        class NoEntityException: public std::exception
+        {
+            const char* chat() const throw()
+            {
+                return "Trying to acces a non-existing entity (Probably a dead noob).";
             }
         };
 

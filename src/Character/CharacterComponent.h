@@ -23,6 +23,7 @@
 #include "../Ecs/Entity.h"
 #include "../Ecs/Component.h"
 #include "../Graphics/Render/AnimationComponent.h"
+#include "StatisticsComponent.h"
 
 namespace Character
 {
@@ -37,16 +38,15 @@ namespace Character
 
         static std::vector<Ecs::Component::Type> Dependencies;
 
-        CharacterComponent(float walkingSpeed):
+        CharacterComponent(float walkingSpeed, const Ecs::Entity& group):
             Component(Type),
             walkingSpeed_(walkingSpeed),
-            hasGroup_(false),
-            group_()
+            group_(group)
         {}
 
         virtual Component* clone() const
         {
-            return new CharacterComponent(walkingSpeed_);
+            return new CharacterComponent(walkingSpeed_, group_);
         }
 
         virtual const std::vector<Ecs::Component::Type>& getDependentComponents()
@@ -54,6 +54,7 @@ namespace Character
             if (Dependencies.empty())
             {
                 Dependencies.push_back(Graphics::Render::AnimationComponent::Type);
+                Dependencies.push_back(StatisticsComponent::Type);
             }
             return Dependencies;
         }
@@ -63,11 +64,6 @@ namespace Character
             return walkingSpeed_;
         }
 
-        bool hasGroup() const
-        {
-            return hasGroup_;
-        }
-
         const Ecs::Entity& getGroup() const
         {
             return group_;
@@ -75,13 +71,12 @@ namespace Character
 
         void setGroup(const Ecs::Entity& group)
         {
-            hasGroup_ = true;
             group_ = group;
         }
 
     private:
+        // TODO replace with statistics field ?
         float walkingSpeed_;
-        bool hasGroup_;
         Ecs::Entity group_;
     };
 }

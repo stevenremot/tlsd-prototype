@@ -17,31 +17,39 @@
     <http://www.gnu.org/licenses/>.
 */
 
-#include "MovementTimer.h"
-#include "../Core/Time.h"
+#ifndef CHARACTER_HARM_COMPONENT_H
+#define CHARACTER_HARM_COMPONENT_H
 
-namespace Physics
+#include "../Ecs/Component.h"
+
+namespace Character
 {
-    void MovementTimer::updateCurrentTime()
+    /**
+     * Component for entities that can cause damages to others.
+     */
+    class HarmComponent: public Ecs::Component
     {
-        struct timespec time;
-        Core::getTime(time);
-        currentTime_ = time.tv_sec * 1000L + time.tv_nsec / 1000000L;
-        delay_ = currentTime_ - lastTime_;
-    }
+    public:
+        static const Type Type;
 
-    void MovementTimer::updateLastTime()
-    {
-        lastTime_ = currentTime_;
-    }
+        HarmComponent(unsigned int damages): Component(Type), damages_(damages)
+        {}
 
-    unsigned long MovementTimer::getLastTime() const
-    {
-        return lastTime_;
-    }
+        virtual Component* clone() const;
 
-    unsigned long MovementTimer::getDelay() const
-    {
-        return delay_;
-    }
+        const std::vector<Component::Type>& getDependentComponents();
+
+        float getDamages() const;
+
+    private:
+        static std::vector<Component::Type> dependentComponents_;
+        unsigned int damages_;
+    };
 }
+
+#endif
+
+// Emacs local variables
+// Local variables:
+// mode: c++
+// End:

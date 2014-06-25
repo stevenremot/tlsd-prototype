@@ -27,10 +27,14 @@ namespace Application
     {
         if (characterSystem_ != NULL)
         {
-            characterSystem_->unregisterListeners(
-                getApplication().getEventManager().getListenerRegister()
-            );
+            Event::ListenerRegister& reg =
+                getApplication().getEventManager().getListenerRegister();
+
+            characterSystem_->unregisterListeners(reg);
+            statSystem_->unregisterListeners(reg);
+
             delete characterSystem_;
+            delete statSystem_;
         }
     }
 
@@ -45,8 +49,15 @@ namespace Application
         );
         characterSystem_->registerListeners(reg);
 
+        statSystem_ = new Character::StatSystem(
+            getApplication().getEcsWorld(),
+            queue
+        );
+        statSystem_->registerListeners(reg);
+
         std::vector<Threading::ThreadableInterface*> threadables;
         threadables.push_back(characterSystem_);
+        threadables.push_back(statSystem_);
 
         setThread(new Threading::Thread(threadables, 60));
         getThread().start();

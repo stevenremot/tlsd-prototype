@@ -17,31 +17,9 @@
     <http://www.gnu.org/licenses/>.
 */
 
-#include "MovementTimer.h"
-#include "../Core/Time.h"
+#include "DieAction.h"
 
-namespace Physics
+namespace Character
 {
-    void MovementTimer::updateCurrentTime()
-    {
-        struct timespec time;
-        Core::getTime(time);
-        currentTime_ = time.tv_sec * 1000L + time.tv_nsec / 1000000L;
-        delay_ = currentTime_ - lastTime_;
-    }
-
-    void MovementTimer::updateLastTime()
-    {
-        lastTime_ = currentTime_;
-    }
-
-    unsigned long MovementTimer::getLastTime() const
-    {
-        return lastTime_;
-    }
-
-    unsigned long MovementTimer::getDelay() const
-    {
-        return delay_;
-    }
+    const Action::Type DieAction::Type = "die";
 }

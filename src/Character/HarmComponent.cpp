@@ -17,31 +17,32 @@
     <http://www.gnu.org/licenses/>.
 */
 
-#include "MovementTimer.h"
-#include "../Core/Time.h"
+#include "HarmComponent.h"
 
-namespace Physics
+#include "../Physics/CollisionComponent.h"
+
+namespace Character
 {
-    void MovementTimer::updateCurrentTime()
+    const Ecs::Component::Type HarmComponent::Type = "harm";
+    std::vector<Ecs::Component::Type> HarmComponent::dependentComponents_;
+
+    Ecs::Component* HarmComponent::clone() const
     {
-        struct timespec time;
-        Core::getTime(time);
-        currentTime_ = time.tv_sec * 1000L + time.tv_nsec / 1000000L;
-        delay_ = currentTime_ - lastTime_;
+        return new HarmComponent(damages_);
     }
 
-    void MovementTimer::updateLastTime()
+    const std::vector<Ecs::Component::Type>& HarmComponent::getDependentComponents()
     {
-        lastTime_ = currentTime_;
+        if (dependentComponents_.empty())
+        {
+            dependentComponents_.push_back(Physics::CollisionComponent::Type);
+        }
+
+        return dependentComponents_;
     }
 
-    unsigned long MovementTimer::getLastTime() const
+    float HarmComponent::getDamages() const
     {
-        return lastTime_;
-    }
-
-    unsigned long MovementTimer::getDelay() const
-    {
-        return delay_;
+        return damages_;
     }
 }

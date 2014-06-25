@@ -17,28 +17,30 @@
     <http://www.gnu.org/licenses/>.
 */
 
-#ifndef CHARACTER_GROUP_UTIL_H
-#define CHARACTER_GROUP_UTIL_H
+#ifndef CHARACTER_ENTITY_CREATOR_H
+#define CHARACTER_ENTITY_CREATOR_H
 
 #include "../Ecs/Entity.h"
 #include "../Ecs/World.h"
+#include "../Geometry/Vec3D.h"
 #include "../Threading/ConcurrentRessource.h"
+#include "Statistics.h"
 
 namespace Character
 {
-    void associateToGroup(
+    Ecs::Entity createCharacter(
         Threading::ConcurrentWriter<Ecs::World>& world,
-        const Ecs::Entity& entity,
+        const Geometry::Vec3Df& position,
+        const Geometry::Vec3Df& rotation,
+        const Statistics& statistics,
         const Ecs::Entity& group
     );
 
-    unsigned int computeMaxHealth(
+    Ecs::Entity createPlayer(
         Threading::ConcurrentWriter<Ecs::World>& world,
-        const Ecs::Entity& group
-    );
-
-    void initGroupHealth(
-        Threading::ConcurrentWriter<Ecs::World>& world,
+        const Geometry::Vec3Df& position,
+        const Geometry::Vec3Df& rotation,
+        const Statistics& statistics,
         const Ecs::Entity& group
     );
 }
