@@ -71,10 +71,10 @@ namespace Physics
             Vec3Df p1 = vertices[faces[tri][1]] / ellipsoidRadius;
             Vec3Df p2 = vertices[faces[tri][2]] / ellipsoidRadius;
 
-            Vec3Df v0 = p1 - p0;
-            Vec3Df v1 = p2 - p0;
+            Vec3Df e01 = p1 - p0;
+            Vec3Df e02 = p2 - p0;
 
-            Vec3Df n = v0.cross(v1);
+            Vec3Df n = e01.cross(e02);
             n.normalize();
 
             float t0 = 0;
@@ -93,11 +93,11 @@ namespace Physics
 
             // compute barycentric coordinates
             Vec3Df v2 = planeIntersectionPoint - p0;
-            float dot00 = v0.dot(v0);
-            float dot01 = v0.dot(v1);
-            float dot02 = v0.dot(v2);
-            float dot11 = v1.dot(v1);
-            float dot12 = v1.dot(v2);
+            float dot00 = e01.dot(e01);
+            float dot01 = e01.dot(e02);
+            float dot02 = e01.dot(v2);
+            float dot11 = e02.dot(e02);
+            float dot12 = e02.dot(v2);
             float invDenom =  1.0 / (dot00 * dot11 - dot01 * dot01);
             float u = (dot11 * dot02 - dot01 * dot12) * invDenom;
             float v = (dot00 * dot12 - dot01 * dot02) * invDenom;
@@ -144,7 +144,7 @@ namespace Physics
                     t);
 
                 resolveEdgeCollision(
-                    v0,
+                    e01,
                     p0,
                     ellipsoidCenter,
                     velocity,
@@ -155,7 +155,7 @@ namespace Physics
                     t);
 
                 resolveEdgeCollision(
-                    v1,
+                    e02,
                     p0,
                     ellipsoidCenter,
                     velocity,
@@ -310,19 +310,21 @@ namespace Physics
         float& intersectionDistance,
         float& t)
     {
+        // compute some useful values
         float edgeSquaredLength = e.getSquaredLength();
-        Vec3Df baseToVertex = p - ellipsoidCenter;
-        float doteb = e.dot(baseToVertex);
-        float dotev = e.dot(velocity);
-        float a = edgeSquaredLength * velocitySquaredLength - dotev*dotev;
-        float b = 2 * (dotev*doteb)
-                  - edgeSquaredLength * 2 * (velocity.dot(baseToVertex));
-        float c = doteb*doteb - edgeSquaredLength * (1 - baseToVertex.getSquaredLength());
+        Vec3Df centerToVertex = p - ellipsoidCenter;
+        float dotEdgeCenterToVertex = e.dot(centerToVertex);
+        float dotEdgeVelocity = e.dot(velocity);
+
+        float a = edgeSquaredLength*velocitySquaredLength - dotEdgeVelocity*dotEdgeVelocity;
+        float b = 2 * (dotEdgeVelocity*dotEdgeCenterToVertex)
+                  - 2 * edgeSquaredLength*(velocity.dot(centerToVertex));
+        float c = -dotEdgeCenterToVertex*dotEdgeCenterToVertex - edgeSquaredLength * (1 - centerToVertex.getSquaredLength());
 
         float lastT = t;
         if (solveQuadraticEquation(a,b,c,t))
         {
-            float lineCoordinate = (dotev * t - doteb) / edgeSquaredLength;
+            float lineCoordinate = (dotEdgeVelocity * t - dotEdgeCenterToVertex) / edgeSquaredLength;
             if (lineCoordinate > 0 && lineCoordinate < 1)
             {
                 intersectionPoint = p + e * lineCoordinate;
