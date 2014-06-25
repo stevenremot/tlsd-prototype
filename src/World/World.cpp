@@ -28,7 +28,7 @@ namespace World
 
     BiomeInterface& World::getBiome(float x, float y)
     {
-        return biomeMap_.getBiome(Geometry::Vec2Df(x,y));
+        return biomeMap_.getBiome(Geometry::Vec2Df(x, y));
     }
 
 }

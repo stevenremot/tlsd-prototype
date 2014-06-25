@@ -21,6 +21,7 @@
 #define WORLD_BIOME_INTERFACE_H
 
 #include <string>
+#include <vector>
 
 #include "../Graphics/Color.h"
 #include "Generation/TreeParameters.h"
@@ -49,7 +50,7 @@ namespace World
          *
          */
         virtual Graphics::Color getColor() = 0;
-        const Type& getType() {return type_;}
+        const Type& getType() { return type_; }
         virtual const Generation::TreeParameters getTreeParameters() = 0;
     private:
         Type type_;

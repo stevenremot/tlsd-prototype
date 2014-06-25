@@ -134,7 +134,7 @@ namespace World
 
             // TODO Chunk should be totally unloaded, but
             // it causes problems when half of a city is unloaded.
-            // CHunk generation is planned to be revised.
+            // Chunk generation is planned to be revised.
             // Chunk currentChunk;
             // world_.setChunk(x, y, currentChunk);
         }
@@ -215,7 +215,13 @@ namespace World
             delete city;
         }
 
-        void ChunkGenerator::generateTrees(int x, int y, Random::NumberGenerator& rng, std::vector<Geometry::Vec3Df>& positions, std::vector<SimpleTree*>& trees)
+        void ChunkGenerator::generateTrees(
+            int x,
+            int y,
+            Random::NumberGenerator& rng,
+            std::vector<Geometry::Vec3Df>& positions,
+            std::vector<SimpleTree*>& trees
+        )
         {
             const float chunkSize = World::ChunkSize;
             const unsigned int treeDensity = World::TreeDensity;
@@ -226,27 +232,28 @@ namespace World
             for (unsigned int i = 0; i < treeDensity; i++)
             {
                 // Generate the parameters
-                float localX = rng.getUniform(0,chunkSize);
-                float localY = rng.getUniform(0,chunkSize);
-                const TreeParameters treeParameters = world_.getBiome(x*chunkSize+localX, y*chunkSize+localY).getTreeParameters();
+                float localX = rng.getUniform(0, chunkSize);
+                float localY = rng.getUniform(0, chunkSize);
+                const TreeParameters treeParameters = world_.getBiome(x * chunkSize + localX, y * chunkSize + localY).getTreeParameters();
+                unsigned int typeNumber = floor(rng.getUniform(0, treeParameters.getNumberOfTypes() - 1) + 0.5);
                 float trunkHeight = rng.getUniform(treeParameters.getMinTrunkHeight(),treeParameters.getMaxTrunkHeight());
                 float trunkWidth = rng.getUniform(treeParameters.getMinTrunkWidth(),treeParameters.getMaxTrunkWidth());
                 float leavesHeight = rng.getUniform(treeParameters.getMinLeavesHeight(),treeParameters.getMaxLeavesHeight());
                 float leavesWidth = rng.getUniform(treeParameters.getMinLeavesWidth(),treeParameters.getMaxLeavesWidth());
                 float offset = rng.getUniform(treeParameters.getMinOffset(),treeParameters.getMaxOffset());
-                float trunkR = rng.getUniform(treeParameters.getMinTrunkColor().getX(),treeParameters.getMaxTrunkColor().getX());
-                float trunkG = rng.getUniform(treeParameters.getMinTrunkColor().getY(),treeParameters.getMaxTrunkColor().getY());
-                float trunkB = rng.getUniform(treeParameters.getMinTrunkColor().getZ(),treeParameters.getMaxTrunkColor().getZ());
-                float leavesR = rng.getUniform(treeParameters.getMinLeavesColor().getX(),treeParameters.getMaxLeavesColor().getX());
-                float leavesG = rng.getUniform(treeParameters.getMinLeavesColor().getY(),treeParameters.getMaxLeavesColor().getY());
-                float leavesB = rng.getUniform(treeParameters.getMinLeavesColor().getZ(),treeParameters.getMaxLeavesColor().getZ());
+                float trunkR = rng.getUniform(treeParameters.getMinTrunkColor()[typeNumber].getX(),treeParameters.getMaxTrunkColor()[typeNumber].getX());
+                float trunkG = rng.getUniform(treeParameters.getMinTrunkColor()[typeNumber].getY(),treeParameters.getMaxTrunkColor()[typeNumber].getY());
+                float trunkB = rng.getUniform(treeParameters.getMinTrunkColor()[typeNumber].getZ(),treeParameters.getMaxTrunkColor()[typeNumber].getZ());
+                float leavesR = rng.getUniform(treeParameters.getMinLeavesColor()[typeNumber].getX(),treeParameters.getMaxLeavesColor()[typeNumber].getX());
+                float leavesG = rng.getUniform(treeParameters.getMinLeavesColor()[typeNumber].getY(),treeParameters.getMaxLeavesColor()[typeNumber].getY());
+                float leavesB = rng.getUniform(treeParameters.getMinLeavesColor()[typeNumber].getZ(),treeParameters.getMaxLeavesColor()[typeNumber].getZ());
                 const std::vector<Geometry::Polygon2D> cityPolygons = world_.getBiomeMap().getCityPolygons();
                 unsigned int length = cityPolygons.size();
                 // Test to see if the future tree will be in a city
                 bool isInACity = false;
                 for (unsigned int j = 0; j < length; j++)
                 {
-                    if (cityPolygons[j].contains(Vec2Df(localX + floatX*chunkSize, localY + floatY*chunkSize)))
+                    if (cityPolygons[j].contains(Vec2Df(localX + floatX * chunkSize, localY + floatY * chunkSize)))
                     {
                         isInACity = true;
                     }
@@ -254,8 +261,26 @@ namespace World
                 // Insert the tree in the trees list
                 if (!isInACity)
                 {
-                    positions.push_back(Vec3Df(localX + floatX*chunkSize, localY + floatY*chunkSize, computeHeight(world_, floatX*chunkSize + localX, floatY*chunkSize + localY)));
-                    SimpleTree *tree = new SimpleTree(trunkHeight,trunkWidth,leavesHeight,leavesWidth,offset,Graphics::Color(trunkR,trunkG,trunkB),Graphics::Color(leavesR,leavesG,leavesB));
+                    positions.push_back(
+                        Vec3Df(
+                            localX + floatX * chunkSize,
+                            localY + floatY * chunkSize,
+                            computeHeight(
+                                world_,
+                                floatX * chunkSize + localX,
+                                floatY * chunkSize + localY
+                            )
+                        )
+                    );
+                    SimpleTree *tree = new SimpleTree(
+                        trunkHeight,
+                        trunkWidth,
+                        leavesHeight,
+                        leavesWidth,
+                        offset,
+                        Graphics::Color(trunkR, trunkG, trunkB),
+                        Graphics::Color(leavesR, leavesG, leavesB)
+                    );
                     trees.push_back(tree);
                 }
             }

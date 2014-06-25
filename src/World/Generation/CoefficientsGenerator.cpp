@@ -43,7 +43,12 @@ namespace World
             {
                 for (unsigned int j = 0; j < 2; j++)
                 {
-                    groundCoefficients.setCoefficient(2,i,j,rng.getUniform(-1.0,1.0));
+                    groundCoefficients.setCoefficient(
+                        2,
+                        i,
+                        j,
+                        rng.getUniform(-1.0, 1.0)
+                    );
                 }
             }
             // Generate the third octave
@@ -51,7 +56,12 @@ namespace World
             {
                 for (unsigned int j = 0; j < 4; j++)
                 {
-                    groundCoefficients.setCoefficient(3,i,j,rng.getUniform(-1.0,1.0));
+                    groundCoefficients.setCoefficient(
+                        3,
+                        i,
+                        j,
+                        rng.getUniform(-1.0, 1.0)
+                    );
                 }
             }
             return groundCoefficients;
