@@ -35,6 +35,14 @@ namespace World
 
     const Generation::TreeParameters DesertBiome::getTreeParameters()
     {
+        std::vector<Graphics::Color> trunkMin;
+        trunkMin.push_back(Graphics::Color(0.8, 0.55, 0.45));
+        std::vector<Graphics::Color> trunkMax;
+        trunkMax.push_back(Graphics::Color(1, 0.75, 0.55));
+        std::vector<Graphics::Color> leavesMin;
+        leavesMin.push_back(Graphics::Color(0.55, 0.7, 0.15));
+        std::vector<Graphics::Color> leavesMax;
+        leavesMax.push_back(Graphics::Color(0.65, 0.9, 0.25));
         return Generation::TreeParameters(
             3.0,
             6.0,
@@ -46,10 +54,11 @@ namespace World
             10.0,
             -2.5,
             2.5,
-            Graphics::Color(0.8, 0.55, 0.45),
-            Graphics::Color(1, 0.75, 0.55),
-            Graphics::Color(0.55, 0.7, 0.15),
-            Graphics::Color(0.65, 0.9, 0.25)
+            1,
+            trunkMin,
+            trunkMax,
+            leavesMin,
+            leavesMax
         );
     }
 }

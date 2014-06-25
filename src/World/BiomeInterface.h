@@ -21,6 +21,7 @@
 #define WORLD_BIOME_INTERFACE_H
 
 #include <string>
+#include <vector>
 
 #include "../Graphics/Color.h"
 #include "Generation/TreeParameters.h"

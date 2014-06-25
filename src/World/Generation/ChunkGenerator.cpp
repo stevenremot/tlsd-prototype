@@ -232,20 +232,21 @@ namespace World
             for (unsigned int i = 0; i < treeDensity; i++)
             {
                 // Generate the parameters
-                float localX = rng.getUniform(0,chunkSize);
-                float localY = rng.getUniform(0,chunkSize);
+                float localX = rng.getUniform(0, chunkSize);
+                float localY = rng.getUniform(0, chunkSize);
                 const TreeParameters treeParameters = world_.getBiome(x * chunkSize + localX, y * chunkSize + localY).getTreeParameters();
+                unsigned int typeNumber = floor(rng.getUniform(0, treeParameters.getNumberOfTypes() - 1) + 0.5);
                 float trunkHeight = rng.getUniform(treeParameters.getMinTrunkHeight(),treeParameters.getMaxTrunkHeight());
                 float trunkWidth = rng.getUniform(treeParameters.getMinTrunkWidth(),treeParameters.getMaxTrunkWidth());
                 float leavesHeight = rng.getUniform(treeParameters.getMinLeavesHeight(),treeParameters.getMaxLeavesHeight());
                 float leavesWidth = rng.getUniform(treeParameters.getMinLeavesWidth(),treeParameters.getMaxLeavesWidth());
                 float offset = rng.getUniform(treeParameters.getMinOffset(),treeParameters.getMaxOffset());
-                float trunkR = rng.getUniform(treeParameters.getMinTrunkColor().getX(),treeParameters.getMaxTrunkColor().getX());
-                float trunkG = rng.getUniform(treeParameters.getMinTrunkColor().getY(),treeParameters.getMaxTrunkColor().getY());
-                float trunkB = rng.getUniform(treeParameters.getMinTrunkColor().getZ(),treeParameters.getMaxTrunkColor().getZ());
-                float leavesR = rng.getUniform(treeParameters.getMinLeavesColor().getX(),treeParameters.getMaxLeavesColor().getX());
-                float leavesG = rng.getUniform(treeParameters.getMinLeavesColor().getY(),treeParameters.getMaxLeavesColor().getY());
-                float leavesB = rng.getUniform(treeParameters.getMinLeavesColor().getZ(),treeParameters.getMaxLeavesColor().getZ());
+                float trunkR = rng.getUniform(treeParameters.getMinTrunkColor()[typeNumber].getX(),treeParameters.getMaxTrunkColor()[typeNumber].getX());
+                float trunkG = rng.getUniform(treeParameters.getMinTrunkColor()[typeNumber].getY(),treeParameters.getMaxTrunkColor()[typeNumber].getY());
+                float trunkB = rng.getUniform(treeParameters.getMinTrunkColor()[typeNumber].getZ(),treeParameters.getMaxTrunkColor()[typeNumber].getZ());
+                float leavesR = rng.getUniform(treeParameters.getMinLeavesColor()[typeNumber].getX(),treeParameters.getMaxLeavesColor()[typeNumber].getX());
+                float leavesG = rng.getUniform(treeParameters.getMinLeavesColor()[typeNumber].getY(),treeParameters.getMaxLeavesColor()[typeNumber].getY());
+                float leavesB = rng.getUniform(treeParameters.getMinLeavesColor()[typeNumber].getZ(),treeParameters.getMaxLeavesColor()[typeNumber].getZ());
                 const std::vector<Geometry::Polygon2D> cityPolygons = world_.getBiomeMap().getCityPolygons();
                 unsigned int length = cityPolygons.size();
                 // Test to see if the future tree will be in a city

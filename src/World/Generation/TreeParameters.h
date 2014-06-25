@@ -43,10 +43,11 @@ namespace World
                 float maxLeavesWidth,
                 float minOffset,
                 float maxOffset,
-                Graphics::Color minTrunkColor,
-                Graphics::Color maxTrunkColor,
-                Graphics::Color minLeavesColor,
-                Graphics::Color maxLeavesColor
+                unsigned int numberOfTypes,
+                std::vector<Graphics::Color> minTrunkColor,
+                std::vector<Graphics::Color> maxTrunkColor,
+                std::vector<Graphics::Color> minLeavesColor,
+                std::vector<Graphics::Color> maxLeavesColor
             ):
                 minTrunkHeight_(minTrunkHeight),
                 maxTrunkHeight_(maxTrunkHeight),
@@ -58,6 +59,7 @@ namespace World
                 maxLeavesWidth_(maxLeavesWidth),
                 minOffset_(minOffset),
                 maxOffset_(maxOffset),
+                numberOfTypes_(numberOfTypes),
                 minTrunkColor_(minTrunkColor),
                 maxTrunkColor_(maxTrunkColor),
                 minLeavesColor_(minLeavesColor),
@@ -124,40 +126,45 @@ namespace World
                 maxOffset_ = maxOffset;
             }
 
-            const Graphics::Color& getMinTrunkColor() const
+            const std::vector<Graphics::Color>& getMinTrunkColor() const
             {
                 return minTrunkColor_;
             }
-            void setMinTrunkColor(const Graphics::Color& minTrunkColor)
+            void setMinTrunkColor(const std::vector<Graphics::Color>& minTrunkColor)
             {
                 minTrunkColor_ = minTrunkColor;
             }
 
-            const Graphics::Color& getMaxTrunkColor() const
+            const std::vector<Graphics::Color>& getMaxTrunkColor() const
             {
                 return maxTrunkColor_;
             }
-            void setMaxTrunkColor(const Graphics::Color& maxTrunkColor)
+            void setMaxTrunkColor(const std::vector<Graphics::Color>& maxTrunkColor)
             {
                 maxTrunkColor_ = maxTrunkColor;
             }
 
-            const Graphics::Color& getMinLeavesColor() const
+            const std::vector<Graphics::Color>& getMinLeavesColor() const
             {
                 return minLeavesColor_;
             }
-            void setMinLeavesColor(const Graphics::Color& minLeavesColor)
+            void setMinLeavesColor(const std::vector<Graphics::Color>& minLeavesColor)
             {
                 minLeavesColor_ = minLeavesColor;
             }
 
-            const Graphics::Color& getMaxLeavesColor() const
+            const std::vector<Graphics::Color>& getMaxLeavesColor() const
             {
                 return maxLeavesColor_;
             }
-            void setMaxLeavesColor(const Graphics::Color& maxLeavesColor)
+            void setMaxLeavesColor(const std::vector<Graphics::Color>& maxLeavesColor)
             {
                 maxLeavesColor_ = maxLeavesColor;
+            }
+
+            const unsigned int& getNumberOfTypes() const
+            {
+                return numberOfTypes_;
             }
 
         private:
@@ -171,10 +178,11 @@ namespace World
             float maxLeavesWidth_;
             float minOffset_;
             float maxOffset_;
-            Graphics::Color minTrunkColor_;
-            Graphics::Color maxTrunkColor_;
-            Graphics::Color minLeavesColor_;
-            Graphics::Color maxLeavesColor_;
+            unsigned int numberOfTypes_;
+            std::vector<Graphics::Color> minTrunkColor_;
+            std::vector<Graphics::Color> maxTrunkColor_;
+            std::vector<Graphics::Color> minLeavesColor_;
+            std::vector<Graphics::Color> maxLeavesColor_;
         };
     }
 }
