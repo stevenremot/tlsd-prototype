@@ -201,6 +201,13 @@ namespace Geometry
             z_ /= length;
         }
 
+        inline Vec3D getNormalized() const
+        {
+            T length = this->getLength();
+
+            return Vec3D(x_/length, y_/length, z_/length);
+        }
+
     private:
         T x_;
         T y_;

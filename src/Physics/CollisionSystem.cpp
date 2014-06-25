@@ -87,6 +87,7 @@ namespace Physics
             Vec3Df positionVector = positionComponent->getPosition();
             // might serve for mesh collisions
             Vec3Df movementVector = movementComponent->getVelocity() * movementFactor;
+            movementVector.setZ(0);
 
             for (group2 = groups2.begin(); group2 != groups2.end(); ++group2)
             {

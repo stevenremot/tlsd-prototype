@@ -37,7 +37,7 @@ namespace Application
         threadables.push_back(movementSystem_);
         threadables.push_back(collisionSystem_);
 
-        setThread(new Threading::Thread(threadables, 100));
+        setThread(new Threading::Thread(threadables, 10));
         getThread().start();
         finishBoot();
     }

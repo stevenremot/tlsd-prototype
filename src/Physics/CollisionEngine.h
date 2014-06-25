@@ -6,6 +6,14 @@
 
 namespace Physics
 {
+    class ANotPositiveException : public std::exception
+    {
+        const char* what() const throw()
+        {
+            return "a not positive";
+        }
+    };
+
     /**
     *   Collision Engine containing collision response functions and algorithm parameters
     */

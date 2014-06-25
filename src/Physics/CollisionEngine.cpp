@@ -35,6 +35,9 @@ namespace Physics
         Geometry::Vec3Df& position,
         Geometry::Vec3Df& movementVector)
     {
+        if (movementVector.getLength() == 0)
+            return false;
+
         AxisAlignedBoundingBox movingAABB = aabbBody.getTranslatedBoundingBox(position);
 
         if (!getAABBCollision(movingAABB, modelBody.getAABB()))
@@ -183,7 +186,27 @@ namespace Physics
 
         if (intersectionDistance < 10000)
         {
-            std::cout << "Collision found : " << intersectionPoint << std::endl;
+            // compute sliding plane
+            Vec3Df newEllipsoidPos =  ellipsoidCenter + velocity.getNormalized() * intersectionDistance;
+
+            Vec3Df intersectionNormal = newEllipsoidPos - intersectionPoint;
+            intersectionNormal.normalize();
+
+            velocity = velocity - intersectionNormal * velocity.dot(intersectionNormal);
+
+            std::cout << "Position : " << position << std::endl;
+
+            // back in the original space
+            newEllipsoidPos *= ellipsoidRadius;
+            //position = newEllipsoidPos;
+            //position.setZ(position.getZ() - ellipsoidRadius.getZ());
+
+            position = position - movementVector;
+
+            //movementVector = velocity * ellipsoidRadius;
+
+            std::cout << "Collision found : " << intersectionPoint*ellipsoidRadius << " " << intersectionDistance << std::endl;
+            std::cout << "New position : " << position << std::endl;
             // TODO: collision response
         }
 
@@ -234,19 +257,39 @@ namespace Physics
         float c,
         float& x)
     {
-        float delta = b*b - 4*a*c;
-        float root = 0;
+        if (a < 0)
+            throw new ANotPositiveException();
 
-        if (delta < 0)
+        float delta = b*b - 4*a*c;
+        float root = -1;
+        float root2 = -1;
+
+        if (a < 1e-6)
+        {
+            if (std::abs(b) < 1e-6)
+                return false;
+            else
+                root = -c / b;
+        }
+        else if (delta < 0)
             return false;
-        else if (delta == 0)
+        else if (std::abs(delta) < 1e-6)
             root = -b/(2*a);
         else
-            root = -b - std::sqrt(delta) / (2*a);
+        {
+            // because a > 1, we have root < root2
+            root = (-b - std::sqrt(delta)) / (2*a);
+            root2 = (-b + std::sqrt(delta)) / (2*a);
+        }
 
         // for our algorithm we discard negative solutions
-        if (root < 0)
+        if (root < 0 && root2 < 0)
             return false;
+        // if root < 0 and root2 > 0, root2 is eligible
+        else if (root < 0)
+            root = root2;
+        // the root represents the intersection distance
+        // it is thus considered when it is lower
         else if (root < x)
         {
             x = root;
