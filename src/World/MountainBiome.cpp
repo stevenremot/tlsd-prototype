@@ -25,12 +25,12 @@ namespace World
 
     float MountainBiome::transformCoefficient(float coefficient)
     {
-        return (coefficient+1.0)*25.0+150.0;
+        return (coefficient + 1.0) * 25.0 + 150.0;
     }
 
     Graphics::Color MountainBiome::getColor()
     {
-        return Graphics::Color(0.25,0.25,0.25);
+        return Graphics::Color(0.25, 0.25, 0.25);
     }
 
     const Generation::TreeParameters MountainBiome::getTreeParameters()
@@ -46,10 +46,10 @@ namespace World
             12.0,
             0,
             0,
-            Graphics::Color(0.3,0.1,0.02),
-            Graphics::Color(0.5,0.2,0.06),
-            Graphics::Color(0,0.4,0),
-            Graphics::Color(0.05,0.5,0.1)
+            Graphics::Color(0.3, 0.1, 0.02),
+            Graphics::Color(0.5, 0.2, 0.06),
+            Graphics::Color(0, 0.4, 0),
+            Graphics::Color(0.05, 0.5, 0.1)
         );
     }
 

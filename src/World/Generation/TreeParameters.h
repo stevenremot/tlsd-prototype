@@ -32,7 +32,22 @@ namespace World
         class TreeParameters
         {
         public:
-            TreeParameters(float minTrunkHeight, float maxTrunkHeight, float minTrunkWidth, float maxTrunkWidth, float minLeavesHeight, float maxLeavesHeight, float minLeavesWidth, float maxLeavesWidth, float minOffset, float maxOffset, Graphics::Color minTrunkColor, Graphics::Color maxTrunkColor, Graphics::Color minLeavesColor, Graphics::Color maxLeavesColor):
+            TreeParameters(
+                float minTrunkHeight,
+                float maxTrunkHeight,
+                float minTrunkWidth,
+                float maxTrunkWidth,
+                float minLeavesHeight,
+                float maxLeavesHeight,
+                float minLeavesWidth,
+                float maxLeavesWidth,
+                float minOffset,
+                float maxOffset,
+                Graphics::Color minTrunkColor,
+                Graphics::Color maxTrunkColor,
+                Graphics::Color minLeavesColor,
+                Graphics::Color maxLeavesColor
+            ):
                 minTrunkHeight_(minTrunkHeight),
                 maxTrunkHeight_(maxTrunkHeight),
                 minTrunkWidth_(minTrunkWidth),

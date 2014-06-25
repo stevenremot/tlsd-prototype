@@ -25,12 +25,12 @@ namespace World
 
     float DesertBiome::transformCoefficient(float coefficient)
     {
-        return (coefficient+1.0)*30.0;
+        return (coefficient + 1.0) * 30.0;
     }
 
     Graphics::Color DesertBiome::getColor()
     {
-        return Graphics::Color(1.0,0.8,0.0);
+        return Graphics::Color(1.0, 0.8, 0.0);
     }
 
     const Generation::TreeParameters DesertBiome::getTreeParameters()
@@ -46,10 +46,10 @@ namespace World
             10.0,
             -2.5,
             2.5,
-            Graphics::Color(0.8,0.55,0.45),
-            Graphics::Color(1,0.75,0.55),
-            Graphics::Color(0.55,0.7,0.15),
-            Graphics::Color(0.65,0.9,0.25)
+            Graphics::Color(0.8, 0.55, 0.45),
+            Graphics::Color(1, 0.75, 0.55),
+            Graphics::Color(0.55, 0.7, 0.15),
+            Graphics::Color(0.65, 0.9, 0.25)
         );
     }
 }

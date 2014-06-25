@@ -30,7 +30,7 @@ namespace World
 
     Graphics::Color CityBiome::getColor()
     {
-        return Graphics::Color(0,1,0);
+        return Graphics::Color(0, 1, 0);
     }
 
     // We don't care about the tree parameters for the city
@@ -48,10 +48,10 @@ namespace World
             10.0,
             -0.3,
             0.3,
-            Graphics::Color(0.5,0.25,0.15),
-            Graphics::Color(0.7,0.35,0.25),
-            Graphics::Color(0.15,0.7,0.15),
-            Graphics::Color(0.25,0.9,0.25)
+            Graphics::Color(0.5, 0.25, 0.15),
+            Graphics::Color(0.7, 0.35, 0.25),
+            Graphics::Color(0.15, 0.7, 0.15),
+            Graphics::Color(0.25, 0.9, 0.25)
         );
     }
 }

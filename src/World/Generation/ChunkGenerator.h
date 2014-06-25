@@ -85,7 +85,14 @@ namespace World
              * @param[out] positions
              * @param[out] trees
              */
-            void generateTrees(int x, int y, Random::NumberGenerator& rng, std::vector<Geometry::Vec3Df>& position, std::vector<SimpleTree*>& trees);
+            void generateTrees(
+                int x,
+                int y,
+                Random::NumberGenerator& rng,
+                std::vector<Geometry::Vec3Df>& position,
+                std::vector<SimpleTree*>& trees
+            );
+
             Random::Seed getChunkSeed(int x, int y);
 
             void insertDescriptor(

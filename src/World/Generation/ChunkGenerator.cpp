@@ -134,7 +134,7 @@ namespace World
 
             // TODO Chunk should be totally unloaded, but
             // it causes problems when half of a city is unloaded.
-            // CHunk generation is planned to be revised.
+            // Chunk generation is planned to be revised.
             // Chunk currentChunk;
             // world_.setChunk(x, y, currentChunk);
         }
@@ -215,7 +215,13 @@ namespace World
             delete city;
         }
 
-        void ChunkGenerator::generateTrees(int x, int y, Random::NumberGenerator& rng, std::vector<Geometry::Vec3Df>& positions, std::vector<SimpleTree*>& trees)
+        void ChunkGenerator::generateTrees(
+            int x,
+            int y,
+            Random::NumberGenerator& rng,
+            std::vector<Geometry::Vec3Df>& positions,
+            std::vector<SimpleTree*>& trees
+        )
         {
             const float chunkSize = World::ChunkSize;
             const unsigned int treeDensity = World::TreeDensity;
@@ -228,7 +234,7 @@ namespace World
                 // Generate the parameters
                 float localX = rng.getUniform(0,chunkSize);
                 float localY = rng.getUniform(0,chunkSize);
-                const TreeParameters treeParameters = world_.getBiome(x*chunkSize+localX, y*chunkSize+localY).getTreeParameters();
+                const TreeParameters treeParameters = world_.getBiome(x * chunkSize + localX, y * chunkSize + localY).getTreeParameters();
                 float trunkHeight = rng.getUniform(treeParameters.getMinTrunkHeight(),treeParameters.getMaxTrunkHeight());
                 float trunkWidth = rng.getUniform(treeParameters.getMinTrunkWidth(),treeParameters.getMaxTrunkWidth());
                 float leavesHeight = rng.getUniform(treeParameters.getMinLeavesHeight(),treeParameters.getMaxLeavesHeight());
@@ -246,7 +252,7 @@ namespace World
                 bool isInACity = false;
                 for (unsigned int j = 0; j < length; j++)
                 {
-                    if (cityPolygons[j].contains(Vec2Df(localX + floatX*chunkSize, localY + floatY*chunkSize)))
+                    if (cityPolygons[j].contains(Vec2Df(localX + floatX * chunkSize, localY + floatY * chunkSize)))
                     {
                         isInACity = true;
                     }
@@ -254,8 +260,26 @@ namespace World
                 // Insert the tree in the trees list
                 if (!isInACity)
                 {
-                    positions.push_back(Vec3Df(localX + floatX*chunkSize, localY + floatY*chunkSize, computeHeight(world_, floatX*chunkSize + localX, floatY*chunkSize + localY)));
-                    SimpleTree *tree = new SimpleTree(trunkHeight,trunkWidth,leavesHeight,leavesWidth,offset,Graphics::Color(trunkR,trunkG,trunkB),Graphics::Color(leavesR,leavesG,leavesB));
+                    positions.push_back(
+                        Vec3Df(
+                            localX + floatX * chunkSize,
+                            localY + floatY * chunkSize,
+                            computeHeight(
+                                world_,
+                                floatX * chunkSize + localX,
+                                floatY * chunkSize + localY
+                            )
+                        )
+                    );
+                    SimpleTree *tree = new SimpleTree(
+                        trunkHeight,
+                        trunkWidth,
+                        leavesHeight,
+                        leavesWidth,
+                        offset,
+                        Graphics::Color(trunkR, trunkG, trunkB),
+                        Graphics::Color(leavesR, leavesG, leavesB)
+                    );
                     trees.push_back(tree);
                 }
             }

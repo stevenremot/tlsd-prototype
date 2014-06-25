@@ -49,7 +49,7 @@ namespace World
          *
          */
         virtual Graphics::Color getColor() = 0;
-        const Type& getType() {return type_;}
+        const Type& getType() { return type_; }
         virtual const Generation::TreeParameters getTreeParameters() = 0;
     private:
         Type type_;
