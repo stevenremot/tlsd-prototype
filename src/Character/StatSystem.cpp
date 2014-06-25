@@ -27,6 +27,7 @@
 #include "DieAction.h"
 #include "ActionPerformedEvent.h"
 #include "GroupComponent.h"
+#include "GroupCurrentHealthChangedEvent.h"
 #include "../Core/Time.h"
 
 namespace Character
@@ -114,6 +115,10 @@ namespace Character
                         else
                         {
                             groupComponent->setCurrentHealth(currentHealth - damages);
+                            outsideQueue_ << new GroupCurrentHealthChangedEvent(
+                                group,
+                                groupComponent->getCurrentHealth()
+                            );
                         }
                     }
                 }

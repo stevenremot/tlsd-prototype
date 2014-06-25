@@ -43,7 +43,8 @@ namespace Character
         const Geometry::Vec3Df& position,
         const Geometry::Vec3Df& rotation,
         const Statistics& statistics,
-        const Ecs::Entity& group
+        const Ecs::Entity& group,
+        Event::EventQueue& queue
     ) {
         // TODO: method AABB from model 3d
         Geometry::AxisAlignedBoundingBox bbox(
@@ -106,17 +107,19 @@ namespace Character
             )
         );
 
-        associateToGroup(world, entity, group);
+        {
+            Threading::ConcurrentWriter<GroupComponent> groupComponent =
+                Threading::getConcurrentWriter<Ecs::Component, GroupComponent>(
+                    world->getEntityComponent(group, GroupComponent::Type)
+                );
 
-        Threading::ConcurrentWriter<GroupComponent> groupComponent =
-            Threading::getConcurrentWriter<Ecs::Component, GroupComponent>(
-                world->getEntityComponent(group, GroupComponent::Type)
+            groupComponent->setCurrentHealth(
+                groupComponent->getCurrentHealth() +
+                statistics.getHealth().getBaseValue()
             );
+        }
 
-        groupComponent->setCurrentHealth(
-            groupComponent->getCurrentHealth() +
-            statistics.getHealth().getBaseValue()
-        );
+        associateToGroup(world, entity, group, queue);
 
         return entity;
     }
@@ -126,14 +129,16 @@ namespace Character
         const Geometry::Vec3Df& position,
         const Geometry::Vec3Df& rotation,
         const Statistics& statistics,
-        const Ecs::Entity& group
+        const Ecs::Entity& group,
+        Event::EventQueue& queue
     ) {
         Ecs::Entity entity = createCharacter(
             world,
             position,
             rotation,
             statistics,
-            group
+            group,
+            queue
         );
 
 

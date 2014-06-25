@@ -33,7 +33,8 @@ namespace Character
         const Geometry::Vec3Df& position,
         const Geometry::Vec3Df& rotation,
         const Statistics& statistics,
-        const Ecs::Entity& group
+        const Ecs::Entity& group,
+        Event::EventQueue& queue
     );
 
     Ecs::Entity createPlayer(
@@ -41,7 +42,8 @@ namespace Character
         const Geometry::Vec3Df& position,
         const Geometry::Vec3Df& rotation,
         const Statistics& statistics,
-        const Ecs::Entity& group
+        const Ecs::Entity& group,
+        Event::EventQueue& queue
     );
 }
 

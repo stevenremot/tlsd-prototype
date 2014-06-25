@@ -132,14 +132,16 @@ namespace Application
                 Geometry::Vec3Df(150,150,150),
                 Geometry::Vec3Df(0,0,0),
                 Character::Statistics(100, 20, 20, 5),
-                group
+                group,
+                eventBoot_.getEventManager().getEventQueue()
             );
             Character::createCharacter(
                 world,
                 Geometry::Vec3Df(160, 160, 150),
                 Geometry::Vec3Df(0, 0, 0),
                 Character::Statistics(70, 20, 20, 5),
-                group
+                group,
+                eventBoot_.getEventManager().getEventQueue()
             );
 
             createDangerousCube(world, Geometry::Vec3Df(160, 160, 0), 20);

@@ -40,22 +40,24 @@ namespace Graphics
                     irr::s32 id,
                     const irr::core::rect<irr::s32>& rect
             ): IGUIElement(irr::gui::EGUIET_ELEMENT, environment, parent, id, rect),
-               world_(NULL)
+               currentHealth_(0),
+               maxHealth_(0)
             {}
 
-            ~LifeBar()
+            void setCurrentHealth(unsigned int currentHealth)
             {
-                delete world_;
+                currentHealth_ = currentHealth;
             }
 
-            void setWorld(Threading::ConcurrentRessource<Ecs::World>* world)
+            void setMaxHealth(unsigned int maxHealth)
             {
-                world_ = world;
+                maxHealth_ = maxHealth;
             }
 
             virtual void draw();
         private:
-            Threading::ConcurrentRessource<Ecs::World>* world_;
+            unsigned int currentHealth_;
+            unsigned int maxHealth_;
         };
     }
 }
