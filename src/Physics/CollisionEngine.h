@@ -58,12 +58,16 @@ namespace Physics
 
         /**
         *   Solve the quadratic equation a t² + b t + c = 0
-        *   @return true if there is one or two solutions
+        *   @return true if a root lower than x0 is found (and update x0)
         *   @param[in] a : supposed > 0
-        *   @param[out] t1 : lowest root
+        *   @param[in&out] t0 : lowest root
         */
-        bool solveQuadraticEquation(float a, float b, float c, float& x0);
+        bool solveQuadraticEquation(float a, float b, float c, float& t0);
 
+
+        /**
+        *   Find the time t at which the ellipsoid intersects the vertex v
+        */
         void resolveVertexCollision(
             const Geometry::Vec3Df& v,
             const Geometry::Vec3Df& ellipsoidCenter,
@@ -74,6 +78,9 @@ namespace Physics
             float& intersectionDistance,
             float& t);
 
+        /**
+        *   Find the time t at which the ellipsoid intersects the edge
+        */
         void resolveEdgeCollision(
             const Geometry::Vec3Df& edge,
             const Geometry::Vec3Df& point,
@@ -84,6 +91,16 @@ namespace Physics
             Geometry::Vec3Df& intersectionPoint,
             float& intersectionDistance,
             float& t);
+
+
+        /**
+        *   Compute the new ellipsoidCenter and velocity vector
+        */
+        void computeCollisionResponse(
+            const Geometry::Vec3Df& intersectionPoint,
+            const float& intersectionDistance,
+            Geometry::Vec3Df& ellipsoidCenter,
+            Geometry::Vec3Df& velocity);
     };
 }
 

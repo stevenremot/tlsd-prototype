@@ -247,17 +247,17 @@ namespace Application
                 Geometry::Vec3Df(150,150,150),
                 Geometry::Vec3Df(0,0,0)
             );
-            Ecs::Entity buddy = createBuddy(
+            /*Ecs::Entity buddy = createBuddy(
                 *world,
                 Geometry::Vec3Df(160, 160, 150),
                 Geometry::Vec3Df(0, 0, 0)
-            );
+            );*/
 
             Ecs::Entity group = world->createEntity();
             world->addComponent(group, new Character::GroupComponent());
 
             Character::associateToGroup(world, player, group);
-            Character::associateToGroup(world, buddy, group);
+            //Character::associateToGroup(world, buddy, group);
         }
 
         running_ = true;

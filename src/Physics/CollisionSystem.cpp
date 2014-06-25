@@ -46,6 +46,9 @@ namespace Physics
         const float movementFactor =
             (static_cast<float>(timer_.getDelay()) / 1000.0);
 
+        // constant step
+        //const float movementFactor = 1/60.0;
+
         // Get all the entities with movement, position and collision component
         ComponentGroup::ComponentTypeCollection types;
         types.insert(CollisionComponent::Type);
@@ -74,8 +77,8 @@ namespace Physics
                 );
 
             // might serve for mesh collisions
-            Threading::ConcurrentReader<MovementComponent> movementComponent =
-                Threading::getConcurrentReader<Ecs::Component, MovementComponent>(
+            Threading::ConcurrentWriter<MovementComponent> movementComponent =
+                Threading::getConcurrentWriter<Ecs::Component, MovementComponent>(
                     group->getComponent(MovementComponent::Type)
                 );
 
@@ -132,15 +135,18 @@ namespace Physics
                             collisionComponent->getCollisionBody()
                         );
 
-                    if (
-                        engine_.getAABBAgainstModel3DCollisionResponse(
+                    if (engine_.getAABBAgainstModel3DCollisionResponse(
                             movingBody,
                             collBody,
                             positionVector,
-                            movementVector
-                        )
-                    )
+                            movementVector))
+                    {
                         positionComponent->setPosition(positionVector);
+                        // TODO: manage also vertical velocity
+                        Vec3Df newVelocity = movementVector/movementFactor;
+                        newVelocity.setZ(movementComponent->getVelocity().getZ());
+                        movementComponent->setVelocity(newVelocity);
+                    }
                 }
             }
 

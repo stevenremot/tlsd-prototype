@@ -186,28 +186,20 @@ namespace Physics
 
         if (intersectionDistance < 10000)
         {
-            // compute sliding plane
-            Vec3Df newEllipsoidPos =  ellipsoidCenter + velocity.getNormalized() * intersectionDistance;
-
-            Vec3Df intersectionNormal = newEllipsoidPos - intersectionPoint;
-            intersectionNormal.normalize();
-
-            velocity = velocity - intersectionNormal * velocity.dot(intersectionNormal);
+            computeCollisionResponse(intersectionPoint, intersectionDistance, ellipsoidCenter, velocity);
 
             std::cout << "Position : " << position << std::endl;
 
             // back in the original space
-            newEllipsoidPos *= ellipsoidRadius;
-            //position = newEllipsoidPos;
-            //position.setZ(position.getZ() - ellipsoidRadius.getZ());
+            position = ellipsoidCenter*ellipsoidRadius;
+            position.setZ(position.getZ() - ellipsoidRadius.getZ());
 
-            position = position - movementVector;
-
-            //movementVector = velocity * ellipsoidRadius;
+            movementVector = velocity*ellipsoidRadius;
 
             std::cout << "Collision found : " << intersectionPoint*ellipsoidRadius << " " << intersectionDistance << std::endl;
             std::cout << "New position : " << position << std::endl;
-            // TODO: collision response
+
+            return true;
         }
 
         return false;
@@ -257,14 +249,11 @@ namespace Physics
         float c,
         float& x)
     {
-        if (a < 0)
-            throw new ANotPositiveException();
-
         float delta = b*b - 4*a*c;
         float root = -1;
         float root2 = -1;
 
-        if (a < 1e-6)
+        if (std::abs(a) < 1e-6)
         {
             if (std::abs(b) < 1e-6)
                 return false;
@@ -354,4 +343,30 @@ namespace Physics
             intersectionDistance = t * velocityLength;
         }
     }
+
+    void CollisionEngine::computeCollisionResponse(
+         const Geometry::Vec3Df& intersectionPoint,
+         const float& intersectionDistance,
+         Geometry::Vec3Df& ellipsoidCenter,
+         Geometry::Vec3Df& velocity)
+    {
+        // compute sliding plane
+        ellipsoidCenter += velocity.getNormalized() * intersectionDistance;
+
+        Vec3Df intersectionNormal = ellipsoidCenter - intersectionPoint;
+        intersectionNormal.normalize();
+
+        if (intersectionDistance < 1e-6)
+        {
+            // at t=0, the ellipsoid is already stuck on the mesh
+            if (velocity.dot(intersectionNormal) < 0)
+                ellipsoidCenter -= velocity;
+            else
+                ellipsoidCenter += velocity;
+        }
+
+        // project the velocity on the sliding plane
+        velocity = velocity - intersectionNormal * velocity.dot(intersectionNormal);
+    }
+
 }
