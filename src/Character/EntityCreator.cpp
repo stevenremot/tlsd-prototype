@@ -36,21 +36,27 @@
 #include "HandAction.h"
 #include "StatisticsComponent.h"
 #include "CharacterComponent.h"
+#include "HarmComponent.h"
+
+using Geometry::Vec3Df;
+using Geometry::PositionComponent;
+using Geometry::RotationComponent;
+using Geometry::AxisAlignedBoundingBox;
 
 namespace Character
 {
     Ecs::Entity createCharacter(
         Threading::ConcurrentWriter<Ecs::World>& world,
-        const Geometry::Vec3Df& position,
-        const Geometry::Vec3Df& rotation,
+        const Vec3Df& position,
+        const Vec3Df& rotation,
         const Statistics& statistics,
         const Ecs::Entity& group,
         Event::EventQueue& queue
     ) {
         // TODO: method AABB from model 3d
-        Geometry::AxisAlignedBoundingBox bbox(
-            Geometry::Vec3Df(-0.5, -0.5, 0.0),
-            Geometry::Vec3Df(0.5, 0.5, 2.0)
+        AxisAlignedBoundingBox bbox(
+            Vec3Df(-0.5, -0.5, 0.0),
+            Vec3Df(0.5, 0.5, 2.0)
         );
 
         Graphics::Render::AnimationMap animMap;
@@ -70,11 +76,11 @@ namespace Character
         const Ecs::Entity& entity = world->createEntity();
         world->addComponent(
             entity,
-            new Geometry::PositionComponent(position)
+            new PositionComponent(position)
         );
         world->addComponent(
             entity,
-            new Geometry::RotationComponent(rotation)
+            new RotationComponent(rotation)
         );
         world->addComponent(
             entity,
@@ -88,7 +94,7 @@ namespace Character
         );
         world->addComponent(
             entity,
-            new Physics::MovementComponent(Geometry::Vec3Df(0.0, 0.0, 0.0))
+            new Physics::MovementComponent(Vec3Df(0.0, 0.0, 0.0))
         );
         world->addComponent(
             entity,
@@ -131,8 +137,8 @@ namespace Character
 
     Ecs::Entity createPlayer(
         Threading::ConcurrentWriter<Ecs::World>& world,
-        const Geometry::Vec3Df& position,
-        const Geometry::Vec3Df& rotation,
+        const Vec3Df& position,
+        const Vec3Df& rotation,
         const Statistics& statistics,
         const Ecs::Entity& group,
         Event::EventQueue& queue
@@ -155,4 +161,77 @@ namespace Character
         return entity;
     }
 
+    Ecs::Entity createAttackArea(
+        Threading::ConcurrentWriter<Ecs::World>& world,
+        const Ecs::Entity& character
+    ) {
+        Ecs::Entity area = world->createEntity();
+        Vec3Df basePosition;
+        Vec3Df rotation;
+        unsigned int damages = 0;
+
+        {
+            Ecs::ComponentGroup::ComponentTypeCollection types;
+            types.insert(StatisticsComponent::Type);
+            types.insert(CharacterComponent::Type);
+            types.insert(PositionComponent::Type);
+            types.insert(RotationComponent::Type);
+            Ecs::ComponentGroup prototype(types);
+
+            Ecs::ComponentGroup group = world->getEntityComponents(
+                character,
+                prototype
+            );
+
+            Threading::ConcurrentWriter<CharacterComponent> characterComponent =
+                Threading::getConcurrentWriter<Ecs::Component, CharacterComponent>(
+                    group.getComponent(CharacterComponent::Type)
+                );
+
+            Threading::ConcurrentReader<StatisticsComponent> statComponent =
+                Threading::getConcurrentReader<Ecs::Component, StatisticsComponent>(
+                    group.getComponent(StatisticsComponent::Type)
+                );
+
+            Threading::ConcurrentReader<PositionComponent> posComponent =
+                Threading::getConcurrentReader<Ecs::Component, PositionComponent>(
+                    group.getComponent(PositionComponent::Type)
+                );
+
+            Threading::ConcurrentReader<RotationComponent> rotComponent =
+                Threading::getConcurrentReader<Ecs::Component, RotationComponent>(
+                    group.getComponent(RotationComponent::Type)
+                );
+
+            damages = statComponent->getStatistics().getAttack().getCurrentValue();
+            characterComponent->setAttackArea(area);
+            basePosition = posComponent->getPosition();
+            rotation = rotComponent->getRotation();
+        }
+
+        Geometry::Vec2Df offset = Geometry::Vec2Df::fromPolar(
+            rotation.getZ(),
+            1.2
+        ) - Geometry::Vec2Df(0.5, 0.5);
+
+        Geometry::AxisAlignedBoundingBox bbox(
+            Geometry::Vec3Df(0.0, 0.0, 0.0),
+            Geometry::Vec3Df(1.0, 1.0, 1.0)
+        );
+
+        world->addComponent(area, new PositionComponent(
+            basePosition + Vec3Df(offset.getX(), offset.getY(), 0)
+        ));
+        world->addComponent(area, new RotationComponent(
+            Vec3Df(0, 0, 0)
+        ));
+        world->addComponent(area, new Physics::CollisionComponent(
+            new Physics::AABBCollisionBody(bbox)
+        ));
+        world->addComponent(area, new HarmComponent(
+            damages
+        ));
+
+        return area;
+    }
 }

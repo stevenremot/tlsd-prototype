@@ -41,7 +41,8 @@ namespace Character
         CharacterComponent(float walkingSpeed, const Ecs::Entity& group):
             Component(Type),
             walkingSpeed_(walkingSpeed),
-            group_(group)
+            group_(group),
+            attackArea_()
         {}
 
         virtual Component* clone() const
@@ -74,10 +75,21 @@ namespace Character
             group_ = group;
         }
 
+        const Ecs::Entity& getAttackArea() const
+        {
+            return attackArea_;
+        }
+
+        void setAttackArea(const Ecs::Entity& attackArea)
+        {
+            attackArea_ = attackArea;
+        }
+
     private:
         // TODO replace with statistics field ?
         float walkingSpeed_;
         Ecs::Entity group_;
+        Ecs::Entity attackArea_;
     };
 }
 

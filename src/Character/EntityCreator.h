@@ -45,6 +45,11 @@ namespace Character
         const Ecs::Entity& group,
         Event::EventQueue& queue
     );
+
+    Ecs::Entity createAttackArea(
+        Threading::ConcurrentWriter<Ecs::World>& world,
+        const Ecs::Entity& character
+    );
 }
 
 #endif
