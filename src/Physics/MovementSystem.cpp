@@ -31,10 +31,11 @@
 using Geometry::PositionComponent;
 using Ecs::World;
 using Ecs::Entity;
+using Geometry::Vec3Df;
 
 namespace Physics
 {
-    const Geometry::Vec3Df GravityVec(0.0, 0.0, -9.81);
+    const Vec3Df GravityVec(0.0, 0.0, -9.81);
 
     void MovementSystem::run()
     {
@@ -70,7 +71,7 @@ namespace Physics
                 positionComponent->setPosition(positionComponent->getPosition() + movement);
 
                 if (!hasCollision)
-                    if (movement != Geometry::Vec3Df(0,0,0))
+                    if (movement != Vec3Df(0,0,0))
                     {
                         eventQueue_ << new EntityPositionChangedEvent(group->getEntity(), positionComponent->getPosition());
                     }
@@ -112,6 +113,11 @@ namespace Physics
             const Vec3Df& baseVelocity = movementComponent->getVelocity();
             movementComponent->setVelocity(
                 baseVelocity +
+                GravityVec * gravityComponent->getWeight() * factor
+            );
+            // add gravity to base velocity
+            movementComponent->setBaseVelocity(
+                movementComponent->getBaseVelocity() +
                 GravityVec * gravityComponent->getWeight() * factor
             );
         }

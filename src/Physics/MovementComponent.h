@@ -26,8 +26,6 @@
 
 namespace Physics
 {
-    using Geometry::Vec3Df;
-
     /**
      * Component for moving entities
      */
@@ -36,9 +34,10 @@ namespace Physics
     public:
         static const Ecs::Component::Type Type;
 
-        MovementComponent(const Vec3Df& velocity):
+        MovementComponent(const Geometry::Vec3Df& velocity):
             Component(Type),
-            velocity_(velocity)
+            velocity_(velocity),
+            baseVelocity_(velocity)
         {}
 
         virtual Component* clone() const
@@ -55,36 +54,46 @@ namespace Physics
             return dependencies_;
         }
 
-        const Vec3Df& getVelocity() const
+        const Geometry::Vec3Df& getVelocity() const
         {
             return velocity_;
         }
 
-        void setVelocity(const Vec3Df& velocity)
+        void setVelocity(const Geometry::Vec3Df& velocity)
         {
             velocity_ = velocity;
         }
-/*
-        const Vec3Df& getBaseVelocity() const
+
+        const Geometry::Vec3Df& getBaseVelocity() const
         {
             return baseVelocity_;
         }
 
-        void setBaseVelocity(const Vec3Df& velocity)
+        void setBaseVelocity(const Geometry::Vec3Df& velocity)
         {
             baseVelocity_ = velocity;
         }
-*/
+
+        void setVelocity(const Geometry::Vec2Df& hVelocity)
+        {
+            velocity_.setHorizontalComponent(hVelocity);
+        }
+
+        void setBaseVelocity(const Geometry::Vec2Df& hVelocity)
+        {
+            baseVelocity_.setHorizontalComponent(hVelocity);
+        }
+
     private:
         /**
         *   Actual velocity used by the physics engine
         */
-        Vec3Df velocity_;
+        Geometry::Vec3Df velocity_;
 
         /**
         *   Theoretical velocity from AI/Input
         */
-        //Vec3Df baseVelocity_;
+        Geometry::Vec3Df baseVelocity_;
 
         static std::vector<Ecs::Component::Type> dependencies_;
     };

@@ -26,6 +26,8 @@
 #include "../Event/EventManager.h"
 #include "MovementTimer.h"
 
+#include <iostream>
+
 namespace Physics
 {
     class MovementSystem : public Ecs::System, public Threading::ThreadableInterface

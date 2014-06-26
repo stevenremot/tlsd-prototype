@@ -22,6 +22,7 @@
 
 #include <ostream>
 #include <cmath>
+#include "Vec2D.h"
 
 namespace Geometry
 {
@@ -212,6 +213,23 @@ namespace Geometry
                 return Vec3D();
             else
                 return Vec3D(x_/length, y_/length, z_/length);
+        }
+
+        inline void setHorizontalComponent(const Vec2D<T>& vec)
+        {
+            x_ = vec.getX();
+            y_ = vec.getY();
+        }
+
+        inline void setHorizontalComponent(const Vec3D& vec)
+        {
+            x_ = vec.getX();
+            y_ = vec.getY();
+        }
+
+        Vec2D<T> getHorizontalComponent() const
+        {
+            return Vec2D<T>(x_, y_);
         }
 
     private:

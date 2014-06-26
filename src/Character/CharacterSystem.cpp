@@ -90,16 +90,15 @@ namespace Character
                 if (action.getType() == MoveAction::Type)
                 {
                     Vec2Df direction2D = dynamic_cast<const MoveAction&>(action).getDirection();
-                    Vec3Df velocity =
-                        Vec3Df(direction2D.getX(), direction2D.getY(), 0) * charComponent->getWalkingSpeed();
-
-                    movementComponent->setVelocity(velocity);
+                    movementComponent->setVelocity(direction2D * charComponent->getWalkingSpeed());
+                    movementComponent->setBaseVelocity(direction2D * charComponent->getWalkingSpeed());
 
                     outsideQueue_ << new Graphics::Render::AnimateActionEvent(entity, MoveAction::Type);
                 }
                 else if (action.getType() == StopAction::Type)
                 {
-                    movementComponent->setVelocity(Vec3Df(0,0,0));
+                    movementComponent->setVelocity(Vec2Df(0,0));
+                    movementComponent->setBaseVelocity(Vec2Df(0,0));
 
                     outsideQueue_ << new Graphics::Render::AnimateActionEvent(entity, StopAction::Type);
                 }
@@ -119,20 +118,22 @@ namespace Character
                     );
 
                     // update movement component orientation
-                    Vec2Df currentDirection(movementComponent->getVelocity().getX(),
-                                            movementComponent->getVelocity().getY()
-                                           );
+                    Vec2Df currentDirection =
+                        movementComponent->getVelocity().getHorizontalComponent();
                     float currentAngle = currentDirection.getOrientation();
                     currentAngle += orientation - currentOrientation.getZ();
                     Vec2Df newDirection =
                         Geometry::Vec2Df::fromPolar(currentAngle, currentDirection.getLength());
+                    movementComponent->setVelocity(newDirection);
 
-                    movementComponent->setVelocity(
-                        Vec3Df(newDirection.getX(),
-                               newDirection.getY(),
-                               movementComponent->getVelocity().getZ()
-                              )
-                    );
+                    // update base velocity orientation
+                    currentDirection =
+                        movementComponent->getBaseVelocity().getHorizontalComponent();
+                    currentAngle = currentDirection.getOrientation();
+                    currentAngle += orientation - currentOrientation.getZ();
+                    newDirection =
+                       Geometry::Vec2Df::fromPolar(currentAngle, currentDirection.getLength());
+                    movementComponent->setBaseVelocity(newDirection);
 
                     if (!hasPlayer)
                     {

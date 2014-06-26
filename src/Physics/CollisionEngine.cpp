@@ -188,9 +188,6 @@ namespace Physics
             }
         }
 
-        std::cout << "Base position : " << position << std::endl;
-        std::cout << "Base velocity : " << movementVector << std::endl;
-
         if (intersectionDistance < 10000)
         {
             computeCollisionResponse(intersectionPoint, intersectionDistance, ellipsoidCenter, velocity);
