@@ -103,28 +103,28 @@ namespace Input
                 // needed to avoid problems when the event receiver is disabled
                 cursorPos_ = centerCursor_;
             }
+        }
 
-            if (actions_[0] && !lastActions_[0])
-            {
-                eventQueue_ << new ActionEvent(ActionEvent::LeftActionType);
-                lastActions_[0] = true;
-            }
-            else if (lastActions_[0] && !actions_[0])
-            {
-                eventQueue_ << new StopActionEvent(StopActionEvent::LeftActionType);
-                lastActions_[0] = false;
-            }
+        if (actions_[0] && !lastActions_[0])
+        {
+            eventQueue_ << new ActionEvent(ActionEvent::LeftActionType);
+            lastActions_[0] = true;
+        }
+        else if (lastActions_[0] && !actions_[0])
+        {
+            eventQueue_ << new StopActionEvent(StopActionEvent::LeftActionType);
+            lastActions_[0] = false;
+        }
 
-            if (actions_[1] && !lastActions_[1])
-            {
-                eventQueue_ << new ActionEvent(ActionEvent::RightActionType);
-                lastActions_[1] = true;
-            }
-            else if (lastActions_[1] && !actions_[1])
-            {
-                eventQueue_ << new StopActionEvent(StopActionEvent::RightActionType);
-                lastActions_[1] = false;
-            }
+        if (actions_[1] && !lastActions_[1])
+        {
+            eventQueue_ << new ActionEvent(ActionEvent::RightActionType);
+            lastActions_[1] = true;
+        }
+        else if (lastActions_[1] && !actions_[1])
+        {
+            eventQueue_ << new StopActionEvent(StopActionEvent::RightActionType);
+            lastActions_[1] = false;
         }
     }
 
@@ -154,30 +154,30 @@ namespace Input
             break;
 
         case irr::EET_MOUSE_INPUT_EVENT:
-            if (event.MouseInput.Event == irr::EMIE_MOUSE_MOVED)
+            switch (event.MouseInput.Event)
             {
+            case irr::EMIE_MOUSE_MOVED:
                 cursorPos_ = cursorControl_->getRelativePosition();
                 return true;
-            }
-            if (event.MouseInput.Event == irr::EMIE_LMOUSE_LEFT_UP)
-            {
+                break;
+            case irr::EMIE_LMOUSE_LEFT_UP:
                 actions_[0] = false;
                 return true;
-            }
-            if (event.MouseInput.Event == irr::EMIE_LMOUSE_PRESSED_DOWN)
-            {
+                break;
+            case irr::EMIE_LMOUSE_PRESSED_DOWN:
                 actions_[0] = true;
                 return true;
-            }
-            if (event.MouseInput.Event == irr::EMIE_RMOUSE_LEFT_UP)
-            {
+                break;
+            case irr::EMIE_RMOUSE_LEFT_UP:
                 actions_[1] = false;
                 return true;
-            }
-            if (event.MouseInput.Event == irr::EMIE_RMOUSE_PRESSED_DOWN)
-            {
+                break;
+            case irr::EMIE_RMOUSE_PRESSED_DOWN:
                 actions_[1] = true;
                 return true;
+                break;
+            default:
+                break;
             }
             break;
 

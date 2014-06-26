@@ -22,6 +22,7 @@
 #include "MoveAction.h"
 #include "StopAction.h"
 #include "LookAtAction.h"
+#include "HandAction.h"
 #include "DieAction.h"
 #include "ActionPerformedEvent.h"
 #include "CharacterComponent.h"
@@ -149,6 +150,17 @@ namespace Character
                                 rotComponent->getRotation()
                             );
                         }
+                    }
+                    else if (action.getType() == StartHandAction::Type)
+                    {
+                        movementComponent->setVelocity(
+                            Vec3Df(0, 0, 0)
+                        );
+                        outsideQueue_ << new Graphics::Render::AnimateActionEvent(entity, StartHandAction::Type);
+                    }
+                    else if (action.getType() == StopHandAction::Type)
+                    {
+                        outsideQueue_ << new Graphics::Render::AnimateActionEvent(entity, StopAction::Type);
                     }
                 }
                 else

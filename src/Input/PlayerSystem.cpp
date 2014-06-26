@@ -50,6 +50,12 @@ namespace Input
                             dynamic_cast<const CameraEvent&>(event)
                         );
         }
+        else if (event.getType() == CameraRenderedEvent::Type)
+        {
+            eventQueue_ << new CameraRenderedEvent(
+                dynamic_cast<const CameraRenderedEvent&>(event)
+            );
+        }
         else if (event.getType() == StopActionEvent::Type)
         {
             eventQueue_ << new StopActionEvent(
@@ -89,7 +95,9 @@ namespace Input
 
 
                     Threading::ConcurrentWriter<PlayerComponent> playerComponent =
-                        Threading::getConcurrentWriter<Ecs::Component, PlayerComponent>(group->getComponent(PlayerComponent::Type));
+                        Threading::getConcurrentWriter<Ecs::Component, PlayerComponent>(
+                            group->getComponent(PlayerComponent::Type)
+                        );
 
                     Character::Action* action = NULL;
                     if (event->getType() == MoveEvent::Type)
