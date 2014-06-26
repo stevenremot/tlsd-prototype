@@ -33,6 +33,7 @@
 #include "GroupUtil.h"
 #include "MoveAction.h"
 #include "StopAction.h"
+#include "HandAction.h"
 #include "StatisticsComponent.h"
 #include "CharacterComponent.h"
 
@@ -57,10 +58,14 @@ namespace Character
             Graphics::Render::AnimationParameters(5.0f, true, Graphics::Render::NoAnimation);
         animMap[Graphics::Render::Walk] =
             Graphics::Render::AnimationParameters(5.0f, true, Graphics::Render::NoAnimation);
+        animMap[Graphics::Render::Attack] =
+            Graphics::Render::AnimationParameters(5.0f, true, Graphics::Render::NoAnimation);
 
         std::map<Character::Action::Type, Graphics::Render::AnimationType> animByAction;
         animByAction[Character::MoveAction::Type] = Graphics::Render::Walk;
         animByAction[Character::StopAction::Type] = Graphics::Render::Idle;
+        animByAction[Character::StartHandAction::Type] = Graphics::Render::Attack;
+        animByAction[Character::StopHandAction::Type] = Graphics::Render::Idle;
 
         const Ecs::Entity& entity = world->createEntity();
         world->addComponent(
