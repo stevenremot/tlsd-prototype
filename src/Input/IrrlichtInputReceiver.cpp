@@ -45,6 +45,9 @@ namespace Input
         // all keys up
         for (irr::u32 i=0; i<irr::EKA_COUNT; i++)
             cursorKeys_[i] = false;
+
+        actions_[0] = actions_[1] =
+            lastActions_[0] = lastActions_[1] = false;
     }
 
     IrrlichtInputReceiver::~IrrlichtInputReceiver()
@@ -100,6 +103,28 @@ namespace Input
                 // needed to avoid problems when the event receiver is disabled
                 cursorPos_ = centerCursor_;
             }
+
+            if (actions_[0] && !lastActions_[0])
+            {
+                eventQueue_ << new ActionEvent(ActionEvent::LeftActionType);
+                lastActions_[0] = true;
+            }
+            else if (lastActions_[0] && !actions_[0])
+            {
+                eventQueue_ << new StopActionEvent(StopActionEvent::LeftActionType);
+                lastActions_[0] = false;
+            }
+
+            if (actions_[1] && !lastActions_[1])
+            {
+                eventQueue_ << new ActionEvent(ActionEvent::RightActionType);
+                lastActions_[1] = true;
+            }
+            else if (lastActions_[1] && !actions_[1])
+            {
+                eventQueue_ << new StopActionEvent(StopActionEvent::RightActionType);
+                lastActions_[1] = false;
+            }
         }
     }
 
@@ -134,18 +159,26 @@ namespace Input
                 cursorPos_ = cursorControl_->getRelativePosition();
                 return true;
             }
-            /* TODO
             if (event.MouseInput.Event == irr::EMIE_LMOUSE_LEFT_UP)
             {
-                actions[0] = true;
+                actions_[0] = false;
+                return true;
+            }
+            if (event.MouseInput.Event == irr::EMIE_LMOUSE_PRESSED_DOWN)
+            {
+                actions_[0] = true;
                 return true;
             }
             if (event.MouseInput.Event == irr::EMIE_RMOUSE_LEFT_UP)
             {
-                actions[1] = true;
+                actions_[1] = false;
                 return true;
             }
-            */
+            if (event.MouseInput.Event == irr::EMIE_RMOUSE_PRESSED_DOWN)
+            {
+                actions_[1] = true;
+                return true;
+            }
             break;
 
         default:

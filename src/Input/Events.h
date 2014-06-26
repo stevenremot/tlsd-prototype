@@ -68,6 +68,51 @@ namespace Input
     private:
         Geometry::Vec2Df cursorPosition_;
     };
+
+    class ActionEvent: public Event::Event
+    {
+    public:
+        static const Type Type;
+        enum ActionType { LeftActionType, RightActionType };
+
+        ActionEvent(const ActionType& type):
+            Event(Type),
+            type_(type)
+        {}
+
+        const ActionType& getType() const
+        {
+            return type_;
+        }
+
+    private:
+        ActionType type_;
+    };
+
+    class StopActionEvent: public Event::Event
+    {
+    public:
+        static const Type Type;
+        enum ActionType { LeftActionType, RightActionType };
+
+        StopActionEvent(const ActionType& type):
+            Event(Type),
+            type_(type)
+        {}
+
+        const ActionType& getType() const
+        {
+            return type_;
+        }
+
+    private:
+        ActionType type_;
+    };
 }
 
 #endif // INPUT_EVENTS_H
+
+// Emacs local variables
+// Local variables:
+// mode: c++
+// End:

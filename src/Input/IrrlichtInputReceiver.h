@@ -96,6 +96,8 @@ namespace Input
         irr::core::array<irr::SKeyMap> keyMap_;
         irr::core::position2df centerCursor_, cursorPos_;
         bool cursorKeys_[irr::EKA_COUNT];
+        bool actions_[2];
+        bool lastActions_[2];
 
         Geometry::Vec2Df lastDirection_;
 
