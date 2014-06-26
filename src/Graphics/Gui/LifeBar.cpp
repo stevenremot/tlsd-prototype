@@ -22,38 +22,25 @@
 #include <irrlicht/IGUIEnvironment.h>
 #include <irrlicht/IVideoDriver.h>
 
-#include "../../Ecs/ComponentGroup.h"
-#include "../../Input/PlayerComponent.h"
-#include "../../Character/GroupComponent.h"
-#include "../../Character/CharacterComponent.h"
-#include "../../Character/GroupUtil.h"
-
-using Threading::getConcurrentReader;
-using Threading::ConcurrentReader;
-using Character::CharacterComponent;
-
 namespace Graphics
 {
     namespace Gui
     {
-        void drawLifeBar(
-            unsigned int current,
-            unsigned int max,
-            const irr::core::rect<irr::s32>& rect,
-            irr::video::IVideoDriver* driver
-        ) {
-            const irr::s32 baseX = rect.UpperLeftCorner.X;
-            const irr::s32 baseY = rect.UpperLeftCorner.Y;
-            const irr::s32 baseW = rect.getWidth();
-            const irr::s32 baseH = rect.getHeight();
+        void LifeBar::draw()
+        {
+            irr::video::IVideoDriver* driver = Environment->getVideoDriver();
+                        const irr::s32 baseX = AbsoluteRect.UpperLeftCorner.X;
+            const irr::s32 baseY = AbsoluteRect.UpperLeftCorner.Y;
+            const irr::s32 baseW = AbsoluteRect.getWidth();
+            const irr::s32 baseH = AbsoluteRect.getHeight();
 
             driver->draw2DRectangle(
                 irr::video::SColor(128, 0, 0, 0),
-                rect
+                AbsoluteRect
             );
 
             const float ratio =
-                static_cast<float>(current) / static_cast<float>(max);
+                static_cast<float>(currentHealth_) / static_cast<float>(maxHealth_);
 
             driver->draw2DRectangle(
                 irr::video::SColor(255, 255, 0, 0),
@@ -66,47 +53,9 @@ namespace Graphics
             );
 
             driver->draw2DRectangleOutline(
-                rect,
+                AbsoluteRect,
                 irr::video::SColor(255, 255, 255, 255)
             );
-        }
-
-        void LifeBar::draw()
-        {
-            Threading::ConcurrentWriter<Ecs::World> world = world_->getWriter();
-            irr::video::IVideoDriver* driver = Environment->getVideoDriver();
-
-            Ecs::ComponentGroup::ComponentTypeCollection types;
-            types.insert(Input::PlayerComponent::Type);
-            Ecs::ComponentGroup prototype(types);
-
-            Ecs::World::ComponentGroupCollection groups =
-                world->getComponents(prototype);
-
-            if (!groups.empty())
-            {
-                Ecs::ComponentGroup& group = groups.front();
-
-                Ecs::Entity groupEntity =
-                    getConcurrentReader<Ecs::Component, CharacterComponent>(
-                        group.getComponent(CharacterComponent::Type)
-                    )->getGroup();
-
-                unsigned int maxHealth = Character::computeMaxHealth(
-                    world,
-                    groupEntity
-                );
-
-                unsigned int currentHealth =
-                    getConcurrentReader<Ecs::Component, Character::GroupComponent>(
-                        world->getEntityComponent(
-                            groupEntity,
-                            Character::GroupComponent::Type
-                        )
-                    )->getCurrentHealth();
-
-                drawLifeBar(currentHealth, maxHealth, AbsoluteClippingRect, driver);
-            }
         }
     }
 }

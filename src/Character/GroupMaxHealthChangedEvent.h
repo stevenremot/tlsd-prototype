@@ -17,34 +17,42 @@
     <http://www.gnu.org/licenses/>.
 */
 
-#ifndef CHARACTER_ENTITY_CREATOR_H
-#define CHARACTER_ENTITY_CREATOR_H
+#ifndef CHARACTER_GROUP_MAX_HEALTH_CHANGED_EVENT_H
+#define CHARACTER_GROUP_MAX_HEALTH_CHANGED_EVENT_H
 
+#include "../Event/Event.h"
 #include "../Ecs/Entity.h"
-#include "../Ecs/World.h"
-#include "../Geometry/Vec3D.h"
-#include "../Threading/ConcurrentRessource.h"
-#include "Statistics.h"
 
 namespace Character
 {
-    Ecs::Entity createCharacter(
-        Threading::ConcurrentWriter<Ecs::World>& world,
-        const Geometry::Vec3Df& position,
-        const Geometry::Vec3Df& rotation,
-        const Statistics& statistics,
-        const Ecs::Entity& group,
-        Event::EventQueue& queue
-    );
+    /**
+     * Dispatched when the maximum health of a group has changed
+     */
+    class GroupMaxHealthChangedEvent: public Event::Event
+    {
+    public:
+        static const Type Type;
 
-    Ecs::Entity createPlayer(
-        Threading::ConcurrentWriter<Ecs::World>& world,
-        const Geometry::Vec3Df& position,
-        const Geometry::Vec3Df& rotation,
-        const Statistics& statistics,
-        const Ecs::Entity& group,
-        Event::EventQueue& queue
-    );
+        GroupMaxHealthChangedEvent(const Ecs::Entity& group, unsigned int maxHealth):
+            Event(Type),
+            group_(group),
+            maxHealth_(maxHealth)
+        {}
+
+        const Ecs::Entity& getGroup() const
+        {
+            return group_;
+        }
+
+        unsigned int getMaxHealth() const
+        {
+            return maxHealth_;
+        }
+
+    private:
+        Ecs::Entity group_;
+        unsigned int maxHealth_;
+    };
 }
 
 #endif

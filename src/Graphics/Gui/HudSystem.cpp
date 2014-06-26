@@ -21,17 +21,14 @@
 
 #include <iostream> // TODO remove
 
-#include "../../Ecs/ComponentGroup.h"
-#include "../../Input/PlayerComponent.h"
-#include "../../Character/GroupComponent.h"
-#include "../../Character/CharacterComponent.h"
 #include "../../Character/GroupUtil.h"
+#include "../../Character/GroupMaxHealthChangedEvent.h"
+#include "../../Character/GroupCurrentHealthChangedEvent.h"
 #include "InitGuiEvent.h"
-#include "LifeBar.h"
 
-using Threading::getConcurrentReader;
-using Threading::ConcurrentReader;
-using Character::CharacterComponent;
+using Character::GroupCurrentHealthChangedEvent;
+using Character::GroupMaxHealthChangedEvent;
+
 
 namespace Graphics
 {
@@ -47,21 +44,59 @@ namespace Graphics
                 irr::gui::IGUIEnvironment* env = evt.getGuiEnvironment();
                 irr::gui::IGUIElement* root = env->getRootGUIElement();
 
-                // Regiser somewhere ?
-                LifeBar* lifeBar = new LifeBar(
+                lifeBar_ = new LifeBar(
                     env,
                     root,
                     -1,
                     irr::core::rect<irr::s32>(10, 10, 100, 25)
                 );
 
-                lifeBar->setWorld(&getWorldRessource());
+                lifeBar_->setCurrentHealth(pendingCurrentHealth_);
+                lifeBar_->setMaxHealth(pendingMaxHealth_);
+            }
+            else if (event.getType() == GroupCurrentHealthChangedEvent::Type)
+            {
+                const GroupCurrentHealthChangedEvent& evt =
+                    dynamic_cast<const GroupCurrentHealthChangedEvent&>(event);
+
+                Threading::ConcurrentWriter<Ecs::World> world = getWorld();
+                if (Character::isPlayerGroup(world, evt.getGroup()))
+                {
+                    if (lifeBar_ == NULL)
+                    {
+                        pendingCurrentHealth_ = evt.getCurrentHealth();
+                    }
+                    else
+                    {
+                        lifeBar_->setCurrentHealth(evt.getCurrentHealth());
+                    }
+                }
+            }
+            else if (event.getType() == GroupMaxHealthChangedEvent::Type)
+            {
+                const GroupMaxHealthChangedEvent& evt =
+                    dynamic_cast<const GroupMaxHealthChangedEvent&>(event);
+
+                Threading::ConcurrentWriter<Ecs::World> world = getWorld();
+                if (Character::isPlayerGroup(world, evt.getGroup()))
+                {
+                    if (lifeBar_ == NULL)
+                    {
+                        pendingMaxHealth_ = evt.getMaxHealth();
+                    }
+                    else
+                    {
+                        lifeBar_->setMaxHealth(evt.getMaxHealth());
+                    }
+                }
             }
         }
 
         void HudSystem::registerListeners(Event::ListenerRegister& reg)
         {
             reg.put(InitGuiEvent::Type, this);
+            reg.put(GroupCurrentHealthChangedEvent::Type, this);
+            reg.put(GroupMaxHealthChangedEvent::Type, this);
         }
 
         void HudSystem::unregisterListeners(Event::ListenerRegister& reg)

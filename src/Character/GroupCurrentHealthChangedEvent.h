@@ -17,34 +17,42 @@
     <http://www.gnu.org/licenses/>.
 */
 
-#ifndef CHARACTER_ENTITY_CREATOR_H
-#define CHARACTER_ENTITY_CREATOR_H
+#ifndef CHARACTER_GROUP_CURRENT_HEALTH_CHANGED_EVENT_H
+#define CHARACTER_GROUP_CURRENT_HEALTH_CHANGED_EVENT_H
 
+#include "../Event/Event.h"
 #include "../Ecs/Entity.h"
-#include "../Ecs/World.h"
-#include "../Geometry/Vec3D.h"
-#include "../Threading/ConcurrentRessource.h"
-#include "Statistics.h"
 
 namespace Character
 {
-    Ecs::Entity createCharacter(
-        Threading::ConcurrentWriter<Ecs::World>& world,
-        const Geometry::Vec3Df& position,
-        const Geometry::Vec3Df& rotation,
-        const Statistics& statistics,
-        const Ecs::Entity& group,
-        Event::EventQueue& queue
-    );
+    /**
+     * Dispatched when the current health of a group has changed
+     */
+    class GroupCurrentHealthChangedEvent: public Event::Event
+    {
+    public:
+        static const Type Type;
 
-    Ecs::Entity createPlayer(
-        Threading::ConcurrentWriter<Ecs::World>& world,
-        const Geometry::Vec3Df& position,
-        const Geometry::Vec3Df& rotation,
-        const Statistics& statistics,
-        const Ecs::Entity& group,
-        Event::EventQueue& queue
-    );
+        GroupCurrentHealthChangedEvent(const Ecs::Entity& group, unsigned int currentHealth):
+            Event(Type),
+            group_(group),
+            currentHealth_(currentHealth)
+        {}
+
+        const Ecs::Entity& getGroup() const
+        {
+            return group_;
+        }
+
+        unsigned int getCurrentHealth() const
+        {
+            return currentHealth_;
+        }
+
+    private:
+        Ecs::Entity group_;
+        unsigned int currentHealth_;
+    };
 }
 
 #endif

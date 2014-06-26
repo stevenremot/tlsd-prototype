@@ -23,13 +23,15 @@
 #include "../Ecs/Entity.h"
 #include "../Ecs/World.h"
 #include "../Threading/ConcurrentRessource.h"
+#include "../Event/EventQueue.h"
 
 namespace Character
 {
     void associateToGroup(
         Threading::ConcurrentWriter<Ecs::World>& world,
         const Ecs::Entity& entity,
-        const Ecs::Entity& group
+        const Ecs::Entity& group,
+        Event::EventQueue& eventQueue
     );
 
     unsigned int computeMaxHealth(
@@ -38,6 +40,11 @@ namespace Character
     );
 
     void initGroupHealth(
+        Threading::ConcurrentWriter<Ecs::World>& world,
+        const Ecs::Entity& group
+    );
+
+    bool isPlayerGroup(
         Threading::ConcurrentWriter<Ecs::World>& world,
         const Ecs::Entity& group
     );

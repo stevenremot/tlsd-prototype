@@ -25,6 +25,7 @@
 #include "../../Ecs/System.h"
 #include "../../Event/EventListenerInterface.h"
 #include "../../Event/ListenerRegister.h"
+#include "LifeBar.h"
 
 namespace Graphics
 {
@@ -40,13 +41,29 @@ namespace Graphics
         {
         public:
             HudSystem(Threading::ConcurrentRessource<Ecs::World> world):
-                System(world)
+                System(world),
+                lifeBar_(NULL),
+                pendingMaxHealth_(0),
+                pendingCurrentHealth_(0)
             {}
+
+            ~HudSystem()
+            {
+                if (lifeBar_ != NULL)
+                {
+                    delete lifeBar_;
+                }
+            }
 
             virtual void call(const Event::Event& event);
 
             void registerListeners(Event::ListenerRegister& reg);
             void unregisterListeners(Event::ListenerRegister& reg);
+
+        private:
+            LifeBar* lifeBar_;
+            unsigned int pendingMaxHealth_;
+            unsigned int pendingCurrentHealth_;
         };
     }
 }
