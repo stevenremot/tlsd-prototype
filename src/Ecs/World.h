@@ -22,6 +22,7 @@
 
 #include <list>
 #include <map>
+#include <set>
 #include <exception>
 
 #include "Entity.h"
@@ -99,6 +100,8 @@ namespace Ecs
          *
          */
          World(Event::EventQueue& eventQueue):
+             components_(),
+             entityIndex_(),
              eventQueue_(eventQueue)
              {}
 
@@ -194,6 +197,7 @@ namespace Ecs
         typedef std::list< Threading::ConcurrentRessource<Component> > ComponentCollection;
 
         std::map< Entity, ComponentCollection > components_;
+        std::map< Component::Type, std::set< Entity > > entityIndex_;
 
         Event::EventQueue& eventQueue_;
     };

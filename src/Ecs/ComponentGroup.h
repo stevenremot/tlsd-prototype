@@ -108,6 +108,11 @@ namespace Ecs
             return entity_;
         }
 
+        const ComponentTypeCollection& getTypes() const
+        {
+            return types_;
+        }
+
         /**
          * Return the component of a given type.
          *
