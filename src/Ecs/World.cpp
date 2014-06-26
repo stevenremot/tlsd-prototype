@@ -99,6 +99,12 @@ namespace Ecs
         return SharedEntity(*this, entity, &Ecs::removeEntity);
     }
 
+
+    bool World::hasEntity(const Entity& entity) const
+    {
+        return components_.find(entity) != components_.end();
+    }
+
     Entity World::loadDescriptor(EntityDescriptor& descriptor)
     {
         if (descriptor.references_ == 0)

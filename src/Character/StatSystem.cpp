@@ -60,65 +60,69 @@ namespace Character
                     const HurtEvent& evt = dynamic_cast<const HurtEvent&>(*event);
                     const Ecs::Entity& attacker = evt.getAttacker();
                     const Ecs::Entity& receiver = evt.getReceiver();
-                    Threading::ConcurrentRessource<Ecs::Component> harmComponentRessource =
-                        world->getEntityComponent(attacker, HarmComponent::Type);
 
-                    Threading::ConcurrentRessource<Ecs::Component> charComponentRessource =
-                        world->getEntityComponent(receiver, CharacterComponent::Type);
-
-                    Threading::ConcurrentRessource<Ecs::Component> statComponentRessource =
-                        world->getEntityComponent(receiver, StatisticsComponent::Type);
-
-                    const Ecs::Entity& group =
-                        Threading::getConcurrentReader<Ecs::Component, CharacterComponent>(
-                            charComponentRessource
-                        )->getGroup();
-
-                    Threading::ConcurrentWriter<GroupComponent> groupComponent =
-                        Threading::getConcurrentWriter<Ecs::Component, GroupComponent>(
-                            world->getEntityComponent(group, GroupComponent::Type)
-                        );
-
-                    Threading::ConcurrentReader<HarmComponent> harmComponent =
-                        Threading::getConcurrentReader<Ecs::Component, HarmComponent>(
-                            harmComponentRessource
-                        );
-                    Threading::ConcurrentWriter<StatisticsComponent> statComponent =
-                        Threading::getConcurrentWriter<Ecs::Component, StatisticsComponent>(
-                            statComponentRessource
-                        );
-
-                    struct timespec lastTimeHurt = statComponent->getLastTimeHurt();
-                    struct timespec currentTime;
-                    Core::getTime(currentTime);
-                    struct timespec diff = Core::difference(lastTimeHurt, currentTime);
-                    unsigned int period = diff.tv_sec * 1000L + diff.tv_nsec / 1000000L;
-
-                    if (period > InvincibilityPeriod)
+                    if (world->hasEntity(attacker) && world->hasEntity(receiver))
                     {
-                        statComponent->setLastTimeHurt(currentTime);
-                        int currentHealth = groupComponent->getCurrentHealth();
-                        int damages = std::max<int>(
-                            static_cast<float>(harmComponent->getDamages()) -
-                            static_cast<float>(statComponent->getStatistics().getDefense().getCurrentValue()),
-                            1
-                        );
+                        Threading::ConcurrentRessource<Ecs::Component> harmComponentRessource =
+                            world->getEntityComponent(attacker, HarmComponent::Type);
 
-                        if (damages > currentHealth)
-                        {
-                            groupComponent->setCurrentHealth(0);
-                            outsideQueue_ << new ActionPerformedEvent(
-                                group,
-                                new DieAction()
+                        Threading::ConcurrentRessource<Ecs::Component> charComponentRessource =
+                            world->getEntityComponent(receiver, CharacterComponent::Type);
+
+                        Threading::ConcurrentRessource<Ecs::Component> statComponentRessource =
+                            world->getEntityComponent(receiver, StatisticsComponent::Type);
+
+                        const Ecs::Entity& group =
+                            Threading::getConcurrentReader<Ecs::Component, CharacterComponent>(
+                                charComponentRessource
+                            )->getGroup();
+
+                        Threading::ConcurrentWriter<GroupComponent> groupComponent =
+                            Threading::getConcurrentWriter<Ecs::Component, GroupComponent>(
+                                world->getEntityComponent(group, GroupComponent::Type)
                             );
-                        }
-                        else
-                        {
-                            groupComponent->setCurrentHealth(currentHealth - damages);
-                            outsideQueue_ << new GroupCurrentHealthChangedEvent(
-                                group,
-                                groupComponent->getCurrentHealth()
+
+                        Threading::ConcurrentReader<HarmComponent> harmComponent =
+                            Threading::getConcurrentReader<Ecs::Component, HarmComponent>(
+                                harmComponentRessource
                             );
+                        Threading::ConcurrentWriter<StatisticsComponent> statComponent =
+                            Threading::getConcurrentWriter<Ecs::Component, StatisticsComponent>(
+                                statComponentRessource
+                            );
+
+                        struct timespec lastTimeHurt = statComponent->getLastTimeHurt();
+                        struct timespec currentTime;
+                        Core::getTime(currentTime);
+                        struct timespec diff = Core::difference(lastTimeHurt, currentTime);
+                        unsigned int period = diff.tv_sec * 1000L + diff.tv_nsec / 1000000L;
+
+                        if (period > InvincibilityPeriod)
+                        {
+                            statComponent->setLastTimeHurt(currentTime);
+                            int currentHealth = groupComponent->getCurrentHealth();
+                            int damages = std::max<int>(
+                                static_cast<float>(harmComponent->getDamages()) -
+                                static_cast<float>(statComponent->getStatistics().getDefense().getCurrentValue()),
+                                1
+                            );
+
+                            if (damages > currentHealth)
+                            {
+                                groupComponent->setCurrentHealth(0);
+                                outsideQueue_ << new ActionPerformedEvent(
+                                    group,
+                                    new DieAction()
+                                );
+                            }
+                            else
+                            {
+                                groupComponent->setCurrentHealth(currentHealth - damages);
+                                outsideQueue_ << new GroupCurrentHealthChangedEvent(
+                                    group,
+                                    groupComponent->getCurrentHealth()
+                                );
+                            }
                         }
                     }
                 }

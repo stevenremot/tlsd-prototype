@@ -161,6 +161,11 @@ namespace Ecs
         void addComponent(const Entity& entity, Component* component);
 
         /**
+         * Return true if the world has this entity, false if it has been removed.
+         */
+        bool hasEntity(const Entity& entity) const;
+
+        /**
          * Return a ComponentGroup filled with entity and matching components.
          *
          * @throw DoesNotSatisfyException when entity's components does not match
