@@ -184,6 +184,10 @@ namespace Character
                         );
                         outsideQueue_ << new Graphics::Render::AnimateActionEvent(entity, StartHandAction::Type);
                         createAttackArea(world, entity);
+
+                        getConcurrentWriter<Ecs::Component, CharacterComponent>(
+                            charComponentRessource
+                        )->setAttacking(true);
                     }
                     else if (action.getType() == StopHandAction::Type)
                     {
@@ -191,13 +195,20 @@ namespace Character
                         outsideQueue_ << new Graphics::Render::AnimateActionEvent(entity, StopAction::Type);
                     }
 
-                    if (stopAttack)
-                    {
+                    if (stopAttack &&
+                        getConcurrentReader<Ecs::Component, CharacterComponent>(
+                            charComponentRessource
+                        )->isAttacking()
+                    ) {
                         world->removeEntity(
                             getConcurrentReader<Ecs::Component, CharacterComponent>(
                                 charComponentRessource
                             )->getAttackArea()
                         );
+
+                        getConcurrentWriter<Ecs::Component, CharacterComponent>(
+                            charComponentRessource
+                        )->setAttacking(false);
                     }
                 }
                 else

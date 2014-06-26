@@ -42,7 +42,8 @@ namespace Character
             Component(Type),
             walkingSpeed_(walkingSpeed),
             group_(group),
-            attackArea_()
+            attackArea_(),
+            isAttacking_(false)
         {}
 
         virtual Component* clone() const
@@ -75,6 +76,16 @@ namespace Character
             group_ = group;
         }
 
+        bool isAttacking() const
+        {
+            return isAttacking_;
+        }
+
+        void setAttacking(bool isAttacking)
+        {
+            isAttacking_ = isAttacking;
+        }
+
         const Ecs::Entity& getAttackArea() const
         {
             return attackArea_;
@@ -90,6 +101,7 @@ namespace Character
         float walkingSpeed_;
         Ecs::Entity group_;
         Ecs::Entity attackArea_;
+        bool isAttacking_;
     };
 }
 
