@@ -56,13 +56,14 @@ namespace Character
 
             if (event != NULL)
             {
+                Threading::ConcurrentWriter<Ecs::World> world = getWorld();
                 const ActionPerformedEvent& actionEvent =
                     dynamic_cast<const ActionPerformedEvent&>(*event);
 
                 const Ecs::Entity& entity = actionEvent.getEntity();
                 const Character::Action& action = actionEvent.getAction();
 
-                bool isGroup = getWorld()->hasComponent(entity, GroupComponent::Type);
+                bool isGroup = world->hasComponent(entity, GroupComponent::Type);
 
                 if (!isGroup)
                 {
@@ -73,9 +74,9 @@ namespace Character
                     types.insert(Physics::MovementComponent::Type);
                     Ecs::ComponentGroup prototype(types);
                     Ecs::ComponentGroup group =
-                        getWorld()->getEntityComponents(entity, prototype);
+                        world->getEntityComponents(entity, prototype);
 
-                    bool hasPlayer = getWorld()->hasComponent(entity, Input::PlayerComponent::Type);
+                    bool hasPlayer = world->hasComponent(entity, Input::PlayerComponent::Type);
 
                     Threading::ConcurrentReader<CharacterComponent> charComponent =
                         Threading::getConcurrentReader<Ecs::Component, CharacterComponent>(
@@ -156,7 +157,7 @@ namespace Character
                     {
                         Threading::ConcurrentReader<GroupComponent> groupComponent =
                             Threading::getConcurrentReader<Ecs::Component, GroupComponent>(
-                                getWorld()->getEntityComponent(entity, GroupComponent::Type)
+                                world->getEntityComponent(entity, GroupComponent::Type)
                             );
 
 
@@ -177,7 +178,7 @@ namespace Character
                     std::list<Ecs::Entity>::iterator ent;
                     for (ent = entitiesToRemove.begin(); ent != entitiesToRemove.end(); ++ent)
                     {
-                        getWorld()->removeEntity(*ent);
+                        world->removeEntity(*ent);
                     }
                 }
             }

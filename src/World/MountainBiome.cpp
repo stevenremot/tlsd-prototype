@@ -55,6 +55,7 @@ namespace World
             0,
             0,
             1,
+            "conique",
             trunkMin,
             trunkMax,
             leavesMin,
