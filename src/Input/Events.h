@@ -80,7 +80,7 @@ namespace Input
             type_(type)
         {}
 
-        const ActionType& getType() const
+        const ActionType& getActionType() const
         {
             return type_;
         }
@@ -100,7 +100,7 @@ namespace Input
             type_(type)
         {}
 
-        const ActionType& getType() const
+        const ActionType& getActionType() const
         {
             return type_;
         }
