@@ -25,16 +25,24 @@ namespace World
 
     float MountainBiome::transformCoefficient(float coefficient)
     {
-        return (coefficient+1.0)*25.0+150.0;
+        return (coefficient + 1.0) * 25.0 + 150.0;
     }
 
     Graphics::Color MountainBiome::getColor()
     {
-        return Graphics::Color(0.25,0.25,0.25);
+        return Graphics::Color(0.25, 0.25, 0.25);
     }
 
     const Generation::TreeParameters MountainBiome::getTreeParameters()
     {
+        std::vector<Graphics::Color> trunkMin;
+        trunkMin.push_back(Graphics::Color(0.3, 0.1, 0.02));
+        std::vector<Graphics::Color> trunkMax;
+        trunkMax.push_back(Graphics::Color(0.5, 0.2, 0.06));
+        std::vector<Graphics::Color> leavesMin;
+        leavesMin.push_back(Graphics::Color(0, 0.4, 0));
+        std::vector<Graphics::Color> leavesMax;
+        leavesMax.push_back(Graphics::Color(0.05, 0.5, 0.1));
         return Generation::TreeParameters(
             2.5,
             4.0,
@@ -46,10 +54,12 @@ namespace World
             12.0,
             0,
             0,
-            Graphics::Color(0.3,0.1,0.02),
-            Graphics::Color(0.5,0.2,0.06),
-            Graphics::Color(0,0.4,0),
-            Graphics::Color(0.05,0.5,0.1)
+            1,
+            "conique",
+            trunkMin,
+            trunkMax,
+            leavesMin,
+            leavesMax
         );
     }
 

@@ -23,6 +23,7 @@
 #include "BootInterface.h"
 
 #include "../Character/CharacterSystem.h"
+#include "../Character/StatSystem.h"
 
 namespace Application
 {
@@ -31,7 +32,8 @@ namespace Application
     public:
         CharacterBoot(Callback callback, Application& application):
             BootInterface(callback, application),
-            characterSystem_(NULL)
+            characterSystem_(NULL),
+            statSystem_(NULL)
         {}
 
         virtual void start();
@@ -41,6 +43,7 @@ namespace Application
 
     private:
         Character::CharacterSystem* characterSystem_;
+        Character::StatSystem* statSystem_;
     };
 }
 

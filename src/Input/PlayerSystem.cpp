@@ -26,6 +26,7 @@
 #include "../Character/MoveAction.h"
 #include "../Character/StopAction.h"
 #include "../Character/LookAtAction.h"
+#include "../Character/HandAction.h"
 #include "../Character/ActionPerformedEvent.h"
 #include "../Geometry/RotationComponent.h"
 #include "../Geometry/PositionComponent.h"
@@ -52,7 +53,19 @@ namespace Input
         else if (event.getType() == CameraRenderedEvent::Type)
         {
             eventQueue_ << new CameraRenderedEvent(
-                            dynamic_cast<const CameraRenderedEvent&>(event)
+                dynamic_cast<const CameraRenderedEvent&>(event)
+            );
+        }
+        else if (event.getType() == StopActionEvent::Type)
+        {
+            eventQueue_ << new StopActionEvent(
+                            dynamic_cast<const StopActionEvent&>(event)
+                        );
+        }
+        else if (event.getType() == ActionEvent::Type)
+        {
+            eventQueue_ << new ActionEvent(
+                            dynamic_cast<const ActionEvent&>(event)
                         );
         }
     }
@@ -82,7 +95,9 @@ namespace Input
 
 
                     Threading::ConcurrentWriter<PlayerComponent> playerComponent =
-                        Threading::getConcurrentWriter<Ecs::Component, PlayerComponent>(group->getComponent(PlayerComponent::Type));
+                        Threading::getConcurrentWriter<Ecs::Component, PlayerComponent>(
+                            group->getComponent(PlayerComponent::Type)
+                        );
 
                     Character::Action* action = NULL;
                     if (event->getType() == MoveEvent::Type)
@@ -136,6 +151,42 @@ namespace Input
 
                         playerComponent->setCamera(evt.getCamera());
                     }
+                    else if (event->getType() == ActionEvent::Type)
+                    {
+                        const ActionEvent& evt =
+                            dynamic_cast<const ActionEvent&>(*event);
+
+                        Character::Hand hand;
+                        switch (evt.getActionType())
+                        {
+                        case ActionEvent::LeftActionType:
+                            hand = Character::LeftHand;
+                            break;
+                        default:
+                            hand = Character::RightHand;
+                            break;
+                        }
+
+                        action = new Character::StartHandAction(hand);
+                    }
+                    else if (event->getType() == StopActionEvent::Type)
+                    {
+                        const StopActionEvent& evt =
+                            dynamic_cast<const StopActionEvent&>(*event);
+
+                        Character::Hand hand;
+                        switch (evt.getActionType())
+                        {
+                        case ActionEvent::LeftActionType:
+                            hand = Character::LeftHand;
+                            break;
+                        default:
+                            hand = Character::RightHand;
+                            break;
+                        }
+
+                        action = new Character::StopHandAction(hand);
+                    }
 
                     if (action != NULL)
                     {
@@ -155,6 +206,8 @@ namespace Input
         listener.put(MoveEvent::Type, this);
         listener.put(CameraEvent::Type, this);
         listener.put(CameraRenderedEvent::Type, this);
+        listener.put(ActionEvent::Type, this);
+        listener.put(StopActionEvent::Type, this);
     }
 
     void PlayerSystem::unregisterListeners(Event::ListenerRegister& listener)

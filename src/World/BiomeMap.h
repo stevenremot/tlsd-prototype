@@ -76,7 +76,13 @@ namespace World
         MountainBiome mountainBiome_;
         PlainBiome plainBiome_;
         DesertBiome desertBiome_;
-        float computePerlinNoise(const Geometry::Vec2Df& position, const Geometry::Vec2Df& perlinCoefficient00, const Geometry::Vec2Df& perlinCoefficient10, const Geometry::Vec2Df& perlinCoefficient01, const Geometry::Vec2Df& perlinCoefficient11);
+        float computePerlinNoise(
+            const Geometry::Vec2Df& position,
+            const Geometry::Vec2Df& perlinCoefficient00,
+            const Geometry::Vec2Df& perlinCoefficient10,
+            const Geometry::Vec2Df& perlinCoefficient01,
+            const Geometry::Vec2Df& perlinCoefficient11
+        );
     };
 }
 

@@ -23,4 +23,6 @@ namespace Input
 {
     const Event::Event::Type MoveEvent::Type = "move";
     const Event::Event::Type CameraEvent::Type = "camera";
+    const Event::Event::Type ActionEvent::Type = "action";
+    const Event::Event::Type StopActionEvent::Type = "stop-action";
 }

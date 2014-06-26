@@ -86,37 +86,64 @@ namespace World
 
         baseIndex += leavesLength;
 
-        // Building leaves
-        for (unsigned int i = 0; i < leavesLength; i++)
+        if (form_.compare("cubique") == 0)
         {
-            const Vec2Df& p1 = leavesBase[i];
-            const Vec2Df& p2 = leavesBase[(i + 1) % leavesLength];
+            // Building leaves
+            for (unsigned int i = 0; i < leavesLength; i++)
+            {
+                const Vec2Df& p1 = leavesBase[i];
+                const Vec2Df& p2 = leavesBase[(i + 1) % leavesLength];
 
-            vertices.push_back(Vec3Df(p1.getX(), p1.getY(), trunkHeight_));
-            vertices.push_back(Vec3Df(p2.getX(), p2.getY(), trunkHeight_));
-            vertices.push_back(Vec3Df(p2.getX(), p2.getY(), trunkHeight_ + leavesHeight_));
-            vertices.push_back(Vec3Df(p1.getX(), p1.getY(), trunkHeight_ + leavesHeight_));
+                vertices.push_back(Vec3Df(p1.getX(), p1.getY(), trunkHeight_));
+                vertices.push_back(Vec3Df(p2.getX(), p2.getY(), trunkHeight_));
+                vertices.push_back(Vec3Df(p2.getX(), p2.getY(), trunkHeight_ + leavesHeight_));
+                vertices.push_back(Vec3Df(p1.getX(), p1.getY(), trunkHeight_ + leavesHeight_));
 
-            faces.push_back(Face(baseIndex, baseIndex + 1, baseIndex + 2, leavesColor_));
-            faces.push_back(Face(baseIndex, baseIndex + 2, baseIndex + 3, leavesColor_));
-            baseIndex += 4;
+                faces.push_back(Face(baseIndex, baseIndex + 1, baseIndex + 2, leavesColor_));
+                faces.push_back(Face(baseIndex, baseIndex + 2, baseIndex + 3, leavesColor_));
+                baseIndex += 4;
+            }
+
+            // Building leaves top
+            for (unsigned int i = 0; i < leavesLength; i++)
+            {
+                const Vec2Df& point = leavesBase[i];
+                vertices.push_back(Vec3Df(point.getX(), point.getY(), trunkHeight_ + leavesHeight_));
+            }
+
+            for (unsigned int currentIndex = 1; currentIndex < leavesLength - 1; currentIndex++)
+            {
+                faces.push_back(
+                    Face(
+                        baseIndex,
+                        baseIndex + currentIndex,
+                        baseIndex + currentIndex + 1,
+                        leavesColor_
+                    )
+                );
+            }
         }
-
-        // Building leaves top
-        for (unsigned int i = 0; i < leavesLength; i++)
+        else
         {
-            const Vec2Df& point = leavesBase[i];
-            vertices.push_back(Vec3Df(point.getX(), point.getY(), trunkHeight_ + leavesHeight_));
-        }
+            // Building leaves
+            Vec2Df center;
+            for (unsigned int i = 0; i < leavesLength; i++)
+            {
+                center += leavesBase[i];
+            }
+            center /= leavesLength;
+            for (unsigned int i = 0; i < leavesLength; i++)
+            {
+                const Vec2Df& p1 = leavesBase[i];
+                const Vec2Df& p2 = leavesBase[(i + 1) % leavesLength];
 
-        for (unsigned int currentIndex = 1; currentIndex < leavesLength - 1; currentIndex++)
-        {
-            faces.push_back(Face(
-                                baseIndex,
-                                baseIndex + currentIndex,
-                                baseIndex + currentIndex + 1,
-                                leavesColor_
-                            ));
+                vertices.push_back(Vec3Df(p1.getX(), p1.getY(), trunkHeight_));
+                vertices.push_back(Vec3Df(p2.getX(), p2.getY(), trunkHeight_));
+                vertices.push_back(Vec3Df(center.getX(), center.getY(), trunkHeight_ + leavesHeight_));
+
+                faces.push_back(Face(baseIndex, baseIndex + 1, baseIndex + 2, leavesColor_));
+                baseIndex += 3;
+            }
         }
 
         model_ = Model3D(vertices, faces);

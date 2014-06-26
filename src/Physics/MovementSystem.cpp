@@ -60,10 +60,10 @@ namespace Physics
             Ecs::World::ComponentGroupCollection::iterator group;
             for (group = groups.begin(); group != groups.end(); ++group)
             {
-
-                Vec3Df movement = getMovement(*getWorld(), *group, delay);
-                bool hasCollision = getWorld()->hasComponent(group->getEntity(), CollisionComponent::Type);
-                bool hasInput = getWorld()->hasComponent(group->getEntity(), Input::PlayerComponent::Type);
+                Threading::ConcurrentWriter<Ecs::World> world = getWorld();
+                Vec3Df movement = getMovement(*world, *group, delay);
+                bool hasCollision = world->hasComponent(group->getEntity(), CollisionComponent::Type);
+                bool hasInput = world->hasComponent(group->getEntity(), Input::PlayerComponent::Type);
 
                 Threading::ConcurrentWriter<PositionComponent> positionComponent =
                     Threading::getConcurrentWriter<Ecs::Component, PositionComponent>(group->getComponent(PositionComponent::Type));

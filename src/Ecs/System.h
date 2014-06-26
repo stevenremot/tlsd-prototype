@@ -44,6 +44,11 @@ namespace Ecs
             return world_.getWriter();
         }
 
+        Threading::ConcurrentRessource<World>& getWorldRessource()
+        {
+            return world_;
+        }
+
     private:
         Threading::ConcurrentRessource<World>& world_;
     };

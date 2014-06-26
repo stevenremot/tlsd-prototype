@@ -25,6 +25,9 @@
 #include "../Geometry/PositionComponent.h"
 #include "GroundCollisionBody.h"
 #include "EntityPositionChangedEvent.h"
+#include "../Character/HarmComponent.h"
+#include "../Character/StatisticsComponent.h"
+#include "../Character/HurtEvent.h"
 
 using Ecs::ComponentCreatedEvent;
 using Ecs::ComponentGroup;
@@ -32,14 +35,14 @@ using Ecs::World;
 using Geometry::PositionComponent;
 using Geometry::Vec3Df;
 using Geometry::Vec2Df;
+using Threading::ConcurrentRessource;
+using Threading::ConcurrentReader;
+using Threading::ConcurrentWriter;
+using Threading::getConcurrentReader;
+using Threading::getConcurrentWriter;
 
 namespace Physics
 {
-    Vec2Df getPosition2D(Vec3Df pos)
-    {
-        return Vec2Df(pos.getX(), pos.getY());
-    }
-
     void CollisionSystem::run()
     {
         // might serve for mesh intersections
@@ -57,109 +60,174 @@ namespace Physics
 
         ComponentGroup prototype(types);
         World::ComponentGroupCollection groups = getWorld()->getComponents(prototype);
-
-        World::ComponentGroupCollection::iterator group;
-        for (group = groups.begin(); group != groups.end(); ++group)
+        try
         {
-            Ecs::Entity movingEntity = group->getEntity();
-
-            // do the collidable entity research before using the concurrent writer
-            ComponentGroup::ComponentTypeCollection types2;
-            types2.insert(CollisionComponent::Type);
-            types2.insert(PositionComponent::Type);
-            ComponentGroup prototype2(types2);
-            World::ComponentGroupCollection groups2 = getWorld()->getComponents(prototype2);
-            World::ComponentGroupCollection::iterator group2;
-
-            Threading::ConcurrentWriter<PositionComponent> positionComponent =
-                Threading::getConcurrentWriter<Ecs::Component, PositionComponent>(
-                    group->getComponent(PositionComponent::Type)
-                );
-
-            // might serve for mesh collisions
-            Threading::ConcurrentWriter<MovementComponent> movementComponent =
-                Threading::getConcurrentWriter<Ecs::Component, MovementComponent>(
-                    group->getComponent(MovementComponent::Type)
-                );
-
-            Threading::ConcurrentReader<CollisionComponent> movingCollisionComponent =
-                Threading::getConcurrentReader<Ecs::Component, CollisionComponent>(
-                    group->getComponent(CollisionComponent::Type)
-                );
-
-            Vec3Df positionVector = positionComponent->getPosition();
-            // might serve for mesh collisions
-            Vec3Df movementVector = movementComponent->getVelocity() * movementFactor;
-
-            bool collisionSlide = false;
-
-            for (group2 = groups2.begin(); group2 != groups2.end(); ++group2)
+            World::ComponentGroupCollection::iterator group;
+            for (group = groups.begin(); group != groups.end(); ++group)
             {
-                if (group2->getEntity() == movingEntity)
-                    continue;
+                Ecs::Entity movingEntity = group->getEntity();
 
-                Threading::ConcurrentReader<CollisionComponent> collisionComponent =
-                    Threading::getConcurrentReader<Ecs::Component, CollisionComponent>(
-                        group2->getComponent(CollisionComponent::Type)
-                    );
+                // do the collidable entity research before using the concurrent writer
+                ComponentGroup::ComponentTypeCollection types2;
+                types2.insert(CollisionComponent::Type);
+                types2.insert(PositionComponent::Type);
+                ComponentGroup prototype2(types2);
+                World::ComponentGroupCollection groups2 = getWorld()->getComponents(prototype2);
+                World::ComponentGroupCollection::iterator group2;
 
-                if (collisionComponent->getCollisionBody().getType() == GroundCollisionBody::Type)
+                bool hasStats = getWorld()->hasComponent(
+                                    movingEntity,
+                                    Character::StatisticsComponent::Type
+                                );
+
+                ConcurrentRessource<Ecs::Component> positionComponentRessource =
+                    group->getComponent(PositionComponent::Type);
+
+                ConcurrentRessource<Ecs::Component> movementComponentRessource =
+                    group->getComponent(MovementComponent::Type);
+
+                ConcurrentRessource<Ecs::Component> movingCollisionComponentRessource =
+                    group->getComponent(CollisionComponent::Type);
+
+                bool collisionSlide = false;
+
+                for (group2 = groups2.begin(); group2 != groups2.end(); ++group2)
                 {
-                    Threading::ConcurrentReader<PositionComponent> groundPositionComponent =
-                        Threading::getConcurrentReader<Ecs::Component, PositionComponent>(
-                            group2->getComponent(PositionComponent::Type)
+                    if (group2->getEntity() == movingEntity)
+                        continue;
+
+                    bool hasHarm = getWorld()->hasComponent(
+                                       group2->getEntity(),
+                                       Character::HarmComponent::Type
+                                   );
+
+                    ConcurrentWriter<PositionComponent> positionComponent =
+                        getConcurrentWriter<Ecs::Component, PositionComponent>(
+                            positionComponentRessource
                         );
 
-                    const GroundCollisionBody& collBody =
-                        static_cast<const GroundCollisionBody&>(collisionComponent->getCollisionBody());
+                    // might serve for mesh collisions
+                    ConcurrentWriter<MovementComponent> movementComponent =
+                        getConcurrentWriter<Ecs::Component, MovementComponent>(
+                            movementComponentRessource
+                        );
 
-                    Vec2Df pos2d = getPosition2D(positionVector - groundPositionComponent->getPosition());
-                    if (collBody.isOnChunk(pos2d))
+                    ConcurrentReader<CollisionComponent> movingCollisionComponent =
+                        getConcurrentReader<Ecs::Component, CollisionComponent>(
+                            movingCollisionComponentRessource
+                        );
+
+                    Vec3Df positionVector = positionComponent->getPosition();
+                    // might serve for mesh collisions
+                    Vec3Df movementVector = movementComponent->getVelocity() * movementFactor;
+
+                    ConcurrentReader<CollisionComponent> collisionComponent =
+                        getConcurrentReader<Ecs::Component, CollisionComponent>(
+                            group2->getComponent(CollisionComponent::Type)
+                        );
+
+                    if (collisionComponent->getCollisionBody().getType() == GroundCollisionBody::Type)
                     {
-                        float height = collBody.getHeight(pos2d);
-                        if (positionVector.getZ() < height)
+                        ConcurrentReader<PositionComponent> groundPositionComponent =
+                            getConcurrentReader<Ecs::Component, PositionComponent>(
+                                group2->getComponent(PositionComponent::Type)
+                            );
+
+                        const GroundCollisionBody& collBody =
+                            static_cast<const GroundCollisionBody&>(collisionComponent->getCollisionBody());
+
+                        Vec2Df pos2d = (positionVector - groundPositionComponent->getPosition()).getHorizontalComponent();
+                        if (collBody.isOnChunk(pos2d))
                         {
-                            positionVector.setZ(height);
+                            float height = collBody.getHeight(pos2d);
+                            if (positionVector.getZ() < height)
+                            {
+                                positionVector.setZ(height);
+                                positionComponent->setPosition(positionVector);
+                            }
+                        }
+                    }
+                    else if (collisionComponent->getCollisionBody().getType() == Model3DCollisionBody::Type)
+                    {
+                        const AABBCollisionBody& movingBody =
+                            static_cast<const AABBCollisionBody&>(
+                                movingCollisionComponent->getCollisionBody()
+                            );
+
+                        const Model3DCollisionBody& collBody =
+                            static_cast<const Model3DCollisionBody&>(
+                                collisionComponent->getCollisionBody()
+                            );
+
+                        if (engine_.getAABBAgainstModel3DCollisionResponse(
+                                    movingBody,
+                                    collBody,
+                                    positionVector,
+                                    movementVector))
+                        {
                             positionComponent->setPosition(positionVector);
+                            // TODO: manage also vertical velocity
+                            Vec3Df newVelocity = movementVector/movementFactor;
+                            movementComponent->setVelocity(newVelocity);
+
+                            collisionSlide = true;
+                        }
+                    }
+                    else if (collisionComponent->getCollisionBody().getType() == AABBCollisionBody::Type)
+                    {
+                        ConcurrentReader<PositionComponent> positionComponent =
+                            getConcurrentReader<Ecs::Component, PositionComponent>(
+                                group2->getComponent(PositionComponent::Type)
+                            );
+
+                        const AABBCollisionBody& movingBody =
+                            static_cast<const AABBCollisionBody&>(
+                                movingCollisionComponent->getCollisionBody()
+                            );
+
+                        const AABBCollisionBody& collBody =
+                            static_cast<const AABBCollisionBody&>(
+                                collisionComponent->getCollisionBody()
+                            );
+
+                        if (hasStats && hasHarm &&
+                                engine_.getAABBAgainstAABBCollisionResponse(
+                                    movingBody,
+                                    collBody,
+                                    positionVector,
+                                    positionComponent->getPosition()
+                                )
+                           )
+                        {
+                            eventQueue_ << new Character::HurtEvent(
+                                            group2->getEntity(),
+                                            movingEntity
+                                        );
                         }
                     }
                 }
-                else if (collisionComponent->getCollisionBody().getType() == Model3DCollisionBody::Type)
+
+                float tweenCoeff = 0.1;
+
+                if (!collisionSlide)
                 {
-                    const AABBCollisionBody& movingBody =
-                        static_cast<const AABBCollisionBody&>(
-                            movingCollisionComponent->getCollisionBody()
-                        );
+                    ConcurrentWriter<MovementComponent> movementComponent
+                        = getConcurrentWriter<Ecs::Component, MovementComponent>(movementComponentRessource);
 
-                    const Model3DCollisionBody& collBody =
-                        static_cast<const Model3DCollisionBody&>(
-                            collisionComponent->getCollisionBody()
-                        );
-
-                    if (engine_.getAABBAgainstModel3DCollisionResponse(
-                            movingBody,
-                            collBody,
-                            positionVector,
-                            movementVector))
-                    {
-                        positionComponent->setPosition(positionVector);
-                        // TODO: manage also vertical velocity
-                        Vec3Df newVelocity = movementVector/movementFactor;
-                        movementComponent->setVelocity(newVelocity);
-
-                        collisionSlide = true;
-                    }
+                    movementComponent->setVelocity(
+                        movementComponent->getBaseVelocity()*tweenCoeff + movementComponent->getVelocity()*(1.0-tweenCoeff)
+                    );
                 }
+
+                eventQueue_ << new EntityPositionChangedEvent(
+                                movingEntity,
+                                getConcurrentReader<Ecs::Component, PositionComponent>
+                                (positionComponentRessource)->getPosition()
+                            );
             }
-
-            float tweenCoeff = 0.1;
-
-            if (!collisionSlide)
-                movementComponent->setVelocity(
-                                               movementComponent->getBaseVelocity()*tweenCoeff + movementComponent->getVelocity()*(1.0-tweenCoeff)
-                                               );
-
-            eventQueue_ << new EntityPositionChangedEvent(movingEntity, positionComponent->getPosition());
+        }
+        catch(const Ecs::World::NoEntityException& e)
+        {
         }
     }
 }

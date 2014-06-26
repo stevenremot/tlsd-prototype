@@ -22,6 +22,7 @@
 
 #include <list>
 #include <map>
+#include <set>
 #include <exception>
 
 #include "Entity.h"
@@ -80,9 +81,17 @@ namespace Ecs
          */
         class AlreadySetComponentException: public std::exception
         {
-            const char * what() const throw()
+            const char* what() const throw()
             {
                 return "Trying to add to an entity a component it already has.";
+            }
+        };
+
+        class NoEntityException: public std::exception
+        {
+            const char* chat() const throw()
+            {
+                return "Trying to acces a non-existing entity (Probably a dead noob).";
             }
         };
 
@@ -91,6 +100,8 @@ namespace Ecs
          *
          */
          World(Event::EventQueue& eventQueue):
+             components_(),
+             entityIndex_(),
              eventQueue_(eventQueue)
              {}
 
@@ -150,6 +161,11 @@ namespace Ecs
         void addComponent(const Entity& entity, Component* component);
 
         /**
+         * Return true if the world has this entity, false if it has been removed.
+         */
+        bool hasEntity(const Entity& entity) const;
+
+        /**
          * Return a ComponentGroup filled with entity and matching components.
          *
          * @throw DoesNotSatisfyException when entity's components does not match
@@ -186,6 +202,7 @@ namespace Ecs
         typedef std::list< Threading::ConcurrentRessource<Component> > ComponentCollection;
 
         std::map< Entity, ComponentCollection > components_;
+        std::map< Component::Type, std::set< Entity > > entityIndex_;
 
         Event::EventQueue& eventQueue_;
     };

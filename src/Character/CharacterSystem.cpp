@@ -22,8 +22,12 @@
 #include "MoveAction.h"
 #include "StopAction.h"
 #include "LookAtAction.h"
+#include "HandAction.h"
+#include "DieAction.h"
 #include "ActionPerformedEvent.h"
 #include "CharacterComponent.h"
+#include "GroupComponent.h"
+#include "EntityCreator.h"
 #include "../Input/PlayerComponent.h"
 #include "../Physics/MovementComponent.h"
 #include "../Physics/EntityRotationChangedEvent.h"
@@ -34,6 +38,11 @@
 
 using Geometry::Vec2Df;
 using Geometry::Vec3Df;
+using Threading::ConcurrentRessource;
+using Threading::ConcurrentReader;
+using Threading::ConcurrentWriter;
+using Threading::getConcurrentReader;
+using Threading::getConcurrentWriter;
 
 namespace Character
 {
@@ -54,93 +63,185 @@ namespace Character
 
             if (event != NULL)
             {
+                ConcurrentWriter<Ecs::World> world = getWorld();
                 const ActionPerformedEvent& actionEvent =
                     dynamic_cast<const ActionPerformedEvent&>(*event);
 
                 const Ecs::Entity& entity = actionEvent.getEntity();
                 const Character::Action& action = actionEvent.getAction();
 
-                Ecs::ComponentGroup::ComponentTypeCollection types;
-                types.insert(CharacterComponent::Type);
-                types.insert(Geometry::RotationComponent::Type);
-                types.insert(Physics::MovementComponent::Type);
-                Ecs::ComponentGroup prototype(types);
-                Ecs::ComponentGroup group =
-                    getWorld()->getEntityComponents(entity, prototype);
+                bool isGroup = world->hasComponent(entity, GroupComponent::Type);
 
-                bool hasPlayer = getWorld()->hasComponent(entity, Input::PlayerComponent::Type);
-
-                Threading::ConcurrentReader<CharacterComponent> charComponent =
-                    Threading::getConcurrentReader<Ecs::Component, CharacterComponent>(
-                        group.getComponent(CharacterComponent::Type)
-                    );
-
-                Threading::ConcurrentWriter<Geometry::RotationComponent> rotComponent =
-                    Threading::getConcurrentWriter<Ecs::Component, Geometry::RotationComponent>(
-                        group.getComponent(
-                            Geometry::RotationComponent::Type
-                        )
-                    );
-
-                Threading::ConcurrentWriter<Physics::MovementComponent> movementComponent =
-                    Threading::getConcurrentWriter<Ecs::Component, Physics::MovementComponent>(
-                        group.getComponent(Physics::MovementComponent::Type)
-                    );
-
-                if (action.getType() == MoveAction::Type)
+                if (!isGroup)
                 {
-                    Vec2Df direction2D = dynamic_cast<const MoveAction&>(action).getDirection();
-                    movementComponent->setVelocity(direction2D * charComponent->getWalkingSpeed());
-                    movementComponent->setBaseVelocity(direction2D * charComponent->getWalkingSpeed());
+                    Ecs::ComponentGroup::ComponentTypeCollection types;
+                    types.insert(CharacterComponent::Type);
+                    types.insert(Geometry::RotationComponent::Type);
+                    types.insert(Physics::MovementComponent::Type);
+                    Ecs::ComponentGroup prototype(types);
+                    Ecs::ComponentGroup group =
+                        world->getEntityComponents(entity, prototype);
 
-                    outsideQueue_ << new Graphics::Render::AnimateActionEvent(entity, MoveAction::Type);
-                }
-                else if (action.getType() == StopAction::Type)
-                {
-                    movementComponent->setVelocity(Vec2Df(0,0));
-                    movementComponent->setBaseVelocity(Vec2Df(0,0));
+                    bool hasPlayer = world->hasComponent(entity, Input::PlayerComponent::Type);
+                    bool stopAttack = false;
 
-                    outsideQueue_ << new Graphics::Render::AnimateActionEvent(entity, StopAction::Type);
-                }
-                else if (action.getType() == LookAtAction::Type)
-                {
-                    const LookAtAction& lookAction =
-                        dynamic_cast<const LookAtAction&>(action);
+                    ConcurrentRessource<Ecs::Component> charComponentRessource =
+                        group.getComponent(CharacterComponent::Type);
 
-                    const float orientation = lookAction.getOrientation();
-                    const Vec3Df currentOrientation = rotComponent->getRotation();
-                    rotComponent->setRotation(
-                        Vec3Df(
-                            currentOrientation.getX(),
-                            currentOrientation.getY(),
-                            orientation
-                        )
-                    );
+                    ConcurrentRessource<Ecs::Component> rotComponentRessource =
+                        group.getComponent(Geometry::RotationComponent::Type);
 
-                    // update movement component orientation
-                    Vec2Df currentDirection =
-                        movementComponent->getVelocity().getHorizontalComponent();
-                    float currentAngle = currentDirection.getOrientation();
-                    currentAngle += orientation - currentOrientation.getZ();
-                    Vec2Df newDirection =
-                        Geometry::Vec2Df::fromPolar(currentAngle, currentDirection.getLength());
-                    movementComponent->setVelocity(newDirection);
+                    ConcurrentRessource<Ecs::Component> movComponentRessource =
+                        group.getComponent(Physics::MovementComponent::Type);
 
-                    // update base velocity orientation
-                    currentDirection =
-                        movementComponent->getBaseVelocity().getHorizontalComponent();
-                    currentAngle = currentDirection.getOrientation();
-                    currentAngle += orientation - currentOrientation.getZ();
-                    newDirection =
-                       Geometry::Vec2Df::fromPolar(currentAngle, currentDirection.getLength());
-                    movementComponent->setBaseVelocity(newDirection);
-
-                    if (!hasPlayer)
+                    if (action.getType() == MoveAction::Type)
                     {
-                        outsideQueue_ << new Physics::EntityRotationChangedEvent(
-                                          entity,
-                                          rotComponent->getRotation()
-                                      );
+                        ConcurrentReader<CharacterComponent> charComponent =
+                            getConcurrentReader<Ecs::Component, CharacterComponent>(
+                                charComponentRessource
+                            );
+
+                        ConcurrentWriter<Physics::MovementComponent> movComponent =
+                            getConcurrentWriter<Ecs::Component, Physics::MovementComponent>(
+                                movComponentRessource
+                            );
+
+                        Vec2Df direction2D = dynamic_cast<const MoveAction&>(action).getDirection();
+                        movComponent->setVelocity(direction2D * charComponent->getWalkingSpeed());
+                        movComponent->setBaseVelocity(direction2D * charComponent->getWalkingSpeed());
+
+                        outsideQueue_ << new Graphics::Render::AnimateActionEvent(entity, MoveAction::Type);
+                    }
+                    else if (action.getType() == StopAction::Type)
+                    {
+                        ConcurrentReader<CharacterComponent> charComponent =
+                            getConcurrentReader<Ecs::Component, CharacterComponent>(
+                                charComponentRessource
+                            );
+
+                        ConcurrentWriter<Physics::MovementComponent> movComponent =
+                            getConcurrentWriter<Ecs::Component, Physics::MovementComponent>(
+                                movComponentRessource
+                            );
+
+                        movComponent->setVelocity(Vec2Df(0,0));
+                        movComponent->setBaseVelocity(Vec2Df(0,0));
+                    }
+                    else if (action.getType() == LookAtAction::Type)
+                    {
+                        ConcurrentWriter<Geometry::RotationComponent> rotComponent =
+                            getConcurrentWriter<Ecs::Component, Geometry::RotationComponent>(
+                                rotComponentRessource
+                            );
+
+                        ConcurrentWriter<Physics::MovementComponent> movComponent =
+                            getConcurrentWriter<Ecs::Component, Physics::MovementComponent>(
+                                movComponentRessource
+                            );
+                        const LookAtAction& lookAction =
+                            dynamic_cast<const LookAtAction&>(action);
+
+                        const float orientation = lookAction.getOrientation();
+                        const Vec3Df currentOrientation = rotComponent->getRotation();
+                        rotComponent->setRotation(
+                            Vec3Df(
+                                currentOrientation.getX(),
+                                currentOrientation.getY(),
+                                orientation
+                            )
+                        );
+
+                        // update movement component orientation
+                        Vec2Df currentDirection =
+                            movComponent->getVelocity().getHorizontalComponent();
+                        float currentAngle = currentDirection.getOrientation();
+                        currentAngle += orientation - currentOrientation.getZ();
+                        Vec2Df newDirection =
+                            Geometry::Vec2Df::fromPolar(currentAngle, currentDirection.getLength());
+                        movComponent->setVelocity(newDirection);
+
+                        // update base velocity orientation
+                        currentDirection =
+                            movComponent->getBaseVelocity().getHorizontalComponent();
+                        currentAngle = currentDirection.getOrientation();
+                        currentAngle += orientation - currentOrientation.getZ();
+                        newDirection =
+                            Geometry::Vec2Df::fromPolar(currentAngle, currentDirection.getLength());
+                        movComponent->setBaseVelocity(newDirection);
+
+                        if (!hasPlayer)
+                        {
+                            outsideQueue_ << new Physics::EntityRotationChangedEvent(
+                                              entity,
+                                              rotComponent->getRotation()
+                                          );
+                        }
+                    }
+                    else if (action.getType() == StartHandAction::Type)
+                    {
+                        getConcurrentWriter<Ecs::Component, Physics::MovementComponent>(
+                            movComponentRessource
+                        )->setVelocity(
+                            Vec3Df(0, 0, 0)
+                        );
+                        outsideQueue_ << new Graphics::Render::AnimateActionEvent(entity, StartHandAction::Type);
+                        createAttackArea(world, entity);
+
+                        getConcurrentWriter<Ecs::Component, CharacterComponent>(
+                            charComponentRessource
+                        )->setAttacking(true);
+                    }
+                    else if (action.getType() == StopHandAction::Type)
+                    {
+                        stopAttack = true;
+                        outsideQueue_ << new Graphics::Render::AnimateActionEvent(entity, StopAction::Type);
+                    }
+
+                    if (stopAttack &&
+                            getConcurrentReader<Ecs::Component, CharacterComponent>(
+                                charComponentRessource
+                            )->isAttacking()
+                       )
+                    {
+                        world->removeEntity(
+                            getConcurrentReader<Ecs::Component, CharacterComponent>(
+                                charComponentRessource
+                            )->getAttackArea()
+                        );
+
+                        getConcurrentWriter<Ecs::Component, CharacterComponent>(
+                            charComponentRessource
+                        )->setAttacking(false);
+                    }
+                }
+                else
+                {
+                    std::list<Ecs::Entity> entitiesToRemove;
+                    {
+                        ConcurrentReader<GroupComponent> groupComponent =
+                            getConcurrentReader<Ecs::Component, GroupComponent>(
+                                world->getEntityComponent(entity, GroupComponent::Type)
+                            );
+
+
+                        if(action.getType() == DieAction::Type)
+                        {
+                            entitiesToRemove.push_back(entity);
+                            const GroupComponent::EntityCollection& entities =
+                                groupComponent->getEntities();
+                            GroupComponent::EntityCollection::const_iterator ent;
+
+                            for (ent = entities.begin(); ent != entities.end(); ++ent)
+                            {
+                                entitiesToRemove.push_back(*ent);
+                            }
+                        }
+                    }
+
+                    std::list<Ecs::Entity>::iterator ent;
+                    for (ent = entitiesToRemove.begin(); ent != entitiesToRemove.end(); ++ent)
+                    {
+                        world->removeEntity(*ent);
                     }
                 }
             }

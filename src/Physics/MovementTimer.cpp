@@ -18,14 +18,14 @@
 */
 
 #include "MovementTimer.h"
-#include "../Threading/Thread.h"
+#include "../Core/Time.h"
 
 namespace Physics
 {
     void MovementTimer::updateCurrentTime()
     {
         struct timespec time;
-        Threading::getTime(time);
+        Core::getTime(time);
         currentTime_ = time.tv_sec * 1000L + time.tv_nsec / 1000000L;
         delay_ = currentTime_ - lastTime_;
     }

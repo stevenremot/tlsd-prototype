@@ -21,26 +21,31 @@
 
 #include "CharacterComponent.h"
 #include "GroupComponent.h"
+#include "StatisticsComponent.h"
+#include "GroupMaxHealthChangedEvent.h"
+#include "GroupCurrentHealthChangedEvent.h"
+#include "../Input/PlayerComponent.h"
 
 namespace Character
 {
     void associateToGroup(
         Threading::ConcurrentWriter<Ecs::World>& world,
         const Ecs::Entity& entity,
-        const Ecs::Entity& group
+        const Ecs::Entity& group,
+        Event::EventQueue& eventQueue
     ) {
-        Threading::ConcurrentWriter<CharacterComponent> characterComponent =
-            Threading::getConcurrentWriter<Ecs::Component, CharacterComponent>(
-                world->getEntityComponent(entity, CharacterComponent::Type)
-            );
-
-        Threading::ConcurrentWriter<GroupComponent> groupComponent =
-            Threading::getConcurrentWriter<Ecs::Component, GroupComponent>(
-                world->getEntityComponent(group, GroupComponent::Type)
-            );
-
-        if (characterComponent->hasGroup())
+        unsigned int currentHealth = 0;
         {
+            Threading::ConcurrentWriter<CharacterComponent> characterComponent =
+                Threading::getConcurrentWriter<Ecs::Component, CharacterComponent>(
+                    world->getEntityComponent(entity, CharacterComponent::Type)
+                );
+
+            Threading::ConcurrentWriter<GroupComponent> groupComponent =
+                Threading::getConcurrentWriter<Ecs::Component, GroupComponent>(
+                    world->getEntityComponent(group, GroupComponent::Type)
+                );
+
             Ecs::Entity oldGroup = characterComponent->getGroup();
 
             if (oldGroup != group) {
@@ -51,9 +56,87 @@ namespace Character
 
                 oldGroupComponent->removeEntity(entity);
             }
+
+            characterComponent->setGroup(group);
+            groupComponent->addEntity(entity);
+            currentHealth = groupComponent->getCurrentHealth();
         }
 
-        characterComponent->setGroup(group);
-        groupComponent->addEntity(entity);
+        eventQueue << new GroupMaxHealthChangedEvent(
+            group,
+            computeMaxHealth(world, group)
+        );
+
+        eventQueue << new GroupCurrentHealthChangedEvent(
+            group,
+            currentHealth
+        );
+
+    }
+
+    unsigned int computeMaxHealth(
+        Threading::ConcurrentWriter<Ecs::World>& world,
+        const Ecs::Entity& group
+    ) {
+        unsigned int health = 0;
+
+        Threading::ConcurrentReader<GroupComponent> groupComponent =
+            Threading::getConcurrentReader<Ecs::Component, GroupComponent>(
+                world->getEntityComponent(group, GroupComponent::Type)
+            );
+
+        const GroupComponent::EntityCollection& entities =
+            groupComponent->getEntities();
+
+        GroupComponent::EntityCollection::const_iterator entity;
+        for (entity = entities.begin(); entity != entities.end(); ++entity)
+        {
+            Threading::ConcurrentReader<StatisticsComponent> statisticsComponent =
+                Threading::getConcurrentReader<Ecs::Component, StatisticsComponent>(
+                    world->getEntityComponent(*entity, StatisticsComponent::Type)
+                );
+
+            health += statisticsComponent->getStatistics().getHealth().getBaseValue();
+        }
+
+        return health;
+    }
+
+    void initGroupHealth(
+        Threading::ConcurrentWriter<Ecs::World>& world,
+        const Ecs::Entity& group
+    ) {
+        unsigned int maxHealth = computeMaxHealth(world, group);
+
+        Threading::ConcurrentWriter<GroupComponent> groupComponent =
+            Threading::getConcurrentWriter<Ecs::Component, GroupComponent>(
+                world->getEntityComponent(group, GroupComponent::Type)
+            );
+
+        groupComponent->setCurrentHealth(maxHealth);
+    }
+
+    bool isPlayerGroup(
+        Threading::ConcurrentWriter<Ecs::World>& world,
+        const Ecs::Entity& group
+    ) {
+        Threading::ConcurrentReader<GroupComponent> groupComponent =
+            Threading::getConcurrentReader<Ecs::Component, GroupComponent>(
+                world->getEntityComponent(group, GroupComponent::Type)
+            );
+
+        const GroupComponent::EntityCollection& entities =
+            groupComponent->getEntities();
+
+        GroupComponent::EntityCollection::const_iterator entity;
+        for (entity = entities.begin(); entity != entities.end(); ++entity)
+        {
+            if (world->hasComponent(*entity, Input::PlayerComponent::Type))
+            {
+                return true;
+            }
+        }
+
+        return false;
     }
 }

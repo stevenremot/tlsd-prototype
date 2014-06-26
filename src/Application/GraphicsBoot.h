@@ -25,9 +25,10 @@
 
 #include "../Graphics/Device.h"
 #include "../Graphics/Render/Scene.h"
+#include "../Graphics/Render/RenderSystem.h"
+#include "../Graphics/Gui/HudSystem.h"
 #include "../Input/IrrlichtInputReceiver.h"
 #include "../Input/PlayerSystem.h"
-#include "../Graphics/Render/RenderSystem.h"
 
 
 namespace Application
@@ -44,11 +45,13 @@ namespace Application
             scene_(NULL),
             receiver_(NULL),
             playerSystem_(NULL),
-            renderSystem_(NULL)
+            renderSystem_(NULL),
+            hudSystem_(NULL)
         {}
 
 
         virtual void start();
+
     protected:
 
         virtual void cleanUp();
@@ -59,6 +62,7 @@ namespace Application
         Input::IrrlichtInputReceiver* receiver_;
         Input::PlayerSystem* playerSystem_;
         Graphics::Render::RenderSystem* renderSystem_;
+        Graphics::Gui::HudSystem* hudSystem_;
     };
 }
 
