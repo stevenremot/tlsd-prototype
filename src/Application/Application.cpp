@@ -19,8 +19,6 @@
 
 #include "Application.h"
 
-#include <iostream> // TODO remove
-
 // TODO includes for group, remove later
 #include "../Character/GroupComponent.h"
 #include "../Character/EntityCreator.h"
@@ -145,8 +143,6 @@ namespace Application
             );
 
             createDangerousCube(world, Geometry::Vec3Df(160, 160, 0), 20);
-
-            std::cout << groupComponent->getCurrentHealth() << std::endl;
         }
 
         running_ = true;
