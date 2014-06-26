@@ -59,6 +59,7 @@ namespace World
             -0.4,
             0.4,
             2,
+            "cubique",
             trunkMin,
             trunkMax,
             leavesMin,

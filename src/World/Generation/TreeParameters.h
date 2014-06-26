@@ -44,6 +44,7 @@ namespace World
                 float minOffset,
                 float maxOffset,
                 unsigned int numberOfTypes,
+                std::string form,
                 std::vector<Graphics::Color> minTrunkColor,
                 std::vector<Graphics::Color> maxTrunkColor,
                 std::vector<Graphics::Color> minLeavesColor,
@@ -60,6 +61,7 @@ namespace World
                 minOffset_(minOffset),
                 maxOffset_(maxOffset),
                 numberOfTypes_(numberOfTypes),
+                form_(form),
                 minTrunkColor_(minTrunkColor),
                 maxTrunkColor_(maxTrunkColor),
                 minLeavesColor_(minLeavesColor),
@@ -167,6 +169,15 @@ namespace World
                 return numberOfTypes_;
             }
 
+            const std::string& getForm() const
+            {
+                return form_;
+            }
+            void setForm(const std::string& form)
+            {
+                form_ = form;
+            }
+
         private:
             float minTrunkHeight_;
             float maxTrunkHeight_;
@@ -179,6 +190,7 @@ namespace World
             float minOffset_;
             float maxOffset_;
             unsigned int numberOfTypes_;
+            std::string form_;
             std::vector<Graphics::Color> minTrunkColor_;
             std::vector<Graphics::Color> maxTrunkColor_;
             std::vector<Graphics::Color> minLeavesColor_;

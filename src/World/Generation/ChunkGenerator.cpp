@@ -247,6 +247,7 @@ namespace World
                 float leavesR = rng.getUniform(treeParameters.getMinLeavesColor()[typeNumber].getX(),treeParameters.getMaxLeavesColor()[typeNumber].getX());
                 float leavesG = rng.getUniform(treeParameters.getMinLeavesColor()[typeNumber].getY(),treeParameters.getMaxLeavesColor()[typeNumber].getY());
                 float leavesB = rng.getUniform(treeParameters.getMinLeavesColor()[typeNumber].getZ(),treeParameters.getMaxLeavesColor()[typeNumber].getZ());
+                std::string form = treeParameters.getForm();
                 const std::vector<Geometry::Polygon2D> cityPolygons = world_.getBiomeMap().getCityPolygons();
                 unsigned int length = cityPolygons.size();
                 // Test to see if the future tree will be in a city
@@ -278,6 +279,7 @@ namespace World
                         leavesHeight,
                         leavesWidth,
                         offset,
+                        form,
                         Graphics::Color(trunkR, trunkG, trunkB),
                         Graphics::Color(leavesR, leavesG, leavesB)
                     );

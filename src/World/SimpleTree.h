@@ -37,6 +37,7 @@ namespace World
             float leavesHeight,
             float leavesWidth,
             float offset,
+            std::string form,
             const Graphics::Color& trunkColor,
             const Graphics::Color& leavesColor
         ):
@@ -45,6 +46,7 @@ namespace World
             trunkWidth_(trunkWidth),
             leavesWidth_(leavesWidth),
             offset_(offset),
+            form_(form),
             trunkColor_(trunkColor),
             leavesColor_(leavesColor)
         {
@@ -56,6 +58,8 @@ namespace World
             leavesHeight_(tree.leavesHeight_),
             trunkWidth_(tree.trunkWidth_),
             leavesWidth_(tree.leavesWidth_),
+            offset_(tree.offset_),
+            form_(tree.form_),
             trunkColor_(tree.trunkColor_),
             leavesColor_(tree.leavesColor_)
         {
@@ -72,6 +76,7 @@ namespace World
         float trunkWidth_;
         float leavesWidth_;
         float offset_;
+        std::string form_;
         Graphics::Color trunkColor_;
         Graphics::Color leavesColor_;
 
