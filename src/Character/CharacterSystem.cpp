@@ -126,6 +126,9 @@ namespace Character
 
                         movComponent->setVelocity(Vec2Df(0,0));
                         movComponent->setBaseVelocity(Vec2Df(0,0));
+
+
+                        outsideQueue_ << new Graphics::Render::AnimateActionEvent(entity, StopAction::Type);
                     }
                     else if (action.getType() == LookAtAction::Type)
                     {
