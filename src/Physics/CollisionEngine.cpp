@@ -35,10 +35,12 @@ namespace Physics
         Geometry::Vec3Df& position,
         Geometry::Vec3Df& movementVector)
     {
-        if (movementVector.getLength() == 0)
-            return false;
+        Vec3Df lastPosition = position - movementVector;
 
-        AxisAlignedBoundingBox movingAABB = aabbBody.getTranslatedBoundingBox(position);
+        Vec3Df positionOnGround = position;
+        positionOnGround.setZ(lastPosition.getZ());
+
+        AxisAlignedBoundingBox movingAABB = aabbBody.getTranslatedBoundingBox(positionOnGround);
 
         if (!getAABBCollision(movingAABB, modelBody.getAABB()))
         {
@@ -48,11 +50,13 @@ namespace Physics
         const std::vector<Vec3Df>& vertices = modelBody.getModel().getVertices();
         const std::vector<Graphics::Render::Face>& faces = modelBody.getModel().getFaces();
 
-        Vec3Df lastPosition = position - movementVector;
         movingAABB = aabbBody.getTranslatedBoundingBox(lastPosition);
         Vec3Df ellipsoidRadius = movingAABB.getExtent() * 0.5;
         Vec3Df ellipsoidCenter = (movingAABB.getOrigin() + ellipsoidRadius) / ellipsoidRadius;
+
+        // TODO: 2 passes for horizontal and vertical velocity
         Vec3Df velocity = movementVector / ellipsoidRadius;
+        velocity.setZ(0);
 
         // computed beforehand
         float velocitySquaredLength = velocity.getSquaredLength();
@@ -184,20 +188,23 @@ namespace Physics
             }
         }
 
+        std::cout << "Base position : " << position << std::endl;
+        std::cout << "Base velocity : " << movementVector << std::endl;
+
         if (intersectionDistance < 10000)
         {
             computeCollisionResponse(intersectionPoint, intersectionDistance, ellipsoidCenter, velocity);
-
-            std::cout << "Position : " << position << std::endl;
 
             // back in the original space
             position = ellipsoidCenter*ellipsoidRadius;
             position.setZ(position.getZ() - ellipsoidRadius.getZ());
 
-            movementVector = velocity*ellipsoidRadius;
+            // TODO: add utility methods in Vec3D
+            Vec3Df horizontalMovementVector = velocity*ellipsoidRadius;
+            movementVector.setX(horizontalMovementVector.getX());
+            movementVector.setY(horizontalMovementVector.getY());
 
-            std::cout << "Collision found : " << intersectionPoint*ellipsoidRadius << " " << intersectionDistance << std::endl;
-            std::cout << "New position : " << position << std::endl;
+            std::cout << "Collision found : " << position << std::endl;
 
             return true;
         }
@@ -215,7 +222,7 @@ namespace Physics
     {
         float signedDistance = position.dot(normal) - planePoint.dot(normal);
         float dotProduct = normal.dot(velocity);
-        if (dotProduct != 0)
+        if (std::abs(dotProduct) > epsilon_)
         {
             t0 = (1 - signedDistance) / dotProduct;
             t1 = (-1 - signedDistance) / dotProduct;
@@ -253,16 +260,16 @@ namespace Physics
         float root = -1;
         float root2 = -1;
 
-        if (std::abs(a) < 1e-6)
+        if (std::abs(a) < epsilon_)
         {
-            if (std::abs(b) < 1e-6)
+            if (std::abs(b) < epsilon_)
                 return false;
             else
                 root = -c / b;
         }
         else if (delta < 0)
             return false;
-        else if (std::abs(delta) < 1e-6)
+        else if (std::abs(delta) < epsilon_)
             root = -b/(2*a);
         else
         {
@@ -356,7 +363,7 @@ namespace Physics
         Vec3Df intersectionNormal = ellipsoidCenter - intersectionPoint;
         intersectionNormal.normalize();
 
-        if (intersectionDistance < 1e-6)
+        if (intersectionDistance < epsilon_)
         {
             // at t=0, the ellipsoid is already stuck on the mesh
             if (velocity.dot(intersectionNormal) < 0)

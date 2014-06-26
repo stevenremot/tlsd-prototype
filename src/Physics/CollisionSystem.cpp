@@ -26,6 +26,9 @@
 #include "GroundCollisionBody.h"
 #include "EntityPositionChangedEvent.h"
 
+// TODO: remove
+#include <iostream>
+
 using Ecs::ComponentCreatedEvent;
 using Ecs::ComponentGroup;
 using Ecs::World;
@@ -90,7 +93,8 @@ namespace Physics
             Vec3Df positionVector = positionComponent->getPosition();
             // might serve for mesh collisions
             Vec3Df movementVector = movementComponent->getVelocity() * movementFactor;
-            movementVector.setZ(0);
+
+            bool collisionSlide = false;
 
             for (group2 = groups2.begin(); group2 != groups2.end(); ++group2)
             {
@@ -135,6 +139,7 @@ namespace Physics
                             collisionComponent->getCollisionBody()
                         );
 
+                    std::cout << positionVector << std::endl;
                     if (engine_.getAABBAgainstModel3DCollisionResponse(
                             movingBody,
                             collBody,
@@ -144,12 +149,20 @@ namespace Physics
                         positionComponent->setPosition(positionVector);
                         // TODO: manage also vertical velocity
                         Vec3Df newVelocity = movementVector/movementFactor;
-                        newVelocity.setZ(movementComponent->getVelocity().getZ());
                         movementComponent->setVelocity(newVelocity);
+
+                        collisionSlide = true;
                     }
                 }
             }
+            /*
+            float tweenCoeff = 0.1;
 
+            if (!collisionSlide)
+                movementComponent->setVelocity(
+                                               movementComponent->getBaseVelocity()*tweenCoeff + movementComponent->getVelocity()*(1-tweenCoeff)
+                                               );
+            */
             eventQueue_ << new EntityPositionChangedEvent(movingEntity, positionComponent->getPosition());
         }
     }

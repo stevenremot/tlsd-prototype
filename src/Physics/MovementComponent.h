@@ -64,9 +64,27 @@ namespace Physics
         {
             velocity_ = velocity;
         }
+/*
+        const Vec3Df& getBaseVelocity() const
+        {
+            return baseVelocity_;
+        }
 
+        void setBaseVelocity(const Vec3Df& velocity)
+        {
+            baseVelocity_ = velocity;
+        }
+*/
     private:
+        /**
+        *   Actual velocity used by the physics engine
+        */
         Vec3Df velocity_;
+
+        /**
+        *   Theoretical velocity from AI/Input
+        */
+        //Vec3Df baseVelocity_;
 
         static std::vector<Ecs::Component::Type> dependencies_;
     };

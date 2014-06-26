@@ -20,7 +20,8 @@ namespace Physics
     class CollisionEngine
     {
     public:
-        CollisionEngine()
+        CollisionEngine():
+            epsilon_(1e-3)
         {}
 
         /**
@@ -101,6 +102,8 @@ namespace Physics
             const float& intersectionDistance,
             Geometry::Vec3Df& ellipsoidCenter,
             Geometry::Vec3Df& velocity);
+
+        const float epsilon_;
     };
 }
 

@@ -196,16 +196,22 @@ namespace Geometry
         {
             T length = this->getLength();
 
-            x_ /= length;
-            y_ /= length;
-            z_ /= length;
+            if (length != 0)
+            {
+                x_ /= length;
+                y_ /= length;
+                z_ /= length;
+            }
         }
 
         inline Vec3D getNormalized() const
         {
             T length = this->getLength();
 
-            return Vec3D(x_/length, y_/length, z_/length);
+            if (length == 0)
+                return Vec3D();
+            else
+                return Vec3D(x_/length, y_/length, z_/length);
         }
 
     private:
