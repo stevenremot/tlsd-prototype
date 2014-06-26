@@ -211,7 +211,7 @@ namespace Character
 
         Geometry::Vec2Df offset = Geometry::Vec2Df::fromPolar(
             rotation.getZ(),
-            1.2
+            1.5
         ) - Geometry::Vec2Df(0.5, 0.5);
 
         Geometry::AxisAlignedBoundingBox bbox(
