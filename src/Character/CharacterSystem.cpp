@@ -182,7 +182,12 @@ namespace Character
                         getConcurrentWriter<Ecs::Component, Physics::MovementComponent>(
                             movComponentRessource
                         )->setVelocity(
-                            Vec3Df(0, 0, 0)
+                            Vec2Df(0, 0)
+                        );
+                        getConcurrentWriter<Ecs::Component, Physics::MovementComponent>(
+                            movComponentRessource
+                        )->setBaseVelocity(
+                            Vec2Df(0, 0)
                         );
                         outsideQueue_ << new Graphics::Render::AnimateActionEvent(entity, StartHandAction::Type);
                         createAttackArea(world, entity);

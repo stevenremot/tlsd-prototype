@@ -201,8 +201,6 @@ namespace Physics
             movementVector.setX(horizontalMovementVector.getX());
             movementVector.setY(horizontalMovementVector.getY());
 
-            std::cout << "Collision found : " << position << std::endl;
-
             return true;
         }
 
