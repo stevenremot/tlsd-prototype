@@ -144,6 +144,8 @@ namespace Physics
                             {
                                 positionVector.setZ(height);
                                 positionComponent->setPosition(positionVector);
+                                // apply the ground's reaction
+                                movementComponent->resetVerticalVelocity();
                             }
                         }
                     }

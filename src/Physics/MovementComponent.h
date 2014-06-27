@@ -84,6 +84,12 @@ namespace Physics
             baseVelocity_.setHorizontalComponent(hVelocity);
         }
 
+        void resetVerticalVelocity()
+        {
+            velocity_.setZ(0);
+            baseVelocity_.setZ(0);
+        }
+
     private:
         /**
         *   Actual velocity used by the physics engine
