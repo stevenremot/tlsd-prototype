@@ -20,6 +20,8 @@
 #include <cstdlib>
 #include <iostream>
 #include <vector>
+#include <pthread.h>
+#include <signal.h>
 
 #include "tests/animation.h"
 #include "tests/event.h"
@@ -46,6 +48,11 @@ using std::vector;
 
 int main()
 {
+    // Blocking broken pipes signals
+    sigset_t set;
+    sigemptyset(&set);
+    sigaddset(&set, SIGPIPE);
+    pthread_sigmask(SIG_BLOCK, &set, NULL);
 
     // EventTest::testEvents();
     // EcsTest::testEcs();

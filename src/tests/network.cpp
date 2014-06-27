@@ -61,7 +61,7 @@ namespace NetworkTest
         Server* server = new Server("1234", em.getEventQueue());
         string str = "127.0.0.1";
         Client* client1 = new Client (str,"1234",em.getEventQueue());
-        Client* client2 = new Client (str,"1234",em.getEventQueue());
+        // Client* client2 = new Client (str,"1234",em.getEventQueue());
         int i=0;
 
         DummyListener lis;

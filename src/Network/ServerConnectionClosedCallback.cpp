@@ -16,11 +16,16 @@
     along with The Lost Souls Downfall prototype.  If not, see
     <http://www.gnu.org/licenses/>.
 */
-#include "SendEvent.h"
-namespace Network{
 
-    void SendEvent(TCPSocket* Socket, Event2 event)
+#include "ServerConnectionClosedCallback.h"
+
+#include "Server.h"
+
+namespace Network
+{
+
+    void ServerConnectionClosedCallback::onClose()
     {
-        Socket->send(event.c_str(),event.size());
+        server_.closeClient(client_);
     }
 }

@@ -29,12 +29,15 @@
 
 namespace Network
 {
+    class Server;
+
     class AcceptClient : public Threading::ThreadableInterface
     {
     public:
         AcceptClient(
-            TCPServerSocket *Server,
-            std::vector<TCPSocket*> *ListeClient,
+            Server &Server,
+            Threading::ConcurrentRessource< std::vector<TCPSocket*> >& ListeClient,
+            std::vector<Threading::Thread*>& clientThreads,
             Event::EventQueue& queue
         );
 
@@ -42,9 +45,9 @@ namespace Network
 
     protected:
     private:
-        TCPServerSocket *Server_;
-        vector<TCPSocket*> *ListeClient_;
-        Threading::Thread* thread_;
+        Server& Server_;
+        Threading::ConcurrentRessource< vector<TCPSocket*> > ListeClient_;
+        std::vector<Threading::Thread*>& clientThreads_;
         Event::EventQueue& eventQueue_;
     };
 }

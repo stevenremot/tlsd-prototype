@@ -22,6 +22,7 @@
 
 #include "EventSerialization.h"
 #include "../Physics/EntityPositionChangedEvent.h"
+#include "ClientConnectionClosedCallback.h"
 
 namespace Network
 {
@@ -39,9 +40,9 @@ namespace Network
         {
             this->ServerSocket_ = new TCPSocket(ip, echoServPort_);
             this->listener_= new Listener(
-                (&this->ListeEvent_),
                 this->ServerSocket_,
-                eventQueue
+                eventQueue,
+                new ClientConnectionClosedCallback(*this)
             );
             connected_=true;
             // demultiplexeur_ = new Demultiplexeur(, ListeEvent_);

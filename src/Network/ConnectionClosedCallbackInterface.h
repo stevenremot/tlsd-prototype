@@ -16,11 +16,24 @@
     along with The Lost Souls Downfall prototype.  If not, see
     <http://www.gnu.org/licenses/>.
 */
-#include "SendEvent.h"
-namespace Network{
 
-    void SendEvent(TCPSocket* Socket, Event2 event)
+#ifndef NETWORK_CONNECTION_CLOSED_CALLBACK_INTERFACE_H
+#define NETWORK_CONNECTION_CLOSED_CALLBACK_INTERFACE_H
+
+namespace Network
+{
+    class ConnectionClosedCallbackInterface
     {
-        Socket->send(event.c_str(),event.size());
-    }
+    public:
+        virtual ~ConnectionClosedCallbackInterface() {}
+
+        virtual void onClose() = 0;
+    };
 }
+
+#endif
+
+// Emacs local variables
+// Local variables:
+// mode: c++
+// End:

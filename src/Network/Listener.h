@@ -23,6 +23,7 @@
 #include <iostream>
 
 #include "PracticalSocket.h"
+#include "ConnectionClosedCallbackInterface.h"
 #include "../Threading/Thread.h"
 #include "../Event/EventQueue.h"
 
@@ -31,17 +32,18 @@ namespace Network{
     {
     public:
         Listener(
-            std::vector<string>* ListeEvent,
             TCPSocket* client,
-            Event::EventQueue& eventQueue
+            Event::EventQueue& eventQueue,
+            ConnectionClosedCallbackInterface* conCloseCallback
         );
         virtual ~Listener();
         void run(void);
 
     private:
-        std::vector<string>* ListeEvent_;
         TCPSocket* client_;
         Event::EventQueue& eventQueue_;
+        ConnectionClosedCallbackInterface* conCloseCallback_;
+
 
         void handleMessage(const std::string& msg);
     };

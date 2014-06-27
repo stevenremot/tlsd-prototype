@@ -20,26 +20,34 @@
 #include "Demultiplexeur.h"
 namespace Network
 {
-    Demultiplexeur::Demultiplexeur(std::vector<TCPSocket*>* ListeClient,std::vector<string>* ListeEvent)
-    {
-        //ctor
-        this->ListeClient_=ListeClient;
-        this->ListeEvent_=ListeEvent;
-    }
+    Demultiplexeur::Demultiplexeur(
+        Threading::ConcurrentRessource< std::vector<TCPSocket*> >& ListeClient,
+        std::vector<string>* ListeEvent
+    ):  ListeClient_(ListeClient),
+        ListeEvent_(ListeEvent)
+    {}
 
     Demultiplexeur::~Demultiplexeur()
     {
-        this->ListeClient_=NULL;
-        this->ListeEvent_=NULL;
     }
 
     void Demultiplexeur::run(void)
     {
-        if(this->ListeClient_!=NULL && this->ListeEvent_!=NULL && this->ListeEvent_->size()!=0)
+        if(ListeEvent_ != NULL && ListeEvent_->size() != 0)
         {
-            for(unsigned int i=0; i < ListeClient_->size(); i++)
+            Threading::ConcurrentReader< std::vector<TCPSocket*> > clientList =
+                ListeClient_.getReader();
+
+            for(unsigned int i=0; i < clientList->size(); i++)
             {
-                SendEvent((*ListeClient_)[i],(ListeEvent_->front()));
+                try
+                {
+                    SendEvent((*clientList)[i],(ListeEvent_->front()));
+                }
+                catch(const SocketException& e)
+                {
+                    cout << "Test" << endl; // TODO remove
+                }
             }
             ListeEvent_->erase(ListeEvent_->begin());
         }

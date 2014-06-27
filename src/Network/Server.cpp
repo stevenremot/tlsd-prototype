@@ -29,6 +29,8 @@ using Threading::Thread;
 namespace Network
 {
     Server::Server(string  port, Event::EventQueue& eventQueue):
+        ListeClient_(new std::vector<TCPSocket*>()),
+        clientThreads_(),
         eventQueue_(eventQueue)
     {
 
@@ -36,7 +38,10 @@ namespace Network
 
         // this->serializer_=NULL;
         // this->deserializer_=NULL;
-        this->demultiplexeur_=new Demultiplexeur(&(this->ListeClient_),&(this->ListeEvent_));
+        this->demultiplexeur_=new Demultiplexeur(
+            ListeClient_,
+            &(this->ListeEvent_)
+        );
 
         unsigned short echoServPort = Socket::resolveService(port, "tcp");
         ///Creation ServerSocket
@@ -45,11 +50,16 @@ namespace Network
 
 
         /// Instancie la classe AcceptClient
-        acceptclient_ = new AcceptClient(servSock_,&ListeClient_, eventQueue);
+        acceptclient_ = new AcceptClient(
+            *this,
+            ListeClient_,
+            clientThreads_,
+            eventQueue
+        );
 
 
         /// Création de thread pour AcceptClient
-
+        // TODO try with only one
         threadables_.push_back(acceptclient_);
         threadables2_.push_back(demultiplexeur_);
         this->thread_=new Thread(threadables_, 2);
@@ -68,9 +78,14 @@ namespace Network
         delete thread2_;
         delete demultiplexeur_;
 
-        for (unsigned int i = 0; i < ListeClient_.size(); i++)
         {
-            delete ListeClient_[i];
+            Threading::ConcurrentReader< std::vector<TCPSocket*> > clientList =
+                ListeClient_.getReader();
+
+            for (unsigned int i = 0; i < clientList->size(); i++)
+            {
+                delete (*clientList)[i];
+            }
         }
 
         delete servSock_;
@@ -126,5 +141,26 @@ namespace Network
     void Server::unregisterListeners(Event::ListenerRegister& reg)
     {
         reg.remove(this);
+    }
+
+    void Server::closeClient(TCPSocket* client)
+    {
+        Threading::ConcurrentWriter< std::vector<TCPSocket*> > clientList =
+            ListeClient_.getWriter();
+
+        for (unsigned int i = 0; i < clientList->size(); i++)
+        {
+            if ((*clientList)[i] == client)
+            {
+                clientThreads_[i]->stop();
+                delete clientThreads_[i];
+                clientThreads_.erase(clientThreads_.begin() + i);
+
+
+                delete (*clientList)[i];
+                clientList->erase(clientList->begin() + i);
+                return;
+            }
+        }
     }
 }

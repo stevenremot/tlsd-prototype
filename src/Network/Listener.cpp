@@ -28,18 +28,17 @@ using std::endl;
 namespace Network
 {
     Listener::Listener(
-        vector<string>* ListeEvent,
         TCPSocket* client,
-        Event::EventQueue& eventQueue
-    ): ListeEvent_(ListeEvent),
-       client_(client),
-       eventQueue_(eventQueue)
+        Event::EventQueue& eventQueue,
+        ConnectionClosedCallbackInterface* conCloseCallback
+    ): client_(client),
+       eventQueue_(eventQueue),
+       conCloseCallback_(conCloseCallback)
     {}
 
     Listener::~Listener()
     {
-        this->ListeEvent_=NULL;
-        this->client_=NULL;
+        delete conCloseCallback_;
     }
 
     void Listener::run(void)
@@ -60,6 +59,7 @@ namespace Network
             {
                 cerr <<" Socket exception : " << e.what() <<  endl;
                 delete[] buffer;
+                conCloseCallback_->onClose();
                 return;
             }
 
@@ -67,6 +67,11 @@ namespace Network
             {
                 message += buffer;
                 handleMessage(message);
+            }
+            else if (recvMsgSize < 0)
+            {
+                cout << "Connection closed ?" << endl; // TODO remove
+                conCloseCallback_->onClose();
             }
 
             delete[] buffer;

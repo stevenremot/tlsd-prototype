@@ -24,13 +24,15 @@
 #include "Demultiplexeur.h"
 #include "../Threading/ThreadableInterface.h"
 #include "../Threading/Thread.h"
+#include "../Threading/ConcurrentRessource.h"
 #include "../Event/EventListenerInterface.h"
 #include "../Event/EventQueue.h"
 #include "../Event/ListenerRegister.h"
+#include "ServerConnectionClosedCallback.h"
 
 typedef string Port;
-typedef int Serializer;
-typedef int Deserializer;
+// typedef int Serializer;
+// typedef int Deserializer;
 
 namespace Network
 {
@@ -50,11 +52,18 @@ namespace Network
         void registerListeners(Event::ListenerRegister& reg);
         void unregisterListeners(Event::ListenerRegister& reg);
 
+        TCPServerSocket& getSocket()
+        {
+            return *servSock_;
+        }
+
+        friend class ServerConnectionClosedCallback;
 
     private:
         Threading::Thread* thread_, *thread2_;
         TCPServerSocket* servSock_;
-        vector<TCPSocket*> ListeClient_;
+        Threading::ConcurrentRessource< vector<TCPSocket*> > ListeClient_;
+        vector<Threading::Thread*> clientThreads_;
         vector<string> ListeEvent_;
         void Listen();
         void Accept();
@@ -65,6 +74,8 @@ namespace Network
         std::vector<ThreadableInterface*> threadables_;
         std::vector<ThreadableInterface*> threadables2_;
         Event::EventQueue& eventQueue_;
+
+        void closeClient(TCPSocket* client);
     };
 }
 #endif // SERVER_H

@@ -16,37 +16,50 @@
   along with The Lost Souls Downfall prototype.  If not, see
   <http://www.gnu.org/licenses/>.
 */
+
 #include "AcceptClient.h"
+#include "ServerConnectionClosedCallback.h"
+
+#include "Server.h"
 
 namespace Network
 {
     AcceptClient::AcceptClient(
-        TCPServerSocket *Server,
-        vector<TCPSocket*> *ListeClient,
+        Server &Server,
+        Threading::ConcurrentRessource< vector<TCPSocket*> >& ListeClient,
+        std::vector<Threading::Thread*>& clientThreads,
         Event::EventQueue& queue
     ): Server_(Server),
        ListeClient_(ListeClient),
-       thread_(NULL),
+       clientThreads_(clientThreads),
        eventQueue_(queue)
     {}
 
     void AcceptClient::run(void)
     {
-        TCPSocket *clntSock= this->Server_->accept();
+        TCPSocket *clntSock = Server_.getSocket().accept();
         // Create separate memory for client argument
 
         if(clntSock != NULL)
         {
+            Threading::ConcurrentWriter< vector<TCPSocket*> > clientList =
+                ListeClient_.getWriter();
+
             /// Ajouter des sémaphores
-            this->ListeClient_->push_back(clntSock);
+            clientList->push_back(clntSock);
             std::cout<<"Client accepte"<<std::endl;
-            Listener* listener=new Listener(NULL, ListeClient_->back(), eventQueue_);
+            Listener* listener=new Listener(
+                clientList->back(),
+                eventQueue_,
+                new ServerConnectionClosedCallback(Server_, clntSock)
+            );
             std::vector<ThreadableInterface*> threadables;
 
             threadables.push_back(listener);
 
-            this->thread_= new Threading::Thread(threadables, 2);
-            this->thread_->start();
+            Threading::Thread* thread = new Threading::Thread(threadables, 2);
+            thread->start();
+            clientThreads_.push_back(thread);
         }
         else
         {

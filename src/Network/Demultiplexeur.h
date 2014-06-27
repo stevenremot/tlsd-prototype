@@ -30,12 +30,16 @@ namespace Network {
     class Demultiplexeur :public ThreadableInterface
     {
     public:
-        Demultiplexeur(std::vector<TCPSocket*> *ListeClient,std::vector<string>* ListeEvent);
+        Demultiplexeur(
+            Threading::ConcurrentRessource< std::vector<TCPSocket*> >& ListeClient,
+            std::vector<string>* ListeEvent
+        );
+
         virtual ~Demultiplexeur();
         void run(void);
     protected:
     private:
-        std::vector<TCPSocket*>* ListeClient_;
+        Threading::ConcurrentRessource< std::vector<TCPSocket*> > ListeClient_;
         std::vector<string>* ListeEvent_;
     };
 
