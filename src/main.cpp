@@ -65,8 +65,9 @@ int main()
     // WorldGenerationTests::testCityCreation();
     // AnimationTest::testAnimation();
     // RenderTest::testRenderSystem(10);
-    Application::Application app;
-    app.start();
-    //NetworkTest::TestNetwork();
+    NetworkTest::TestNetwork();
+
+    // Application::Application app;
+    // app.start();
     return 0;
 }

@@ -19,75 +19,75 @@
 #include "Client.h"
 namespace Network
 {
-Client::Client(Ip ip, string port, EventQueue eventqueue)
-{
-
-    connected_ = false;
-
-    this->echoServPort_= Socket::resolveService(port, "tcp");
-    try
+    Client::Client(Ip ip, string port, Event::EventQueue& eventqueue)
     {
-        this->ServerSocket_=new TCPSocket(ip, echoServPort_);
-        this->listener_=new Listener((&this->ListeEvent_),this->ServerSocket_);
-        connected_=true;
-        //this->demultiplexeur=new Demultiplexeur(NULL,this->ListeEvent,ServerSocket);
+
+        connected_ = false;
+
+        this->echoServPort_= Socket::resolveService(port, "tcp");
+        try
+        {
+            this->ServerSocket_=new TCPSocket(ip, echoServPort_);
+            this->listener_=new Listener((&this->ListeEvent_),this->ServerSocket_);
+            connected_=true;
+            //this->demultiplexeur=new Demultiplexeur(NULL,this->ListeEvent,ServerSocket);
 
 
-    threadables_.push_back(listener_);
-    this->thread_=new Thread(threadables_, 2);
-    this->thread_->start();
+            threadables_.push_back(listener_);
+            this->thread_=new Thread(threadables_, 2);
+            this->thread_->start();
 
+        }
+        catch(SocketException &e)
+        {
+            connected_=false;
+            std::cerr << e.what() << std::endl;
+        }
     }
-    catch(SocketException &e)
+
+    Client::~Client()
     {
-        connected_=false;
-        std::cerr << e.what() << std::endl;
-    }
-}
-
-Client::~Client()
-{
-    //dtor
-}
-
-
-void Client::SetSerializer(Serializer *serializer)
-{
-
-    this->serializer_=serializer;
-
-}
-
-Serializer * Client::GetSerializer()
-{
-
-    return this->serializer_;
-
-}
-
-void Client::SetDeserializer(Deserializer * deserializer)
-{
-
-    this->deserializer_=deserializer;
-
-}
-
-Deserializer * Client::GetDeserializer()
-{
-
-    return this->deserializer_;
-
-}
-
-void Client::SendEvent(Event2 event)
-{
-
-    if(connected_==true)
-    {
-        ServerSocket_->send(event.c_str(),event.size()+1);
+        //dtor
     }
 
 
-}
+    void Client::SetSerializer(Serializer *serializer)
+    {
+
+        this->serializer_=serializer;
+
+    }
+
+    Serializer * Client::GetSerializer()
+    {
+
+        return this->serializer_;
+
+    }
+
+    void Client::SetDeserializer(Deserializer * deserializer)
+    {
+
+        this->deserializer_=deserializer;
+
+    }
+
+    Deserializer * Client::GetDeserializer()
+    {
+
+        return this->deserializer_;
+
+    }
+
+    void Client::SendEvent(Event2 event)
+    {
+
+        if(connected_==true)
+        {
+            ServerSocket_->send(event.c_str(),event.size()+1);
+        }
+
+
+    }
 
 }

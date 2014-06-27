@@ -25,12 +25,12 @@
 */
 #include "../Threading/Channel.h"
 #include "../Threading/Thread.h"
+#include "../Event/EventQueue.h"
 #include "Demultiplexeur.h"
 using Threading::ThreadableInterface;
 
 typedef string Port;
 typedef string Ip;
-typedef int EventQueue;
 typedef string Event2;
 typedef int Serializer;
 typedef int Deserializer;
@@ -38,28 +38,28 @@ typedef int Deserializer;
 namespace Network{
 class Client
 {
-    public:
-        Client(Ip ip, string port, EventQueue eventqueue);
-        virtual ~Client();
-        void SetSerializer(Serializer *serializer);
-        Serializer *GetSerializer();
-        void SetDeserializer(Deserializer *deserializer );
-        Deserializer *GetDeserializer();
-        void SendEvent(Event2 event);
+public:
+    Client(Ip ip, string port, Event::EventQueue& eventqueue);
+    virtual ~Client();
+    void SetSerializer(Serializer *serializer);
+    Serializer *GetSerializer();
+    void SetDeserializer(Deserializer *deserializer );
+    Deserializer *GetDeserializer();
+    void SendEvent(Event2 event);
 
-    protected:
-    private:
-        bool connected_;
-        Listener* listener_;
-        Thread* thread_;
-        vector<string> ListeEvent_;
-        std::vector<ThreadableInterface*> threadables_;
-        TCPSocket* ServerSocket_;
-        unsigned short echoServPort_;
-        void Listen();
-        Serializer *serializer_;
-        Deserializer *deserializer_;
-        Demultiplexeur* demultiplexeur_;
+protected:
+private:
+    bool connected_;
+    Listener* listener_;
+    Thread* thread_;
+    vector<string> ListeEvent_;
+    std::vector<ThreadableInterface*> threadables_;
+    TCPSocket* ServerSocket_;
+    unsigned short echoServPort_;
+    void Listen();
+    Serializer *serializer_;
+    Deserializer *deserializer_;
+    Demultiplexeur* demultiplexeur_;
 };
 }
 #endif // CLIENT_H
