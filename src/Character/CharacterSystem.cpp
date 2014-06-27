@@ -126,6 +126,9 @@ namespace Character
 
                         movComponent->setVelocity(Vec2Df(0,0));
                         movComponent->setBaseVelocity(Vec2Df(0,0));
+
+
+                        outsideQueue_ << new Graphics::Render::AnimateActionEvent(entity, StopAction::Type);
                     }
                     else if (action.getType() == LookAtAction::Type)
                     {
@@ -179,16 +182,18 @@ namespace Character
                     }
                     else if (action.getType() == StartHandAction::Type)
                     {
-                        getConcurrentWriter<Ecs::Component, Physics::MovementComponent>(
-                            movComponentRessource
-                        )->setVelocity(
-                            Vec2Df(0, 0)
-                        );
-                        getConcurrentWriter<Ecs::Component, Physics::MovementComponent>(
-                            movComponentRessource
-                        )->setBaseVelocity(
-                            Vec2Df(0, 0)
-                        );
+                        {
+                            ConcurrentWriter<Physics::MovementComponent> movComponent =
+                                getConcurrentWriter<Ecs::Component, Physics::MovementComponent>(
+                                    movComponentRessource
+                                );
+
+                            movComponent->setVelocity(
+                                Vec2Df(0, 0)
+                            );
+                            movComponent->setBaseVelocity(Vec2Df(0, 0));
+                        }
+
                         outsideQueue_ << new Graphics::Render::AnimateActionEvent(entity, StartHandAction::Type);
                         createAttackArea(world, entity);
 
