@@ -20,7 +20,11 @@
 #ifndef WORLD_BIOME_INTERFACE_H
 #define WORLD_BIOME_INTERFACE_H
 
+#include <string>
+#include <vector>
+
 #include "../Graphics/Color.h"
+#include "Generation/TreeParameters.h"
 
 namespace World
 {
@@ -34,6 +38,8 @@ namespace World
     class BiomeInterface
     {
     public:
+        typedef std::string Type;
+        BiomeInterface(const Type& type):type_(type){}
         /**
          * Return the transformed base-coefficient (transformation specific for a biome)
          *
@@ -43,7 +49,11 @@ namespace World
          * Return the principal color of a biome
          *
          */
-        virtual Graphics::Color getColor() =0;
+        virtual Graphics::Color getColor() = 0;
+        const Type& getType() { return type_; }
+        virtual const Generation::TreeParameters getTreeParameters() = 0;
+    private:
+        Type type_;
     };
 }
 

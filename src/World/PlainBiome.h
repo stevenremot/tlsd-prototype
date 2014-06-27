@@ -29,8 +29,11 @@ namespace World
     class PlainBiome : public BiomeInterface
     {
     public:
+        static const Type Type;
+        PlainBiome():BiomeInterface(Type){}
         virtual float transformCoefficient(float coefficient);
         virtual Graphics::Color getColor();
+        virtual const Generation::TreeParameters getTreeParameters();
     };
 }
 

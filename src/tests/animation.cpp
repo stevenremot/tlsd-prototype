@@ -1,3 +1,22 @@
+/*
+   This file is part of The Lost Souls Downfall prototype.
+
+    The Lost Souls Downfall prototype is free software: you can
+    redistribute it and/or modify it under the terms of the GNU
+    General Public License as published by the Free Software
+    Foundation, either version 3 of the License, or (at your option)
+    any later version.
+
+    The Lost Souls Downfall prototype is distributed in the hope that
+    it will be useful, but WITHOUT ANY WARRANTY; without even the
+    implied warranty of MERCHANTABILITY or FITNESS FOR A PARTICULAR
+    PURPOSE.  See the GNU General Public License for more details.
+
+    You should have received a copy of the GNU General Public License
+    along with The Lost Souls Downfall prototype.  If not, see
+    <http://www.gnu.org/licenses/>.
+*/
+
 #include "animation.h"
 
 #include <iostream>
@@ -15,8 +34,11 @@
 #include "../Geometry/RotationComponent.h"
 #include "../Graphics/Render/RenderableComponent.h"
 #include "../Graphics/Render/AnimationComponent.h"
+#include "../Graphics/Render/AnimateActionEvent.h"
+#include "../Character/MoveAction.h"
+#include "../Character/StopAction.h"
 
-using Graphics::Render::DummyActionEvent;
+using Graphics::Render::AnimateActionEvent;
 using Graphics::Render::Scene;
 using Graphics::Device;
 using Graphics::Render::RenderSystem;
@@ -31,18 +53,23 @@ using Geometry::PositionComponent;
 using Geometry::RotationComponent;
 using Graphics::Render::RenderableComponent;
 using Graphics::Render::AnimationComponent;
+using Geometry::Vec3Df;
 
 namespace AnimationTest
 {
     void DummyInputListener::call(const Event::Event& event)
     {
-        if (event.getType() == Input::MoveEvent::TYPE)
+        if (event.getType() == Input::MoveEvent::Type)
         {
             const Input::MoveEvent& me = static_cast<const Input::MoveEvent&>(event);
 
-            if (me.getDirection() == Input::Forward)
+            if (me.getDirection() == Geometry::Vec2Df(1,0))
             {
-                eventQueue_ << new DummyActionEvent(0,1); // entity 0, action 1
+                eventQueue_ << new AnimateActionEvent(0,Character::MoveAction::Type);
+            }
+            else if (me.getDirection() == Geometry::Vec2Df(0,0))
+            {
+                eventQueue_ << new AnimateActionEvent(0,Character::StopAction::Type);
             }
         }
     }
@@ -50,64 +77,65 @@ namespace AnimationTest
     void testAnimation()
     {
         Event::EventManager m;
-        Ecs::World w(m.getEventQueue());
+        Threading::ConcurrentRessource<Ecs::World> w(new Ecs::World(m.getEventQueue()));
 
         Device device(m.getEventQueue());
         Event::ListenerRegister& reg = m.getListenerRegister();
-        reg.put(Input::InputInitializedEvent::TYPE, &device);
+        reg.put(Input::InputInitializedEvent::Type, &device);
 
         DummyInputListener l(m.getEventQueue());
-        reg.put(Input::MoveEvent::TYPE, &l);
+        reg.put(Input::MoveEvent::Type, &l);
 
-        Scene scene;
-        reg.put(Graphics::Render::InitSceneEvent::TYPE, &scene);
-        reg.put(Input::CameraEvent::TYPE, &scene);
-        reg.put(Graphics::Render::RenderMeshFileEvent::TYPE, &scene);
-        reg.put(Graphics::Render::RenderModel3DEvent::TYPE, &scene);
-        reg.put(Graphics::Render::RenderAnimatedMeshFileEvent::TYPE, &scene);
-        reg.put(Graphics::Render::SetupAnimationEvent::TYPE, &scene);
-        reg.put(Graphics::Render::AnimateEvent::TYPE, &scene);
-        reg.put(Graphics::Render::UpdateAnimationEvent::TYPE, &scene);
+        Scene scene(m.getEventQueue());
+        scene.registerListeners(reg);
 
         IrrlichtInputReceiver receiver(m.getEventQueue());
-        reg.put(Input::InitInputEvent::TYPE, &receiver);
+        reg.put(Input::InitInputEvent::Type, &receiver);
 
         RenderSystem rs(w, m.getEventQueue());
-        reg.put(Ecs::ComponentCreatedEvent::TYPE, &rs);
+        reg.put(Ecs::ComponentCreatedEvent::Type, &rs);
 
         AnimationSystem as(w, m.getEventQueue());
-        reg.put(Ecs::ComponentCreatedEvent::TYPE, &as);
-        reg.put(Graphics::Render::DummyActionEvent::TYPE, &as);
+        as.registerListeners(reg);
 
-        std::vector<ThreadableInterface*> threadables, threadables2;
+        std::vector<ThreadableInterface*> threadables, threadables2, threadables3;
 
         // Device, Scene and InputReceiver use irrlicht engine, so they should be in the same thread
         threadables.push_back(&device);
         threadables.push_back(&scene);
         threadables.push_back(&receiver);
-        threadables.push_back(&as);
         Thread thread(threadables, 60);
 
         threadables2.push_back(&m);
-        Thread thread2(threadables2, 200);
+        Thread thread2(threadables2, 1000);
+
+        threadables3.push_back(&as);
+        Thread thread3(threadables3, 60);
 
         thread.start();
         thread2.start();
+        thread3.start();
 
         AnimationMap animMap;
         animMap[Graphics::Render::Idle] = AnimationParameters(5.0f, true, Graphics::Render::NoAnimation);
         animMap[Graphics::Render::Walk] = AnimationParameters(5.0f, true, Graphics::Render::NoAnimation);
 
-        std::map<unsigned int, AnimationType> animByAction;
-        animByAction[0] = Graphics::Render::Idle;
-        animByAction[1] = Graphics::Render::Walk;
+        std::map<Character::Action::Type, AnimationType> animByAction;
+        animByAction[Character::MoveAction::Type] = Graphics::Render::Walk;
+        animByAction[Character::StopAction::Type] = Graphics::Render::Idle;
 
         std::string meshFile = "ninja.b3d";
-        Ecs::Entity e = w.createEntity(0);
-        w.addComponent(e, new PositionComponent(Vec3Df()));
-        w.addComponent(e, new RotationComponent(Vec3Df()));
-        w.addComponent(e, new RenderableComponent(meshFile, ""));
-        w.addComponent(e, new AnimationComponent(animMap, animByAction));
+
+        Threading::ConcurrentWriter<Ecs::World> ww = w.getWriter();
+        for (int i = 0; i < 15; i++)
+        {
+            Ecs::Entity e = ww->createEntity();
+            ww->addComponent(e, new PositionComponent(Vec3Df(150+5*i,150,0)));
+            ww->addComponent(e, new RotationComponent(Vec3Df()));
+            ww->addComponent(e, new RenderableComponent(meshFile, ""));
+            ww->addComponent(e, new AnimationComponent(animMap, animByAction));
+        }
+
 
         int imax = 20 * 1;
         for (int i = 0; i < imax; i++)

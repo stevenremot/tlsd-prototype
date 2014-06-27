@@ -19,14 +19,23 @@
 
 #include "CoefficientsGenerator.h"
 
+// Uses intermediary variables for rng because of a strange clang bug that
+// outputs different values if we use rng.getUniform directly as function's
+// argument.
+
 namespace World
 {
     namespace Generation
     {
-        Geometry::Vec2Df generatePerlinCoefficient(Random::NumberGenerator& rng)
+        std::vector<Geometry::Vec2Df> generatePerlinCoefficient(Random::NumberGenerator& rng)
         {
-
-            return Geometry::Vec2Df(rng.getUniform(-1, 1), rng.getUniform(-1, 1));
+            std::vector<Geometry::Vec2Df> perlinCoefs;
+            float n1 = rng.getUniform(-1.0, 1.0), n2 = rng.getUniform(-1.0, 1.0);
+            perlinCoefs.push_back(Geometry::Vec2Df(n1, n2));
+            n1 = rng.getUniform(-1.0, 1.0);
+            n2 = rng.getUniform(-1.0, 1.0);
+            perlinCoefs.push_back(Geometry::Vec2Df(n1, n2));
+            return perlinCoefs;
 
         }
 
@@ -34,19 +43,36 @@ namespace World
         {
 
             GroundCoefficients groundCoefficients;
-            groundCoefficients.setCoefficient(1, 0, 0, rng.getUniform(-1, 1));
+            float n;
+            // Generate the first octave
+            n = rng.getUniform(-1.0, 1.0);
+            groundCoefficients.setCoefficient(1, 0, 0, n);
+            // Generate the second octave
             for (unsigned int i = 0; i < 2; i++)
             {
                 for (unsigned int j = 0; j < 2; j++)
                 {
-                    groundCoefficients.setCoefficient(2,i,j,rng.getUniform(-1,1));
+                    n = rng.getUniform(-1.0, 1.0);
+                    groundCoefficients.setCoefficient(
+                        2,
+                        i,
+                        j,
+                        n
+                    );
                 }
             }
+            // Generate the third octave
             for (unsigned int i = 0; i < 4; i++)
             {
                 for (unsigned int j = 0; j < 4; j++)
                 {
-                    groundCoefficients.setCoefficient(3,i,j,rng.getUniform(-1,1));
+                    n = rng.getUniform(-1.0, 1.0);
+                    groundCoefficients.setCoefficient(
+                        3,
+                        i,
+                        j,
+                        n
+                    );
                 }
             }
             return groundCoefficients;

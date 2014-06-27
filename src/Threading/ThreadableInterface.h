@@ -28,6 +28,7 @@ namespace Threading
     class ThreadableInterface
     {
     public:
+        virtual ~ThreadableInterface() {}
         /**
          * This method will be executed at each thread loop.
          */

@@ -1,3 +1,22 @@
+/*
+   This file is part of The Lost Souls Downfall prototype.
+
+    The Lost Souls Downfall prototype is free software: you can
+    redistribute it and/or modify it under the terms of the GNU
+    General Public License as published by the Free Software
+    Foundation, either version 3 of the License, or (at your option)
+    any later version.
+
+    The Lost Souls Downfall prototype is distributed in the hope that
+    it will be useful, but WITHOUT ANY WARRANTY; without even the
+    implied warranty of MERCHANTABILITY or FITNESS FOR A PARTICULAR
+    PURPOSE.  See the GNU General Public License for more details.
+
+    You should have received a copy of the GNU General Public License
+    along with The Lost Souls Downfall prototype.  If not, see
+    <http://www.gnu.org/licenses/>.
+*/
+
 #ifndef INPUT_IRRLICHTINPUTRECEIVER_H
 #define INPUT_IRRLICHTINPUTRECEIVER_H
 
@@ -9,6 +28,7 @@
 
 #include "../Event/EventManager.h"
 #include "../Threading/ThreadableInterface.h"
+#include "../Geometry/Vec2D.h"
 
 namespace Input
 {
@@ -18,10 +38,10 @@ namespace Input
     class InitInputEvent : public Event::Event
     {
     public:
-        static const Event::Type TYPE;
+        static const Event::Type Type;
 
         InitInputEvent(irr::gui::ICursorControl* cursorControl):
-            Event::Event(TYPE),
+            Event::Event(Type),
             cursorControl_(cursorControl)
         {}
 
@@ -37,10 +57,10 @@ namespace Input
     class InputInitializedEvent : public Event::Event
     {
     public:
-        static const Event::Type TYPE;
+        static const Event::Type Type;
 
         InputInitializedEvent(irr::IEventReceiver* receiver):
-            Event::Event(TYPE),
+            Event::Event(Type),
             receiver_(receiver)
         {}
 
@@ -76,6 +96,10 @@ namespace Input
         irr::core::array<irr::SKeyMap> keyMap_;
         irr::core::position2df centerCursor_, cursorPos_;
         bool cursorKeys_[irr::EKA_COUNT];
+        bool actions_[2];
+        bool lastActions_[2];
+
+        Geometry::Vec2Df lastDirection_;
 
         Event::EventQueue& eventQueue_;
     };

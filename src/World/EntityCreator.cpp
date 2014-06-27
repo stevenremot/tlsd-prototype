@@ -22,17 +22,17 @@
 #include "../Geometry/RotationComponent.h"
 #include "../Graphics/Render/RenderableComponent.h"
 #include "Ground.h"
-
-#include <iostream>
+#include "../Physics/GroundCollisionBody.h"
+#include "../Physics/Model3DCollisionBody.h"
+#include "../Physics/CollisionComponent.h"
 
 namespace World
 {
-	Ecs::SharedEntity createGround(World& world, int i, int j, Ecs::World& ecsWorld)
+    Core::SharedPtr<Ecs::EntityDescriptor> createGround(World& world, int i, int j)
 	{
-		Ecs::SharedEntity groundEntity = ecsWorld.createSharedEntity();
+        Core::SharedPtr<Ecs::EntityDescriptor> groundEntity(new Ecs::EntityDescriptor);
 
-		ecsWorld.addComponent(
-            groundEntity.getEntity(),
+		groundEntity->addComponent(
             new Geometry::PositionComponent(
                 Geometry::Vec3Df(
                     i*static_cast<int>(World::ChunkSize),
@@ -42,40 +42,87 @@ namespace World
             )
         );
 
-        ecsWorld.addComponent(
-            groundEntity.getEntity(),
+        groundEntity->addComponent(
             new Geometry::RotationComponent(
                 Geometry::Vec3Df(0, 0, 0)
             )
         );
 
-        ecsWorld.addComponent(
-            groundEntity.getEntity(),
-            new Graphics::Render::RenderableComponent(computeGroundModel(world, i, j))
+        Graphics::Render::Model3D model;
+        Physics::GroundCollisionBody* collBody = new Physics::GroundCollisionBody();
+        computeGroundModel(world, i, j, model, *collBody);
+
+        groundEntity->addComponent(
+            new Graphics::Render::RenderableComponent(model)
         );
 
-		return groundEntity;
-	}
+        groundEntity->addComponent(
+            new Physics::CollisionComponent(collBody)
+        );
 
-    Ecs::Entity createRoad(const RoadNetwork& road, Ecs::World& ecsWorld)
+        return groundEntity;
+    }
+
+    Core::SharedPtr<Ecs::EntityDescriptor> createRoad(const RoadNetwork& road)
     {
-        Ecs::Entity entity = ecsWorld.createEntity();
+        Core::SharedPtr<Ecs::EntityDescriptor> entity(new Ecs::EntityDescriptor);
 
-        ecsWorld.addComponent(
-            entity,
-            new Geometry::PositionComponent(Geometry::Vec3Df())
+        entity->addComponent(
+            new Geometry::PositionComponent(Geometry::Vec3Df(0.0, 0.0, 0.01))
+        );
+
+        entity->addComponent(
+            new Geometry::RotationComponent(Geometry::Vec3Df())
+        );
+
+        entity->addComponent(
+            new Graphics::Render::RenderableComponent(road.getModel())
         );
 
         return entity;
     }
 
-    Ecs::Entity createBuilding(const BuildingInterface& building, Ecs::World& ecsWorld)
+    Core::SharedPtr<Ecs::EntityDescriptor> createBuilding(const BuildingInterface& building)
     {
-        Ecs::Entity entity = ecsWorld.createEntity();
+        Core::SharedPtr<Ecs::EntityDescriptor> entity(new Ecs::EntityDescriptor);
 
-        ecsWorld.addComponent(
-            entity,
-            new Geometry::PositionComponent(Geometry::Vec3Df())
+        Geometry::Vec3Df pos = Geometry::Vec3Df(0.0, 0.0, 0.0);
+
+        entity->addComponent(
+            new Geometry::PositionComponent(pos)
+        );
+
+        entity->addComponent(
+            new Geometry::RotationComponent(Geometry::Vec3Df())
+        );
+
+        entity->addComponent(
+            new Graphics::Render::RenderableComponent(building.getModel())
+        );
+        entity->addComponent(
+            new Physics::CollisionComponent(new Physics::Model3DCollisionBody(building.getModel(), pos))
+        );
+
+        return entity;
+    }
+
+    Core::SharedPtr<Ecs::EntityDescriptor> createTree(const Geometry::Vec3Df& position, const TreeInterface& tree)
+    {
+        Core::SharedPtr<Ecs::EntityDescriptor> entity(new Ecs::EntityDescriptor);
+
+        entity->addComponent(
+            new Geometry::PositionComponent(position)
+        );
+
+        entity->addComponent(
+            new Geometry::RotationComponent(Geometry::Vec3Df())
+        );
+
+        entity->addComponent(
+            new Graphics::Render::RenderableComponent(tree.getModel())
+        );
+        entity->addComponent(
+            new Physics::CollisionComponent(new Physics::Model3DCollisionBody(tree.getModel(), position))
         );
 
         return entity;

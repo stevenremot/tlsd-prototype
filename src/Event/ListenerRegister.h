@@ -45,6 +45,11 @@ namespace Event
         void put(Event::Type type, EventListenerInterface* listener);
 
         /**
+         * Remove all the associations for a listener.
+         */
+        void remove(EventListenerInterface *listener);
+
+        /**
          * Return event listeners associated to type.
          */
         const EventListenerList getListeners(Event::Type type) const;

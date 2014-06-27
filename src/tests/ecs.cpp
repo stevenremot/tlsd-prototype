@@ -42,6 +42,11 @@ namespace EcsTest
                                                  message_(message)
         {}
 
+        virtual Component* clone() const
+        {
+            return new MessageComponent(message_);
+        }
+
         const string& getMessage() const
         {
             return message_;
@@ -69,6 +74,11 @@ namespace EcsTest
 
         DummyComponent(): Component(Type)
         {}
+
+        virtual Component* clone() const
+        {
+            return new DummyComponent();
+        }
 
         virtual const std::vector<Ecs::Component::Type>& getDependentComponents()
         {
@@ -100,7 +110,7 @@ namespace EcsTest
         for (group = groups.begin(); group != groups.end(); ++group)
         {
             cout << group->getEntity() << " says ";
-            cout << static_cast<MessageComponent &>(group->getComponent(MessageComponent::Type)).getMessage() << endl;
+            cout << dynamic_cast<const MessageComponent &>(*group->getComponent(MessageComponent::Type).getReader()).getMessage() << endl;
         }
     }
 

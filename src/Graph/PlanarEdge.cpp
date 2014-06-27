@@ -51,7 +51,7 @@ namespace Graph
 
     bool PlanarEdge::operator!=(const PlanarEdge& edge) const
     {
-        return firstNode_ != edge.firstNode_ &&
+        return firstNode_ != edge.firstNode_ ||
             secondNode_ != edge.secondNode_;
     }
 

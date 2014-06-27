@@ -41,11 +41,13 @@ namespace World
                     expansionNumber_(100),
                     minRoadLength_(5),
                     maxRoadLength_(15),
-                    minBuildingHeight_(2.0),
-                    maxBuildingHeight_(3.0),
-                    roadColor_(0.7, 0.7, 0.7),
-                    wallColor_(0.9, 0.9, 0.9),
-                    roofColor_(0.8, 0.2, 0.2)
+                    minBuildingHeight_(4.0),
+                    maxBuildingHeight_(20.0),
+                    roadColor_(0.3, 0.3, 0.3),
+                    wallColorMin_(0.8, 0.8, 0.8),
+                    wallColorMax_(1.0, 1.0, 0.8),
+                    roofColorMin_(0.8, 0.2, 0.2),
+                    roofColorMax_(0.6, 0.1, 0.1)
                 {}
 
                 float getRoadLength() const { return roadLength_; }
@@ -101,22 +103,40 @@ namespace World
                     roadColor_ = roadColor;
                 }
 
-                const Graphics::Color& getWallColor() const
+                const Graphics::Color& getWallColorMin() const
                 {
-                    return wallColor_;
+                    return wallColorMin_;
                 }
-                void setWallColor(const Graphics::Color& wallColor)
+                void setWallColorMin(const Graphics::Color& wallColorMin)
                 {
-                    wallColor_ = wallColor;
+                    wallColorMin_ = wallColorMin;
                 }
 
-                const Graphics::Color& getRoofColor() const
+                const Graphics::Color& getWallColorMax() const
                 {
-                    return roofColor_;
+                    return wallColorMax_;
                 }
-                void setRoofColor(const Graphics::Color& roofColor)
+                void setWallColorMax(const Graphics::Color& wallColorMax)
                 {
-                    roofColor_ = roofColor;
+                    wallColorMax_ = wallColorMax;
+                }
+
+                const Graphics::Color& getRoofColorMin() const
+                {
+                    return roofColorMin_;
+                }
+                void setRoofColorMin(const Graphics::Color& roofColorMin)
+                {
+                    roofColorMin_ = roofColorMin;
+                }
+
+                const Graphics::Color& getRoofColorMax() const
+                {
+                    return roofColorMax_;
+                }
+                void setRoofColorMax(const Graphics::Color& roofColorMax)
+                {
+                    roofColorMax_ = roofColorMax;
                 }
 
             private:
@@ -131,8 +151,10 @@ namespace World
                 float maxBuildingHeight_;
 
                 Graphics::Color roadColor_;
-                Graphics::Color wallColor_;
-                Graphics::Color roofColor_;
+                Graphics::Color wallColorMin_;
+                Graphics::Color wallColorMax_;
+                Graphics::Color roofColorMin_;
+                Graphics::Color roofColorMax_;
             };
         }
     }

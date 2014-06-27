@@ -20,51 +20,66 @@
 #ifndef APPLICATION_APPLICATION_H
 #define APPLICATION_APPLICATION_H
 
-#include "../Threading/Thread.h"
-#include "../Event/EventManager.h"
+#include "../Event/EventListenerInterface.h"
+#include "../Threading/ConcurrentRessource.h"
 #include "../Ecs/World.h"
 #include "../World/World.h"
+#include "EventBoot.h"
+#include "GraphicsBoot.h"
+#include "UpdateBoot.h"
+#include "GenerationBoot.h"
+#include "CharacterBoot.h"
+#include "AnimationBoot.h"
 
 namespace Application
 {
     /**
      * Class in charge of launching the game
      */
-    class Application
+    class Application : public Event::EventListenerInterface
     {
     public:
-        Application():
-            eventThread_(NULL),
-            graphicsThread_(NULL),
-            generationThread_(NULL),
-            eventManager_(),
-            ecsWorld_(eventManager_.getEventQueue()),
-            world_()
-        {}
-
-        ~Application()
-        {
-            if (eventThread_ != NULL)
-            {
-                delete eventThread_;
-                delete graphicsThread_;
-                delete generationThread_;
-            }
-        }
+        Application();
 
         void start();
 
-    private:
-        Threading::Thread* eventThread_;
-        Threading::Thread* graphicsThread_;
-        Threading::Thread* generationThread_;
-        Event::EventManager eventManager_;
-        Ecs::World ecsWorld_;
-        World::World world_;
 
-        void setupEventThread();
-        void setupGraphicsThread();
-        void setupGenerationThread();
+        virtual void call(const Event::Event& event);
+
+        Event::EventManager& getEventManager()
+        {
+            return eventBoot_.getEventManager();
+        }
+
+        Threading::ConcurrentRessource<Ecs::World>& getEcsWorld()
+        {
+            return ecsWorld_;
+        }
+
+        World::World& getWorld()
+        {
+            return world_;
+        }
+
+        friend void applicationEventBootCallback(Application& application, BootInterface& eventBoot);
+        friend void applicationGraphicsBootCallback(Application& application, BootInterface& graphicsBoot);
+        friend void applicationUpdateBootCallback(Application& application, BootInterface& graphicsBoot);
+        friend void applicationGenerationBootCallback(Application& application, BootInterface& graphicsBoot);
+        friend void applicationCharacterBootCallback(Application& application, BootInterface& graphicsBoot);
+        friend void applicationAnimationBootCallback(Application& application, BootInterface& graphicsBoot);
+
+    private:
+        EventBoot eventBoot_;
+        Threading::ConcurrentRessource<Ecs::World> ecsWorld_;
+        World::World world_;
+        GraphicsBoot graphicsBoot_;
+        UpdateBoot updateBoot_;
+        GenerationBoot generationBoot_;
+        CharacterBoot characterBoot_;
+        AnimationBoot animationBoot_;
+        bool running_;
+
+        void startLoop();
     };
 }
 

@@ -31,8 +31,12 @@
 #include "tests/render.h"
 #include "tests/core.h"
 #include "tests/network.h"
+#include "tests/ai.h"
+#include "tests/stateMachine.h"
 #include "tests/world.h"
 #include "tests/worldGeneration.h"
+#include "tests/physics.h"
+#include "tests/input.h"
 #include "Application/Application.h"
 
 using std::cout;
@@ -65,9 +69,16 @@ int main()
     // WorldGenerationTests::testCityCreation();
     // AnimationTest::testAnimation();
     // RenderTest::testRenderSystem(10);
+    // Application::Application app;
+    // app.start();
+    // PhysicsTest::testMovementSystem();
+    // InputTest::testPlayerSystem();
+    // InputTest::testCoordinates();
+    // StateMachineTest::testStateMachine();
     NetworkTest::TestNetwork();
 
     // Application::Application app;
     // app.start();
+
     return 0;
 }

@@ -22,7 +22,8 @@
 
 #include <vector>
 
-#include "../Ecs/SharedEntity.h"
+#include "../Ecs/EntityDescriptor.h"
+#include "../Core/SharedPtr.h"
 #include "GroundCoefficients.h"
 
 namespace World
@@ -32,16 +33,36 @@ namespace World
      *
      * A chunk is a square part of the world containing its entities
      * It has a state describing its loading status
+     *
+     * TODO : Find something more elegant than base entities - final entities
+     *        separation. It dusplicates data.
      */
     class Chunk
     {
     public:
-        typedef std::vector<Ecs::SharedEntity> EntityCollection;
+        typedef std::vector< Core::SharedPtr<Ecs::EntityDescriptor> > EntityCollection;
         enum State { NotLoadedState, PreparedState, GeneratedState };
+
+        Chunk(): coefficients_(), state_(NotLoadedState)
+        {}
+
+        Chunk& operator=(const Chunk& chunk)
+        {
+            baseEntities_ = chunk.baseEntities_;
+            finalEntities_ = chunk.finalEntities_;
+            coefficients_ = chunk.coefficients_;
+            state_ = chunk.state_;
+
+            return *this;
+        }
 
         const EntityCollection& getBaseEntities() const { return baseEntities_; }
         const EntityCollection& getFinalEntities() const { return finalEntities_; }
         const GroundCoefficients& getCoefficients() const { return coefficients_; }
+
+        EntityCollection& getBaseEntities() { return baseEntities_; }
+        EntityCollection& getFinalEntities() { return finalEntities_; }
+        GroundCoefficients& getCoefficients() { return coefficients_; }
 
         void setBaseEntities(const EntityCollection& baseEntities)
         {

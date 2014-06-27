@@ -20,6 +20,11 @@ namespace Geometry
             position_(position)
         {}
 
+        virtual Component* clone() const
+        {
+            return new PositionComponent(position_);
+        }
+
         virtual const std::vector<Ecs::Component::Type>& getDependentComponents()
         {
             return Dependencies;
