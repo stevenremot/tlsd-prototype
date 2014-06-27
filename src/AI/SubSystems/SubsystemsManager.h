@@ -54,12 +54,18 @@ namespace AI
              */
             Subsystem* getSubsystemByType(const Subsystem::SubsystemType& type);
 
-            void updateSubsystems(std::vector<Ecs::Component&> &components);
+            /**
+             * Update all the subsystems sequentially
+             * Return true if all the subsystems don't need to be updated anymore for the moment
+             */
+            bool updateSubsystems(Ecs::ComponentGroup& components);
+
+            void resetSubsystems();
 
             /**
-             * Send the action to the subsystem which can execute it.
+             * Send the action to set the subsystem which can execute it.
              */
-            void dispatchAction(Action::Action* action, Ecs::ComponentGroup& components);
+            void dispatchAction(Action::Action* action, const Ecs::ComponentGroup& components);
 
 
         private:

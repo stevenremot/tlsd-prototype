@@ -29,7 +29,7 @@
 #include "../AI/Sensor/SensorSystem.h"
 #include "../AI/Sensor/SensorComponent.h"
 #include "../AI/Sensor/SightSensor.h"
-#include "../AI/SubSystems/TargetingSubsystem.h"
+#include "../AI/SubSystems/TargetingSystem.h"
 #include "../AI/SubSystems/NavigationSubsystem.h"
 #include "../AI/SubSystems/TargetingSystem.h"
 #include "../AI/NavMesh/NavMeshGenerationEngine.h"
@@ -146,10 +146,8 @@ namespace NavMeshTest
             Graph::BasicAStar(graph, startNode, goalNode, path);
 
             drawNavMesh(*navMesh, drawer);
-            drawPath(path, drawer);
-
-            drawer.end();
-            std::cout << drawer.getContent().str();
+            //drawPath(path, drawer);
+            //std::cout << drawer.getContent().str();
         }
 
         // Test AI
@@ -168,16 +166,16 @@ namespace NavMeshTest
         vector<Threading::ThreadableInterface*> targetingSystemVector;
         vector<Threading::ThreadableInterface*> sensorSystemVector;
 
-        sensorSystemVector.push_back(&sensorSystem);
-        targetingSystemVector.push_back(&targetingSystem);
+        aiSystemVector.push_back(&sensorSystem);
+        aiSystemVector.push_back(&targetingSystem);
         aiSystemVector.push_back(&aiSystem);
         movementSystemVector.push_back(&movementSystem);
 
-        Threading::Thread aiThread(aiSystemVector, 10);
-        Threading::Thread sensorThread(sensorSystemVector, 5);
-        Threading::Thread targetingThread(targetingSystemVector, 5);
+        Threading::Thread aiThread(aiSystemVector, 20);
+        //Threading::Thread sensorThread(sensorSystemVector, 5);
+        //Threading::Thread targetingThread(targetingSystemVector, 5);
 
-        Threading::Thread movementThread(movementSystemVector, 30);
+        Threading::Thread movementThread(movementSystemVector, 20);
 
         // Get the position component of e1
         Ecs::ComponentGroup::ComponentTypeCollection types;
@@ -187,29 +185,103 @@ namespace NavMeshTest
         Ecs::ComponentGroup componentsE1 = w.getEntityComponents(e1, prototype);
         const Geometry::PositionComponent& positionComponentE1 = static_cast<const Geometry::PositionComponent&>(componentsE1.getComponent(Geometry::PositionComponent::Type));
         Ecs::ComponentGroup componentsE2 = w.getEntityComponents(e2, prototype);
-        const Geometry::PositionComponent& positionComponentE2 = static_cast<const Geometry::PositionComponent&>(componentsE2.getComponent(Geometry::PositionComponent::Type));
+        Geometry::PositionComponent& positionComponentE2 = static_cast<Geometry::PositionComponent&>(componentsE2.getComponent(Geometry::PositionComponent::Type));
 
-        sensorThread.start();
-        targetingThread.start();
+        //sensorThread.start();
+        //targetingThread.start();
         aiThread.start();
         movementThread.start();
+        std::vector<Geometry::Vec2Df> positions;
+        positions.push_back(Geometry::Vec2Df(0,0));
+        /*
         bool b = true;
         while(b)
         {
-            if((positionComponentE1.getPosition()-positionComponentE2.getPosition()).getLength() < 4.f)
+            Geometry::Vec2Df lastPos = positions.back();
+            Geometry::Vec3Df pos = positionComponentE1.getPosition();
+            if((pos -positionComponentE2.getPosition()).getLength() < 2.f)
                 b = false;
+            Threading::sleep(0,20);
+            if(pos.getX() != lastPos.getX() && pos.getY() != lastPos.getY())
+                positions.push_back(Geometry::Vec2Df(pos.getX(), pos.getY()));
+
+        }
+
+        for (int j =0; j < 20; j++)
+        {
+            Threading::sleep(0,100);
+        }
+        */
+
+        std::vector<Geometry::Vec2Df> positionsE2;
+        std::vector<Geometry::Vec2Df> targets;
+
+        types.insert(AI::Subsystem::TargetingComponent::Type);
+        Ecs::ComponentGroup components = w.getEntityComponents(e1, Ecs::ComponentGroup(types));
+        const AI::Subsystem::TargetingComponent& targetingComponent = static_cast<const AI::Subsystem::TargetingComponent&>(components.getComponent(AI::Subsystem::TargetingComponent::Type));
+
+
+        // Taget is moving slowly to the upper-right corner of the navMesh
+        Geometry::Vec3Df offset(0.1, -0.2, 0.0);
+        for (int j =0; j < 20*20; j++)
+        {
+            Threading::sleep(0,50);
+            Geometry::Vec3Df pos1 = positionComponentE1.getPosition();
+            Geometry::Vec3Df pos2 = positionComponentE2.getPosition();
+            Geometry::Vec3Df target = targetingComponent.getTargetPosition();
+
+            Geometry::Vec3Df newPos = pos2 + offset;
+            positionComponentE2.setPosition(newPos);
+            positionsE2.push_back(Geometry::Vec2Df(newPos.getX(), newPos.getY()));
+            positions.push_back(Geometry::Vec2Df(pos1.getX(), pos1.getY()));
+            targets.push_back(Geometry::Vec2Df(target.getX(), target.getY()));
+
+
         }
 
         aiThread.stop();
-        sensorThread.stop();
-        targetingThread.stop();
+        //sensorThread.stop();
+        //targetingThread.stop();
         movementThread.stop();
+
+        if(navMeshes.size() > 0)
+        {
+            AI::NavMesh::NavMesh* navMesh = navMeshes.at(0);
+            // Path finding
+            const Graph::PlanarGraph& graph = navMesh->getGraph();
+            Geometry::Vec3Df pos2 = positionComponentE2.getPosition();
+
+            Graph::PlanarNode startNode; navMesh->getNode( Geometry::Vec2Df(0, 0), startNode);
+            Graph::PlanarNode goalNode; navMesh->getNode( Geometry::Vec2Df(pos2.getX(), pos2.getY()), goalNode);
+            Graph::PlanarGraph::NodeCollection path;
+            Graph::BasicAStar(graph, startNode, goalNode, path);
+
+            drawPath(path, drawer);
+        }
+
+        for(unsigned int i = 0; i < positions.size(); i++)
+        {
+            Geometry::Vec2Df pos = positions[i];
+            drawer.drawCircle(pos.getX(), pos.getY(), 1, "green");
+        }
+        for(unsigned int i = 0; i < positionsE2.size(); i++)
+        {
+            Geometry::Vec2Df pos = positionsE2[i];
+            drawer.drawCircle(pos.getX(), pos.getY(), 1, "orange");
+
+            Geometry::Vec2Df target = targets[i];
+            drawer.drawCircle(target.getX(), target.getY(), 1, "purple");
+        }
+        drawer.end();
+
+        std::cout << drawer.getContent().str();
+
     }
 
     void drawNavMesh(const AI::NavMesh::NavMesh& navMesh, Test::SvgDrawer& drawer)
     {
         const Graph::PlanarGraph& graph = navMesh.getGraph();
-        drawer.drawGraph(graph);
+        //drawer.drawGraph(graph);
         const AI::NavMesh::NavMesh::PolygonsMap& polygonsMap = navMesh.getPolygonsMap();
         const AI::NavMesh::NavMesh::VerticesMap& verticesMap = navMesh.getVerticesMap();
         const Graph::PlanarGraph::NodeCollection& nodes = graph.getNodes();

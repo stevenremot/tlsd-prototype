@@ -48,8 +48,7 @@ namespace AI
                     TargetingComponent& targetingComponent = static_cast<TargetingComponent &>(group->getComponent(TargetingComponent::Type));
                     MemoryComponent& memoryComponent = static_cast<MemoryComponent &>(group->getComponent(MemoryComponent::Type));
 
-                    targetingComponent.setHasValidTarget(false);
-
+                    bool validTarget = false;
                     MemoryFact::MemoryFactType factType = "sightFact";
                     std::vector<MemoryFact*> ennemyFacts;
                     memoryComponent.getMemoryFactsByType(factType, ennemyFacts);
@@ -71,10 +70,13 @@ namespace AI
                                 currentDistance = distance;
                                 targetingComponent.setTargetPosition(position);
                                 targetingComponent.setTargetEntity(targetEntity);
-                                targetingComponent.setHasValidTarget(true);
+                                //targetingComponent.setHasValidTarget(true);
+                                validTarget = true;
                             }
                         }
                     }
+                    targetingComponent.setHasValidTarget(validTarget);
+
                 }
                 catch (const Ecs::ComponentGroup::UnexistingComponentException& e)
                 {

@@ -49,7 +49,12 @@ namespace AI
              */
             virtual void goToNextStep();
 
-            Action::Action* getCurrentAction() {return (*currentAction_);}
+            Action::Action* getCurrentAction()
+            {
+                if(currentAction_ != actionsPlanned_.end())
+                    return (*currentAction_);
+                return NULL;
+            }
 
         private:
             std::vector<Action::Action*> actionsPlanned_;

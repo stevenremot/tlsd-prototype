@@ -8,7 +8,7 @@
 
 #include "../AI/AiComponent.h"
 #include "../AI/Sensor/SightSensor.h"
-#include "../AI/SubSystems/TargetingSubsystem.h"
+#include "../AI/SubSystems/TargetingSystem.h"
 #include "../AI/SubSystems/NavigationSubsystem.h"
 #include "../AI/AiSystem.h"
 #include "../AI/NavMesh/NavMeshContainer.h"
@@ -47,6 +47,7 @@ namespace AITest
 
     void testAI()
     {
+        /*
         Ecs::World w = Ecs::World();
         // Create the unit with the ai module
         Ecs::Entity e1 = w.createEntity();
@@ -92,6 +93,7 @@ namespace AITest
             isRunning = (positionComponent->getPosition().getY() > 0.f);
         }
         thread.stop();
+        */
 
     }
 }

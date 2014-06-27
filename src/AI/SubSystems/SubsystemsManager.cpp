@@ -1,7 +1,6 @@
 #include "SubsystemsManager.h"
 
 #include "NavigationSubsystem.h"
-#include "TargetingSubsystem.h"
 
 #include "../Action/MoveCloseToTargetAction.h"
 #include "../Action/NoAction.h"
@@ -35,18 +34,6 @@ namespace AI
         {
             if(type == NavigationSubSystem::Type)
             {
-                // Get the movement and position components.
-                // If they do not exist, don't add the navigation subsystem
-                // TODO : Launch an exception ?
-                /*
-                Ecs::ComponentGroup::ComponentTypeCollection types;
-                types.insert(PositionComponent::Type);
-                types.insert(MovementComponent::Type);
-                Ecs::ComponentGroup prototype(types);
-                Ecs::ComponentGroup components = world.getEntityComponents(entity_, prototype);
-                Geometry::PositionComponent& positionComponent = static_cast<Geometry::PositionComponent&>(components.getComponent(PositionComponent::Type));
-                Physics::MovementComponent& movementComponent = static_cast<Physics::MovementComponent&>(components.getComponent(MovementComponent::Type));
-                */
                 subSystemsList_.push_back(new NavigationSubSystem(navMeshes_));
             }
         }
@@ -60,16 +47,18 @@ namespace AI
             return NULL;
         }
 
-        void SubSystemsManager::updateSubsystems(std::vector<Ecs::Component&>& components)
+        bool SubSystemsManager::updateSubsystems(Ecs::ComponentGroup& components)
         {
+            bool updateOver = true;
             vector<Subsystem*>::iterator subsystem;
             for(subsystem = subSystemsList_.begin(); subsystem != subSystemsList_.end(); ++subsystem)
             {
-                (*subsystem)->update(components);
+                updateOver = updateOver && (*subsystem)->update(components);
             }
+            return updateOver;
         }
 
-        void SubSystemsManager::dispatchAction(Action::Action* action, Ecs::ComponentGroup& components)
+        void SubSystemsManager::dispatchAction(Action::Action* action, const Ecs::ComponentGroup& components)
         {
             Subsystem::SubsystemType subsystemType = "None";
             if(action->getType() == Action::MoveCloseToTargetAction::Type)
@@ -77,8 +66,16 @@ namespace AI
                 subsystemType = NavigationSubSystem::Type;
             }
             if(!(subsystemType == "None"))
-                getSubsystemByType(subsystemType)->executeAction(action, components);
+                getSubsystemByType(subsystemType)->treatAction(action, components);
         }
+
+        void SubSystemsManager::resetSubsystems()
+        {
+            std::vector<Subsystem*>::iterator subsystem;
+            for ( subsystem = subSystemsList_.begin(); subsystem  != subSystemsList_.end(); ++subsystem)
+                (*subsystem) -> reset();
+        }
+
     }
 
 }

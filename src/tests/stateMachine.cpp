@@ -8,7 +8,7 @@
 #include "../AI/Action/MoveCloseToTargetAction.h"
 #include "../AI/Action/NoAction.h"
 #include "../AI/SubSystems/NavigationSubsystem.h"
-#include "../AI/SubSystems/TargetingSubsystem.h"
+#include "../AI/SubSystems/TargetingSystem.h"
 #include "../AI/SubSystems/TargetingComponent.h"
 #include "../AI/Sensor/SightSensor.h"
 #include "../AI/AiSystem.h"
@@ -44,7 +44,7 @@ namespace StateMachineTest
             const Subsystem::TargetingComponent& targetingComponent = static_cast<const Subsystem::TargetingComponent&>(components.getComponent(Subsystem::TargetingComponent::Type));
 
             float maxDistance = 10.f;
-            if((targetingComponent.getTargetPosition()- positionComponent.getPosition()).getLength() < maxDistance)
+            if(targetingComponent.hasValidTarget() && (targetingComponent.getTargetPosition()- positionComponent.getPosition()).getLength() < maxDistance)
             {
                 return 1.0f;
             }
@@ -65,7 +65,7 @@ namespace StateMachineTest
             const Subsystem::TargetingComponent& targetingComponent = static_cast<const Subsystem::TargetingComponent&>(components.getComponent(Subsystem::TargetingComponent::Type));
 
             float maxDistance = 120.f;
-            if((targetingComponent.getTargetPosition() - positionComponent.getPosition()).getLength() < maxDistance)
+            if(targetingComponent.hasValidTarget() && (targetingComponent.getTargetPosition() - positionComponent.getPosition()).getLength() < maxDistance)
             {
                 return 1.0f;
             }
@@ -100,7 +100,7 @@ namespace StateMachineTest
 
     void testStateMachine()
     {
-
+        /*
         Ecs::World w = Ecs::World();
         NavMesh::NavMeshContainer navMeshes;
 
@@ -111,23 +111,11 @@ namespace StateMachineTest
         w.addComponent(e1, positionComponentE1);
         w.addComponent(e1, movementComponentE1);
 
-        /*
-        Ecs::ComponentGroup::ComponentTypeCollection types;
-        types.insert(Physics::MovementComponent::Type);
-        types.insert(Geometry::PositionComponent::Type);
-
-        Ecs::ComponentGroup prototype(types);
-        Ecs::ComponentGroup components = w.getEntityComponents(e1, prototype);
-        */
         AI::AiComponent* aiComponent = new AI::AiComponent(e1, navMeshes);
         BasicAiModule* aiModule = new BasicAiModule(Idle);
         setupStateMachine(*aiModule);
         aiComponent->setAiModule(aiModule);
         w.addComponent(e1, aiComponent);
-
-        // Add a sight sensor
-        //AI::Sensor::SensorsManager& sensorsManager = aiComponent->getSensorsManager();
-        //sensorsManager.addSensor(AI::Sensor::SightSensor::Type);
 
         // Add navigation and targeting subsytems
         AI::Subsystem::SubSystemsManager& subsystemsManager = aiComponent->getSubsystemsManager();
@@ -164,5 +152,6 @@ namespace StateMachineTest
         aiThread.stop();
         movementThread.stop();
         //aiModule->computeNewPlan();
+        */
     }
 }

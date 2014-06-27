@@ -27,6 +27,7 @@
 #include "../MemoryFact.h"
 
 #include "../Action/Action.h"
+#include "../Action/NoAction.h"
 
 #include "../../Ecs/ComponentGroup.h"
 //#include "../../Ecs/Component.h"
@@ -45,10 +46,23 @@ namespace AI
             typedef std::string SubsystemType;
 
             Subsystem(const SubsystemType & subsystemType)
-                : subsystemType_(subsystemType){}
+                : subsystemType_(subsystemType)
+            {
+                noAction_ = new Action::NoAction();
+                currentAction_ = NULL;
+                setCurrentAction(noAction_);
+            }
             virtual ~Subsystem(){}
-            virtual bool update(std::vector<Ecs::Component&>& components) = 0;
-            virtual void executeAction(Action::Action* action, Ecs::ComponentGroup& components) = 0;
+            virtual bool update(Ecs::ComponentGroup& components) = 0;
+            void reset()
+            {
+                // It's ok to delete the current action because it's a clone of the action in the aiplan
+                if(currentAction_ != NULL)
+                    delete currentAction_;
+                setCurrentAction(noAction_);
+            }
+
+            virtual void treatAction(Action::Action* action, const Ecs::ComponentGroup& components) = 0;
 
             const SubsystemType & getSubsystemType() const
             {
@@ -56,7 +70,24 @@ namespace AI
             }
 
         protected:
+            const Action::NoAction* noAction_;
+
+            const Action::Action* getCurrentAction() const {return currentAction_;}
+            void setCurrentAction(const Action::Action* action)
+            {
+                /*
+                if(currentAction_ != NULL)
+                {
+                    delete currentAction_;
+                    currentAction_ = NULL;
+                }
+                */
+                currentAction_ = action->clone();
+            }
+
+        private:
             SubsystemType subsystemType_;
+            const Action::Action* currentAction_;
         };
     }
 }

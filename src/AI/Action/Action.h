@@ -35,20 +35,27 @@ namespace AI
 
             typedef std::string ActionType;
 
-            Action(const ActionType& type) : type_(type){}
+            Action(const ActionType& type)
+                : type_(type), finished_(false), started_(false){}
             Action(const Action& action)
-                : type_(action.getType()), finished_(action.isFinished()) {}
+                : type_(action.getType()), finished_(action.isFinished()), started_(action.isStarted()) {}
 
             virtual ~Action(){}
+
+            virtual const Action* clone()const = 0;
 
             const ActionType& getType() const {return type_;}
 
             bool isFinished() const {return finished_;}
             void setFinished(bool finished) {finished_ = finished;}
 
+            bool isStarted() const {return started_;}
+            void setStarted(bool started) {started_ = started;}
+
         private:
             ActionType type_;
             bool finished_;
+            bool started_;
         };
     }
 }

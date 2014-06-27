@@ -36,6 +36,11 @@ namespace AI
             MoveCloseToTargetAction(const Geometry::Vec3Df & targetPosition)
                 : Action(Type), targetPosition_(targetPosition) {}
 
+            MoveCloseToTargetAction(const MoveCloseToTargetAction& action)
+                : Action(action), targetPosition_(action.getTargetPosition()) {}
+
+            virtual const MoveCloseToTargetAction* clone() const {return new MoveCloseToTargetAction(*this);}
+
             const Geometry::Vec3Df & getTargetPosition() const {return targetPosition_;}
 
         private:

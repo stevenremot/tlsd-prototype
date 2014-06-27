@@ -40,8 +40,6 @@ namespace AI
         {
             AiComponent& aiComponent = static_cast<AiComponent &>(group->getComponent(AiComponent::Type));
 
-            Subsystem::SubSystemsManager& subsystemsManager = aiComponent.getSubsystemsManager();
-
             Ecs::ComponentGroup::ComponentTypeCollection types2;
             types2.insert(Subsystem::TargetingComponent::Type);
             types2.insert(Geometry::PositionComponent::Type);
@@ -52,20 +50,44 @@ namespace AI
 
             // If the plan is over, compute a new one.
             AiModule* aiModule = aiComponent.getAiModule();
-            // Get the actions sequence and dispatch them between subsystems
-            Plan::AiPlan* aiPlan = aiModule->getPlan();
-            if(aiPlan != NULL && !aiPlan->isPlanCompleted())
+            Subsystem::SubSystemsManager& subsystemsManager = aiComponent.getSubsystemsManager();
+            bool updateOver = subsystemsManager.updateSubsystems(components);
+            if(updateOver)
             {
-                Action::Action* currentAction = aiPlan->getCurrentAction();
-                // Send the action to the relevant object
-                subsystemsManager.dispatchAction(currentAction, components);
-                aiPlan->goToNextStep();
+                /*
+                if (currentAction != NULL)
+                {
+                        // Send the action to the relevant object
+                    subsystemsManager.dispatchAction(currentAction, components);
+                    if (currentAction->isFinished())
+                    {
+                        aiPlan->goToNextStep();
+                        if (aiPlan->isPlanCompleted())
+                            aiModule->computeNewPlan(components);
+                    }
+                }
+                */
+                // Get the actions sequence and dispatch them between subsystems
+                Plan::AiPlan* aiPlan = aiModule->getPlan();
+                if(aiPlan != NULL && !aiPlan->isPlanCompleted())
+                {
+                    aiPlan->goToNextStep();
+                    Action::Action* currentAction = aiPlan->getCurrentAction();
+                    if(currentAction!= NULL)
+                        subsystemsManager.dispatchAction(currentAction, components);
+                }
+                if(aiPlan == NULL || aiPlan->isPlanCompleted())
+                {
+                    subsystemsManager.resetSubsystems();
+                    aiModule->computeNewPlan(components);
+                    if(aiModule->getPlan() != NULL)
+                    {
+                        Action::Action* currentAction = aiModule->getPlan()->getCurrentAction();
+                        if(currentAction != NULL)
+                            subsystemsManager.dispatchAction(currentAction, components);
+                    }
+                }
             }
-            else
-            {
-                aiModule->computeNewPlan(components);
-            }
-
         }
     }
 }

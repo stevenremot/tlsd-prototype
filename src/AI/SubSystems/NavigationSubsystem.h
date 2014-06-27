@@ -20,6 +20,7 @@
 #ifndef AI_SUBSYSTEM_NAVIGATIONSUBSYSTEM_H
 #define AI_SUBSYSTEM_NAVIGATIONSUBSYSTEM_H
 
+#include "../Action/NoAction.h"
 #include "Subsystem.h"
 #include "../NavMesh/NavMeshContainer.h"
 
@@ -30,6 +31,7 @@ namespace AI
 {
     namespace Subsystem
     {
+
         /**
          * Find a path to the target position and update the velocity of the entity to make it reach the target.
          * Entity needs movement and position components to have a navigation system.
@@ -40,20 +42,20 @@ namespace AI
         public:
             static const Subsystem::SubsystemType Type;
 
+            typedef std::vector<Geometry::Vec3Df> Path;
+
             NavigationSubSystem(const NavMesh::NavMeshContainer& navMeshes);
             ~NavigationSubSystem(){}
 
             void findPathToGoal();
-            virtual bool update(std::vector<Ecs::Component&>& components);
-            virtual void executeAction(Action::Action* action, Ecs::ComponentGroup& components);
-
-            bool isValid() const {return isValid_;}
-            void setValid(bool isValid) {isValid_ = isValid;}
+            virtual bool update(Ecs::ComponentGroup& components);
+            virtual void treatAction(Action::Action* action, const Ecs::ComponentGroup& components);
 
         private:
             const NavMesh::NavMeshContainer& navMeshes_;
-            bool isFinished_;
-            bool isValid_;
+            //Action::NoAction* defaultAction_;
+            Path currentPath_;
+            //Action::Action* currentAction_;
         };
     }
 }

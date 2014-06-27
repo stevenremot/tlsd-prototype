@@ -122,7 +122,7 @@ namespace AI
         try
         {
             /**
-              * Add the action to the plan if n exception is raised ?
+              * Add the action to the plan if an exception is raised ?
               */
             newPlan.push_back(Action::ActionFactory::createAction(actionType, components));
             stateMachine_.goToState(nextState);

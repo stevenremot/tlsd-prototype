@@ -54,9 +54,6 @@ namespace AI
          */
         virtual void computeNewPlan(const Ecs::ComponentGroup& components) = 0;
 
-        //void executePlan();
-        //std::vector<Action*> getNewPlan() const {return newPlan_;}
-
         void cleanPlan()
         {
             if(aiPlan_ != NULL && aiPlan_->isPlanCompleted())

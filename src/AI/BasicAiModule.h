@@ -47,10 +47,10 @@ namespace AI
 
         std::vector<State> getNextStates(const State& state) const;
         const State& getCurrentState() const {return currentState_;}
+
     private:
-
-
         State currentState_;
+        State nextState_;
         std::vector<State> states_;
         std::map<std::pair<State,State>, bool> transitions_;
     };

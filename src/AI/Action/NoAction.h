@@ -34,6 +34,11 @@ namespace AI
 
             NoAction()
                 : Action(Type) {}
+
+            NoAction(const NoAction& action)
+                : Action(action) {}
+
+            virtual const NoAction* clone() const {return new NoAction(*this);}
         };
     }
 }
