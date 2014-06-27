@@ -37,12 +37,12 @@ namespace Physics
                 position_(position)
                 {}
 
-            const Ecs::Entity& getEntity()
+            const Ecs::Entity& getEntity() const
             {
                 return entity_;
             }
 
-            const Geometry::Vec3Df& getPosition()
+            const Geometry::Vec3Df& getPosition() const
             {
                 return position_;
             }

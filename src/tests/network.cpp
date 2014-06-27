@@ -21,6 +21,7 @@
 
 #include "../Event/EventManager.h"
 #include "../Threading/Thread.h"
+#include "../Physics/EntityPositionChangedEvent.h"
 
 using std::cout;
 using std::endl;
@@ -35,8 +36,8 @@ void TestNetwork()
     /// Faire un scénario de test Client/Server
     Event::EventManager em;
 
-    Server* server =new Server("1234",NULL);
-    string str="127.0.0.1";
+    Server* server = new Server("1234", em.getEventQueue());
+    string str = "127.0.0.1";
     Client* client1 = new Client (str,"1234",em.getEventQueue());
     Client* client2 = new Client (str,"1234",em.getEventQueue());
 int i=0;
@@ -45,7 +46,10 @@ int i=0;
         Threading::sleep(1, 0);
         client1->SendEvent("Client1");
         client2->SendEvent("Client2");
-        server->SendEvent("Server");
+        server->SendEvent(Physics::EntityPositionChangedEvent(
+            1,
+            Geometry::Vec3Df(1, 2, 3)
+        ));
     i++;
     }
 
