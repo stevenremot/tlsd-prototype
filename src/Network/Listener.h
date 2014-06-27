@@ -21,20 +21,29 @@
 #define LISTENER_H
 #include <vector>
 #include <iostream>
+
 #include "PracticalSocket.h"
 #include "../Threading/Thread.h"
+#include "../Event/EventQueue.h"
 
 namespace Network{
     class Listener : public Threading::ThreadableInterface
     {
     public:
-        Listener(vector<string>* ListeEvent, TCPSocket* client);
+        Listener(
+            std::vector<string>* ListeEvent,
+            TCPSocket* client,
+            Event::EventQueue& eventQueue
+        );
         virtual ~Listener();
         void run(void);
 
     private:
-        vector<string>* ListeEvent_;
+        std::vector<string>* ListeEvent_;
         TCPSocket* client_;
+        Event::EventQueue& eventQueue_;
+
+        void handleMessage(const std::string& msg);
     };
 }
 #endif // LISTENER_H

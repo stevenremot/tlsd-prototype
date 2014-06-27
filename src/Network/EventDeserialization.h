@@ -16,16 +16,22 @@
     along with The Lost Souls Downfall prototype.  If not, see
     <http://www.gnu.org/licenses/>.
 */
-#ifndef SENDEVENT_H
-#define SENDEVENT_H
-#include <string>
-#include "PracticalSocket.h"
-#include "../Threading/Channel.h"
-#include "../Threading/Thread.h"
-typedef std::string Event2;
-using Threading::ThreadableInterface;
 
-namespace Network{
-    void SendEvent( TCPSocket* Socket, Event2 event);
+#ifndef NETWORK_EVENT_DESERIALIZATION_H
+#define NETWORK_EVENT_DESERIALIZATION_H
+
+#include <istream>
+
+#include "../Event/Event.h"
+
+namespace Network
+{
+    Event::Event* deserializeEvent(std::istream& in);
 }
-#endif // SENDEVENT_H
+
+#endif
+
+// Emacs local variables
+// Local variables:
+// mode: c++
+// End:

@@ -20,7 +20,7 @@
 namespace Network{
 
  void SendEvent(TCPSocket* Socket, Event2 event){
-Socket->send(event.c_str(),event.size());
+     Socket->send(event.c_str(),event.size());
  }
 
 

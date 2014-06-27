@@ -17,44 +17,40 @@
     <http://www.gnu.org/licenses/>.
 */
 
-#include "EventSerialization.h"
-
+#include "EventDeserialization.h"
 #include "../Physics/EntityPositionChangedEvent.h"
 
 namespace Network
 {
-    void serializeVec3Df(
-        std::ostream& out,
-        const Geometry::Vec3Df& v
-    ) {
-        out << v.getX() << " " << v.getY() << " " << v.getZ();
-    }
-
-    bool serializeEvent(
-        std::ostream& out,
-        const Physics::EntityPositionChangedEvent& event
-    ) {
-        out << "( " << event.getType() << " " <<
-            event.getEntity() << " ";
-
-        serializeVec3Df(out, event.getPosition());
-
-        out << " )" ;
-
-        return true;
-    }
-
-    bool serializeEvent(std::ostream& out, const Event::Event& event)
+    Geometry::Vec3Df deserializeVec3Df(std::istream& in)
     {
-        if (event.getType() == Physics::EntityPositionChangedEvent::Type)
+        float x, y, z;
+        in >> x >> y >> z;
+        return Geometry::Vec3Df(x, y, z);
+    }
+
+    Event::Event* deserializeEntityPositionChangedEvent(std::istream& in)
+    {
+        // TODO entity map
+        Ecs::Entity entity;
+        in >> entity;
+        Geometry::Vec3Df position = deserializeVec3Df(in);
+        return new Physics::EntityPositionChangedEvent(entity, position);
+    }
+
+    Event::Event* deserializeEvent(std::istream& in)
+    {
+        std::string token;
+        in >> token; // token == "("
+
+        in >> token;
+
+        if (token == Physics::EntityPositionChangedEvent::Type)
         {
-            out << "event ";
-            return serializeEvent(
-                out,
-                dynamic_cast<const Physics::EntityPositionChangedEvent&>(event)
-            );
+            return deserializeEntityPositionChangedEvent(in);
         }
 
-        return false;
+
+        return NULL;
     }
 }

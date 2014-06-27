@@ -29,32 +29,70 @@ using Network::Server;
 using Network::Client;
 namespace NetworkTest
 {
-
-void TestNetwork()
-{
-
-    /// Faire un scénario de test Client/Server
-    Event::EventManager em;
-
-    Server* server = new Server("1234", em.getEventQueue());
-    string str = "127.0.0.1";
-    Client* client1 = new Client (str,"1234",em.getEventQueue());
-    Client* client2 = new Client (str,"1234",em.getEventQueue());
-int i=0;
-    while(i<3)
+    class DummyListener: public Event::EventListenerInterface
     {
-        Threading::sleep(1, 0);
-        client1->SendEvent("Client1");
-        client2->SendEvent("Client2");
-        server->SendEvent(Physics::EntityPositionChangedEvent(
-            1,
-            Geometry::Vec3Df(1, 2, 3)
-        ));
-    i++;
-    }
+    public:
+        virtual void call(const Event::Event& event)
+        {
+            std::cout << "Event : " << event.getType() << std::endl;
 
-    std::cout<<"Network part done"<<std::endl;
-};
+            if (event.getType() == Physics::EntityPositionChangedEvent::Type)
+            {
+                const Physics::EntityPositionChangedEvent& evt =
+                    dynamic_cast<const Physics::EntityPositionChangedEvent&>(event);
+
+                std::cout << "Entity : " << evt.getEntity() << std::endl;
+                std::cout << "Pos : " << evt.getPosition() << std::endl;
+            }
+        }
+
+        void registerListeners(Event::ListenerRegister& reg)
+        {
+            reg.put(Physics::EntityPositionChangedEvent::Type, this);
+        }
+    };
+
+    void TestNetwork()
+    {
+
+        /// Faire un scénario de test Client/Server
+        Event::EventManager em;
+
+        Server* server = new Server("1234", em.getEventQueue());
+        string str = "127.0.0.1";
+        Client* client1 = new Client (str,"1234",em.getEventQueue());
+        Client* client2 = new Client (str,"1234",em.getEventQueue());
+        int i=0;
+
+        DummyListener lis;
+        lis.registerListeners(em.getListenerRegister());
+
+        std::vector<Threading::ThreadableInterface*> threadables;
+        threadables.push_back(&em);
+        Threading::Thread eventThread(threadables, 10);
+        eventThread.start();
+
+        while(i<30)
+        {
+            if (i == 2)
+            {
+                delete client1;
+            }
+
+            Threading::sleep(1, 0);
+            // client1->SendEvent("Client1");
+            // client2->SendEvent("Client2");
+            server->SendEvent(Physics::EntityPositionChangedEvent(
+                1,
+                Geometry::Vec3Df(1, 2, 3)
+            ));
+            i++;
+        }
+
+        eventThread.stop();
+
+        std::cout<<"Network part done"<<std::endl;
+    };
 
 
 }

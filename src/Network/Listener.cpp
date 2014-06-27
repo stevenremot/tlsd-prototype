@@ -18,16 +18,23 @@
 */
 #include "Listener.h"
 
+#include <sstream>
+
+#include "EventDeserialization.h"
+
 using std::cout;
 using std::endl;
 
 namespace Network
 {
-    Listener::Listener(vector<string>* ListeEvent, TCPSocket* client)
-    {
-        this->ListeEvent_=ListeEvent;
-        this->client_=client;
-    }
+    Listener::Listener(
+        vector<string>* ListeEvent,
+        TCPSocket* client,
+        Event::EventQueue& eventQueue
+    ): ListeEvent_(ListeEvent),
+       client_(client),
+       eventQueue_(eventQueue)
+    {}
 
     Listener::~Listener()
     {
@@ -39,22 +46,44 @@ namespace Network
     {
         if(this->client_!=NULL )
         {
-            try{
-                char* buffer = new char[2000];
-                int recvMsgSize = client_->recv(buffer, 2000);
+            std::string message;
+            char* buffer = new char[2000];
 
-                while (recvMsgSize > 0)   // Zero means
-                {
-                    cout<<"Message recu "<<buffer<<endl;
-                    recvMsgSize = client_->recv(buffer, 2000);
-                }
+            int recvMsgSize = 0;
 
-                delete[] buffer;
-            }catch(const SocketException& e)
+            try
+            {
+                recvMsgSize = client_->recv(buffer, 2000);
+
+            }
+            catch(const SocketException& e)
             {
                 cerr <<" Socket exception : " << e.what() <<  endl;
+                delete[] buffer;
+                return;
             }
+
+            if (recvMsgSize > 0)
+            {
+                message += buffer;
+                handleMessage(message);
+            }
+
+            delete[] buffer;
         }
 
+    }
+
+
+    void Listener::handleMessage(const std::string& msg)
+    {
+        std::stringstream sstream(msg);
+        string type;
+        sstream >> type;
+
+        if (type == "event")
+        {
+            eventQueue_ << deserializeEvent(sstream);
+        }
     }
 }

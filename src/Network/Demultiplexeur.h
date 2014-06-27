@@ -26,14 +26,9 @@
 #include "SendEvent.h"
 #include <iostream>
 
-using Threading::ThreadableInterface;
-using Threading::Thread;
-using std::cout;
-using std::endl;
-
 namespace Network {
-class Demultiplexeur :public ThreadableInterface
-{
+    class Demultiplexeur :public ThreadableInterface
+    {
     public:
         Demultiplexeur(std::vector<TCPSocket*> *ListeClient,std::vector<string>* ListeEvent);
         virtual ~Demultiplexeur();
@@ -42,7 +37,7 @@ class Demultiplexeur :public ThreadableInterface
     private:
         std::vector<TCPSocket*>* ListeClient_;
         std::vector<string>* ListeEvent_;
-};
+    };
 
 }
 #endif // DEMULTIPLEXEUR_H

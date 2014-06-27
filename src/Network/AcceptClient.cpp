@@ -17,23 +17,21 @@
   <http://www.gnu.org/licenses/>.
 */
 #include "AcceptClient.h"
+
 namespace Network
 {
-    AcceptClient::AcceptClient(TCPServerSocket *Server,vector<TCPSocket*> *ListeClient)
-    {
-        this->Server_=Server;
-        this->ListeClient_=ListeClient;
-    }
-
-    AcceptClient::~AcceptClient()
-    {
-        this->Server_=NULL;
-        this->ListeClient_=NULL;
-    }
+    AcceptClient::AcceptClient(
+        TCPServerSocket *Server,
+        vector<TCPSocket*> *ListeClient,
+        Event::EventQueue& queue
+    ): Server_(Server),
+       ListeClient_(ListeClient),
+       thread_(NULL),
+       eventQueue_(queue)
+    {}
 
     void AcceptClient::run(void)
     {
-
         TCPSocket *clntSock= this->Server_->accept();
         // Create separate memory for client argument
 
@@ -42,12 +40,12 @@ namespace Network
             /// Ajouter des sémaphores
             this->ListeClient_->push_back(clntSock);
             std::cout<<"Client accepte"<<std::endl;
-            Listener* listener=new Listener(NULL, ListeClient_->back());
+            Listener* listener=new Listener(NULL, ListeClient_->back(), eventQueue_);
             std::vector<ThreadableInterface*> threadables;
 
             threadables.push_back(listener);
 
-            this->thread_=new Thread(threadables, 2);
+            this->thread_= new Threading::Thread(threadables, 2);
             this->thread_->start();
         }
         else

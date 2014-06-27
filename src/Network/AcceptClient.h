@@ -25,21 +25,27 @@
 #include "Listener.h"
 #include "../Threading/Channel.h"
 #include "../Threading/Thread.h"
-using Threading::ThreadableInterface;
-using Threading::Thread;
+#include "../Event/EventQueue.h"
+
 namespace Network
 {
-    class AcceptClient : public ThreadableInterface
+    class AcceptClient : public Threading::ThreadableInterface
     {
     public:
-        AcceptClient(TCPServerSocket *Server,std::vector<TCPSocket*> *ListeClient);
-        virtual ~AcceptClient();
+        AcceptClient(
+            TCPServerSocket *Server,
+            std::vector<TCPSocket*> *ListeClient,
+            Event::EventQueue& queue
+        );
+
         void run(void);
+
     protected:
     private:
         TCPServerSocket *Server_;
         vector<TCPSocket*> *ListeClient_;
-        Thread* thread_;
+        Threading::Thread* thread_;
+        Event::EventQueue& eventQueue_;
     };
 }
 #endif // ACCEPTCLIENT_H

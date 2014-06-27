@@ -23,6 +23,7 @@
 #include <list>
 
 #include "Event.h"
+#include "../Threading/Channel.h"
 
 namespace Event
 {

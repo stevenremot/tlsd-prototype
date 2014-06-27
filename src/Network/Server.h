@@ -39,10 +39,10 @@ namespace Network
     public:
         Server(string port, Event::EventQueue& eventQueue);
         virtual ~Server();
-        void SetSerializer(Serializer* serializer);
-        Serializer* GetSerializer();
-        void SetDeserializer(Deserializer* deserializer );
-        Deserializer* GetDeserializer();
+        // void SetSerializer(Serializer* serializer);
+        // Serializer* GetSerializer();
+        // void SetDeserializer(Deserializer* deserializer );
+        // Deserializer* GetDeserializer();
         void SendEvent(const Event::Event& event);
 
         virtual void call(const Event::Event& event);
@@ -52,14 +52,14 @@ namespace Network
 
 
     private:
-        Thread* thread_, *thread2_;
+        Threading::Thread* thread_, *thread2_;
         TCPServerSocket* servSock_;
         vector<TCPSocket*> ListeClient_;
         vector<string> ListeEvent_;
         void Listen();
         void Accept();
-        Serializer *serializer_;
-        Deserializer *deserializer_;
+        // Serializer *serializer_;
+        // Deserializer *deserializer_;
         Demultiplexeur *demultiplexeur_;
         AcceptClient* acceptclient_;
         std::vector<ThreadableInterface*> threadables_;

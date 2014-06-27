@@ -34,8 +34,8 @@ namespace Network
 
         ///Initialisation des pointeurs
 
-        this->serializer_=NULL;
-        this->deserializer_=NULL;
+        // this->serializer_=NULL;
+        // this->deserializer_=NULL;
         this->demultiplexeur_=new Demultiplexeur(&(this->ListeClient_),&(this->ListeEvent_));
 
         unsigned short echoServPort = Socket::resolveService(port, "tcp");
@@ -45,7 +45,7 @@ namespace Network
 
 
         /// Instancie la classe AcceptClient
-        acceptclient_ = new AcceptClient(servSock_,&ListeClient_);
+        acceptclient_ = new AcceptClient(servSock_,&ListeClient_, eventQueue);
 
 
         /// Création de thread pour AcceptClient
@@ -60,39 +60,49 @@ namespace Network
 
     Server::~Server()
     {
-        this->serializer_=NULL;
-        this->deserializer_=NULL;
+        // this->serializer_=NULL;
+        // this->deserializer_=NULL;
         this->thread_->stop();
         this->thread2_->stop();
+        delete thread_;
+        delete thread2_;
+        delete demultiplexeur_;
+
+        for (unsigned int i = 0; i < ListeClient_.size(); i++)
+        {
+            delete ListeClient_[i];
+        }
+
+        delete servSock_;
     }
 
-    void Server::SetSerializer(Serializer *serializer)
-    {
+    // void Server::SetSerializer(Serializer *serializer)
+    // {
 
-        this->serializer_=serializer;
+    //     this->serializer_=serializer;
 
-    }
+    // }
 
-    Serializer * Server::GetSerializer()
-    {
+    // Serializer * Server::GetSerializer()
+    // {
 
-        return this->serializer_;
+    //     return this->serializer_;
 
-    }
+    // }
 
-    void Server::SetDeserializer(Deserializer * deserializer)
-    {
+    // void Server::SetDeserializer(Deserializer * deserializer)
+    // {
 
-        this->deserializer_=deserializer;
+    //     this->deserializer_=deserializer;
 
-    }
+    // }
 
-    Deserializer * Server::GetDeserializer()
-    {
+    // Deserializer * Server::GetDeserializer()
+    // {
 
-        return this->deserializer_;
+    //     return this->deserializer_;
 
-    }
+    // }
 
     void Server::SendEvent(const Event::Event& event)
     {

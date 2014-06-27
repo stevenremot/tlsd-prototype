@@ -17,12 +17,19 @@
   <http://www.gnu.org/licenses/>.
 */
 #include "Client.h"
+
+#include <sstream>
+
+#include "EventSerialization.h"
+#include "../Physics/EntityPositionChangedEvent.h"
+
 namespace Network
 {
     Client::Client(Ip ip, string port, Event::EventQueue& eventQueue):
-        serializer_(NULL),
-        deserializer_(NULL),
-        demultiplexeur_(NULL)
+        // serializer_(NULL),
+        // deserializer_(NULL),
+        demultiplexeur_(NULL),
+        eventQueue_(eventQueue)
     {
 
         connected_ = false;
@@ -30,14 +37,18 @@ namespace Network
         this->echoServPort_= Socket::resolveService(port, "tcp");
         try
         {
-            this->ServerSocket_=new TCPSocket(ip, echoServPort_);
-            this->listener_=new Listener((&this->ListeEvent_),this->ServerSocket_);
+            this->ServerSocket_ = new TCPSocket(ip, echoServPort_);
+            this->listener_= new Listener(
+                (&this->ListeEvent_),
+                this->ServerSocket_,
+                eventQueue
+            );
             connected_=true;
-            //this->demultiplexeur=new Demultiplexeur(NULL,this->ListeEvent,ServerSocket);
+            // demultiplexeur_ = new Demultiplexeur(, ListeEvent_);
 
 
             threadables_.push_back(listener_);
-            this->thread_=new Thread(threadables_, 2);
+            this->thread_ = new Threading::Thread(threadables_, 2);
             this->thread_->start();
 
         }
@@ -50,47 +61,64 @@ namespace Network
 
     Client::~Client()
     {
-        //dtor
+        delete ServerSocket_;
+        delete demultiplexeur_;
+        thread_->stop();
+        delete thread_;
+        delete listener_;
     }
 
+    // void Client::SetSerializer(Serializer *serializer)
+    // {
 
-    void Client::SetSerializer(Serializer *serializer)
+    //     this->serializer_=serializer;
+
+    // }
+
+    // Serializer * Client::GetSerializer()
+    // {
+
+    //     return this->serializer_;
+
+    // }
+
+    // void Client::SetDeserializer(Deserializer * deserializer)
+    // {
+
+    //     this->deserializer_=deserializer;
+
+    // }
+
+    // Deserializer * Client::GetDeserializer()
+    // {
+
+    //     return this->deserializer_;
+
+    // }
+
+    void Client::SendEvent(const Event::Event& event)
     {
-
-        this->serializer_=serializer;
-
-    }
-
-    Serializer * Client::GetSerializer()
-    {
-
-        return this->serializer_;
-
-    }
-
-    void Client::SetDeserializer(Deserializer * deserializer)
-    {
-
-        this->deserializer_=deserializer;
-
-    }
-
-    Deserializer * Client::GetDeserializer()
-    {
-
-        return this->deserializer_;
-
-    }
-
-    void Client::SendEvent(Event2 event)
-    {
-
-        if(connected_==true)
+        std::stringstream sstream;
+        if (serializeEvent(sstream, event))
         {
-            ServerSocket_->send(event.c_str(),event.size()+1);
+            ServerSocket_->send(sstream.str().c_str(), sstream.str().size());
         }
-
-
     }
 
+
+
+    void Client::call(const Event::Event& event)
+    {
+        SendEvent(event);
+    }
+
+    void Client::registerListeners(Event::ListenerRegister& reg)
+    {
+        reg.put(Physics::EntityPositionChangedEvent::Type, this);
+    }
+
+    void Client::unregisterListeners(Event::ListenerRegister& reg)
+    {
+        reg.remove(this);
+    }
 }
