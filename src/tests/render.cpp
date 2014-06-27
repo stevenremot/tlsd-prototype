@@ -1,8 +1,28 @@
+/*
+   This file is part of The Lost Souls Downfall prototype.
+
+    The Lost Souls Downfall prototype is free software: you can
+    redistribute it and/or modify it under the terms of the GNU
+    General Public License as published by the Free Software
+    Foundation, either version 3 of the License, or (at your option)
+    any later version.
+
+    The Lost Souls Downfall prototype is distributed in the hope that
+    it will be useful, but WITHOUT ANY WARRANTY; without even the
+    implied warranty of MERCHANTABILITY or FITNESS FOR A PARTICULAR
+    PURPOSE.  See the GNU General Public License for more details.
+
+    You should have received a copy of the GNU General Public License
+    along with The Lost Souls Downfall prototype.  If not, see
+    <http://www.gnu.org/licenses/>.
+*/
+
 #include "render.h"
 
 #include <iostream>
 
 #include "../Graphics/Device.h"
+#include "../Graphics/CloseDeviceEvent.h"
 #include "../Graphics/Render/Scene.h"
 #include "../Graphics/Render/RenderSystem.h"
 #include "../Graphics/Render/RenderableComponent.h"
@@ -28,6 +48,7 @@ using Threading::Thread;
 using Input::IrrlichtInputReceiver;
 using Geometry::PositionComponent;
 using Geometry::RotationComponent;
+using Geometry::Vec3Df;
 using Graphics::Render::RenderableComponent;
 using Graphics::Render::RenderSystem;
 
@@ -38,24 +59,27 @@ namespace RenderTest
         std::cout << static_cast<const Input::MoveEvent&>(event).getDirection() << std::endl;
     }
 
+    void CloseDeviceListener::call(const Event::Event& event)
+    {
+        closed_ = true;
+    }
+
     void testThread(int durationInSeconds)
     {
         Event::EventManager m;
 
         Device device(m.getEventQueue());
         Event::ListenerRegister& reg = m.getListenerRegister();
-        reg.put(Input::InputInitializedEvent::TYPE, &device);
+        reg.put(Input::InputInitializedEvent::Type, &device);
 
-        Scene scene;
-        reg.put(Graphics::Render::InitSceneEvent::TYPE, &scene);
-        reg.put(Input::CameraEvent::TYPE, &scene);
-        reg.put(Input::MoveEvent::TYPE, &scene);
+        Scene scene(m.getEventQueue());
+        scene.registerListeners(reg);
 
         IrrlichtInputReceiver receiver(m.getEventQueue());
-        reg.put(Input::InitInputEvent::TYPE, &receiver);
+        reg.put(Input::InitInputEvent::Type, &receiver);
 
         //DummyInputListener inputListener;
-        //reg.put(Input::MoveEvent::TYPE, &inputListener);
+        //reg.put(Input::MoveEvent::Type, &inputListener);
 
         std::vector<ThreadableInterface*> threadables, threadables2;
         threadables.push_back(&device);
@@ -81,26 +105,25 @@ namespace RenderTest
     void testRenderSystem(int durationInSeconds)
     {
         Event::EventManager m;
-        Ecs::World w(m.getEventQueue());
+        Threading::ConcurrentRessource<Ecs::World> w(new Ecs::World(m.getEventQueue()));
 
         Random::NumberGenerator rng(1);
 
         Device device(m.getEventQueue());
         Event::ListenerRegister& reg = m.getListenerRegister();
-        reg.put(Input::InputInitializedEvent::TYPE, &device);
+        reg.put(Input::InputInitializedEvent::Type, &device);
 
-        Scene scene;
-        reg.put(Graphics::Render::InitSceneEvent::TYPE, &scene);
-        reg.put(Input::CameraEvent::TYPE, &scene);
-        reg.put(Input::MoveEvent::TYPE, &scene);
-        reg.put(Graphics::Render::RenderMeshFileEvent::TYPE, &scene);
-        reg.put(Graphics::Render::RenderModel3DEvent::TYPE, &scene);
+        Scene scene(m.getEventQueue());
+        scene.registerListeners(reg);
 
         IrrlichtInputReceiver receiver(m.getEventQueue());
-        reg.put(Input::InitInputEvent::TYPE, &receiver);
+        reg.put(Input::InitInputEvent::Type, &receiver);
 
         RenderSystem rs(w, m.getEventQueue());
-        reg.put(Ecs::ComponentCreatedEvent::TYPE, &rs);
+        reg.put(Ecs::ComponentCreatedEvent::Type, &rs);
+
+        CloseDeviceListener cdl;
+        reg.put(Graphics::CloseDeviceEvent::Type, &cdl);
 
         std::vector<ThreadableInterface*> threadables, threadables2;
 
@@ -120,15 +143,16 @@ namespace RenderTest
         std::string meshFile = "ninja.b3d";
 
         int imax = durationInSeconds * 1;
-        for (int i = 0; i < imax; i++)
+        for (int i = 0; i < imax && !cdl.closed_; i++)
         {
-            Ecs::Entity e = w.createEntity(i);
-            w.addComponent(e, new PositionComponent(Vec3Df(rng.getUniform(-5, 5), rng.getUniform(-5, 5), 0)));
-            w.addComponent(e, new RotationComponent(Vec3Df(0, 0, rng.getUniform(0, 360))));
+            Threading::ConcurrentWriter<Ecs::World> ww = w.getWriter();
+            Ecs::Entity e = ww->createEntity(i);
+            ww->addComponent(e, new PositionComponent(Vec3Df(rng.getUniform(-5, 5), rng.getUniform(-5, 5), 0)));
+            ww->addComponent(e, new RotationComponent(Vec3Df(0, 0, rng.getUniform(0, 360))));
             if (i % 2)
-                w.addComponent(e, new RenderableComponent(meshFile, ""));
+                ww->addComponent(e, new RenderableComponent(meshFile, ""));
             else
-                w.addComponent(e, new RenderableComponent(cube));
+                ww->addComponent(e, new RenderableComponent(cube));
 
             Threading::sleep(1,0);
         }
@@ -148,17 +172,17 @@ namespace RenderTest
 
         Device device(m.getEventQueue());
         Event::ListenerRegister& reg = m.getListenerRegister();
-        reg.put(Input::InputInitializedEvent::TYPE, &device);
+        reg.put(Input::InputInitializedEvent::Type, &device);
 
-        Scene scene;
-        reg.put(Graphics::Render::InitSceneEvent::TYPE, &scene);
-        reg.put(Input::CameraEvent::TYPE, &scene);
+        Scene scene(m.getEventQueue());
+        reg.put(Graphics::Render::InitSceneEvent::Type, &scene);
+        reg.put(Input::CameraEvent::Type, &scene);
 
         IrrlichtInputReceiver receiver(m.getEventQueue());
-        reg.put(Input::InitInputEvent::TYPE, &receiver);
+        reg.put(Input::InitInputEvent::Type, &receiver);
 
         DummyInputListener inputListener;
-        reg.put(Input::MoveEvent::TYPE, &inputListener);
+        reg.put(Input::MoveEvent::Type, &inputListener);
 
         std::vector<ThreadableInterface*> threadables, threadables2;
         threadables.push_back(&device);

@@ -51,9 +51,9 @@ namespace World
             wallHeight_(building.wallHeight_),
             roofHeight_(building.roofHeight_),
             wallColor_(building.wallColor_),
-            roofColor_(building.roofColor_)
+            roofColor_(building.roofColor_),
+            model_(building.model_)
         {
-            updateModel();
         }
 
         virtual const Graphics::Render::Model3D& getModel() const

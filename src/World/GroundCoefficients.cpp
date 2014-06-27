@@ -23,7 +23,7 @@ namespace World
 {
     float GroundCoefficients::getCoefficient(int octave, int i, int j) const
     {
-        checkValidity(octave,i,j);
+        checkValidity(octave, i, j);
         switch (octave)
         {
         case 1:
@@ -42,7 +42,7 @@ namespace World
 
     void GroundCoefficients::setCoefficient(int octave, int i, int j, float coefficient)
     {
-        checkValidity(octave,i,j);
+        checkValidity(octave, i, j);
         switch (octave)
         {
             case 1:

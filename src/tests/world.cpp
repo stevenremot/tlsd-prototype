@@ -144,15 +144,18 @@ namespace WorldTest
             }
             world.setChunk(i/5,i%5,chunk);
         }
-        // Model3D model11 = World::computeGroundModel(world, 1, 1);
-        // Model3D model21 = World::computeGroundModel(world, 2, 1);
-        // Model3D model31 = World::computeGroundModel(world, 3, 1);
-        // Model3D model12 = World::computeGroundModel(world, 1, 2);
-        Model3D model22 = World::computeGroundModel(world, 2, 2);
-        // Model3D model32 = World::computeGroundModel(world, 3, 2);
-        // Model3D model13 = World::computeGroundModel(world, 1, 3);
-        // Model3D model23 = World::computeGroundModel(world, 2, 3);
-        // Model3D model33 = World::computeGroundModel(world, 3, 3);
+
+        Model3D model11, model21, model31, model12, model22, model32, model13, model23, model33;
+        Physics::GroundCollisionBody c11, c21, c31, c12, c22, c32, c13, c23, c33;
+        // World::computeGroundModel(world, 1, 1, model11, c11);
+        // World::computeGroundModel(world, 2, 1, model21, c21);
+        // World::computeGroundModel(world, 3, 1, model31, c31);
+        // World::computeGroundModel(world, 1, 2, model12, c12);
+        World::computeGroundModel(world, 2, 2, model22, c22);
+        // World::computeGroundModel(world, 3, 2, model32, c32);
+        // World::computeGroundModel(world, 1, 3, model13, c13);
+        // World::computeGroundModel(world, 2, 3, model23, c23);
+        // World::computeGroundModel(world, 3, 3, model33, c33);
 
         Test::SvgDrawer svg(128, 512);
 

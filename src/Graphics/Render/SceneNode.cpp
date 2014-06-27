@@ -1,6 +1,29 @@
+/*
+   This file is part of The Lost Souls Downfall prototype.
+
+    The Lost Souls Downfall prototype is free software: you can
+    redistribute it and/or modify it under the terms of the GNU
+    General Public License as published by the Free Software
+    Foundation, either version 3 of the License, or (at your option)
+    any later version.
+
+    The Lost Souls Downfall prototype is distributed in the hope that
+    it will be useful, but WITHOUT ANY WARRANTY; without even the
+    implied warranty of MERCHANTABILITY or FITNESS FOR A PARTICULAR
+    PURPOSE.  See the GNU General Public License for more details.
+
+    You should have received a copy of the GNU General Public License
+    along with The Lost Souls Downfall prototype.  If not, see
+    <http://www.gnu.org/licenses/>.
+*/
+
 #include "SceneNode.h"
+#include "../../Geometry/IrrlichtConversions.h"
 
 #include <irrlicht/matrix4.h>
+#include <irrlicht/aabbox3d.h>
+
+using Geometry::Vec3Df;
 
 namespace Graphics
 {
@@ -19,11 +42,24 @@ namespace Graphics
         SceneNode::~SceneNode()
         {
             // delete all the node's children
-            for(std::list<SceneNode*>::iterator it = children_.begin(); it != children_.end(); ++it)
+            for (std::list<SceneNode*>::iterator it = children_.begin(); it != children_.end(); ++it)
                 delete *it;
 
             // inherited classes have their own type of irrlicht scene node
             removeIrrlichtSceneNode();
+        }
+
+        void SceneNode::removeChild(unsigned int id)
+        {
+            for (std::list<SceneNode*>::iterator it = children_.begin(); it != children_.end(); ++it)
+            {
+                if ((*it)->getId() == id)
+                {
+                    delete *it;
+                    children_.erase(it);
+                    return;
+                }
+            }
         }
 
         void SceneNode::removeIrrlichtSceneNode()
@@ -35,25 +71,25 @@ namespace Graphics
         Vec3Df SceneNode::getPosition() const
         {
             vector3df irrPosition = irrlichtSceneNode_->getPosition();
-            return Vec3Df(irrPosition.X, irrPosition.Z, irrPosition.Y);
+            return Geometry::fromIrrVector3df(irrPosition);
         }
 
         Vec3Df SceneNode::getRotation() const
         {
             vector3df irrRotation = irrlichtSceneNode_->getRotation();
-            return Vec3Df(irrRotation.X, irrRotation.Z, irrRotation.Y);
+            return Geometry::fromIrrVector3df(irrRotation) * M_PI / 180.0;
         }
 
         Vec3Df SceneNode::getScale() const
         {
             vector3df irrScale = irrlichtSceneNode_->getScale();
-            return Vec3Df(irrScale.X, irrScale.Z, irrScale.Y);
+            return Geometry::fromIrrVector3df(irrScale);
         }
 
         Vec3Df SceneNode::getAbsolutePosition() const
         {
             vector3df irrPos = irrlichtSceneNode_->getAbsolutePosition();
-            return Vec3Df(irrPos.X, irrPos.Z, irrPos.Y);
+            return Geometry::fromIrrVector3df(irrPos);
         }
 
         Vec3Df SceneNode::getAbsoluteRotation() const
@@ -63,33 +99,41 @@ namespace Graphics
             else
             {
                 vector3df irrRot = irrlichtSceneNode_->getAbsoluteTransformation().getRotationDegrees();
-                return Vec3Df(irrRot.X, irrRot.Z, irrRot.Y);
+                return Geometry::fromIrrVector3df(irrRot) * M_PI / 180.0;
             }
+        }
+
+        Geometry::AxisAlignedBoundingBox SceneNode::getBoundingBox() const
+        {
+            irr::core::aabbox3df bbox = irrlichtSceneNode_->getBoundingBox();
+            return Geometry::AxisAlignedBoundingBox(
+                                                    Geometry::fromIrrVector3df(bbox.MinEdge) * getScale(),
+                                                    Geometry::fromIrrVector3df(bbox.MaxEdge) * getScale());
         }
 
         void SceneNode::setPosition(const Vec3Df& pos)
         {
-            vector3df irrPos = vector3df(pos.getX(), pos.getZ(), pos.getY());
+            vector3df irrPos = Geometry::fromVec3Df(pos);
             irrlichtSceneNode_->setPosition(irrPos);
         }
 
 
         void SceneNode::setRotation(const Vec3Df& rot)
         {
-            vector3df irrRot = vector3df(rot.getX(), rot.getZ(), rot.getY());
+            vector3df irrRot = 180.0 / M_PI * Geometry::fromVec3Df(rot);
             irrlichtSceneNode_->setRotation(irrRot);
         }
 
 
         void SceneNode::setScale(const Vec3Df& sca)
         {
-            vector3df irrScale = vector3df(sca.getX(), sca.getZ(), sca.getY());
+            vector3df irrScale = Geometry::fromVec3Df(sca);
             irrlichtSceneNode_->setScale(irrScale);
         }
 
         void SceneNode::setAbsolutePosition(const Vec3Df& pos)
         {
-            vector3df irrPos = vector3df(pos.getX(), pos.getZ(), pos.getY());
+            vector3df irrPos = Geometry::fromVec3Df(pos);
 
             if(getParent() != NULL)
             {
@@ -115,7 +159,7 @@ namespace Graphics
 
         void SceneNode::setAbsoluteRotation(const Vec3Df& rot)
         {
-            vector3df irrRot = vector3df(rot.getX(), rot.getZ(), rot.getY());
+            vector3df irrRot = 180.0 / M_PI * Geometry::fromVec3Df(rot);
 
             if(getParent() != NULL)
             {
@@ -145,7 +189,7 @@ namespace Graphics
             irrlichtSceneNode_->setID(id_);
         }
 
-        const unsigned int SceneNode::getId() const
+        unsigned int SceneNode::getId() const
         {
             return id_;
         }

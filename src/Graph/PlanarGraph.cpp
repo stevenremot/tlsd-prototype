@@ -51,10 +51,9 @@ namespace Graph
 
     PlanarGraph& PlanarGraph::operator=(const PlanarGraph& graph)
     {
-        while (!nodeCache_.empty())
-        {
-            removeNode(nodeCache_.front());
-        }
+        graph_.clear();
+        nodeCache_.clear();
+        edgeCache_.clear();
 
         insertData(graph.getNodes(), graph.getEdges());
         return *this;
@@ -80,7 +79,7 @@ namespace Graph
         }
     }
 
-    PlanarNode& PlanarGraph::addNode(const Vec2Df& position)
+    PlanarNode PlanarGraph::addNode(const Vec2Df& position)
     {
         for (unsigned int i = 0; i < nodeCache_.size(); i++)
         {

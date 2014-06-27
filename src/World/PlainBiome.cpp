@@ -21,14 +21,49 @@
 
 namespace World
 {
+    const BiomeInterface::Type PlainBiome::Type = "PlainBiome";
+
     float PlainBiome::transformCoefficient(float coefficient)
     {
-        return (coefficient+1.0)*15.0;
+        return (coefficient + 1.0) * 15.0;
     }
 
     Graphics::Color PlainBiome::getColor()
     {
-        return Graphics::Color(0,1,0);
+        return Graphics::Color(0, 1, 0);
     }
 
+    const Generation::TreeParameters PlainBiome::getTreeParameters()
+    {
+        std::vector<Graphics::Color> trunkMin;
+        trunkMin.push_back(Graphics::Color(0.5, 0.25, 0.15));
+        trunkMin.push_back(Graphics::Color(0.5, 0.25, 0.15));
+        std::vector<Graphics::Color> trunkMax;
+        trunkMax.push_back(Graphics::Color(0.7, 0.35, 0.25));
+        trunkMax.push_back(Graphics::Color(0.7, 0.35, 0.25));
+        std::vector<Graphics::Color> leavesMin;
+        leavesMin.push_back(Graphics::Color(0.9, 0.8, 0.8));
+        leavesMin.push_back(Graphics::Color(0.15, 0.7, 0.15));
+        std::vector<Graphics::Color> leavesMax;
+        leavesMax.push_back(Graphics::Color(1.0, 0.9, 0.9));
+        leavesMax.push_back(Graphics::Color(0.25, 0.9, 0.25));
+        return Generation::TreeParameters(
+            4.0,
+            6.0,
+            2.0,
+            3.0,
+            8.0,
+            12.0,
+            8.0,
+            12.0,
+            -0.4,
+            0.4,
+            2,
+            "cubique",
+            trunkMin,
+            trunkMax,
+            leavesMin,
+            leavesMax
+        );
+    }
 }

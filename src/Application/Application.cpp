@@ -19,102 +19,100 @@
 
 #include "Application.h"
 
-#include "../Graphics/Device.h"
-#include "../Graphics/Render/Scene.h"
-#include "../Graphics/Render/RenderSystem.h"
-#include "../Graphics/Render/RenderEvents.h"
-#include "../Input/IrrlichtInputReceiver.h"
-#include "../Input/Events.h"
-#include "../Input/IrrlichtInputReceiver.h"
-#include "../World/Generation/ChunkGenerationSystem.h"
-#include "../Input/PlayerPositionChangedEvent.h"
-#include "../Ecs/ComponentCreatedEvent.h"
+// TODO includes for group, remove later
+#include "../Character/GroupComponent.h"
+#include "../Character/EntityCreator.h"
+#include "../Character/Statistics.h"
 
 namespace Application
 {
+    void applicationEventBootCallback(Application& application, BootInterface& eventBoot)
+    {
+        application.graphicsBoot_.start();
+    }
+
+    void applicationGraphicsBootCallback(Application& application, BootInterface& graphicsBoot)
+    {
+        application.updateBoot_.start();
+    }
+
+    void applicationUpdateBootCallback(Application& application, BootInterface& graphicsBoot)
+    {
+        application.generationBoot_.start();
+    }
+
+    void applicationGenerationBootCallback(Application& application, BootInterface& graphicsBoot)
+    {
+        application.characterBoot_.start();
+    }
+
+    void applicationCharacterBootCallback(Application& application, BootInterface& graphicsBoot)
+    {
+        application.animationBoot_.start();
+    }
+
+    void applicationAnimationBootCallback(Application& application, BootInterface& graphicsBoot)
+    {
+        application.startLoop();
+    }
+
+    Application::Application():
+        eventBoot_(applicationEventBootCallback, *this),
+        ecsWorld_(new Ecs::World(eventBoot_.getEventManager().getEventQueue())),
+        world_(),
+        graphicsBoot_(applicationGraphicsBootCallback, *this),
+        updateBoot_(applicationUpdateBootCallback, *this),
+        generationBoot_(applicationGenerationBootCallback, *this),
+        characterBoot_(applicationCharacterBootCallback, *this),
+        animationBoot_(applicationAnimationBootCallback, *this),
+        running_(false)
+    {}
+
     void Application::start()
     {
-        setupEventThread();
-        setupGraphicsThread();
-        setupGenerationThread();
+        eventBoot_.start();
+    }
 
-        eventThread_->start();
-        graphicsThread_->start();
-        generationThread_->start();
+    void Application::startLoop()
+    {
+        // TODO set z at 0, not 150
+        {
+            Threading::ConcurrentWriter<Ecs::World> world = ecsWorld_.getWriter();
 
-        for (unsigned int i = 0; i < 1000000; i++)
+
+            Ecs::Entity group = world->createEntity();
+            Character::GroupComponent* groupComponent = new Character::GroupComponent();
+            world->addComponent(group, groupComponent);
+
+            Character::createPlayer(
+                world,
+                Geometry::Vec3Df(150,150,150),
+                Geometry::Vec3Df(0,0,0),
+                Character::Statistics(100, 120, 20, 5),
+                group,
+                eventBoot_.getEventManager().getEventQueue()
+            );
+
+            Character::createCharacter(
+                world,
+                Geometry::Vec3Df(160, 160, 150),
+                Geometry::Vec3Df(0, 0, 0),
+                Character::Statistics(70, 20, 20, 5),
+                group,
+                eventBoot_.getEventManager().getEventQueue()
+            );
+        }
+
+        running_ = true;
+        while (running_)
         {
             Threading::sleep(1, 0);
         }
 
-        eventThread_->stop();
-        graphicsThread_->stop();
-        generationThread_->stop();
     }
 
-    void Application::setupEventThread()
+    void Application::call(const Event::Event& event)
     {
-        std::vector<Threading::ThreadableInterface*> eventThreadables;
-        eventThreadables.push_back(&eventManager_);
-        eventThread_ = new Threading::Thread(eventThreadables, 120);
-    }
-
-    void Application::setupGraphicsThread()
-    {
-        Event::ListenerRegister& reg = eventManager_.getListenerRegister();
-        Event::EventQueue& queue = eventManager_.getEventQueue();
-
-        Graphics::Device* dev = new Graphics::Device(queue);
-        reg.put(Input::InputInitializedEvent::TYPE, dev);
-
-        Graphics::Render::Scene* scene = new Graphics::Render::Scene;
-        reg.put(Graphics::Render::InitSceneEvent::TYPE, scene);
-        reg.put(Input::CameraEvent::TYPE, scene);
-        reg.put(Input::MoveEvent::TYPE, scene);
-        reg.put(Graphics::Render::RenderModel3DEvent::TYPE, scene);
-
-
-        Input::IrrlichtInputReceiver* receiver =
-            new Input::IrrlichtInputReceiver(queue);
-        reg.put(Input::InitInputEvent::TYPE, receiver);
-
-
-        std::vector<Threading::ThreadableInterface*> graphicsThreadables;
-        graphicsThreadables.push_back(dev);
-        graphicsThreadables.push_back(scene);
-        graphicsThreadables.push_back(receiver);
-
-        Graphics::Render::RenderSystem* rs =
-            new Graphics::Render::RenderSystem(ecsWorld_, queue);
-        reg.put(Ecs::ComponentCreatedEvent::TYPE, rs);
-
-        graphicsThread_ = new Threading::Thread(graphicsThreadables, 60);
-    }
-
-    void Application::setupGenerationThread()
-    {
-        World::Generation::ChunkGenerator generator(world_, ecsWorld_, 42);
-
-        for (int i = -1; i <= 1; i++)
-        {
-            for (int j = -1; j <= 1; j++)
-            {
-                generator.generateChunk(i, j);
-            }
-        }
-
-        // TODO Change world seed at each run :-)
-        World::Generation::ChunkGenerationSystem* generation =
-            new World::Generation::ChunkGenerationSystem(
-                ecsWorld_,
-                generator
-            );
-
-        generation->registerListeners(eventManager_.getListenerRegister());
-
-        std::vector<Threading::ThreadableInterface*> threadables;
-        threadables.push_back(generation);
-
-        generationThread_ = new Threading::Thread(threadables, 1);
+        running_ = false;
     }
 }

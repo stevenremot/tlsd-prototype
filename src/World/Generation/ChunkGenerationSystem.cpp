@@ -24,6 +24,24 @@ namespace World
 {
     namespace Generation
     {
+        ChunkGenerationSystem::ChunkGenerationSystem(
+            Threading::ConcurrentRessource<Ecs::World>& world,
+            ChunkGenerator chunkGenerator
+        ): Ecs::System(world),
+           chunkGenerator_(chunkGenerator)
+        {
+            Threading::createChannel<Geometry::Vec2Di>(
+                channelInput_,
+                channelOutput_
+            );
+            listener_ = new ChunkGenerationListener(channelInput_);
+        }
+
+        ChunkGenerationSystem::~ChunkGenerationSystem()
+        {
+            delete listener_;
+        }
+
         void ChunkGenerationSystem::run()
         {
             while (!channelOutput_.isEmpty())
@@ -31,7 +49,25 @@ namespace World
                 Geometry::Vec2Di pos;
                 channelOutput_ >> pos;
 
-                chunkGenerator_.generateChunk(pos.getX(), pos.getY());
+                for (int i = -1; i <= 1; i++)
+                {
+                    for (int j = -1; j <= 1; j++)
+                    {
+                        chunkGenerator_.generateChunk(pos.getX() + i, pos.getY() + j);
+                    }
+                }
+
+                for (int j = -3; j <= 3; j++)
+                {
+                    chunkGenerator_.removeChunk(pos.getX() - 3, pos.getY() + j);
+                    chunkGenerator_.removeChunk(pos.getX() + 3, pos.getY() + j);
+
+                    if (j != -3 && j != 3)
+                    {
+                        chunkGenerator_.removeChunk(pos.getX() + j, pos.getY() - 3);
+                        chunkGenerator_.removeChunk(pos.getX() + j, pos.getY() + 3);
+                    }
+                }
             }
         }
 
@@ -39,8 +75,13 @@ namespace World
         {
             reg.put(
                 Input::PlayerPositionChangedEvent::Type,
-                new ChunkGenerationListener(channelInput_)
+                listener_
             );
+        }
+
+        void ChunkGenerationSystem::unregisterListeners(Event::ListenerRegister& reg)
+        {
+            reg.remove(listener_);
         }
     }
 }

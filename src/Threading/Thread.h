@@ -36,11 +36,6 @@ namespace Threading
     int sleep(long seconds, long milliseconds);
 
     /**
-     *  Difference of timespec structs : end - start
-     */
-    struct timespec difference(struct timespec start, struct timespec end);
-
-    /**
      * Class that can run multiple threadable objects.
      *
      * *Caution*: Does not own threadables' memory.

@@ -20,9 +20,13 @@
 #ifndef WORLD_GENERATION_CHUNK_GENERATOR_H
 #define WORLD_GENERATION_CHUNK_GENERATOR_H
 
+#include <vector>
+
 #include "../World.h"
 #include "../../Ecs/World.h"
 #include "../../Random/NumberGenerator.h"
+#include "../../Threading/ConcurrentRessource.h"
+#include "../SimpleTree.h"
 
 namespace World
 {
@@ -38,7 +42,7 @@ namespace World
         public:
             ChunkGenerator(
                 World& world,
-                Ecs::World& ecsWorld,
+                Threading::ConcurrentRessource<Ecs::World>& ecsWorld,
                 Random::Seed worldSeed
             ): world_(world),
                ecsWorld_(ecsWorld),
@@ -50,13 +54,52 @@ namespace World
              */
             void generateChunk(int x, int y);
 
+            /**
+             * Cancel the generation of the chunk
+             */
+            void unGenerateChunk(int x, int y);
+
+            /**
+             * Totally forget about the chunk in x, y
+             */
+            void removeChunk(int x, int y);
+
         private:
             World& world_;
-            Ecs::World& ecsWorld_;
+            Threading::ConcurrentRessource<Ecs::World>& ecsWorld_;
             Random::Seed worldSeed_;
 
             void prepareChunk(int x, int y);
+
+            /**
+             * Generate a city in the chunk (x, y)
+             */
+            void generateCity(int x, int y, Random::NumberGenerator& rng);
+
+            /**
+             * Generate trees in the chunk (x, y)
+             *
+             * @param[in] x
+             * @param[in] y
+             * @param[in] rng
+             * @param[out] positions
+             * @param[out] trees
+             */
+            void generateTrees(
+                int x,
+                int y,
+                Random::NumberGenerator& rng,
+                std::vector<Geometry::Vec3Df>& position,
+                std::vector<SimpleTree*>& trees
+            );
+
             Random::Seed getChunkSeed(int x, int y);
+
+            void insertDescriptor(
+                Core::SharedPtr<Ecs::EntityDescriptor>& descriptor,
+                int defaultI,
+                int defaultJ
+            );
         };
     }
 }

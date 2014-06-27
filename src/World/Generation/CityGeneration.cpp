@@ -93,12 +93,28 @@ namespace World
                 parameters.getMinBuildingHeight(),
                 parameters.getMaxBuildingHeight()
             );
+
+            const Geometry::Vec3Df& wallColorMin = parameters.getWallColorMin();
+            const Geometry::Vec3Df& wallColorMax = parameters.getWallColorMax();
+            const Geometry::Vec3Df& roofColorMin = parameters.getRoofColorMin();
+            const Geometry::Vec3Df& roofColorMax = parameters.getRoofColorMax();
+
+            const float wallCoef = rng.getUniform(0.0, 1.0);
+            const Geometry::Vec3Df wallColor =
+                wallColorMin * wallCoef + wallColorMax * (1.0 - wallCoef);
+
+            const Geometry::Vec3Df roofColor = Geometry::Vec3Df(
+                rng.getUniform(roofColorMin.getX(), roofColorMax.getX()),
+                rng.getUniform(roofColorMin.getY(), roofColorMax.getY()),
+                rng.getUniform(roofColorMin.getZ(), roofColorMax.getZ())
+            );
+
             return new SimpleBuilding(
                 base,
-                height * 0.75,
-                height * 0.25,
-                parameters.getWallColor(),
-                parameters.getRoofColor()
+                height * 0.70,
+                height * 0.30,
+                wallColor,
+                roofColor
             );
         }
 

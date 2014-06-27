@@ -53,6 +53,8 @@ namespace Ecs
         virtual ~Component()
         {}
 
+        virtual Component* clone() const = 0;
+
         /**
          * Return the dependencies of this component
          *
@@ -64,7 +66,7 @@ namespace Ecs
         /**
          * Returns component's type
          */
-        const Type & getType() const
+        const Type& getType() const
         {
             return type_;
         }
