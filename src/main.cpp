@@ -73,9 +73,9 @@ int main()
     // InputTest::testPlayerSystem();
     // InputTest::testCoordinates();
     // StateMachineTest::testStateMachine();
+    NetworkTest::TestNetwork();
 
-    Application::Application app;
-    app.start();
-    //NetworkTest::TestNetwork();
+    // Application::Application app;
+    // app.start();
     return 0;
 }
