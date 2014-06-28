@@ -24,6 +24,7 @@
 #include "../../Ecs/ComponentGroup.h"
 #include "../../Geometry/PositionComponent.h"
 #include "../../Physics/MovementComponent.h"
+#include "../../Character/CharacterComponent.h"
 
 using std::max;
 using std::vector;
@@ -60,6 +61,7 @@ namespace AI
 
             Ecs::ComponentGroup::ComponentTypeCollection types;
             types.insert(PositionComponent::Type);
+            types.insert(Character::CharacterComponent::Type);
             Ecs::ComponentGroup prototype(types);
 
 	    // Get the position of the entity owning the sensor

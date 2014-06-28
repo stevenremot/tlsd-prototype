@@ -72,7 +72,6 @@ namespace AI
                             MemoryFact* ennemyFact = ennemyFacts[i];
                             float factBelief = ennemyFact->getFactBelief();
                             const Geometry::Vec3Df& position = ennemyFact->getPosition();
-                            float distance = position.getLength();
                             if (currentFactBelief < factBelief)
                             {
                                 targetEntity = ennemyFact->getCharacterId();

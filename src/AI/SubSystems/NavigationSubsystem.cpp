@@ -31,6 +31,7 @@
 #include "../../Character/ActionPerformedEvent.h"
 #include "../../Character/MoveAction.h"
 #include "../../Character/StopAction.h"
+#include "../../Character/LookAtAction.h"
 
 using AI::Subsystem::Subsystem;
 
@@ -94,6 +95,14 @@ namespace AI
                         {
                             const Geometry::Vec3Df& dir = currentTarget - positionComponent->getPosition();
                             Geometry::Vec3Df velocity = dir*(1.0/(distanceToNextTarget + FLT_EPSILON)); // avoid division by 0 ?
+
+                            eventQueue_ << new Character::ActionPerformedEvent(
+                                components.getEntity(),
+                                new Character::LookAtAction(
+                                    velocity.getHorizontalComponent().getOrientation()
+                                )
+                            );
+
                             eventQueue_ << new Character::ActionPerformedEvent(
                                 components.getEntity(),
                                 new Character::MoveAction(
