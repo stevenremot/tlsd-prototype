@@ -61,7 +61,8 @@ namespace NavMeshTest
         Threading::ConcurrentWriter<Ecs::World> w,
         const Geometry::Vec3Df& position,
         const Geometry::Vec3Df& velocity,
-        bool hasAI
+        bool hasAI,
+        Event::EventQueue& queue
     ) {
         Ecs::Entity e = w->createEntity();
 
@@ -74,7 +75,7 @@ namespace NavMeshTest
         {
             // Set up the ai component
             AI::AiComponent* aiComponent =
-                new AI::AiComponent(e);
+                new AI::AiComponent(e, queue);
             AI::MemoryComponent* memoryComponent =
                 new AI::MemoryComponent();
             AI::Sensor::SensorComponent* sensorComponent =
@@ -179,13 +180,15 @@ namespace NavMeshTest
                 world,
                 Geometry::Vec3Df(0.0,0.0,0.0),
                 Geometry::Vec3Df(0.0,0.0,0.0),
-                true
+                true,
+                queue
             );
             e2 = createNewCharacter(
                 world,
                 Geometry::Vec3Df(80.0,80.0,0.0),
                 Geometry::Vec3Df(0.0,0.0,0.0),
-                false
+                false,
+                queue
             );
         }
 

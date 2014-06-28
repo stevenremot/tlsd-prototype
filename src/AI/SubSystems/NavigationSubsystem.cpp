@@ -28,6 +28,9 @@
 
 #include "../../Geometry/PositionComponent.h"
 #include "../../Physics/MovementComponent.h"
+#include "../../Character/ActionPerformedEvent.h"
+#include "../../Character/MoveAction.h"
+#include "../../Character/StopAction.h"
 
 using AI::Subsystem::Subsystem;
 
@@ -45,8 +48,9 @@ namespace AI
     {
         const Subsystem::SubsystemType NavigationSubSystem::Type = "NavigationSubsystem";
 
-        NavigationSubSystem::NavigationSubSystem()
-            : Subsystem(Type)
+        NavigationSubSystem::NavigationSubSystem(Event::EventQueue& eventQueue):
+            Subsystem(Type),
+            eventQueue_(eventQueue)
         {}
 
         bool NavigationSubSystem::update(Ecs::ComponentGroup& components)
@@ -85,29 +89,43 @@ namespace AI
                     if(targetingComponent->isTargetValid(finalTarget))
                     {
                         float margin = 2.f;
-                        float maxSpeed = 10.0f;//0.5f;
                         float distanceToNextTarget = (positionComponent->getPosition()- currentTarget).getLength();
                         if(distanceToNextTarget > margin)
                         {
                             const Geometry::Vec3Df& dir = currentTarget - positionComponent->getPosition();
-                            Geometry::Vec3Df velocity = dir*(maxSpeed/(distanceToNextTarget + FLT_EPSILON)); // avoid division by 0 ?
-                            movementComponent->setVelocity(velocity);
+                            Geometry::Vec3Df velocity = dir*(1.0/(distanceToNextTarget + FLT_EPSILON)); // avoid division by 0 ?
+                            eventQueue_ << new Character::ActionPerformedEvent(
+                                components.getEntity(),
+                                new Character::MoveAction(
+                                    velocity.getHorizontalComponent()
+                                )
+                            );
                         }
                         else
                         {
-                            movementComponent->setVelocity(Geometry::Vec3Df(0.0, 0.0, 0.0));
+                            eventQueue_ << new Character::ActionPerformedEvent(
+                                components.getEntity(),
+                                new Character::StopAction()
+                            );
                             currentPath_.erase(currentPath_.begin());
                         }
                         return false;
                     }
                     else // the target is no longer valid, a new plan needs to be recompute
                     {
+                        eventQueue_ << new Character::ActionPerformedEvent(
+                            components.getEntity(),
+                            new Character::StopAction()
+                        );
                         currentPath_.clear();
-                        movementComponent->setVelocity(Geometry::Vec3Df(0.0, 0.0, 0.0));
                     }
                 }
                 else // The movement action is finished, the entity has reached the target
                 {
+                    eventQueue_ << new Character::ActionPerformedEvent(
+                        components.getEntity(),
+                        new Character::StopAction()
+                    );
                     movementComponent->setVelocity(Geometry::Vec3Df(0.0, 0.0, 0.0));
                 }
                 return true;

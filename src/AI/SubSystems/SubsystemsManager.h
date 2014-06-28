@@ -29,6 +29,7 @@
 
 #include "../../Ecs/Entity.h"
 #include "../../Ecs/World.h"
+#include "../../Event/EventQueue.h"
 
 namespace AI
 {
@@ -40,7 +41,8 @@ namespace AI
         class SubSystemsManager
         {
         public:
-            SubSystemsManager()
+            SubSystemsManager(Event::EventQueue& eventQueue):
+                eventQueue_(eventQueue)
             {}
 
             ~SubSystemsManager();
@@ -67,6 +69,7 @@ namespace AI
 
         private:
             std::vector<Subsystem*> subSystemsList_;
+            Event::EventQueue& eventQueue_;
         };
     }
 

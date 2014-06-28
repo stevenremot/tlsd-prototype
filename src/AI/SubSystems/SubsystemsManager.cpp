@@ -34,7 +34,7 @@ namespace AI
         {
             if(type == NavigationSubSystem::Type)
             {
-                subSystemsList_.push_back(new NavigationSubSystem());
+                subSystemsList_.push_back(new NavigationSubSystem(eventQueue_));
             }
         }
 

@@ -23,6 +23,7 @@
 #include "../Action/NoAction.h"
 #include "Subsystem.h"
 #include "../NavMesh/NavMeshContainer.h"
+#include "../../Event/EventQueue.h"
 
 #include "../../Geometry/Vec3D.h"
 
@@ -44,7 +45,7 @@ namespace AI
 
             typedef std::vector<Geometry::Vec3Df> Path;
 
-            NavigationSubSystem();
+            NavigationSubSystem(Event::EventQueue& eventQueue);
             ~NavigationSubSystem(){}
 
             void findPathToGoal();
@@ -57,6 +58,7 @@ namespace AI
         private:
             //Action::NoAction* defaultAction_;
             Path currentPath_;
+            Event::EventQueue& eventQueue_;
             //Action::Action* currentAction_;
         };
     }

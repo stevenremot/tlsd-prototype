@@ -24,6 +24,16 @@
 #include "../Character/EntityCreator.h"
 #include "../Character/Statistics.h"
 
+// TODO for ai, remove later
+#include "../AI/AiComponent.h"
+#include "../AI/BasicAiModule.h"
+#include "../AI/MemoryComponent.h"
+#include "../AI/Sensor/SensorComponent.h"
+#include "../AI/SubSystems/TargetingComponent.h"
+#include "../AI/Sensor/SightSensor.h"
+#include "../tests/stateMachine.h"
+#include "../AI/SubSystems/NavigationSubsystem.h"
+
 namespace Application
 {
     void applicationEventBootCallback(Application& application, BootInterface& eventBoot)
@@ -53,6 +63,11 @@ namespace Application
 
     void applicationAnimationBootCallback(Application& application, BootInterface& graphicsBoot)
     {
+        application.aiBoot_.start();
+    }
+
+    void applicationAiBootCallback(Application& application, BootInterface& aiBoot)
+    {
         application.startLoop();
     }
 
@@ -65,6 +80,7 @@ namespace Application
         generationBoot_(applicationGenerationBootCallback, *this),
         characterBoot_(applicationCharacterBootCallback, *this),
         animationBoot_(applicationAnimationBootCallback, *this),
+        aiBoot_(applicationAiBootCallback, *this),
         running_(false)
     {}
 
@@ -93,7 +109,7 @@ namespace Application
                 eventBoot_.getEventManager().getEventQueue()
             );
 
-            Character::createCharacter(
+            Ecs::Entity badGuy = Character::createCharacter(
                 world,
                 Geometry::Vec3Df(160, 160, 150),
                 Geometry::Vec3Df(0, 0, 0),
@@ -101,6 +117,31 @@ namespace Application
                 group,
                 eventBoot_.getEventManager().getEventQueue()
             );
+
+            AI::AiComponent* aiComponent = new AI::AiComponent(
+                badGuy,
+                getEventManager().getEventQueue()
+            );
+            AI::Sensor::SensorComponent* sensorComponent =
+                new AI::Sensor::SensorComponent(badGuy);
+
+            AI::BasicAiModule* aiModule = new AI::BasicAiModule(StateMachineTest::Idle);
+            StateMachineTest::setupStateMachine(*aiModule);
+            aiComponent->setAiModule(aiModule);
+
+            // Add a sight sensor
+            AI::Sensor::SensorManager& sensorsManager = sensorComponent->getSensorsManager();
+            sensorsManager.addSensor(AI::Sensor::SightSensor::Type);
+
+            // Add navigation and targeting subsytems
+            AI::Subsystem::SubSystemsManager& subsystemsManager = aiComponent->getSubsystemsManager();
+
+            subsystemsManager.addSubsystem(AI::Subsystem::NavigationSubSystem::Type);
+
+            world->addComponent(badGuy, new AI::MemoryComponent());
+            world->addComponent(badGuy, sensorComponent);
+            world->addComponent(badGuy, new AI::Subsystem::TargetingComponent());
+            world->addComponent(badGuy, aiComponent);
         }
 
         running_ = true;

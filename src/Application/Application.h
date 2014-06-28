@@ -30,6 +30,7 @@
 #include "GenerationBoot.h"
 #include "CharacterBoot.h"
 #include "AnimationBoot.h"
+#include "AiBoot.h"
 
 namespace Application
 {
@@ -67,6 +68,7 @@ namespace Application
         friend void applicationGenerationBootCallback(Application& application, BootInterface& graphicsBoot);
         friend void applicationCharacterBootCallback(Application& application, BootInterface& graphicsBoot);
         friend void applicationAnimationBootCallback(Application& application, BootInterface& graphicsBoot);
+        friend void applicationAiBootCallback(Application& application, BootInterface& aiBoot);
 
     private:
         EventBoot eventBoot_;
@@ -77,6 +79,7 @@ namespace Application
         GenerationBoot generationBoot_;
         CharacterBoot characterBoot_;
         AnimationBoot animationBoot_;
+        AiBoot aiBoot_;
         bool running_;
 
         void startLoop();

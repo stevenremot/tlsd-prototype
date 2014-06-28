@@ -58,7 +58,7 @@ int main()
     // GraphTest::testPrimitiveExtraction();
     // GraphTest::testPlanarCopy();
     // GraphTest::testFilamentInCycleExtraction();
-    NavMeshTest::testNavMesh();
+    // NavMeshTest::testNavMesh();
     // StateMachineTest::testStateMachine();
     // ThreadingTest::testChannel();
     // WorldTest::testRoadNetworkModel();
@@ -75,8 +75,8 @@ int main()
     // InputTest::testCoordinates();
     // StateMachineTest::testStateMachine();
 
-    // Application::Application app;
-    // app.start();
+    Application::Application app;
+    app.start();
 
     return 0;
 }

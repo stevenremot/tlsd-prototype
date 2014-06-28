@@ -50,10 +50,10 @@ namespace AI
         static const Ecs::Component::Type Type;
 
         // TODO use a concurrent ressource here
-        AiComponent(Ecs::Entity entity)
+        AiComponent(Ecs::Entity entity, Event::EventQueue& eventQueue)
             : Component(Type),
               entity_(entity),
-              subsystemsManager_(),
+              subsystemsManager_(eventQueue),
               aiModule_(NULL) {}
 
         AiComponent(const AiComponent& aiComp):
