@@ -57,10 +57,18 @@ namespace AI
         std::vector<MemoryFact*> SightSensor::update(Ecs::World& world)
         {
             std::vector<MemoryFact*> newFacts;
-            // Get all the entity with the component "position"
+
             Ecs::ComponentGroup::ComponentTypeCollection types;
             types.insert(PositionComponent::Type);
             Ecs::ComponentGroup prototype(types);
+
+	    // Get the position of the entity owning the sensor
+	    Ecs::ComponentGroup sensorEntityComponents = world.getEntityComponents(entity_, prototype);
+	    const Vec3Df& sensorEntityPosition =
+	      getConcurrentReader<Ecs::Component, PositionComponent>(
+								     sensorEntityComponents.getComponent(PositionComponent::Type)
+								     )->getPosition();
+            // Get all the entity with the component "position"
             Ecs::World::ComponentGroupCollection groupCollection = world.getComponents(prototype);
             Ecs::World::ComponentGroupCollection::iterator group;
 
@@ -74,10 +82,10 @@ namespace AI
                         getConcurrentReader<Ecs::Component, PositionComponent>(
                             group->getComponent(PositionComponent::Type)
                         )->getPosition();
-
-                    if(entityPosition.getSquaredLength() < detectionRadius_*detectionRadius_)
+		    float distance  = (sensorEntityPosition - entityPosition).getLength();
+                    if(distance < detectionRadius_)
                     {
-                        float belief = max(1-entityPosition.getLength()/detectionRadius_,0.f);
+                        float belief = 1-distance/detectionRadius_;
                         newFacts.push_back(new SeeEntityFact(entity, entityPosition, belief));
                     }
                 }

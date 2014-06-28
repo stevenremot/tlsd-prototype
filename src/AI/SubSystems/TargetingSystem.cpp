@@ -67,18 +67,16 @@ namespace AI
                     {
                         Ecs::Entity targetEntity;
                         float currentFactBelief = 0.0;
-                        float currentDistance = FLT_MAX;
                         for(unsigned int i = 0; i < ennemyFacts.size(); i++)
                         {
                             MemoryFact* ennemyFact = ennemyFacts[i];
                             float factBelief = ennemyFact->getFactBelief();
                             const Geometry::Vec3Df& position = ennemyFact->getPosition();
                             float distance = position.getLength();
-                            if (currentFactBelief/(FLT_EPSILON + currentDistance) < factBelief/(FLT_EPSILON + distance))
+                            if (currentFactBelief < factBelief)
                             {
                                 targetEntity = ennemyFact->getCharacterId();
                                 currentFactBelief = factBelief;
-                                currentDistance = distance;
                                 targetingComponent->setTargetPosition(position);
                                 targetingComponent->setTargetEntity(targetEntity);
                                 //targetingComponent.setHasValidTarget(true);
