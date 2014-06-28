@@ -1,17 +1,17 @@
 /*
    This file is part of The Lost Souls Downfall prototype.
-   
+
     The Lost Souls Downfall prototype is free software: you can
     redistribute it and/or modify it under the terms of the GNU
     General Public License as published by the Free Software
     Foundation, either version 3 of the License, or (at your option)
     any later version.
-    
+
     The Lost Souls Downfall prototype is distributed in the hope that
     it will be useful, but WITHOUT ANY WARRANTY; without even the
     implied warranty of MERCHANTABILITY or FITNESS FOR A PARTICULAR
     PURPOSE.  See the GNU General Public License for more details.
-    
+
     You should have received a copy of the GNU General Public License
     along with The Lost Souls Downfall prototype.  If not, see
     <http://www.gnu.org/licenses/>.
@@ -43,47 +43,62 @@
 
 #include "stateMachine.h"
 #include "SvgDrawer.h"
+
 using std::vector;
 using std::cout;
 using std::endl;
 
+using Threading::ConcurrentRessource;
+using Threading::ConcurrentReader;
+using Threading::ConcurrentWriter;
+using Threading::getConcurrentReader;
+using Threading::getConcurrentWriter;
+
 namespace NavMeshTest
 {
 
-    Ecs::Entity createNewCharacter(Ecs::World& w, const AI::NavMesh::NavMeshContainer& navMeshes ,const Geometry::Vec3Df& position, const Geometry::Vec3Df& velocity, bool hasAI)
-    {
-        Ecs::Entity e = w.createEntity();
+    Ecs::Entity createNewCharacter(
+        Threading::ConcurrentWriter<Ecs::World> w,
+        const Geometry::Vec3Df& position,
+        const Geometry::Vec3Df& velocity,
+        bool hasAI
+    ) {
+        Ecs::Entity e = w->createEntity();
 
         Geometry::PositionComponent* positionComponent = new Geometry::PositionComponent(position);
         Physics::MovementComponent* movementComponent= new Physics::MovementComponent(velocity);
-        w.addComponent(e, positionComponent);
-        w.addComponent(e, movementComponent);
+        w->addComponent(e, positionComponent);
+        w->addComponent(e, movementComponent);
 
         if(hasAI)
         {
             // Set up the ai component
-            AI::AiComponent* aiComponent = new AI::AiComponent(e, navMeshes);
-            AI::MemoryComponent* memoryComponent = new AI::MemoryComponent();
-            AI::Sensor::SensorComponent* sensorComponent = new AI::Sensor::SensorComponent(e);
-            AI::Subsystem::TargetingComponent* targetingComponent = new AI::Subsystem::TargetingComponent();
+            AI::AiComponent* aiComponent =
+                new AI::AiComponent(e);
+            AI::MemoryComponent* memoryComponent =
+                new AI::MemoryComponent();
+            AI::Sensor::SensorComponent* sensorComponent =
+                new AI::Sensor::SensorComponent(e);
+            AI::Subsystem::TargetingComponent* targetingComponent =
+                new AI::Subsystem::TargetingComponent();
 
-            w.addComponent(e, memoryComponent);
-            w.addComponent(e, sensorComponent);
-            w.addComponent(e, targetingComponent);
+            w->addComponent(e, memoryComponent);
+            w->addComponent(e, sensorComponent);
+            w->addComponent(e, targetingComponent);
 
             AI::BasicAiModule* aiModule = new AI::BasicAiModule(StateMachineTest::Idle);
             StateMachineTest::setupStateMachine(*aiModule);
             aiComponent->setAiModule(aiModule);
-            w.addComponent(e, aiComponent);
+            w->addComponent(e, aiComponent);
 
             // Add a sight sensor
-            AI::Sensor::SensorsManager& sensorsManager = sensorComponent->getSensorsManager();
+            AI::Sensor::SensorManager& sensorsManager = sensorComponent->getSensorsManager();
             sensorsManager.addSensor(AI::Sensor::SightSensor::Type);
 
             // Add navigation and targeting subsytems
             AI::Subsystem::SubSystemsManager& subsystemsManager = aiComponent->getSubsystemsManager();
             //subsystemsManager.addSubsystem(AI::Subsystem::TargetingSubsystem::Type, w);
-            subsystemsManager.addSubsystem(AI::Subsystem::NavigationSubSystem::Type, w);
+            subsystemsManager.addSubsystem(AI::Subsystem::NavigationSubSystem::Type);
         }
         return e;
     }
@@ -152,13 +167,32 @@ namespace NavMeshTest
 
         // Test AI
         // Create entity
-        Ecs::World w = Ecs::World();
-        Ecs::Entity e1 = createNewCharacter(w, navMeshGenerationEngine.getNavMeshes(), Geometry::Vec3Df(0.0,0.0,0.0), Geometry::Vec3Df(0.0,0.0,0.0), true);
-        Ecs::Entity e2 = createNewCharacter(w, navMeshGenerationEngine.getNavMeshes(), Geometry::Vec3Df(80.0,80.0,0.0), Geometry::Vec3Df(0.0,0.0,0.0));
+        Threading::ConcurrentRessource<Ecs::World> w(
+            new Ecs::World(m.getEventQueue())
+        );
+
+        Ecs::Entity e1, e2;
+
+        {
+            Threading::ConcurrentWriter<Ecs::World> world = w.getWriter();
+            e1 = createNewCharacter(
+                world,
+                Geometry::Vec3Df(0.0,0.0,0.0),
+                Geometry::Vec3Df(0.0,0.0,0.0),
+                true
+            );
+            e2 = createNewCharacter(
+                world,
+                Geometry::Vec3Df(80.0,80.0,0.0),
+                Geometry::Vec3Df(0.0,0.0,0.0),
+                false
+            );
+        }
+
         // Create thrads for systems
         AI::AiSystem aiSystem(w);
         AI::Sensor::SensorSystem sensorSystem(w);
-        Physics::MovementSystem movementSystem(w);
+        Physics::MovementSystem movementSystem(w, m.getEventQueue());
         AI::Subsystem::TargetingSystem targetingSystem(w);
 
         vector<Threading::ThreadableInterface*> aiSystemVector;
@@ -182,10 +216,18 @@ namespace NavMeshTest
         types.insert(Geometry::PositionComponent::Type);
 
         Ecs::ComponentGroup prototype(types);
-        Ecs::ComponentGroup componentsE1 = w.getEntityComponents(e1, prototype);
-        const Geometry::PositionComponent& positionComponentE1 = static_cast<const Geometry::PositionComponent&>(componentsE1.getComponent(Geometry::PositionComponent::Type));
-        Ecs::ComponentGroup componentsE2 = w.getEntityComponents(e2, prototype);
-        Geometry::PositionComponent& positionComponentE2 = static_cast<Geometry::PositionComponent&>(componentsE2.getComponent(Geometry::PositionComponent::Type));
+        Ecs::ComponentGroup componentsE1 = w.getWriter()->getEntityComponents(
+            e1,
+            prototype
+        );
+
+        Ecs::ComponentGroup componentsE2 =
+            w.getWriter()->getEntityComponents(e2, prototype);
+
+
+        types.insert(AI::Subsystem::TargetingComponent::Type);
+        Ecs::ComponentGroup components =
+            w.getWriter()->getEntityComponents(e1, Ecs::ComponentGroup(types));
 
         //sensorThread.start();
         //targetingThread.start();
@@ -216,22 +258,32 @@ namespace NavMeshTest
         std::vector<Geometry::Vec2Df> positionsE2;
         std::vector<Geometry::Vec2Df> targets;
 
-        types.insert(AI::Subsystem::TargetingComponent::Type);
-        Ecs::ComponentGroup components = w.getEntityComponents(e1, Ecs::ComponentGroup(types));
-        const AI::Subsystem::TargetingComponent& targetingComponent = static_cast<const AI::Subsystem::TargetingComponent&>(components.getComponent(AI::Subsystem::TargetingComponent::Type));
-
-
         // Taget is moving slowly to the upper-right corner of the navMesh
         Geometry::Vec3Df offset(0.1, -0.2, 0.0);
         for (int j =0; j < 20*20; j++)
         {
+            ConcurrentReader<Geometry::PositionComponent> positionComponentE1 =
+                getConcurrentReader<Ecs::Component, Geometry::PositionComponent>(
+                    componentsE1.getComponent(Geometry::PositionComponent::Type)
+                );
+
+            ConcurrentWriter<Geometry::PositionComponent> positionComponentE2 =
+                getConcurrentWriter<Ecs::Component, Geometry::PositionComponent>(
+                    componentsE2.getComponent(Geometry::PositionComponent::Type)
+                );
+
+            ConcurrentReader<AI::Subsystem::TargetingComponent> targetingComponent =
+                getConcurrentReader<Ecs::Component, AI::Subsystem::TargetingComponent>(
+                    components.getComponent(AI::Subsystem::TargetingComponent::Type)
+                );
+
             Threading::sleep(0,50);
-            Geometry::Vec3Df pos1 = positionComponentE1.getPosition();
-            Geometry::Vec3Df pos2 = positionComponentE2.getPosition();
-            Geometry::Vec3Df target = targetingComponent.getTargetPosition();
+            Geometry::Vec3Df pos1 = positionComponentE1->getPosition();
+            Geometry::Vec3Df pos2 = positionComponentE2->getPosition();
+            Geometry::Vec3Df target = targetingComponent->getTargetPosition();
 
             Geometry::Vec3Df newPos = pos2 + offset;
-            positionComponentE2.setPosition(newPos);
+            positionComponentE2->setPosition(newPos);
             positionsE2.push_back(Geometry::Vec2Df(newPos.getX(), newPos.getY()));
             positions.push_back(Geometry::Vec2Df(pos1.getX(), pos1.getY()));
             targets.push_back(Geometry::Vec2Df(target.getX(), target.getY()));
@@ -246,10 +298,15 @@ namespace NavMeshTest
 
         if(navMeshes.size() > 0)
         {
+            ConcurrentWriter<Geometry::PositionComponent> positionComponentE2 =
+                getConcurrentWriter<Ecs::Component, Geometry::PositionComponent>(
+                    componentsE2.getComponent(Geometry::PositionComponent::Type)
+                );
+
             AI::NavMesh::NavMesh* navMesh = navMeshes.at(0);
             // Path finding
             const Graph::PlanarGraph& graph = navMesh->getGraph();
-            Geometry::Vec3Df pos2 = positionComponentE2.getPosition();
+            Geometry::Vec3Df pos2 = positionComponentE2->getPosition();
 
             Graph::PlanarNode startNode; navMesh->getNode( Geometry::Vec2Df(0, 0), startNode);
             Graph::PlanarNode goalNode; navMesh->getNode( Geometry::Vec2Df(pos2.getX(), pos2.getY()), goalNode);

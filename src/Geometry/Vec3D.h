@@ -22,6 +22,7 @@
 
 #include <ostream>
 #include <cmath>
+#include "Vec2D.h"
 
 namespace Geometry
 {
@@ -73,7 +74,7 @@ namespace Geometry
 
         inline bool operator!=(const Vec3D& vec) const
         {
-            return x_ != vec.x_ && y_ != vec.y_ && z_ != vec.z_;
+            return x_ != vec.x_ || y_ != vec.y_ || z_ != vec.z_;
         }
 
         inline Vec3D operator+(const Vec3D& vec) const
@@ -136,6 +137,36 @@ namespace Geometry
             return *this;
         }
 
+        inline Vec3D operator/(const Vec3D& vec) const
+        {
+            return Vec3D(x_ / vec.x_,
+                         y_ / vec.y_,
+                         z_ / vec.z_);
+        }
+
+        inline Vec3D& operator /=(const Vec3D& vec)
+        {
+            x_ /= vec.x_;
+            y_ /= vec.y_;
+            z_ /= vec.z_;
+            return *this;
+        }
+
+        inline Vec3D operator/(T t) const
+        {
+            return Vec3D(x_ / t,
+                         y_ / t,
+                         z_ / t);
+        }
+
+        inline Vec3D& operator /=(T t)
+        {
+            x_ /= t;
+            y_ /= t;
+            z_ /= t;
+            return *this;
+        }
+
         inline Vec3D operator-() const
         {
             return Vec3D(-x_, -y_, -z_);
@@ -144,6 +175,11 @@ namespace Geometry
         inline T dot(const Vec3D& vec) const
         {
             return x_ * vec.x_ + y_ * vec.y_ + z_ * vec.z_;
+        }
+
+        inline Vec3D cross(const Vec3D& vec) const
+        {
+            return Vec3D(y_*vec.z_ - z_* vec.y_, z_*vec.x_ - x_*vec.z_, x_*vec.y_ - y_*vec.x_);
         }
 
         // Vector function
@@ -155,6 +191,45 @@ namespace Geometry
         inline T getLength() const
         {
             return std::sqrt(getSquaredLength());
+        }
+
+        inline void normalize()
+        {
+            T length = this->getLength();
+
+            if (length != 0)
+            {
+                x_ /= length;
+                y_ /= length;
+                z_ /= length;
+            }
+        }
+
+        inline Vec3D getNormalized() const
+        {
+            T length = this->getLength();
+
+            if (length == 0)
+                return Vec3D();
+            else
+                return Vec3D(x_/length, y_/length, z_/length);
+        }
+
+        inline void setHorizontalComponent(const Vec2D<T>& vec)
+        {
+            x_ = vec.getX();
+            y_ = vec.getY();
+        }
+
+        inline void setHorizontalComponent(const Vec3D& vec)
+        {
+            x_ = vec.getX();
+            y_ = vec.getY();
+        }
+
+        Vec2D<T> getHorizontalComponent() const
+        {
+            return Vec2D<T>(x_, y_);
         }
 
     private:

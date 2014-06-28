@@ -30,6 +30,9 @@
 
 #include "AiModule.h"
 
+#include "../Geometry/PositionComponent.h"
+#include "../Physics/MovementComponent.h"
+
 
 #include "../Ecs/Component.h"
 #include "../Geometry/PositionComponent.h"
@@ -46,13 +49,27 @@ namespace AI
     public:
         static const Ecs::Component::Type Type;
 
-        AiComponent(Ecs::Entity entity, const NavMesh::NavMeshContainer& navMeshes)
+        // TODO use a concurrent ressource here
+        AiComponent(Ecs::Entity entity)
             : Component(Type),
               entity_(entity),
-              subsystemsManager_(entity, navMeshes),
+              subsystemsManager_(),
               aiModule_(NULL) {}
 
+        AiComponent(const AiComponent& aiComp):
+            Component(Type),
+            entity_(aiComp.entity_),
+            subsystemsManager_(aiComp.subsystemsManager_),
+            aiModule_(aiComp.aiModule_)
+        {}
+
         ~AiComponent();
+
+
+        virtual Component* clone() const
+        {
+            return new AiComponent(*this);
+        }
 
         virtual const std::vector<Ecs::Component::Type>& getDependentComponents()
         {
@@ -68,30 +85,16 @@ namespace AI
         void setAiModule(AiModule* aiModule) {aiModule_ = aiModule;}
         AiModule* getAiModule() {return aiModule_;}
 
-        /*
-        Blackboard& getBlackboard() {return blackboard_;}
-        WorkingMemory& getMemory() {return memory_;}
-        */
-
         Subsystem::SubSystemsManager& getSubsystemsManager()
         {
             return subsystemsManager_;
         }
-        /*
-        Sensor::SensorsManager& getSensorsManager()
-        {
-            return sensorsManager_;
-        }
-        */
 
     private:
         static std::vector<Ecs::Component::Type> Dependencies;
 
         const Ecs::Entity entity_;
-        //WorkingMemory memory_;
-        //Blackboard blackboard_;
         Subsystem::SubSystemsManager subsystemsManager_;
-        //Sensor::SensorsManager sensorsManager_;
         AiModule* aiModule_;
 
     };

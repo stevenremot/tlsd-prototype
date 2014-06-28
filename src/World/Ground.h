@@ -23,6 +23,7 @@
 #include <exception>
 
 #include "../Graphics/Render/Model3D.h"
+#include "../Physics/GroundCollisionBody.h"
 #include "World.h"
 
 namespace World
@@ -55,15 +56,26 @@ namespace World
         }
     };
 
-    const float Resolution = 1;
+    const float Resolution = 2;
     /**
-     * Returns the 3D model of the ground for the chunk
-     * at the given position
-     *
+     * @param[in] x,y : chunk position
+     * @param[out] model : the 3D model of the ground for the chunk
+     * @param[out] collBody : GroundCollisionBody containing the chunk's heightmap
      */
-    Graphics::Render::Model3D computeGroundModel(World& world, int x, int y);
+    void computeGroundModel(
+        World& world,
+        int x,
+        int y,
+        Graphics::Render::Model3D& model,
+        Physics::GroundCollisionBody& collBody
+    );
     float computeHeight(World& world, float x, float y);
 
 }
 
 #endif
+
+// Emacs local variables
+// Local variables:
+// mode: c++
+// End:

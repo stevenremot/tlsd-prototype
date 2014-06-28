@@ -30,6 +30,8 @@ namespace Event
     class EventListenerInterface
     {
     public:
+        virtual ~EventListenerInterface() {}
+
         /**
          * Method to call when the wanted type of event occurs
          */

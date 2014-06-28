@@ -28,17 +28,17 @@ namespace EventTest
     class QuitEvent: public Event::Event
     {
     public:
-        static const Event::Type TYPE;
-    QuitEvent(): Event::Event(TYPE)
+        static const Event::Type Type;
+    QuitEvent(): Event::Event(Type)
         {}
     };
 
     class PrintEvent: public Event::Event
     {
     public:
-        static const Type TYPE;
+        static const Type Type;
 
-    PrintEvent(char c): Event::Event(TYPE), c_(c)
+    PrintEvent(char c): Event::Event(Type), c_(c)
         {}
 
         char getChar() const

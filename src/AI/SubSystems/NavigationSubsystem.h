@@ -44,15 +44,17 @@ namespace AI
 
             typedef std::vector<Geometry::Vec3Df> Path;
 
-            NavigationSubSystem(const NavMesh::NavMeshContainer& navMeshes);
+            NavigationSubSystem();
             ~NavigationSubSystem(){}
 
             void findPathToGoal();
             virtual bool update(Ecs::ComponentGroup& components);
-            virtual void treatAction(Action::Action* action, const Ecs::ComponentGroup& components);
+            virtual void treatAction(
+                Action::Action* action,
+                Ecs::ComponentGroup& components
+            );
 
         private:
-            const NavMesh::NavMeshContainer& navMeshes_;
             //Action::NoAction* defaultAction_;
             Path currentPath_;
             //Action::Action* currentAction_;

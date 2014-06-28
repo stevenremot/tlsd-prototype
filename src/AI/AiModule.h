@@ -52,7 +52,7 @@ namespace AI
          * Compute the next sequence of action to execute.
          * Clean up the former plan so you should check if it has been fully executed before computing a new one.
          */
-        virtual void computeNewPlan(const Ecs::ComponentGroup& components) = 0;
+        virtual void computeNewPlan(Ecs::ComponentGroup& components) = 0;
 
         void cleanPlan()
         {

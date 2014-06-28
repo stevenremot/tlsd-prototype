@@ -25,7 +25,6 @@ namespace AI
 
     std::vector<Ecs::Component::Type> AiComponent::Dependencies;
 
-
     AiComponent::~AiComponent()
     {
 

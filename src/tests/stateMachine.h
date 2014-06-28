@@ -10,9 +10,9 @@ namespace StateMachineTest
     const AI::BasicStateMachine::State CloseToTarget = "closeToTarget";
     const AI::BasicStateMachine::State OnAttack = "onAttack";
 
-    float toIdleState(const Ecs::ComponentGroup&);
-    float toOnAttack(const Ecs::ComponentGroup& components);
-    float toCloseToTarget(const Ecs::ComponentGroup& components);
+    float toIdleState(Ecs::ComponentGroup&);
+    float toOnAttack(Ecs::ComponentGroup& components);
+    float toCloseToTarget(Ecs::ComponentGroup& components);
 
     void setupStateMachine(AI::BasicAiModule& aiModule);
 

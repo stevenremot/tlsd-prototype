@@ -20,10 +20,19 @@
 #ifndef CORE_SHARED_PTR_H_H
 #define CORE_SHARED_PTR_H_H
 
+#include <cstdlib>
 #include <exception>
+
+#include "../Threading/Lock.h"
 
 namespace Core
 {
+    template <typename T>
+    class SharedPtr;
+
+    template<typename T1, typename T2>
+    SharedPtr<T2> castSharedPtr(const SharedPtr<T1> ptr);
+
     /**
      * A class of pointer shared between different objets
      *
@@ -38,16 +47,20 @@ namespace Core
     public:
         SharedPtr(T* data):
             data_(data),
-            refs_(new unsigned int)
+            refs_(new unsigned int),
+            lock_(new Threading::Lock())
         {
             *refs_ = 1;
         }
 
         SharedPtr(const SharedPtr& ptr):
             data_(ptr.data_),
-            refs_(ptr.refs_)
+            refs_(ptr.refs_),
+            lock_(ptr.lock_)
         {
+            lock_->lockForWriting();
             (*refs_) += 1;
+            lock_->unlockForWriting();
         }
 
         SharedPtr& operator=(const T* data)
@@ -55,7 +68,10 @@ namespace Core
             unassign();
             data_ = data;
             refs_ = new unsigned int;
+            lock_ = new Threading::Lock();
             *refs_ = 1;
+
+            return *this;
         }
 
         SharedPtr& operator=(const SharedPtr& ptr)
@@ -63,7 +79,10 @@ namespace Core
             unassign();
             data_ = ptr.data_;
             refs_ = ptr.refs_;
+            lock_ = ptr.lock_;
+            lock_->lockForWriting();
             (*refs_) += 1;
+            lock_->unlockForWriting();
 
             return *this;
         }
@@ -83,23 +102,61 @@ namespace Core
             return data_;
         }
 
+        const T& operator*() const
+        {
+            return *data_;
+        }
+
+        const T* operator->() const
+        {
+            return data_;
+        }
+
+        template<typename T1, typename T2>
+        friend SharedPtr<T2> castSharedPtr(const SharedPtr<T1> ptr);
+
     private:
         T* data_;
         unsigned int* refs_;
+        Threading::Lock* lock_;
 
         void unassign()
         {
+            lock_->lockForWriting();
             (*refs_) -= 1;
 
             if (*refs_ == 0)
             {
-                delete refs_;
+                lock_->unlockForWriting();
                 delete data_;
-                refs_ = NULL;
+                delete refs_;
+                delete lock_;
                 data_ = NULL;
+                refs_ = NULL;
+                lock_ = NULL;
+            }
+            else
+            {
+                lock_->unlockForWriting();
             }
         }
+
+        SharedPtr(unsigned int* refs, T* data, Threading::Lock* lock):
+            data_(data),
+            refs_(refs),
+            lock_(lock)
+        {
+            lock_->lockForWriting();
+            (*refs) += 1;
+            lock_->unlockForWriting();
+        }
     };
+
+    template<typename T1, typename T2>
+    SharedPtr<T2> castSharedPtr(const SharedPtr<T1> ptr)
+    {
+        return SharedPtr<T2>(ptr.refs_, static_cast<T2*>(ptr.data_), ptr.lock_);
+    }
 }
 
 #endif

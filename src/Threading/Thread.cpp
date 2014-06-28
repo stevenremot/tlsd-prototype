@@ -7,13 +7,18 @@
 #include <windows.h>
 #endif
 
+#include "../Core/Time.h"
+
 using std::cout;
 using std::endl;
 
 using std::vector;
 
-namespace Threading {
+using Core::getTime;
+using Core::difference;
 
+namespace Threading
+{
     int sleep(long seconds, long milliseconds)
     {
 #ifdef _WIN32
@@ -50,27 +55,38 @@ namespace Threading {
         vector<ThreadableInterface*> threadables = thread->threadables_;
         unsigned int threadablesSize = threadables.size();
 
-        time_t lastTime = std::time(NULL);
-        time_t delay = 0;
-        time_t currentTime;
-        time_t loopDelay = thread->loopDelay_;
+        struct timespec lastTime;
+        getTime(lastTime);
+
+        struct timespec delay;
+        delay.tv_sec = 0;
+        delay.tv_nsec = 0;
+        struct timespec currentTime;
+        struct timespec loopDelay;
+        loopDelay.tv_sec = 0;
+        loopDelay.tv_nsec = 1000000L * thread->loopDelay_;
 
         while (thread->isRunning())
         {
-            currentTime = std::time(NULL);
-            delay += (currentTime - lastTime) * 1000;
+            getTime(currentTime);
+            struct timespec diff = difference(lastTime, currentTime);
+            delay.tv_sec += diff.tv_sec;
+            delay.tv_nsec += diff.tv_nsec;
             lastTime = currentTime;
 
-            while (delay >= loopDelay)
+            struct timespec diffDelays = difference(loopDelay, delay);
+            while (diffDelays.tv_sec >= 0 && diffDelays.tv_nsec >= 1000 && thread->isRunning())
             {
                 for (unsigned int i = 0; i < threadablesSize; i++)
                 {
                     threadables[i]->run();
                 }
-                delay -= loopDelay;
+                delay = diffDelays;
+                diffDelays = difference(loopDelay, delay);
             }
 
-            Threading::sleep(0, static_cast<long>(loopDelay - delay));
+            struct timespec waitingTime = difference(delay, loopDelay);
+            Threading::sleep(waitingTime.tv_sec, waitingTime.tv_nsec / 1000000L);
         }
 
         return NULL;

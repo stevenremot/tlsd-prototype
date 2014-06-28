@@ -33,6 +33,12 @@ using Geometry::Vec3Df;
 
 using Physics::MovementComponent;
 
+using Threading::ConcurrentRessource;
+using Threading::ConcurrentWriter;
+using Threading::ConcurrentReader;
+using Threading::getConcurrentWriter;
+using Threading::getConcurrentReader;
+
 namespace AI
 {
     namespace Sensor
@@ -61,10 +67,14 @@ namespace AI
             for(group = groupCollection.begin(); group != groupCollection.end(); ++group)
             {
                 // Check if the entity can be detected by the sensor's owner
-                const Ecs::Entity & entity = group->getEntity();
+                const Ecs::Entity& entity = group->getEntity();
                 if(entity != entity_)
                 {
-                    const Vec3Df & entityPosition = static_cast<PositionComponent &>(group->getComponent(PositionComponent::Type)).getPosition();
+                    const Vec3Df& entityPosition =
+                        getConcurrentReader<Ecs::Component, PositionComponent>(
+                            group->getComponent(PositionComponent::Type)
+                        )->getPosition();
+
                     if(entityPosition.getSquaredLength() < detectionRadius_*detectionRadius_)
                     {
                         float belief = max(1-entityPosition.getLength()/detectionRadius_,0.f);
@@ -78,7 +88,7 @@ namespace AI
         // SeeEnnemyFact's implementation :
         const MemoryFact::MemoryFactType SeeEntityFact::Type = "sightFact";
 
-        SeeEntityFact::SeeEntityFact(Ecs::Entity entity, const Geometry::Vec3Df & position, float belief):
+        SeeEntityFact::SeeEntityFact(Ecs::Entity entity, const Geometry::Vec3Df& position, float belief):
             MemoryFact(Type, belief)
         {
             setCharacterId(entity);

@@ -33,7 +33,7 @@ namespace AI
     class AiSystem : public Ecs::System, public Threading::ThreadableInterface
     {
     public:
-        AiSystem(Ecs::World& world) : System(world){}
+        AiSystem(Threading::ConcurrentRessource<Ecs::World>& world) : System(world){}
 
         virtual void run();
     };

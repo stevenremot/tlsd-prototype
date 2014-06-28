@@ -62,7 +62,7 @@ namespace AI
     {
     public:
 
-        typedef float(*TransitionFunction)(const Ecs::ComponentGroup& components);
+        typedef float(*TransitionFunction)(Ecs::ComponentGroup& components);
 
         struct Transition
         {
@@ -79,7 +79,7 @@ namespace AI
         /**
          * Look for the next state in the state machine and add the action related to the ttransition in the plan.
          */
-        virtual void computeNewPlan(const Ecs::ComponentGroup& components);
+        virtual void computeNewPlan(Ecs::ComponentGroup& components);
 
         void addState(const BasicStateMachine::State& state);
         void addTransition(const BasicStateMachine::State& state1, const BasicStateMachine::State& state2, const Transition& transition);

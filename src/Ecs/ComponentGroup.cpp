@@ -28,39 +28,31 @@ namespace Ecs
 {
     ComponentGroup::ComponentGroup(ComponentTypeCollection types)
     {
-        ComponentTypeCollection::const_iterator type;
-        for (type = types.begin(); type != types.end(); ++type)
-        {
-            components_[*type] = NULL;
-        }
+        types_ = types;
     }
 
     ComponentGroup::ComponentGroup(const ComponentGroup & group):
         entity_(group.entity_),
+        types_(group.types_),
         components_(group.components_)
     {
     }
 
-    bool ComponentGroup::satisfies(const ComponentCollection & components) const
+    bool ComponentGroup::satisfies(ComponentCollection & components) const
     {
         // Suppose all components have different types
         unsigned int satisfied = 0;
 
-        ComponentCollection::const_iterator component;
+        ComponentCollection::iterator component;
         for (component = components.begin(); component != components.end(); ++component)
         {
-            try
+            if (types_.find(component->getReader()->getType()) != types_.end())
             {
-                components_.at((*component)->getType());
                 satisfied += 1;
-            }
-            catch (const out_of_range & e)
-            {
-                continue;
             }
         }
 
-        if (satisfied < components_.size())
+        if (satisfied < types_.size())
         {
             return false;
         }
@@ -68,7 +60,7 @@ namespace Ecs
         return true;
     }
 
-    ComponentGroup ComponentGroup::clone(Entity entity, ComponentCollection components) const
+    ComponentGroup ComponentGroup::clone(Entity entity, ComponentCollection& components) const
     {
         if (!satisfies(components))
         {
@@ -81,7 +73,9 @@ namespace Ecs
         ComponentCollection::iterator component;
         for (component = components.begin(); component != components.end(); ++component)
         {
-            group.components_[(*component)->getType()] = *component;
+            group.components_.insert(
+                std::pair<Component::Type, Threading::ConcurrentRessource<Component> >(component->getReader()->getType(), *component)
+            );
         }
 
         return group;

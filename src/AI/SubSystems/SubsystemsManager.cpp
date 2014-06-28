@@ -30,11 +30,11 @@ namespace AI
             }
         }
 
-        void SubSystemsManager::addSubsystem(const Subsystem::SubsystemType& type, Ecs::World& world)
+        void SubSystemsManager::addSubsystem( const Subsystem::SubsystemType& type)
         {
             if(type == NavigationSubSystem::Type)
             {
-                subSystemsList_.push_back(new NavigationSubSystem(navMeshes_));
+                subSystemsList_.push_back(new NavigationSubSystem());
             }
         }
 
@@ -58,8 +58,10 @@ namespace AI
             return updateOver;
         }
 
-        void SubSystemsManager::dispatchAction(Action::Action* action, const Ecs::ComponentGroup& components)
-        {
+        void SubSystemsManager::dispatchAction(
+            Action::Action* action,
+            Ecs::ComponentGroup& components
+        ) {
             Subsystem::SubsystemType subsystemType = "None";
             if(action->getType() == Action::MoveCloseToTargetAction::Type)
             {

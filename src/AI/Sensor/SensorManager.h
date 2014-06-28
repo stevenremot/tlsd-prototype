@@ -35,21 +35,28 @@ namespace AI
          * Add, remove or update the sensors
          * Update all the sensors in a row
          */
-        class SensorsManager
+        class SensorManager
         {
         public:
-            SensorsManager(Ecs::Entity entity)
-                : entity_(entity){}
+            SensorManager(Ecs::Entity entity):
+                entity_(entity)
+            {}
+
+            SensorManager(const SensorManager& sensorManager):
+                entity_(sensorManager.entity_),
+                sensorsList_(sensorManager.sensorsList_)
+            {
+            }
 
             /**
              * Add a new sensor. If the sensor is already in the list, it's not added.
              */
-            void addSensor(const AI::Sensor::Sensor::SensorType & sensorType);
+            void addSensor(const AI::Sensor::Sensor::SensorType& sensorType);
 
             /**
              * Remove a sensor. If the sensor's type does not match a type in the sensors list, no component is removed.
              */
-            void removeSensor(const AI::Sensor::Sensor::SensorType & sensorType);
+            void removeSensor(const AI::Sensor::Sensor::SensorType& sensorType);
 
             /**
              * Update all the sensors and return the new memory facts to be added in memory
@@ -57,7 +64,7 @@ namespace AI
             std::vector<MemoryFact*> updateSensors(Ecs::World& world);
 
         private:
-            typedef vector<Sensor*> SensorsList;
+            typedef vector< Core::SharedPtr<Sensor> > SensorsList;
 
             const Ecs::Entity entity_;
             SensorsList sensorsList_;

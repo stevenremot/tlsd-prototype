@@ -24,27 +24,41 @@ using AI::BasicStateMachine;
 using AI::BasicAiModule;
 using AI::Action::MoveCloseToTargetAction;
 
-using namespace AI;
-
 using std::vector;
+
+using Threading::ConcurrentRessource;
+using Threading::ConcurrentReader;
+using Threading::ConcurrentWriter;
+using Threading::getConcurrentReader;
+using Threading::getConcurrentWriter;
 
 namespace StateMachineTest
 {
 
-    float toIdleState(const Ecs::ComponentGroup& )
+    float toIdleState(Ecs::ComponentGroup& )
     {
         return 0.1f;
     }
 
-    float toOnAttack(const Ecs::ComponentGroup& components)
+    float toOnAttack(Ecs::ComponentGroup& components)
     {
         try
         {
-            const Geometry::PositionComponent& positionComponent = static_cast<const Geometry::PositionComponent&>(components.getComponent(Geometry::PositionComponent::Type));
-            const Subsystem::TargetingComponent& targetingComponent = static_cast<const Subsystem::TargetingComponent&>(components.getComponent(Subsystem::TargetingComponent::Type));
+            ConcurrentReader<Geometry::PositionComponent> positionComponent =
+                getConcurrentReader<Ecs::Component, Geometry::PositionComponent>(
+                    components.getComponent(Geometry::PositionComponent::Type)
+                );
+
+            ConcurrentReader<AI::Subsystem::TargetingComponent> targetingComponent =
+                getConcurrentReader<Ecs::Component, AI::Subsystem::TargetingComponent>(
+                    components.getComponent(AI::Subsystem::TargetingComponent::Type)
+                );
 
             float maxDistance = 10.f;
-            if(targetingComponent.hasValidTarget() && (targetingComponent.getTargetPosition()- positionComponent.getPosition()).getLength() < maxDistance)
+
+            if(targetingComponent->hasValidTarget() &&
+               (targetingComponent->getTargetPosition() -
+                positionComponent->getPosition()).getLength() < maxDistance)
             {
                 return 1.0f;
             }
@@ -57,15 +71,25 @@ namespace StateMachineTest
         }
     }
 
-    float toCloseToTarget(const Ecs::ComponentGroup& components)
+    float toCloseToTarget(Ecs::ComponentGroup& components)
     {
         try
         {
-            const Geometry::PositionComponent& positionComponent = static_cast<const Geometry::PositionComponent&>(components.getComponent(Geometry::PositionComponent::Type));
-            const Subsystem::TargetingComponent& targetingComponent = static_cast<const Subsystem::TargetingComponent&>(components.getComponent(Subsystem::TargetingComponent::Type));
+
+            ConcurrentReader<Geometry::PositionComponent> positionComponent =
+                getConcurrentReader<Ecs::Component, Geometry::PositionComponent>(
+                    components.getComponent(Geometry::PositionComponent::Type)
+                );
+
+            ConcurrentReader<AI::Subsystem::TargetingComponent> targetingComponent =
+                getConcurrentReader<Ecs::Component, AI::Subsystem::TargetingComponent>(
+                    components.getComponent(AI::Subsystem::TargetingComponent::Type)
+                );
 
             float maxDistance = 120.f;
-            if(targetingComponent.hasValidTarget() && (targetingComponent.getTargetPosition() - positionComponent.getPosition()).getLength() < maxDistance)
+            if(targetingComponent->hasValidTarget() &&
+               (targetingComponent->getTargetPosition() -
+                positionComponent->getPosition()).getLength() < maxDistance)
             {
                 return 1.0f;
             }
@@ -83,7 +107,7 @@ namespace StateMachineTest
         aiModule.addState(OnAttack);
 
         //Transition Idle -> CloseToTarget
-        BasicAiModule::Transition idleToCloseToTarget(Action::MoveCloseToTargetAction::Type, &toCloseToTarget);
+        BasicAiModule::Transition idleToCloseToTarget(AI::Action::MoveCloseToTargetAction::Type, &toCloseToTarget);
         aiModule.addTransition(Idle, CloseToTarget, idleToCloseToTarget);
 
         // Transition CloseToTarget- > OnAttack

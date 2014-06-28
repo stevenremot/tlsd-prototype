@@ -16,7 +16,7 @@
     along with The Lost Souls Downfall prototype.  If not, see
     <http://www.gnu.org/licenses/>.
 */
-    
+
 #include "NavMesh.h"
 
 #include <stdexcept>
@@ -47,9 +47,9 @@ namespace AI
             return newVertexId;
         }
 
-        Graph::PlanarNode& NavMesh::addNode(const Geometry::Vec2Df& position, const VerticesIdsList& verticesIdsList)
+        Graph::PlanarNode NavMesh::addNode(const Geometry::Vec2Df& position, const VerticesIdsList& verticesIdsList)
         {
-            Graph::PlanarNode& newNode = graph_.addNode(position);
+            Graph::PlanarNode newNode = graph_.addNode(position);
             polygonsMap_.insert(std::make_pair(newNode, verticesIdsList));
             return newNode;
         }

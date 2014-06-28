@@ -92,7 +92,7 @@ namespace AI
 
     // Ai module's implementation
 
-    void BasicAiModule::computeNewPlan(const Ecs::ComponentGroup& components)
+    void BasicAiModule::computeNewPlan(Ecs::ComponentGroup& components)
     {
         if(getPlan() != NULL && !getPlan()->isPlanCompleted())
             return;

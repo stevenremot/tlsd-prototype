@@ -47,7 +47,7 @@ namespace Graph
          *
          * @return the newly created node
          */
-        PlanarNode& addNode(const Geometry::Vec2Df& position);
+        PlanarNode addNode(const Geometry::Vec2Df& position);
 
         /**
          * Remove the given node from the graph

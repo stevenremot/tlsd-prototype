@@ -27,6 +27,14 @@
 #include "../SubSystems/TargetingComponent.h"
 
 #include "../../Ecs/ComponentGroup.h"
+#include "../../Threading/ConcurrentRessource.h"
+
+using Threading::ConcurrentRessource;
+using Threading::ConcurrentReader;
+using Threading::ConcurrentWriter;
+using Threading::getConcurrentReader;
+using Threading::getConcurrentWriter;
+
 namespace AI
 {
     namespace Action
@@ -48,14 +56,19 @@ namespace AI
         class ActionFactory
         {
         public:
-            static Action* createAction(const Action::ActionType type, const Ecs::ComponentGroup& components)
-            {
+            static Action* createAction(
+                const Action::ActionType& type,
+                Ecs::ComponentGroup& components
+            ) {
                 try
                 {
                     if(type == MoveCloseToTargetAction::Type)
                     {
-                        const Subsystem::TargetingComponent& targetingComponent = static_cast<const Subsystem::TargetingComponent&>(components.getComponent(Subsystem::TargetingComponent::Type));
-                        return new MoveCloseToTargetAction(targetingComponent.getTargetPosition());
+                        ConcurrentReader<Subsystem::TargetingComponent> targetingComponent =
+                            getConcurrentReader<Ecs::Component, Subsystem::TargetingComponent>(
+                                components.getComponent(Subsystem::TargetingComponent::Type)
+                            );
+                        return new MoveCloseToTargetAction(targetingComponent->getTargetPosition());
                     }
                     else if (type == NoAction::Type)
                     {

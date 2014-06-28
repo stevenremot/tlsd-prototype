@@ -21,10 +21,42 @@
 
 #include <algorithm>
 
+#include "ComponentCreatedEvent.h"
+#include "EntityRemovedEvent.h"
+
 using std::map;
 
 namespace Ecs
 {
+    template <typename T>
+    std::set < T > getIntersection(const std::vector < std::set < T > >& sets)
+    {
+        std::set<T> intersection;
+
+        const std::set<T>& firstSet = sets[0];
+        typename std::set<T>::const_iterator elt;
+
+        for(elt = firstSet.begin(); elt != firstSet.end(); ++elt)
+        {
+            bool hasEntity = true;
+            for (unsigned int i = 1; i < sets.size(); i++)
+            {
+                if (sets.at(i).find(*elt) == sets.at(i).end())
+                {
+                    hasEntity = false;
+                    break;
+                }
+            }
+
+            if (hasEntity)
+            {
+                intersection.insert(*elt);
+            }
+        }
+
+        return intersection;
+    }
+
     void removeEntity(World& world, Entity entity)
     {
         world.removeEntity(entity);
@@ -54,12 +86,52 @@ namespace Ecs
 
     SharedEntity World::createSharedEntity()
     {
-        return SharedEntity(*this, createEntity(), &Ecs::removeEntity);
+        return shareEntity(createEntity());
     }
 
     SharedEntity World::createSharedEntity(const Entity& entity)
     {
-        return SharedEntity(*this, createEntity(entity), &Ecs::removeEntity);
+        return shareEntity(createEntity(entity));
+    }
+
+    SharedEntity World::shareEntity(const Entity& entity)
+    {
+        return SharedEntity(*this, entity, &Ecs::removeEntity);
+    }
+
+
+    bool World::hasEntity(const Entity& entity) const
+    {
+        return components_.find(entity) != components_.end();
+    }
+
+    Entity World::loadDescriptor(EntityDescriptor& descriptor)
+    {
+        if (descriptor.references_ == 0)
+        {
+            const Entity& entity = createEntity();
+
+            for (unsigned int i = 0; i < descriptor.getComponents().size(); i++)
+            {
+                addComponent(entity, descriptor.getComponents()[i]->clone());
+            }
+
+            descriptor.entity_ = entity;
+        }
+
+        descriptor.references_ += 1;
+
+        return descriptor.entity_;
+    }
+
+    void World::unloadDescriptor(EntityDescriptor& descriptor)
+    {
+        descriptor.references_ -= 1;
+
+        if (descriptor.references_ == 0)
+        {
+            removeEntity(descriptor.entity_);
+        }
     }
 
     void World::addComponent(const Entity& entity, Component* component)
@@ -68,10 +140,10 @@ namespace Ecs
         std::vector<Component::Type> dependencies =
             component->getDependentComponents();
 
-        ComponentCollection::const_iterator comp;
+        ComponentCollection::iterator comp;
         for (comp = components.begin(); comp != components.end(); ++comp)
         {
-            Component::Type type = (*comp)->getType();
+            Component::Type type = comp->getReader()->getType();
             if (type == component->getType())
             {
                 throw AlreadySetComponentException();
@@ -91,40 +163,78 @@ namespace Ecs
             throw MissingDependentComponentException();
         }
 
+        entityIndex_[component->getType()].insert(entity);
         components.push_back(component);
+
+        eventQueue_ << new ComponentCreatedEvent(entity, component);
     }
 
     ComponentGroup World::getEntityComponents(const Entity& entity,
                                               const ComponentGroup& prototype)
     {
-        ComponentCollection & components = components_.at(entity);
+        std::map< Entity, ComponentCollection >::iterator pos;
+        pos = components_.find(entity);
+        if (pos == components_.end())
+        {
+            throw NoEntityException();
+        }
+
+        ComponentCollection& components = pos->second;
 
         try
         {
             return prototype.clone(entity, components);
         }
-        catch (const ComponentGroup::DoesNotSatisfyException & e)
+        catch (const ComponentGroup::DoesNotSatisfyException& e)
         {
             throw DoesNotSatisfyException();
         }
     }
 
-    World::ComponentGroupCollection World::getComponents(const ComponentGroup & prototype)
+    Threading::ConcurrentRessource<Component>& World::getEntityComponent(
+        const Entity& entity,
+        const Component::Type& type
+    ) {
+        std::map< Entity, ComponentCollection >::iterator pos;
+        pos = components_.find(entity);
+        if (pos == components_.end())
+        {
+            throw NoEntityException();
+        }
+
+        ComponentCollection& components = pos->second;
+
+        ComponentCollection::iterator component;
+        for (component = components.begin(); component != components.end(); ++component)
+        {
+            if (component->getReader()->getType() == type)
+            {
+                return *component;
+            }
+        }
+
+        throw DoesNotSatisfyException();
+    }
+
+    World::ComponentGroupCollection World::getComponents(const ComponentGroup& prototype)
     {
         ComponentGroupCollection groups;
 
-        map< Entity, ComponentCollection >::iterator pair;
-        for (pair = components_.begin(); pair != components_.end(); ++pair)
+        std::vector< std::set < Entity > > entitySets;
+        const ComponentGroup::ComponentTypeCollection& types = prototype.getTypes();
+        ComponentGroup::ComponentTypeCollection::const_iterator type;
+        for (type = types.begin(); type != types.end(); ++type)
+
         {
-            try
-            {
-                groups.push_back(prototype.clone(pair->first,
-                                                 pair->second));
-            }
-            catch (const ComponentGroup::DoesNotSatisfyException & e)
-            {
-                continue;
-            }
+            entitySets.push_back(entityIndex_[*type]);
+        }
+
+        std::set<Entity> intersection = getIntersection(entitySets);
+        std::set<Entity>::iterator entity;
+
+        for (entity = intersection.begin(); entity != intersection.end(); ++entity)
+        {
+            groups.push_back(prototype.clone(*entity, components_[*entity]));
         }
 
         return groups;
@@ -132,6 +242,27 @@ namespace Ecs
 
     void World::removeEntity(const Entity& entity)
     {
+        ComponentCollection& components = components_[entity];
+
+        ComponentCollection::iterator component;
+        for (component = components.begin(); component != components.end(); ++component)
+        {
+            entityIndex_[component->getReader()->getType()].erase(entity);
+        }
+
         components_.erase(entity);
+        eventQueue_ << new EntityRemovedEvent(entity);
+    }
+
+    bool World::hasComponent(const Entity& entity, Component::Type type)
+    {
+        std::map< Entity, ComponentCollection >::iterator pos;
+        pos = components_.find(entity);
+        if (pos == components_.end())
+        {
+            throw NoEntityException();
+        }
+
+        return entityIndex_[type].find(entity) != entityIndex_[type].end();
     }
 }

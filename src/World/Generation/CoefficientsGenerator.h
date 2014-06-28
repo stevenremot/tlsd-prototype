@@ -20,6 +20,7 @@
 #ifndef WORLD_COEFFICIENTS_GENERATOR_H
 #define WORLD_COEFFICIENTS_GENERATOR_H
 
+#include <vector>
 
 #include "../../Random/NumberGenerator.h"
 #include "../GroundCoefficients.h"
@@ -30,7 +31,13 @@ namespace World
 
     namespace Generation
     {
-        Geometry::Vec2Df generatePerlinCoefficient(Random::NumberGenerator& rng);
+        /*
+         * Generate a random 2D vector to be used as gradient 
+         */
+        std::vector<Geometry::Vec2Df> generatePerlinCoefficient(Random::NumberGenerator& rng);
+        /*
+         * Generate 3 octaves of coefficients for the simplex noise
+         */
         GroundCoefficients generateGroundCoefficients(Random::NumberGenerator& rng);
     }
 

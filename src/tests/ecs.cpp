@@ -28,6 +28,8 @@ using std::string;
 
 #include "../Ecs/World.h"
 
+#include "../Event/EventManager.h"
+
 namespace EcsTest
 {
     class MessageComponent: public Ecs::Component
@@ -39,6 +41,11 @@ namespace EcsTest
         MessageComponent(const string& message): Component(Type),
                                                  message_(message)
         {}
+
+        virtual Component* clone() const
+        {
+            return new MessageComponent(message_);
+        }
 
         const string& getMessage() const
         {
@@ -68,6 +75,11 @@ namespace EcsTest
         DummyComponent(): Component(Type)
         {}
 
+        virtual Component* clone() const
+        {
+            return new DummyComponent();
+        }
+
         virtual const std::vector<Ecs::Component::Type>& getDependentComponents()
         {
             return Dependencies;
@@ -79,7 +91,9 @@ namespace EcsTest
 
     void testEcs()
     {
-        Ecs::World w = Ecs::World();
+        Event::EventManager m = Event::EventManager();
+
+        Ecs::World w = Ecs::World(m.getEventQueue());
 
         Ecs::Entity entity1 = w.createEntity();
         w.addComponent(entity1, new MessageComponent("Hello world !"));
@@ -96,7 +110,7 @@ namespace EcsTest
         for (group = groups.begin(); group != groups.end(); ++group)
         {
             cout << group->getEntity() << " says ";
-            cout << static_cast<MessageComponent &>(group->getComponent(MessageComponent::Type)).getMessage() << endl;
+            cout << dynamic_cast<const MessageComponent &>(*group->getComponent(MessageComponent::Type).getReader()).getMessage() << endl;
         }
     }
 
@@ -104,7 +118,8 @@ namespace EcsTest
     {
         bool failed = false;
 
-        Ecs::World world;
+        Event::EventManager em;
+        Ecs::World world(em.getEventQueue());
 
         Ecs::ComponentGroup::ComponentTypeCollection types;
         types.insert(MessageComponent::Type);

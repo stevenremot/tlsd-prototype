@@ -31,6 +31,12 @@
 
 using AI::Subsystem::Subsystem;
 
+using Threading::ConcurrentRessource;
+using Threading::ConcurrentReader;
+using Threading::ConcurrentWriter;
+using Threading::getConcurrentReader;
+using Threading::getConcurrentWriter;
+
 //using Geometry::Vec3Df;
 
 namespace AI
@@ -39,47 +45,57 @@ namespace AI
     {
         const Subsystem::SubsystemType NavigationSubSystem::Type = "NavigationSubsystem";
 
-        NavigationSubSystem::NavigationSubSystem(const NavMesh::NavMeshContainer& navMeshes)
-            : Subsystem(Type),
-              navMeshes_(navMeshes)
-        {
-        }
+        NavigationSubSystem::NavigationSubSystem()
+            : Subsystem(Type)
+        {}
 
         bool NavigationSubSystem::update(Ecs::ComponentGroup& components)
         {
             if(getCurrentAction()->getType() != Action::MoveCloseToTargetAction::Type)
             {
                 currentPath_.clear();
-                Physics::MovementComponent& movementComponent = static_cast<Physics::MovementComponent&>(components.getComponent(Physics::MovementComponent::Type));
-                movementComponent.setVelocity(Geometry::Vec3Df(0.0, 0.0, 0.0));
+                ConcurrentWriter<Physics::MovementComponent> movementComponent =
+                    getConcurrentWriter<Ecs::Component, Physics::MovementComponent>(
+                        components.getComponent(Physics::MovementComponent::Type)
+                    );
+                movementComponent->setVelocity(Geometry::Vec3Df(0.0, 0.0, 0.0));
                 return true;
             }
             try
             {
                 // Get all the needed components
-                const Geometry::PositionComponent& positionComponent = static_cast<const Geometry::PositionComponent&>(components.getComponent(Geometry::PositionComponent::Type));
-                const TargetingComponent& targetingComponent = static_cast<const TargetingComponent&>(components.getComponent(TargetingComponent::Type));
-                Physics::MovementComponent& movementComponent = static_cast<Physics::MovementComponent&>(components.getComponent(Physics::MovementComponent::Type));
+                ConcurrentReader<Geometry::PositionComponent> positionComponent =
+                    getConcurrentReader<Ecs::Component, Geometry::PositionComponent>(
+                        components.getComponent(Geometry::PositionComponent::Type)
+                    );
+                ConcurrentReader<TargetingComponent> targetingComponent =
+                    getConcurrentReader<Ecs::Component, TargetingComponent>(
+                        components.getComponent(TargetingComponent::Type)
+                    );
+                ConcurrentWriter<Physics::MovementComponent> movementComponent =
+                    getConcurrentWriter<Ecs::Component, Physics::MovementComponent>(
+                        components.getComponent(Physics::MovementComponent::Type)
+                    );
 
                 if(!currentPath_.empty())
                 {
 
                     const Geometry::Vec3Df& currentTarget = (*currentPath_.begin());
                     const Geometry::Vec3Df& finalTarget = currentPath_.back();
-                    if(targetingComponent.isTargetValid(finalTarget))
+                    if(targetingComponent->isTargetValid(finalTarget))
                     {
                         float margin = 2.f;
                         float maxSpeed = 0.2f;//0.5f;
-                        float distanceToNextTarget = (positionComponent.getPosition()- currentTarget).getLength();
+                        float distanceToNextTarget = (positionComponent->getPosition()- currentTarget).getLength();
                         if(distanceToNextTarget > margin)
                         {
-                            const Geometry::Vec3Df& dir = currentTarget - positionComponent.getPosition();
+                            const Geometry::Vec3Df& dir = currentTarget - positionComponent->getPosition();
                             Geometry::Vec3Df velocity = dir*(maxSpeed/(distanceToNextTarget + FLT_EPSILON)); // avoid division by 0 ?
-                            movementComponent.setVelocity(velocity);
+                            movementComponent->setVelocity(velocity);
                         }
                         else
                         {
-                            movementComponent.setVelocity(Geometry::Vec3Df(0.0, 0.0, 0.0));
+                            movementComponent->setVelocity(Geometry::Vec3Df(0.0, 0.0, 0.0));
                             currentPath_.erase(currentPath_.begin());
                         }
                         return false;
@@ -87,12 +103,12 @@ namespace AI
                     else // the target is no longer valid, a new plan needs to be recompute
                     {
                         currentPath_.clear();
-                        movementComponent.setVelocity(Geometry::Vec3Df(0.0, 0.0, 0.0));
+                        movementComponent->setVelocity(Geometry::Vec3Df(0.0, 0.0, 0.0));
                     }
                 }
                 else // The movement action is finished, the entity has reached the target
                 {
-                    movementComponent.setVelocity(Geometry::Vec3Df(0.0, 0.0, 0.0));
+                    movementComponent->setVelocity(Geometry::Vec3Df(0.0, 0.0, 0.0));
                 }
                 return true;
 
@@ -102,8 +118,10 @@ namespace AI
                 return true;
             }
         }
-        void NavigationSubSystem::treatAction(Action::Action* action, const Ecs::ComponentGroup &components)
-        {
+        void NavigationSubSystem::treatAction(
+            Action::Action* action,
+            Ecs::ComponentGroup &components
+        ) {
             Action::MoveCloseToTargetAction* moveAction = dynamic_cast<Action::MoveCloseToTargetAction*>(action);
             if(moveAction == NULL)
             {
@@ -114,42 +132,53 @@ namespace AI
             try
             {
                 // Get all the needed components
-                const Geometry::PositionComponent& positionComponent = static_cast<const Geometry::PositionComponent&>(components.getComponent(Geometry::PositionComponent::Type));
-                const TargetingComponent& targetingComponent = static_cast<const TargetingComponent&>(components.getComponent(TargetingComponent::Type));
+                ConcurrentReader<Geometry::PositionComponent> positionComponent =
+                    getConcurrentReader<Ecs::Component, Geometry::PositionComponent>(
+                        components.getComponent(Geometry::PositionComponent::Type)
+                    );
 
-                if(targetingComponent.hasValidTarget())
+                ConcurrentReader<TargetingComponent> targetingComponent =
+                    getConcurrentReader<Ecs::Component, TargetingComponent>(
+                        components.getComponent(TargetingComponent::Type)
+                    );
+
+                if(targetingComponent->hasValidTarget())
                 {
                     //currentAction_ = moveAction;
                     setCurrentAction(moveAction);
-                    Geometry::Vec3Df navigationTarget = targetingComponent.getTargetPosition();
-                    const Geometry::Vec3Df& currentPosition = positionComponent.getPosition();
+                    Geometry::Vec3Df navigationTarget =
+                        targetingComponent->getTargetPosition();
+                    // const Geometry::Vec3Df& currentPosition =
+                    //     positionComponent->getPosition();
                     // Compute the path to the target
 
                     currentPath_.clear();
-                    const NavMesh::NavMesh* currentNavMesh = NULL;
-                    Geometry::Vec2Df currentPosition2D = Geometry::Vec2Df(currentPosition.getX(), currentPosition.getY());
-                    Geometry::Vec2Df targetPosition2D = Geometry::Vec2Df(navigationTarget.getX(), navigationTarget.getY());
-                    if(navMeshes_.getNavMesh(currentPosition2D, currentNavMesh))
-                    {
+                    // const NavMesh::NavMesh* currentNavMesh = NULL;
+                    // Geometry::Vec2Df currentPosition2D =
+                    //     Geometry::Vec2Df(currentPosition.getX(), currentPosition.getY());
+                    // Geometry::Vec2Df targetPosition2D =
+                    //     Geometry::Vec2Df(navigationTarget.getX(), navigationTarget.getY());
+                    // if(navMeshes_.getNavMesh(currentPosition2D, currentNavMesh))
+                    // {
 
-                        Graph::PlanarNode startNode;
-                        Graph::PlanarNode endNode;
-                        if(currentNavMesh->getNode(currentPosition2D, startNode)
-                                && currentNavMesh->getNode(targetPosition2D, endNode))
-                        {
-                            Graph::PlanarGraph::NodeCollection path;
-                            // If a path exists add the current position of the cgaracter and its target position to the path
-                            if(Graph::BasicAStar(currentNavMesh->getGraph(), startNode, endNode, path))
-                            {
-                                for (Graph::PlanarGraph::NodeCollection::const_iterator it = path.begin(); it != path.end(); ++it)
-                                {
-                                    Graph::PlanarNode node = (*it);
-                                    const Geometry::Vec2Df& pos = node.getPosition();
-                                    currentPath_.push_back(Geometry::Vec3Df(pos.getX(), pos.getY(), 0.0));
-                                }
-                            }
-                        }
-                    }
+                    //     Graph::PlanarNode startNode;
+                    //     Graph::PlanarNode endNode;
+                    //     if(currentNavMesh->getNode(currentPosition2D, startNode)
+                    //             && currentNavMesh->getNode(targetPosition2D, endNode))
+                    //     {
+                    //         Graph::PlanarGraph::NodeCollection path;
+                    //         // If a path exists add the current position of the cgaracter and its target position to the path
+                    //         if(Graph::BasicAStar(currentNavMesh->getGraph(), startNode, endNode, path))
+                    //         {
+                    //             for (Graph::PlanarGraph::NodeCollection::const_iterator it = path.begin(); it != path.end(); ++it)
+                    //             {
+                    //                 Graph::PlanarNode node = (*it);
+                    //                 const Geometry::Vec2Df& pos = node.getPosition();
+                    //                 currentPath_.push_back(Geometry::Vec3Df(pos.getX(), pos.getY(), 0.0));
+                    //             }
+                    //         }
+                    //     }
+                    // }
                     currentPath_.push_back(navigationTarget);
                 }
             }

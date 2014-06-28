@@ -21,6 +21,8 @@
 
 namespace World
 {
+    const BiomeInterface::Type CityBiome::Type = "CityBiome";
+
     float CityBiome::transformCoefficient(float coefficient)
     {
         return 0;
@@ -28,8 +30,38 @@ namespace World
 
     Graphics::Color CityBiome::getColor()
     {
-        return Graphics::Color(0,1,0);
+        return Graphics::Color(0, 1, 0);
     }
 
-
+    // We don't care about the tree parameters for the city
+    // Actually we do care a bit
+    const Generation::TreeParameters CityBiome::getTreeParameters()
+    {
+        std::vector<Graphics::Color> trunkMin;
+        trunkMin.push_back(Graphics::Color(0.5, 0.25, 0.15));
+        std::vector<Graphics::Color> trunkMax;
+        trunkMax.push_back(Graphics::Color(0.7, 0.35, 0.25));
+        std::vector<Graphics::Color> leavesMin;
+        leavesMin.push_back(Graphics::Color(0.15, 0.7, 0.15));
+        std::vector<Graphics::Color> leavesMax;
+        leavesMax.push_back(Graphics::Color(0.25, 0.9, 0.25));
+        return Generation::TreeParameters(
+            3.0,
+            4.0,
+            1.5,
+            2.5,
+            5.0,
+            10.0,
+            5.0,
+            10.0,
+            -0.3,
+            0.3,
+            1,
+            "cubique",
+            trunkMin,
+            trunkMax,
+            leavesMin,
+            leavesMax
+        );
+    }
 }

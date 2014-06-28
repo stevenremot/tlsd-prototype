@@ -24,6 +24,7 @@
 
 namespace Graphics
 {
+    /// A Color is defined by the vector (r,g,b) with values between 0.0f and 1.0f
     typedef Geometry::Vec3Df Color;
 }
 

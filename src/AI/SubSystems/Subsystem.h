@@ -62,7 +62,10 @@ namespace AI
                 setCurrentAction(noAction_);
             }
 
-            virtual void treatAction(Action::Action* action, const Ecs::ComponentGroup& components) = 0;
+            virtual void treatAction(
+                Action::Action* action,
+                Ecs::ComponentGroup& components
+            ) = 0;
 
             const SubsystemType & getSubsystemType() const
             {

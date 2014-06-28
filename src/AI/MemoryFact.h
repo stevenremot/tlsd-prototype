@@ -29,7 +29,7 @@ namespace AI
 {
 /**
  * Class for the facts in the memory of the entity.
- * 
+ *
  * Some attributes might be unset, check the fact's type first to know relevant attributes.
  *
  */
@@ -51,7 +51,7 @@ public:
     void setPosition(const Geometry::Vec3Df& position) { position_ = position;}
 
     Ecs::Entity getCharacterId() const {return characterId_;}
-    Geometry::Vec3Df getPosition() const {return position_;}
+    const Geometry::Vec3Df& getPosition() const {return position_;}
 
     bool operator ==(const MemoryFact & otherFact) const;
 

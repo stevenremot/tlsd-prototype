@@ -21,24 +21,29 @@
 
 #include "AiComponent.h"
 #include "../Threading/Thread.h"
+#include "../Threading/ConcurrentRessource.h"
+
+using Threading::ConcurrentRessource;
+using Threading::ConcurrentWriter;
+using Threading::ConcurrentReader;
+using Threading::getConcurrentWriter;
+using Threading::getConcurrentReader;
 
 namespace AI
 {
     void AiSystem::run()
     {
         // Get all the entities which have an ai component
-        Ecs::World world = getWorld();
 
         Ecs::ComponentGroup::ComponentTypeCollection types;
         types.insert(AiComponent::Type);
         Ecs::ComponentGroup prototype(types);
-        Ecs::World::ComponentGroupCollection groups = world.getComponents(prototype);
+        Ecs::World::ComponentGroupCollection groups = getWorld()->getComponents(prototype);
 
         // Update their positions
         Ecs::World::ComponentGroupCollection::iterator group;
         for (group = groups.begin(); group != groups.end(); ++group)
         {
-            AiComponent& aiComponent = static_cast<AiComponent &>(group->getComponent(AiComponent::Type));
 
             Ecs::ComponentGroup::ComponentTypeCollection types2;
             types2.insert(Subsystem::TargetingComponent::Type);
@@ -46,11 +51,16 @@ namespace AI
             types2.insert(Physics::MovementComponent::Type);
 
             Ecs::ComponentGroup prototype2(types2);
-            Ecs::ComponentGroup components = world.getEntityComponents((*group).getEntity(),prototype2);
+            Ecs::ComponentGroup components = getWorld()->getEntityComponents((*group).getEntity(),prototype2);
+
+            ConcurrentWriter<AiComponent> aiComponent =
+                getConcurrentWriter<Ecs::Component, AiComponent>(
+                    group->getComponent(AiComponent::Type)
+                );
 
             // If the plan is over, compute a new one.
-            AiModule* aiModule = aiComponent.getAiModule();
-            Subsystem::SubSystemsManager& subsystemsManager = aiComponent.getSubsystemsManager();
+            AiModule* aiModule = aiComponent->getAiModule();
+            Subsystem::SubSystemsManager& subsystemsManager = aiComponent->getSubsystemsManager();
             bool updateOver = subsystemsManager.updateSubsystems(components);
             if(updateOver)
             {

@@ -258,11 +258,11 @@ namespace Graph
             {
                 if (neighbours[0] != nextEdge)
                 {
-                    nextEdge = neighbours[1];
+                    nextEdge = neighbours[0];
                 }
                 else
                 {
-                    nextEdge = neighbours[0];
+                    nextEdge = neighbours[1];
                 }
 
                 currentNode = nextEdge.getOtherNode(currentNode);
@@ -299,7 +299,11 @@ namespace Graph
             }
             else
             {
-                primitives.push_back(extractPrimitive(g, isCycle, node));
+                PlanarPrimitive prim = extractPrimitive(g, isCycle, node);
+                if (!prim.getNodes().empty())
+                {
+                    primitives.push_back(prim);
+                }
             }
         }
 

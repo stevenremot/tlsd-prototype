@@ -53,7 +53,7 @@ namespace AI
              * Add a new node to the graph.
              * TODO : return the current node if its already in the graph.
              */
-            Graph::PlanarNode& addNode(const Geometry::Vec2Df& position, const VerticesIdsList& verticesIdsList);
+            Graph::PlanarNode addNode(const Geometry::Vec2Df& position, const VerticesIdsList& verticesIdsList);
             //Graph::PlanarNode& addNode(const Geometry::Vec2Df& position, const std::vector<Geometry::Vec2Df>& verticesList);
             /**
             * Add a new edge to the graph.
