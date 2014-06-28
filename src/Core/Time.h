@@ -22,6 +22,10 @@
 
 #include <ctime>
 
+#ifdef _WIN32
+#include <pthread.h>
+#include <windows.h>
+#endif
 namespace Core
 {
     /**

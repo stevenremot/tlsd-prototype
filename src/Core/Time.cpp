@@ -19,10 +19,6 @@
 
 #include "Time.h"
 
-#ifdef _WIN32
-#include <windows.h>
-#endif
-
 namespace Core
 {
     int getTime(struct timespec& time)
