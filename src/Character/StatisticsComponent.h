@@ -20,8 +20,10 @@
 #ifndef CHARACTER_STATISTICS_COMPONENT_H
 #define CHARACTER_STATISTICS_COMPONENT_H
 
-#include <ctime>
+#include <pthread.h>
 
+#include <ctime>
+//#include "../Core/Time.h"
 #include "../Ecs/Component.h"
 #include "Statistics.h"
 

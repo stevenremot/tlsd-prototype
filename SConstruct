@@ -1,7 +1,7 @@
 import os
 
 env= Environment()
-env.Append(CXXFLAGS = ["-Wall"])
+env.Append(CXXFLAGS = ["-Wall","-pthread"])
 
 if ARGUMENTS.get("debug", 0):
     env.Append(CXXFLAGS = ["-g"])
