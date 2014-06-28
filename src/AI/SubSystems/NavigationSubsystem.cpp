@@ -85,7 +85,7 @@ namespace AI
                     if(targetingComponent->isTargetValid(finalTarget))
                     {
                         float margin = 2.f;
-                        float maxSpeed = 0.2f;//0.5f;
+                        float maxSpeed = 10.0f;//0.5f;
                         float distanceToNextTarget = (positionComponent->getPosition()- currentTarget).getLength();
                         if(distanceToNextTarget > margin)
                         {

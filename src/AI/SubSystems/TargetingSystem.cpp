@@ -72,7 +72,7 @@ namespace AI
                         {
                             MemoryFact* ennemyFact = ennemyFacts[i];
                             float factBelief = ennemyFact->getFactBelief();
-                            const Geometry::Vec3Df position = ennemyFact->getPosition();
+                            const Geometry::Vec3Df& position = ennemyFact->getPosition();
                             float distance = position.getLength();
                             if (currentFactBelief/(FLT_EPSILON + currentDistance) < factBelief/(FLT_EPSILON + distance))
                             {

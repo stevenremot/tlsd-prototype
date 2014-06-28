@@ -61,7 +61,10 @@ namespace AI
             bool isTargetValid(const Geometry::Vec3Df& targetPosition) const;
 
             Geometry::Vec3Df getTargetPosition() const {return targetPosition_;}
-            void setTargetPosition(const Geometry::Vec3Df& targetPosition) {targetPosition_ = targetPosition;}
+            void setTargetPosition(const Geometry::Vec3Df& targetPosition)
+            {
+                targetPosition_ = targetPosition;
+            }
 
             Ecs::Entity getTargetEntity() const {return targetEntity_;}
             void setTargetEntity(Ecs::Entity targetEntity) {targetEntity_ = targetEntity;}

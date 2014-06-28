@@ -262,6 +262,8 @@ namespace NavMeshTest
         Geometry::Vec3Df offset(0.1, -0.2, 0.0);
         for (int j =0; j < 20*20; j++)
         {
+            Threading::sleep(0,50);
+
             ConcurrentReader<Geometry::PositionComponent> positionComponentE1 =
                 getConcurrentReader<Ecs::Component, Geometry::PositionComponent>(
                     componentsE1.getComponent(Geometry::PositionComponent::Type)
@@ -277,7 +279,6 @@ namespace NavMeshTest
                     components.getComponent(AI::Subsystem::TargetingComponent::Type)
                 );
 
-            Threading::sleep(0,50);
             Geometry::Vec3Df pos1 = positionComponentE1->getPosition();
             Geometry::Vec3Df pos2 = positionComponentE2->getPosition();
             Geometry::Vec3Df target = targetingComponent->getTargetPosition();
