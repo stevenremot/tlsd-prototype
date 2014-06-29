@@ -104,7 +104,7 @@ namespace Application
                 world,
                 Geometry::Vec3Df(150,150,150),
                 Geometry::Vec3Df(0,0,0),
-                Character::Statistics(100, 120, 20, 5),
+                Character::Statistics(100, 25, 20, 5),
                 group,
                 eventBoot_.getEventManager().getEventQueue()
             );
