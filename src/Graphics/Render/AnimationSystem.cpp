@@ -100,13 +100,18 @@ namespace Graphics
                         types.insert(AnimationComponent::Type);
 
                         ComponentGroup prototype(types);
-                        ComponentGroup group = getWorld()->getEntityComponents(entity, prototype);
-                        Threading::ConcurrentWriter<AnimationComponent> animComponent =
-                            Threading::getConcurrentWriter<Ecs::Component, AnimationComponent>(
-                                group.getComponent(AnimationComponent::Type)
-                            );
+                        try
+                        {
+                            ComponentGroup group = getWorld()->getEntityComponents(entity, prototype);
+                            Threading::ConcurrentWriter<AnimationComponent> animComponent =
+                                Threading::getConcurrentWriter<Ecs::Component, AnimationComponent>(
+                                    group.getComponent(AnimationComponent::Type)
+                                );
 
-                        outsideQueue_ << new AnimateEvent(animComponent->getAnimationByAction(actionEvent.getAction()), entity);
+                            outsideQueue_ << new AnimateEvent(animComponent->getAnimationByAction(actionEvent.getAction()), entity);
+                        }
+                        catch (const Ecs::World::NoEntityException& e)
+                        {}
                     }
                 }
             }

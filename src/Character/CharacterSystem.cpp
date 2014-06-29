@@ -69,6 +69,10 @@ namespace Character
 
                 const Ecs::Entity& entity = actionEvent.getEntity();
                 const Character::Action& action = actionEvent.getAction();
+                if (!world->hasEntity(entity))
+                {
+                    return;
+                }
 
                 bool isGroup = world->hasComponent(entity, GroupComponent::Type);
 
