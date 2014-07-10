@@ -8,6 +8,8 @@ env.Append(
 
 if ARGUMENTS.get("debug", 0):
     env.Append(CXXFLAGS = ["-g"])
+else:
+    env.Append(CXXFLAGS = ["-O3"])
 
 if ARGUMENTS.get("clang", 0):
     env.Replace(CC = "clang",
