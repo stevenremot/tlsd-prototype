@@ -40,7 +40,7 @@ namespace Graphics
                          public Event::EventListenerInterface
         {
         public:
-            HudSystem(Threading::ConcurrentRessource<Ecs::World> world):
+            HudSystem(Threading::ConcurrentRessource<Ecs::World>& world):
                 System(world),
                 lifeBar_(NULL),
                 pendingMaxHealth_(0),
