@@ -25,7 +25,7 @@ namespace Application
     {
         std::vector<Threading::ThreadableInterface*> threadables;
         threadables.push_back(&eventManager_);
-        setThread(new Threading::Thread(threadables, 500));
+        setThread(new Threading::Thread(threadables, 1000));
         getThread().start();
         finishBoot();
     }
