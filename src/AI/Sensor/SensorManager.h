@@ -21,6 +21,7 @@
 #define AI_SENSOR_SENSORSMANAGER_H
 
 #include <vector>
+#include <memory>
 
 #include "Sensor.h"
 #include "../../Ecs/World.h"
@@ -64,7 +65,7 @@ namespace AI
             std::vector<MemoryFact*> updateSensors(Ecs::World& world);
 
         private:
-            typedef vector< Core::SharedPtr<Sensor> > SensorsList;
+            typedef vector< std::shared_ptr<Sensor> > SensorsList;
 
             const Ecs::Entity entity_;
             SensorsList sensorsList_;

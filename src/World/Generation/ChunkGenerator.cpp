@@ -195,14 +195,14 @@ namespace World
             class City* city = Generation::generateCity(position, parameters, rng);
 
 
-            Core::SharedPtr<Ecs::EntityDescriptor> roadPtr =
+            std::shared_ptr<Ecs::EntityDescriptor> roadPtr =
                 createRoad(city->getRoadNetwork());
             insertDescriptor(roadPtr, x, y);
 
             const std::vector<BuildingInterface*>& buildings = city->getBuildings();
             for (unsigned int i = 0; i < buildings.size(); i++)
             {
-                Core::SharedPtr<Ecs::EntityDescriptor> buildingPtr =
+                std::shared_ptr<Ecs::EntityDescriptor> buildingPtr =
                     createBuilding(*(buildings[i]));
                 insertDescriptor(buildingPtr, x, y);
             }
@@ -289,7 +289,7 @@ namespace World
         }
 
         void ChunkGenerator::insertDescriptor(
-            Core::SharedPtr<Ecs::EntityDescriptor>& descriptor,
+            std::shared_ptr<Ecs::EntityDescriptor>& descriptor,
             int defaultI,
             int defaultJ
         ) {

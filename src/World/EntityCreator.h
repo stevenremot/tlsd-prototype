@@ -20,10 +20,11 @@
 #ifndef WORLD_ENTITY_CREATOR_H
 #define WORLD_ENTITY_CREATOR_H
 
+#include <memory>
+
 #include "../Ecs/EntityDescriptor.h"
 #include "World.h"
 #include "../Ecs/World.h"
-#include "../Core/SharedPtr.h"
 #include "BuildingInterface.h"
 #include "RoadNetwork.h"
 #include "TreeInterface.h"
@@ -35,12 +36,12 @@ namespace World
      *
      * TODO : Add "const" to world
      */
-    Core::SharedPtr<Ecs::EntityDescriptor> createGround(World& world, int i, int j);
+    std::shared_ptr<Ecs::EntityDescriptor> createGround(World& world, int i, int j);
 
     /**
      * Create an entity for the road, and insert it in the ECS world
      */
-    Core::SharedPtr<Ecs::EntityDescriptor> createRoad(const RoadNetwork& road);
+    std::shared_ptr<Ecs::EntityDescriptor> createRoad(const RoadNetwork& road);
 
 
     /**
@@ -48,7 +49,7 @@ namespace World
      *
      * TODO Add physical component
      */
-    Core::SharedPtr<Ecs::EntityDescriptor> createBuilding(const BuildingInterface& building);
+    std::shared_ptr<Ecs::EntityDescriptor> createBuilding(const BuildingInterface& building);
 
 
     /**
@@ -56,7 +57,7 @@ namespace World
      *
      * TODO Add physical component
      */
-    Core::SharedPtr<Ecs::EntityDescriptor> createTree(const Geometry::Vec3Df& position, const TreeInterface& tree);
+    std::shared_ptr<Ecs::EntityDescriptor> createTree(const Geometry::Vec3Df& position, const TreeInterface& tree);
 
 }
 

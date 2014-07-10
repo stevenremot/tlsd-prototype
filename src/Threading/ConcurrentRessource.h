@@ -20,8 +20,9 @@
 #ifndef THREADING_CONCURRENT_RESSOURCE_H
 #define THREADING_CONCURRENT_RESSOURCE_H
 
+#include <memory>
+
 #include "Lock.h"
-#include "../Core/SharedPtr.h"
 
 namespace Threading
 {
@@ -44,7 +45,7 @@ namespace Threading
     class ConcurrentReader
     {
     public:
-        ConcurrentReader(const Core::SharedPtr<Lock>& lock, const Core::SharedPtr<T>& data):
+        ConcurrentReader(const std::shared_ptr<Lock>& lock, const std::shared_ptr<T>& data):
             lock_(lock),
             data_(data)
         {
@@ -67,15 +68,15 @@ namespace Threading
         }
 
     private:
-        Core::SharedPtr<Lock> lock_;
-        Core::SharedPtr<T> data_;
+        std::shared_ptr<Lock> lock_;
+        std::shared_ptr<T> data_;
     };
 
     template<typename T>
     class ConcurrentWriter
     {
     public:
-        ConcurrentWriter(const Core::SharedPtr<Lock>& lock, const Core::SharedPtr<T>& data):
+        ConcurrentWriter(const std::shared_ptr<Lock>& lock, const std::shared_ptr<T>& data):
             lock_(lock),
             data_(data)
         {
@@ -98,8 +99,8 @@ namespace Threading
         }
 
     private:
-        Core::SharedPtr<Lock> lock_;
-        Core::SharedPtr<T> data_;
+        std::shared_ptr<Lock> lock_;
+        std::shared_ptr<T> data_;
     };
 
     /**
@@ -136,8 +137,8 @@ namespace Threading
         friend ConcurrentWriter<V> getConcurrentWriter(ConcurrentRessource<U>);
 
     private:
-        Core::SharedPtr<Lock> lock_;
-        Core::SharedPtr<T> data_;
+        std::shared_ptr<Lock> lock_;
+        std::shared_ptr<T> data_;
     };
 
     template <typename T1, typename T2>
@@ -145,7 +146,7 @@ namespace Threading
     {
         return ConcurrentReader<T2>(
             res.lock_,
-            Core::castSharedPtr<T1, T2>(res.data_)
+            std::static_pointer_cast<T2, T1>(res.data_)
         );
     }
 
@@ -155,7 +156,7 @@ namespace Threading
     {
         return ConcurrentWriter<T2>(
             res.lock_,
-            Core::castSharedPtr<T1, T2>(res.data_)
+            std::static_pointer_cast<T2, T1>(res.data_)
         );
     }
 }

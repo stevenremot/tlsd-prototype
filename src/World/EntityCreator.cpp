@@ -28,9 +28,9 @@
 
 namespace World
 {
-    Core::SharedPtr<Ecs::EntityDescriptor> createGround(World& world, int i, int j)
+    std::shared_ptr<Ecs::EntityDescriptor> createGround(World& world, int i, int j)
 	{
-        Core::SharedPtr<Ecs::EntityDescriptor> groundEntity(new Ecs::EntityDescriptor);
+        std::shared_ptr<Ecs::EntityDescriptor> groundEntity(new Ecs::EntityDescriptor);
 
 		groundEntity->addComponent(
             new Geometry::PositionComponent(
@@ -63,9 +63,9 @@ namespace World
         return groundEntity;
     }
 
-    Core::SharedPtr<Ecs::EntityDescriptor> createRoad(const RoadNetwork& road)
+    std::shared_ptr<Ecs::EntityDescriptor> createRoad(const RoadNetwork& road)
     {
-        Core::SharedPtr<Ecs::EntityDescriptor> entity(new Ecs::EntityDescriptor);
+        std::shared_ptr<Ecs::EntityDescriptor> entity(new Ecs::EntityDescriptor);
 
         entity->addComponent(
             new Geometry::PositionComponent(Geometry::Vec3Df(0.0, 0.0, 0.01))
@@ -82,9 +82,9 @@ namespace World
         return entity;
     }
 
-    Core::SharedPtr<Ecs::EntityDescriptor> createBuilding(const BuildingInterface& building)
+    std::shared_ptr<Ecs::EntityDescriptor> createBuilding(const BuildingInterface& building)
     {
-        Core::SharedPtr<Ecs::EntityDescriptor> entity(new Ecs::EntityDescriptor);
+        std::shared_ptr<Ecs::EntityDescriptor> entity(new Ecs::EntityDescriptor);
 
         Geometry::Vec3Df pos = Geometry::Vec3Df(0.0, 0.0, 0.0);
 
@@ -106,9 +106,9 @@ namespace World
         return entity;
     }
 
-    Core::SharedPtr<Ecs::EntityDescriptor> createTree(const Geometry::Vec3Df& position, const TreeInterface& tree)
+    std::shared_ptr<Ecs::EntityDescriptor> createTree(const Geometry::Vec3Df& position, const TreeInterface& tree)
     {
-        Core::SharedPtr<Ecs::EntityDescriptor> entity(new Ecs::EntityDescriptor);
+        std::shared_ptr<Ecs::EntityDescriptor> entity(new Ecs::EntityDescriptor);
 
         entity->addComponent(
             new Geometry::PositionComponent(position)

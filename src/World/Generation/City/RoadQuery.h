@@ -20,8 +20,9 @@
 #ifndef WORLD_GENERATION_CITY_ROAD_QUERY_H
 #define WORLD_GENERATION_CITY_ROAD_QUERY_H
 
+#include <memory>
+
 #include "../../../Graph/PlanarNode.h"
-#include "../../../Core/SharedPtr.h"
 #include "QueryInserterInterface.h"
 #include "QueryInserter.h"
 
@@ -101,7 +102,7 @@ namespace World
 
                 void setInserter(QueryInserterInterface* inserter)
                 {
-                    inserter_ = Core::SharedPtr<QueryInserterInterface>(inserter);
+                    inserter_ = std::shared_ptr<QueryInserterInterface>(inserter);
                 }
 
             private:
@@ -109,7 +110,7 @@ namespace World
                 Graph::PlanarNode originNode_;
                 float orientation_;
                 float length_;
-                Core::SharedPtr<QueryInserterInterface> inserter_;
+                std::shared_ptr<QueryInserterInterface> inserter_;
             };
         }
     }

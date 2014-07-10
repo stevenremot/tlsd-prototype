@@ -19,6 +19,7 @@
 
 #include "EventManager.h"
 
+#include <iostream> // TODO remove
 namespace Event
 {
     void EventManager::run()
@@ -30,6 +31,7 @@ namespace Event
 
             if (event != NULL)
             {
+                std::cout << "Handling event " << event->getType() << std::endl;
                 const ListenerRegister::EventListenerList& listeners = listeners_.getListeners(event->getType());
 
                 ListenerRegister::EventListenerList::const_iterator listener;
