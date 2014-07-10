@@ -126,7 +126,7 @@ namespace Threading
             channel_(new Channel<T>)
         {};
 
-        ChannelOutput(ConcurrentRessource< Channel<T> > channel):
+        ChannelOutput(ConcurrentRessource< Channel<T> >& channel):
             channel_(channel)
         {}
 
