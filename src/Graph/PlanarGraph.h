@@ -56,14 +56,6 @@ namespace Graph
         /**
          * Add an edge linking two nodes
          *
-         * *TODO* :
-         *
-         * It would be nice to return a reference in this method, but
-         * this reference would currently be modified when
-         * /getNeighbourEdges/ is called. It makes no sense, as this
-         * method should only read things, but you can see it by
-         * returning reference with addEdge and launching tests.
-         *
          * @return the newly created edge
          */
         PlanarEdge addEdge(const PlanarNode& firstNode,

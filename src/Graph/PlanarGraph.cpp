@@ -62,9 +62,7 @@ namespace Graph
         }
 
         nodeCache_.push_back(PlanarNode(position));
-        PlanarNode& newNode = nodeCache_[nodeCache_.size() - 1];
-
-        return newNode;
+        return nodeCache_[nodeCache_.size() - 1];
     }
 
     void PlanarGraph::removeNode(const PlanarNode& node)
@@ -94,9 +92,7 @@ namespace Graph
         addNode(secondNode.getPosition());
 
         edgeCache_.push_back(PlanarEdge(firstNode, secondNode));
-        PlanarEdge& newEdge = edgeCache_[edgeCache_.size() - 1];
-
-        return newEdge;
+        return edgeCache_[edgeCache_.size() - 1];
     }
 
     void PlanarGraph::removeEdge(const PlanarEdge& edge)
