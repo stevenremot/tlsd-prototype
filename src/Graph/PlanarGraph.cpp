@@ -20,38 +20,28 @@
 #include "PlanarGraph.h"
 
 #include <map>
+#include <algorithm>
 
 using Geometry::Vec2Df;
 
 namespace Graph
 {
-    PlanarGraph::PlanarGraph():
-        graph_(),
-        nodes_(graph_),
-        edges_(graph_)
-    {
-    }
+    PlanarGraph::PlanarGraph()
+    {}
 
     PlanarGraph::PlanarGraph(const NodeCollection& nodes,
-                             const EdgeCollection& edges):
-        graph_(),
-        nodes_(graph_),
-        edges_(graph_)
+                             const EdgeCollection& edges)
     {
         insertData(nodes, edges);
     }
 
-    PlanarGraph::PlanarGraph(const PlanarGraph& graph):
-        graph_(),
-        nodes_(graph_),
-        edges_(graph_)
+    PlanarGraph::PlanarGraph(const PlanarGraph& graph)
     {
         insertData(graph.getNodes(), graph.getEdges());
     }
 
     PlanarGraph& PlanarGraph::operator=(const PlanarGraph& graph)
     {
-        graph_.clear();
         nodeCache_.clear();
         edgeCache_.clear();
 
@@ -90,10 +80,8 @@ namespace Graph
             }
         }
 
-        lemon::ListGraph::Node lemonNode = graph_.addNode();
-        nodeCache_.push_back(PlanarNode(lemonNode, position));
+        nodeCache_.push_back(PlanarNode(position));
         PlanarNode& newNode = nodeCache_[nodeCache_.size() - 1];
-        nodes_[lemonNode] = newNode;
 
         return newNode;
     }
@@ -106,7 +94,6 @@ namespace Graph
             removeEdge(neighbours[i]);
         }
 
-        graph_.erase(node.node_);
         nodeCache_.erase(std::find(nodeCache_.begin(), nodeCache_.end(), node));
     }
 
@@ -122,34 +109,29 @@ namespace Graph
             }
         }
 
-        const PlanarNode& trueFirstNode = addNode(firstNode.getPosition());
-        const PlanarNode& trueSecondNode = addNode(secondNode.getPosition());
+        addNode(firstNode.getPosition());
+        addNode(secondNode.getPosition());
 
-        lemon::ListGraph::Edge lemonEdge = graph_.addEdge(
-            trueFirstNode.node_,
-            trueSecondNode.node_
-        );
-        edgeCache_.push_back(PlanarEdge(firstNode, secondNode, lemonEdge));
+        edgeCache_.push_back(PlanarEdge(firstNode, secondNode));
         PlanarEdge& newEdge = edgeCache_[edgeCache_.size() - 1];
-        edges_[lemonEdge] = newEdge;
 
         return newEdge;
     }
 
     void PlanarGraph::removeEdge(const PlanarEdge& edge)
     {
-        graph_.erase(edge.edge_);
         edgeCache_.erase(std::find(edgeCache_.begin(), edgeCache_.end(), edge));
     }
 
     PlanarGraph::EdgeCollection PlanarGraph::getNeighbourEdges(const PlanarNode& node)
     {
         EdgeCollection edges;
-        lemon::ListGraph::IncEdgeIt edge(graph_, node.node_);
-        for (; edge != lemon::INVALID; ++edge)
+        for (auto edge : edgeCache_)
         {
-            PlanarEdge& planarEdge = edges_[edge];
-            edges.push_back(planarEdge);
+            if (edge.hasNode(node))
+            {
+                edges.push_back(edge);
+            }
         }
 
         return edges;
@@ -158,11 +140,12 @@ namespace Graph
     PlanarGraph::EdgeCollection PlanarGraph::getNeighbourEdges(const PlanarNode& node) const
     {
         EdgeCollection edges;
-        lemon::ListGraph::IncEdgeIt edge(graph_, node.node_);
-        for (; edge != lemon::INVALID; ++edge)
+        for (auto edge : edgeCache_)
         {
-            const PlanarEdge& planarEdge = edges_[edge];
-            edges.push_back(planarEdge);
+            if (edge.hasNode(node))
+            {
+                edges.push_back(edge);
+            }
         }
 
         return edges;

@@ -20,8 +20,6 @@
 #ifndef GRAPH_PLANAR_NODE_H
 #define GRAPH_PLANAR_NODE_H
 
-#include <lemon/list_graph.h>
-
 #include "../Geometry/Vec2D.h"
 
 namespace Graph
@@ -36,8 +34,6 @@ namespace Graph
     public:
         PlanarNode();
         PlanarNode(const Geometry::Vec2Df& position);
-        PlanarNode(const lemon::ListGraph::Node& node,
-                   const Geometry::Vec2Df& position);
 
         PlanarNode(const PlanarNode& node);
         PlanarNode& operator=(const PlanarNode& node);
@@ -52,12 +48,7 @@ namespace Graph
         bool operator!=(const PlanarNode& node) const;
         bool operator<(const PlanarNode& node) const;
 
-        // In order to hide lemon node from the outside of the code,
-        // but to let the graph implementation get it.
-        friend class PlanarGraph;
-
     private:
-        lemon::ListGraph::Node node_;
         Geometry::Vec2Df position_;
     };
 }

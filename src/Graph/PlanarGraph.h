@@ -21,7 +21,6 @@
 #define GRAPH_PLANAR_GRAPH_H
 
 #include <vector>
-#include <lemon/list_graph.h>
 
 #include "PlanarNode.h"
 #include "PlanarEdge.h"
@@ -96,9 +95,6 @@ namespace Graph
         EdgeCollection getNeighbourEdges(const PlanarNode& node) const;
 
     private:
-        lemon::ListGraph graph_;
-        lemon::ListGraph::NodeMap<PlanarNode> nodes_;
-        lemon::ListGraph::EdgeMap<PlanarEdge> edges_;
         NodeCollection nodeCache_;
         EdgeCollection edgeCache_;
 

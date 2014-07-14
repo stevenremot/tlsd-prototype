@@ -20,6 +20,7 @@
 #include "PlanarPrimitiveExtraction.h"
 
 #include <map>
+#include <algorithm>
 
 #include "PlanarUtil.h"
 

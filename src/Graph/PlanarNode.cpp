@@ -31,20 +31,12 @@ namespace Graph
         position_(position)
     {}
 
-    PlanarNode::PlanarNode(const lemon::ListGraph::Node& node,
-                           const Geometry::Vec2Df& position):
-        node_(node),
-        position_(position)
-    {}
-
     PlanarNode::PlanarNode(const PlanarNode& node):
-        node_(node.node_),
         position_(node.position_)
     {}
 
     PlanarNode& PlanarNode::operator=(const PlanarNode& node)
     {
-        node_ = node.node_;
         position_ = node.position_;
         return *this;
     }

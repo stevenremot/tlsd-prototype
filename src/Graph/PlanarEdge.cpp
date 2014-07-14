@@ -22,24 +22,20 @@
 namespace Graph
 {
     PlanarEdge::PlanarEdge(const PlanarNode& firstNode,
-                           const PlanarNode& secondNode,
-                           const lemon::ListGraph::Edge edge):
+                           const PlanarNode& secondNode):
         firstNode_(firstNode),
-        secondNode_(secondNode),
-        edge_(edge)
+        secondNode_(secondNode)
     {}
 
     PlanarEdge::PlanarEdge(const PlanarEdge& edge):
         firstNode_(edge.firstNode_),
-        secondNode_(edge.secondNode_),
-        edge_(edge.edge_)
+        secondNode_(edge.secondNode_)
     {}
 
     PlanarEdge& PlanarEdge::operator=(const PlanarEdge& edge)
     {
         firstNode_ = edge.firstNode_;
         secondNode_ = edge.secondNode_;
-        edge_ = edge.edge_;
         return *this;
     }
 

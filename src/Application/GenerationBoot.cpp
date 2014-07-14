@@ -46,14 +46,13 @@ namespace Application
             42
         );
 
-        // for (int i = -1; i <= 1; i++)
-        // {
-        //     for (int j = -1; j <= 1; j++)
-        //     {
-        //         generator.generateChunk(i, j);
-        //     }
-        // }
-        generator.generateChunk(0, 0);
+        for (int i = -1; i <= 1; i++)
+        {
+            for (int j = -1; j <= 1; j++)
+            {
+                generator.generateChunk(i, j);
+            }
+        }
 
         std::cout << "[Generation]: Base generated" << std::endl;
 

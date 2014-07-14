@@ -18,9 +18,9 @@ if ARGUMENTS.get("clang", 0):
 libs = []
 if env['PLATFORM'] == 'win32':
 	env = Environment(Env=os.environ, tools=['mingw'])
-	libs = ["lemon","Irrlicht"]
+	libs = ["Irrlicht"]
 elif env['PLATFORM'] == 'posix':
-	libs = ["emon","Irrlicht","X11"]
+	libs = ["Irrlicht","X11"]
 
 env.Append(CPPPATH=['libs'])
 

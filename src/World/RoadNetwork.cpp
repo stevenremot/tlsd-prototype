@@ -20,6 +20,7 @@
 #include "RoadNetwork.h"
 
 #include <vector>
+#include <algorithm>
 
 #include "../Graph/PlanarUtil.h"
 #include "../Geometry/Util2D.h"

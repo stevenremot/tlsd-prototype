@@ -22,8 +22,6 @@
 
 #include <exception>
 
-#include <lemon/list_graph.h>
-
 #include "PlanarNode.h"
 
 namespace Graph
@@ -44,8 +42,7 @@ namespace Graph
 
         PlanarEdge() {};
         PlanarEdge(const PlanarNode& firstNode,
-                   const PlanarNode& secondNode,
-                   const lemon::ListGraph::Edge edge);
+                   const PlanarNode& secondNode);
 
         PlanarEdge(const PlanarEdge& edge);
         PlanarEdge& operator=(const PlanarEdge& edge);
@@ -102,14 +99,9 @@ namespace Graph
             return (p11 < p21) || (p11 == p21 && p12 < p22);
         }
 
-        // In order to hide lemon edge from the outside of the code,
-        // but to let the graph implementation get it.
-        friend class PlanarGraph;
-
     private:
         PlanarNode firstNode_;
         PlanarNode secondNode_;
-        lemon::ListGraph::Edge edge_;
     };
 }
 
