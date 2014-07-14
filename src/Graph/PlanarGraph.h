@@ -97,9 +97,6 @@ namespace Graph
     private:
         NodeCollection nodeCache_;
         EdgeCollection edgeCache_;
-
-        void insertData(const NodeCollection& nodes,
-                        const EdgeCollection& edges);
     };
 }
 
