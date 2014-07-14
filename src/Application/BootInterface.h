@@ -20,6 +20,8 @@
 #ifndef APPLICATION_BOOT_INTERFACE_H
 #define APPLICATION_BOOT_INTERFACE_H
 
+#include <memory>
+
 #include "../Threading/Thread.h"
 
 namespace Application
@@ -35,7 +37,7 @@ namespace Application
         typedef void (*Callback)(Application&, BootInterface&);
 
         BootInterface(Callback callback, Application& application):
-            thread_(NULL),
+            thread_(nullptr),
             callback_(callback, application)
         {}
 
@@ -43,11 +45,10 @@ namespace Application
 
         virtual ~BootInterface()
         {
-            if (thread_ != NULL)
+            if (thread_ != nullptr)
             {
                 thread_->stop();
                 cleanUp();
-                delete thread_;
             }
         }
 
@@ -67,7 +68,11 @@ namespace Application
         }
 
     protected:
-        void setThread(Threading::Thread* thread) { thread_ = thread; }
+        void setThread(Threading::Thread* thread)
+        {
+            thread_ = std::unique_ptr<Threading::Thread>(thread);
+        }
+
         virtual void cleanUp() {};
 
     private:
@@ -81,7 +86,7 @@ namespace Application
             Application& application;
         } CallbackStruct;
 
-        Threading::Thread* thread_;
+        std::unique_ptr<Threading::Thread> thread_;
         CallbackStruct callback_;
     };
 }

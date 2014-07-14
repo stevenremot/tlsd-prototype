@@ -29,19 +29,19 @@ namespace AI
     {
         void SensorManager::addSensor(const Sensor::SensorType & sensorType)
         {
-            vector< Core::SharedPtr<Sensor> >::const_iterator sensor;
+            vector< std::shared_ptr<Sensor> >::const_iterator sensor;
             for (sensor = sensorsList_.begin(); sensor != sensorsList_.end(); ++sensor)
             {
                 if((*sensor)->getSensorType() == sensorType)
                     return;
             }
             if(sensorType == SightSensor::Type)
-                sensorsList_.push_back(new SightSensor(entity_));
+                sensorsList_.push_back(std::shared_ptr<Sensor>(new SightSensor(entity_)));
         }
 
         void SensorManager::removeSensor(const Sensor::SensorType &sensorType)
         {
-            vector< Core::SharedPtr<Sensor> >::iterator sensor;
+            vector< std::shared_ptr<Sensor> >::iterator sensor;
             for (sensor = sensorsList_.begin(); sensor != sensorsList_.end(); ++sensor)
             {
                 if((*sensor)->getSensorType() == sensorType)
@@ -55,7 +55,7 @@ namespace AI
         std::vector<MemoryFact*> SensorManager::updateSensors(Ecs::World& world)
         {
             std::vector<MemoryFact*> memoryFacts;
-            vector< Core::SharedPtr<Sensor> >::iterator sensor;
+            vector< std::shared_ptr<Sensor> >::iterator sensor;
             for(sensor = sensorsList_.begin(); sensor != sensorsList_.end(); ++sensor)
             {
                 std::vector<MemoryFact*> memoryFactsForSensor= (*sensor)->update(world);

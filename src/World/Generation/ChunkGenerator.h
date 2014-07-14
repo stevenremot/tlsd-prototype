@@ -21,6 +21,7 @@
 #define WORLD_GENERATION_CHUNK_GENERATOR_H
 
 #include <vector>
+#include <memory>
 
 #include "../World.h"
 #include "../../Ecs/World.h"
@@ -96,7 +97,7 @@ namespace World
             Random::Seed getChunkSeed(int x, int y);
 
             void insertDescriptor(
-                Core::SharedPtr<Ecs::EntityDescriptor>& descriptor,
+                std::shared_ptr<Ecs::EntityDescriptor>& descriptor,
                 int defaultI,
                 int defaultJ
             );

@@ -29,7 +29,6 @@
 #include "tests/graph.h"
 #include "tests/threading.h"
 #include "tests/render.h"
-#include "tests/core.h"
 #include "tests/ai.h"
 #include "tests/stateMachine.h"
 #include "tests/navmesh.h"
@@ -49,7 +48,6 @@ int main()
     // EventTest::testEvents();
     // EcsTest::testEcs();
     // EcsTest::testSharedEntity();
-    // CoreTest::testSharedPtr();
     // GeometryTest::testVectors();
     // GeometryTest::testPolygons();
     // RandomTest::testNumberGenerator();
