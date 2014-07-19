@@ -1,9 +1,9 @@
 import os
 
-env = Environment()
+env = Environment(ENV = os.environ)
 env.Append(
-    CXXFLAGS = ["-Wall", "-std=c++11"],
-    LINKFLAGS = ["-pthread", "-std=c++11"]
+    CXXFLAGS = ["-Wall", "-pthread", "-std=gnu++11"],
+    LINKFLAGS = ["-std=gnu++11"]
 )
 
 if ARGUMENTS.get("debug", 0):
@@ -17,10 +17,10 @@ if ARGUMENTS.get("clang", 0):
 
 libs = []
 if env['PLATFORM'] == 'win32':
-	env = Environment(Env=os.environ, tools=['mingw'])
-	libs = ["Irrlicht"]
+	env.Replace(tools=['mingw'])
+	libs = ["pthreadGC2", "Irrlicht"]
 elif env['PLATFORM'] == 'posix':
-	libs = ["Irrlicht","X11"]
+	libs = ["pthread", "Irrlicht", "X11"]
 
 env.Append(CPPPATH=['libs'])
 
