@@ -35,25 +35,18 @@ namespace Threading
     void Thread::start()
     {
         running_ = true;
-        int ret = pthread_create(&thread_, NULL, Thread::loopFunction, this);
-
-        if (ret)
-        {
-            throw Exception(ret);
-        }
+        thread_ = std::thread([this](){ this->loopFunction(); });
     }
 
     void Thread::stop()
     {
         running_ = false;
-        pthread_join(thread_, NULL);
+        thread_.join();
     }
 
-    void* Thread::loopFunction(void * obj)
+    void Thread::loopFunction()
     {
-        Thread * thread = static_cast<Thread*>(obj);
-        vector<ThreadableInterface*> threadables = thread->threadables_;
-        unsigned int threadablesSize = threadables.size();
+        unsigned int threadablesSize = threadables_.size();
 
         struct timespec lastTime;
         getTime(lastTime);
@@ -64,9 +57,9 @@ namespace Threading
         struct timespec currentTime;
         struct timespec loopDelay;
         loopDelay.tv_sec = 0;
-        loopDelay.tv_nsec = 1000000L * thread->loopDelay_;
+        loopDelay.tv_nsec = 1000000L * loopDelay_;
 
-        while (thread->isRunning())
+        while (isRunning())
         {
             getTime(currentTime);
             struct timespec diff = difference(lastTime, currentTime);
@@ -75,11 +68,11 @@ namespace Threading
             lastTime = currentTime;
 
             struct timespec diffDelays = difference(loopDelay, delay);
-            while (diffDelays.tv_sec >= 0 && diffDelays.tv_nsec >= 1000 && thread->isRunning())
+            while (diffDelays.tv_sec >= 0 && diffDelays.tv_nsec >= 1000 && isRunning())
             {
                 for (unsigned int i = 0; i < threadablesSize; i++)
                 {
-                    threadables[i]->run();
+                    threadables_[i]->run();
                 }
                 delay = diffDelays;
                 diffDelays = difference(loopDelay, delay);
@@ -88,7 +81,5 @@ namespace Threading
             struct timespec waitingTime = difference(delay, loopDelay);
             Threading::sleep(waitingTime.tv_sec, waitingTime.tv_nsec / 1000000L);
         }
-
-        return NULL;
     }
 }

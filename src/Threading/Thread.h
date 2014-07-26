@@ -23,7 +23,7 @@
 #include <cstdio>
 #include <vector>
 #include <exception>
-#include <pthread.h>
+#include <thread>
 #include <ctime>
 
 #include "ThreadableInterface.h"
@@ -81,11 +81,11 @@ namespace Threading
         inline bool isRunning() const { return running_; }
 
     private:
-        static void* loopFunction(void * obj);
+        void loopFunction();
 
         std::vector<ThreadableInterface*> threadables_;
         bool running_;
-        pthread_t thread_;
+        std::thread thread_;
         time_t loopDelay_;
     };
 }
