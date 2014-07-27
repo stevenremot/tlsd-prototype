@@ -23,11 +23,9 @@
 #include <memory>
 #include <mutex>
 
-
 namespace Threading
 {
     typedef std::mutex Lock;
-    typedef std::lock_guard<std::mutex> LockGuard;
 
     template<typename T>
     class ConcurrentRessource;
@@ -39,19 +37,40 @@ namespace Threading
     class ConcurrentWriter;
 
     template <typename T1, typename T2>
-    ConcurrentReader<T2> getConcurrentReader(ConcurrentRessource<T1> res);
+    ConcurrentReader<T2> getConcurrentReader(ConcurrentRessource<T1>& res);
 
     template <typename T1, typename T2>
-    ConcurrentWriter<T2> getConcurrentWriter(ConcurrentRessource<T1> res);
+    ConcurrentWriter<T2> getConcurrentWriter(ConcurrentRessource<T1>& res);
 
     template<typename T>
     class ConcurrentReader
     {
     public:
-        ConcurrentReader(Lock& lock, const std::shared_ptr<T>& data):
-            lock_(new LockGuard(lock)),
+        ConcurrentReader(const std::shared_ptr<Lock>& lock, const std::shared_ptr<T>& data):
+            lock_(lock),
             data_(data)
         {
+            lock_->lock();
+        }
+
+        ConcurrentReader(const ConcurrentReader&) = delete;
+
+        ConcurrentReader(ConcurrentReader&& reader):
+            lock_(reader.lock_),
+            data_(reader.data_)
+        {
+            reader.lock_ = nullptr;
+            reader.data_ = nullptr;
+        }
+
+        ConcurrentReader& operator=(ConcurrentReader) = delete;
+
+        ~ConcurrentReader()
+        {
+            if (lock_ != nullptr)
+            {
+                lock_->unlock();
+            }
         }
 
         const T& operator*()
@@ -65,7 +84,7 @@ namespace Threading
         }
 
     private:
-        std::shared_ptr<LockGuard> lock_;
+        std::shared_ptr<Lock> lock_;
         std::shared_ptr<T> data_;
     };
 
@@ -73,10 +92,31 @@ namespace Threading
     class ConcurrentWriter
     {
     public:
-        ConcurrentWriter(Lock& lock, const std::shared_ptr<T>& data):
-            lock_(new LockGuard(lock)),
+        ConcurrentWriter(const std::shared_ptr<Lock>& lock, const std::shared_ptr<T>& data):
+            lock_(lock),
             data_(data)
         {
+            lock_->lock();
+        }
+
+        ConcurrentWriter(const ConcurrentWriter&) = delete;
+
+        ConcurrentWriter(ConcurrentWriter&& writer):
+            lock_(writer.lock_),
+            data_(writer.data_)
+        {
+            writer.lock_ = nullptr;
+            writer.data_ = nullptr;
+        }
+
+        ConcurrentWriter& operator=(ConcurrentWriter) = delete;
+
+        ~ConcurrentWriter()
+        {
+            if (lock_ != nullptr)
+            {
+                lock_->unlock();
+            }
         }
 
         T& operator*()
@@ -90,7 +130,7 @@ namespace Threading
         }
 
     private:
-        std::shared_ptr<LockGuard> lock_;
+        std::shared_ptr<Lock> lock_;
         std::shared_ptr<T> data_;
     };
 
@@ -102,22 +142,18 @@ namespace Threading
     {
     public:
         ConcurrentRessource(T* data):
-            lock_(),
+            lock_(new Lock),
             data_(data)
         {}
 
         ConcurrentRessource(const ConcurrentRessource& res):
-            lock_(),
-            data_(res.data_)
-        {}
-
-        ConcurrentRessource(const ConcurrentRessource&& res):
-            lock_(),
+            lock_(res.lock_),
             data_(res.data_)
         {}
 
         ConcurrentRessource& operator=(const ConcurrentRessource& res)
         {
+            lock_ = res.lock_;
             data_ = res.data_;
             return *this;
         }
@@ -134,18 +170,18 @@ namespace Threading
         }
 
         template<typename U, typename V>
-        friend ConcurrentReader<V> getConcurrentReader(ConcurrentRessource<U>);
+        friend ConcurrentReader<V> getConcurrentReader(ConcurrentRessource<U>&);
 
         template<typename U, typename V>
-        friend ConcurrentWriter<V> getConcurrentWriter(ConcurrentRessource<U>);
+        friend ConcurrentWriter<V> getConcurrentWriter(ConcurrentRessource<U>&);
 
     private:
-        Lock lock_;
+        std::shared_ptr<Lock> lock_;
         std::shared_ptr<T> data_;
     };
 
     template <typename T1, typename T2>
-    ConcurrentReader<T2> getConcurrentReader(ConcurrentRessource<T1> res)
+    ConcurrentReader<T2> getConcurrentReader(ConcurrentRessource<T1>& res)
     {
         return ConcurrentReader<T2>(
             res.lock_,
@@ -155,7 +191,7 @@ namespace Threading
 
 
     template <typename T1, typename T2>
-    ConcurrentWriter<T2> getConcurrentWriter(ConcurrentRessource<T1> res)
+    ConcurrentWriter<T2> getConcurrentWriter(ConcurrentRessource<T1>& res)
     {
         return ConcurrentWriter<T2>(
             res.lock_,

@@ -18,16 +18,13 @@
 */
 
 #include "MovementTimer.h"
-#include "../Core/Time.h"
 
 namespace Physics
 {
     void MovementTimer::updateCurrentTime()
     {
-        struct timespec time;
-        Core::getTime(time);
-        currentTime_ = time.tv_sec * 1000L + time.tv_nsec / 1000000L;
-        delay_ = currentTime_ - lastTime_;
+        currentTime_ = Core::getTime();
+        delay_ = Core::difference(lastTime_, currentTime_);
     }
 
     void MovementTimer::updateLastTime()
@@ -37,11 +34,12 @@ namespace Physics
 
     unsigned long MovementTimer::getLastTime() const
     {
-        return lastTime_;
+        // TODO find something better than rely on std::chrono::timepoint
+        return lastTime_.time_since_epoch().count();
     }
 
     unsigned long MovementTimer::getDelay() const
     {
-        return delay_;
+        return Core::getDurationMillis(delay_);
     }
 }

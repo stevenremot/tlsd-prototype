@@ -59,6 +59,7 @@ int main()
     // NavMeshTest::testNavMesh();
     // StateMachineTest::testStateMachine();
     // ThreadingTest::testChannel();
+    // ThreadingTest::testThread();
     // WorldTest::testRoadNetworkModel();
     // WorldGenerationTests::testRoadExpansion();
     // WorldTest::testGroundCoefficients();
@@ -71,7 +72,6 @@ int main()
     // PhysicsTest::testMovementSystem();
     // InputTest::testPlayerSystem();
     // InputTest::testCoordinates();
-    // StateMachineTest::testStateMachine();
 
     Application::Application app;
     app.start();

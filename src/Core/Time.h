@@ -20,27 +20,34 @@
 #ifndef CORE_TIME_H
 #define CORE_TIME_H
 
-#include <ctime>
+#include <chrono>
 
-#ifdef _WIN32
-#include <pthread.h>
-#include <windows.h>
-#endif
 namespace Core
 {
-    /**
-     * Return the time elapsed in milliseconds since an arbitrary and constant start
-     *
-     * @param[out] time
-     *
-     * @return 0 on success
-     */
-    int getTime(struct timespec& time);
+    typedef std::chrono::steady_clock::time_point TimePoint;
+    typedef std::chrono::milliseconds Duration;
 
     /**
-     *  Difference of timespec structs : end - start
+     * Return the time point since an arbitrary and constant start
+     *
+     * @return Current time point
      */
-    struct timespec difference(struct timespec start, struct timespec end);
+    TimePoint getTime();
+
+    /**
+     *  Difference of time points : end - start
+     */
+    Duration difference(const TimePoint& start, const TimePoint& end);
+
+    /**
+     * Return a duration for milliseconds
+     */
+    Duration makeDurationMillis(unsigned long milliSeconds);
+
+    /**
+     * Return the milliseconds of the duration
+     */
+    unsigned long getDurationMillis(const Duration& duration);
 }
 
 #endif

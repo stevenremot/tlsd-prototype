@@ -91,11 +91,10 @@ namespace Character
                                 statComponentRessource
                             );
 
-                        struct timespec lastTimeHurt = statComponent->getLastTimeHurt();
-                        struct timespec currentTime;
-                        Core::getTime(currentTime);
-                        struct timespec diff = Core::difference(lastTimeHurt, currentTime);
-                        unsigned int period = diff.tv_sec * 1000L + diff.tv_nsec / 1000000L;
+                        Core::TimePoint lastTimeHurt = statComponent->getLastTimeHurt();
+                        Core::TimePoint currentTime = Core::getTime();
+                        Core::Duration diff = Core::difference(lastTimeHurt, currentTime);
+                        unsigned int period = Core::getDurationMillis(diff);
 
                         if (period > InvincibilityPeriod)
                         {

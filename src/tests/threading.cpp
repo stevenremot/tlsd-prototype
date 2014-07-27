@@ -100,4 +100,47 @@ namespace ThreadingTest
 
         thread.stop();
     }
+
+    class Counter: public Threading::ThreadableInterface
+    {
+    public:
+        Counter():
+            count_(0)
+        {}
+
+        void run()
+        {
+            count_++;
+        }
+
+        unsigned long getCount() const
+        {
+            return count_;
+        }
+
+    private:
+        unsigned long count_;
+    };
+
+    void testThread()
+    {
+        Counter c;
+        std::vector<Threading::ThreadableInterface*> threadables{&c};
+        Threading::Thread t(threadables, 50);
+
+        Core::TimePoint start = Core::getTime();
+        t.start();
+
+        for (unsigned int i = 0; i < 5; i++)
+        {
+            Threading::sleep(Core::makeDurationMillis(1000));
+        }
+
+        t.stop();
+        Core::TimePoint stop = Core::getTime();
+
+        cout << "Reference : " << 50 << endl;
+        cout << "Result : " << static_cast<double>(c.getCount()) /
+            static_cast<double>(Core::getDurationMillis(Core::difference(start, stop))) * 1000 << std::endl;
+    }
 }

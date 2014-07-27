@@ -24,16 +24,16 @@
 #include <vector>
 #include <exception>
 #include <thread>
-#include <ctime>
 
+#include "../Core/Time.h"
 #include "ThreadableInterface.h"
 
 namespace Threading
 {
     /**
-     * Sleep the current thread for given milliseconds.
+     * Sleep the current thread for given duration
      */
-    int sleep(long seconds, long milliseconds);
+    void sleep(const Core::Duration& duration);
 
     /**
      * Class that can run multiple threadable objects.

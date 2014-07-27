@@ -147,7 +147,7 @@ namespace Application
         running_ = true;
         while (running_)
         {
-            Threading::sleep(1, 0);
+            Threading::sleep(Core::makeDurationMillis(1000));
         }
 
     }

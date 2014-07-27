@@ -58,7 +58,7 @@ namespace NavMeshTest
 {
 
     Ecs::Entity createNewCharacter(
-        Threading::ConcurrentWriter<Ecs::World> w,
+        Threading::ConcurrentWriter<Ecs::World>& w,
         const Geometry::Vec3Df& position,
         const Geometry::Vec3Df& velocity,
         bool hasAI,
@@ -141,7 +141,7 @@ namespace NavMeshTest
         while (k < 20)
         {
             k++;
-            Threading::sleep(0, 200);
+            Threading::sleep(Core::makeDurationMillis(200));
         }
 
         eventThread.stop();
@@ -265,7 +265,7 @@ namespace NavMeshTest
         Geometry::Vec3Df offset(0.1, -0.2, 0.0);
         for (int j =0; j < 20*20; j++)
         {
-            Threading::sleep(0,50);
+            Threading::sleep(Core::makeDurationMillis(50));
 
             ConcurrentReader<Geometry::PositionComponent> positionComponentE1 =
                 getConcurrentReader<Ecs::Component, Geometry::PositionComponent>(

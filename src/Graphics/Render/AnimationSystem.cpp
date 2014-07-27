@@ -24,8 +24,6 @@
 #include "AnimationEvents.h"
 #include "AnimateActionEvent.h"
 
-#include <iostream>
-
 using Ecs::ComponentCreatedEvent;
 using Ecs::ComponentGroup;
 using Ecs::World;

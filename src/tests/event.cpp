@@ -73,7 +73,7 @@ namespace EventTest
         while (loop)
         {
             cout << ".";
-            Threading::sleep(0, 200);
+            Threading::sleep(Core::makeDurationMillis(200));
         }
 
         eventThread.stop();

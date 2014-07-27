@@ -21,35 +21,24 @@
 
 namespace Core
 {
-    int getTime(struct timespec& time)
+    TimePoint getTime()
     {
-#ifdef _WIN32
-        SYSTEMTIME st;
-        GetSystemTime(&st);
-
-        time.tv_sec = st.wSecond;
-        time.tv_nsec = st.wMilliseconds * 1000000L;
-
-        return 0;
-#else
-        return clock_gettime(CLOCK_MONOTONIC, &time);
-#endif
+        return std::chrono::steady_clock::now();
     }
 
     // end - start
-    struct timespec difference(struct timespec start, struct timespec end)
+    Duration difference(const TimePoint& start, const TimePoint& end)
     {
-        struct timespec temp;
-        if (end.tv_nsec-start.tv_nsec < 0)
-        {
-            temp.tv_sec = end.tv_sec - start.tv_sec-1;
-            temp.tv_nsec = 1000000000L + end.tv_nsec-start.tv_nsec;
-        }
-        else
-        {
-            temp.tv_sec = end.tv_sec - start.tv_sec;
-            temp.tv_nsec = end.tv_nsec - start.tv_nsec;
-        }
-        return temp;
+        return std::chrono::duration_cast<Duration>(end - start);
+    }
+
+    Duration makeDurationMillis(unsigned long millis)
+    {
+        return Duration(millis);
+    }
+
+    unsigned long getDurationMillis(const Duration& duration)
+    {
+        return duration.count();
     }
 }

@@ -58,7 +58,7 @@ namespace Threading
         {
             while(data_.empty())
             {
-                sleep(0, 10);
+                sleep(Core::makeDurationMillis(10));
             }
 
             data = data_.front();

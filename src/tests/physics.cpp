@@ -75,7 +75,7 @@ namespace PhysicsTest
         );
         for (unsigned int i = 0; i < 20; i++)
         {
-            Threading::sleep(0, 250);
+            Threading::sleep(Core::makeDurationMillis(250));
             svg.drawCircle(
                 pos->getPosition().getX() * 10,
                 -pos->getPosition().getZ() * 10,

@@ -20,25 +20,28 @@
 #ifndef PHYSICS_MOVEMENTTIMER_H
 #define PHYSICS_MOVEMENTTIMER_H
 
+#include "../Core/Time.h"
+
 namespace Physics
 {
     class MovementTimer
     {
-        public:
-            MovementTimer():
-                lastTime_(0),
-                currentTime_(0),
-                delay_(0)
-                {}
+    public:
+        MovementTimer():
+            lastTime_(),
+            currentTime_(),
+            delay_(Core::makeDurationMillis(0))
+        {}
 
-            void updateCurrentTime();
-            void updateLastTime();
+        void updateCurrentTime();
+        void updateLastTime();
 
-            unsigned long getLastTime() const;
-            unsigned long getDelay() const;
+        unsigned long getLastTime() const;
+        unsigned long getDelay() const;
 
-        private:
-            unsigned long lastTime_, currentTime_, delay_;
+    private:
+        Core::TimePoint lastTime_, currentTime_;
+        Core::Duration delay_;
     };
 }
 

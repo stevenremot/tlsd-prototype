@@ -94,7 +94,7 @@ namespace RenderTest
         int imax = durationInSeconds * 10;
         for (int i = 0; i < imax; i++)
         {
-           Threading::sleep(0,100);
+            Threading::sleep(Core::makeDurationMillis(100));
         }
 
         thread.stop();
@@ -142,19 +142,21 @@ namespace RenderTest
         Graphics::Render::Model3D cube = Graphics::Render::createPrettyCubeModel();
         std::string meshFile = "ninja.b3d";
 
-        int imax = durationInSeconds * 1;
+        int imax = durationInSeconds;
         for (int i = 0; i < imax && !cdl.closed_; i++)
         {
-            Threading::ConcurrentWriter<Ecs::World> ww = w.getWriter();
-            Ecs::Entity e = ww->createEntity(i);
-            ww->addComponent(e, new PositionComponent(Vec3Df(rng.getUniform(-5, 5), rng.getUniform(-5, 5), 0)));
-            ww->addComponent(e, new RotationComponent(Vec3Df(0, 0, rng.getUniform(0, 360))));
-            if (i % 2)
-                ww->addComponent(e, new RenderableComponent(meshFile, ""));
-            else
-                ww->addComponent(e, new RenderableComponent(cube));
+            {
+                Threading::ConcurrentWriter<Ecs::World> ww = w.getWriter();
+                Ecs::Entity e = ww->createEntity(i);
+                ww->addComponent(e, new PositionComponent(Vec3Df(rng.getUniform(-5, 5), rng.getUniform(-5, 5), 0)));
+                ww->addComponent(e, new RotationComponent(Vec3Df(0, 0, rng.getUniform(0, 360))));
+                if (i % 2)
+                    ww->addComponent(e, new RenderableComponent(meshFile, ""));
+                else
+                    ww->addComponent(e, new RenderableComponent(cube));
+            }
 
-            Threading::sleep(1,0);
+            Threading::sleep(Core::makeDurationMillis(1000));
         }
 
         thread.stop();
@@ -195,7 +197,7 @@ namespace RenderTest
         // wait for 20 seconds
         for (int i = 0; i < 200; i++)
         {
-           Threading::sleep(0,20);
+            Threading::sleep(Core::makeDurationMillis(20));
         }
 
         thread.stop();

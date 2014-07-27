@@ -1,16 +1,6 @@
 #include "Thread.h"
 
-#include <iostream>
-#include <ctime>
-
-#ifdef _WIN32
-#include <windows.h>
-#endif
-
 #include "../Core/Time.h"
-
-using std::cout;
-using std::endl;
 
 using std::vector;
 
@@ -19,17 +9,9 @@ using Core::difference;
 
 namespace Threading
 {
-    int sleep(long seconds, long milliseconds)
+    void sleep(const Core::Duration& duration)
     {
-#ifdef _WIN32
-        Sleep(seconds * 1000L + milliseconds);
-        return 0;
-#else
-        struct timespec tim;
-        tim.tv_sec = seconds;
-        tim.tv_nsec = milliseconds * 1000000L;
-        return nanosleep(&tim, NULL);
-#endif
+        std::this_thread::sleep_for(duration);
     }
 
     void Thread::start()
@@ -48,38 +30,27 @@ namespace Threading
     {
         unsigned int threadablesSize = threadables_.size();
 
-        struct timespec lastTime;
-        getTime(lastTime);
+        Core::TimePoint lastTime = Core::getTime();
 
-        struct timespec delay;
-        delay.tv_sec = 0;
-        delay.tv_nsec = 0;
-        struct timespec currentTime;
-        struct timespec loopDelay;
-        loopDelay.tv_sec = 0;
-        loopDelay.tv_nsec = 1000000L * loopDelay_;
+        Core::Duration delay = Core::makeDurationMillis(0);
+        Core::Duration loopDelay = Core::makeDurationMillis(loopDelay_);
 
         while (isRunning())
         {
-            getTime(currentTime);
-            struct timespec diff = difference(lastTime, currentTime);
-            delay.tv_sec += diff.tv_sec;
-            delay.tv_nsec += diff.tv_nsec;
+            Core::TimePoint currentTime = getTime();
+            delay += difference(lastTime, currentTime);
             lastTime = currentTime;
 
-            struct timespec diffDelays = difference(loopDelay, delay);
-            while (diffDelays.tv_sec >= 0 && diffDelays.tv_nsec >= 1000 && isRunning())
+            while (delay >= loopDelay && isRunning())
             {
                 for (unsigned int i = 0; i < threadablesSize; i++)
                 {
                     threadables_[i]->run();
                 }
-                delay = diffDelays;
-                diffDelays = difference(loopDelay, delay);
+                delay -= loopDelay;
             }
 
-            struct timespec waitingTime = difference(delay, loopDelay);
-            Threading::sleep(waitingTime.tv_sec, waitingTime.tv_nsec / 1000000L);
+            Threading::sleep(loopDelay - delay);
         }
     }
 }

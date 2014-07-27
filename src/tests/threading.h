@@ -23,6 +23,7 @@
 namespace ThreadingTest
 {
     void testChannel();
+    void testThread();
 }
 
 #endif

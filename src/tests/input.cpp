@@ -120,7 +120,7 @@ namespace InputTest
         Threading::Thread t(threadables, 60);
         t.start();
 
-        Threading::sleep(0, 500);
+        Threading::sleep(Core::makeDurationMillis(500));
 
         t.stop();
     }

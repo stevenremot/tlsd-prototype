@@ -20,10 +20,7 @@
 #ifndef CHARACTER_STATISTICS_COMPONENT_H
 #define CHARACTER_STATISTICS_COMPONENT_H
 
-#include <pthread.h>
-
-#include <ctime>
-//#include "../Core/Time.h"
+#include "../Core/Time.h"
 #include "../Ecs/Component.h"
 #include "Statistics.h"
 
@@ -56,12 +53,12 @@ namespace Character
         Statistics& getStatistics() { return statistics_; }
         const Statistics& getStatistics() const { return statistics_; }
 
-        const struct timespec& getLastTimeHurt()
+        const Core::TimePoint& getLastTimeHurt()
         {
             return lastTimeHurt_;
         }
 
-        void setLastTimeHurt(const struct timespec& lastTimeHurt)
+        void setLastTimeHurt(const Core::TimePoint& lastTimeHurt)
         {
             lastTimeHurt_ = lastTimeHurt;
         }
@@ -69,7 +66,7 @@ namespace Character
     private:
         static const std::vector<Component::Type> dependentComponents_;
         Statistics statistics_;
-        struct timespec lastTimeHurt_;
+        Core::TimePoint lastTimeHurt_;
     };
 }
 

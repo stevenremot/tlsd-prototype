@@ -126,9 +126,10 @@ namespace AnimationTest
 
         std::string meshFile = "ninja.b3d";
 
-        Threading::ConcurrentWriter<Ecs::World> ww = w.getWriter();
+
         for (int i = 0; i < 15; i++)
         {
+            Threading::ConcurrentWriter<Ecs::World> ww = w.getWriter();
             Ecs::Entity e = ww->createEntity();
             ww->addComponent(e, new PositionComponent(Vec3Df(150+5*i,150,0)));
             ww->addComponent(e, new RotationComponent(Vec3Df()));
@@ -140,7 +141,7 @@ namespace AnimationTest
         int imax = 20 * 1;
         for (int i = 0; i < imax; i++)
         {
-            Threading::sleep(1,0);
+            Threading::sleep(Core::makeDurationMillis(1000));
         }
 
         thread.stop();
