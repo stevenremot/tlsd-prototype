@@ -2,7 +2,7 @@
 
 ##Description##
 
-This is the prototype of an action RPG game developed for a school
+This is an action RPG game initially developed for a school
 project: The Lost Souls Downfall.
 
 ##Dependencies##
@@ -14,7 +14,7 @@ project: The Lost Souls Downfall.
 
 ##Contributions##
 
-As it is a school project, we can not accept contributions for now.
+This is now an amateur project, so contributions are welcomed. We are mainly following [cxx convetions](http://www.c-xx.com/ccc/ccc.php).
 
 ##License##
 
