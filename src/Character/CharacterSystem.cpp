@@ -89,26 +89,19 @@ namespace Character
                     bool hasPlayer = world->hasComponent(entity, Input::PlayerComponent::Type);
                     bool stopAttack = false;
 
-                    ConcurrentRessource<Ecs::Component> charComponentRessource =
+                    ConcurrentRessource<CharacterComponent> charComponentRessource =
                         group.getComponent(CharacterComponent::Type);
 
-                    ConcurrentRessource<Ecs::Component> rotComponentRessource =
+                    ConcurrentRessource<Geometry::RotationComponent> rotComponentRessource =
                         group.getComponent(Geometry::RotationComponent::Type);
 
-                    ConcurrentRessource<Ecs::Component> movComponentRessource =
+                    ConcurrentRessource<Physics::MovementComponent> movComponentRessource =
                         group.getComponent(Physics::MovementComponent::Type);
 
                     if (action.getType() == MoveAction::Type)
                     {
-                        ConcurrentReader<CharacterComponent> charComponent =
-                            getConcurrentReader<Ecs::Component, CharacterComponent>(
-                                charComponentRessource
-                            );
-
-                        ConcurrentWriter<Physics::MovementComponent> movComponent =
-                            getConcurrentWriter<Ecs::Component, Physics::MovementComponent>(
-                                movComponentRessource
-                            );
+                        auto charComponent = charComponentRessource.getReader();
+                        auto movComponent = movComponentRessource.getWriter();
 
                         Vec2Df direction2D = dynamic_cast<const MoveAction&>(action).getDirection();
                         movComponent->setVelocity(direction2D * charComponent->getWalkingSpeed());
@@ -118,15 +111,8 @@ namespace Character
                     }
                     else if (action.getType() == StopAction::Type)
                     {
-                        ConcurrentReader<CharacterComponent> charComponent =
-                            getConcurrentReader<Ecs::Component, CharacterComponent>(
-                                charComponentRessource
-                            );
-
-                        ConcurrentWriter<Physics::MovementComponent> movComponent =
-                            getConcurrentWriter<Ecs::Component, Physics::MovementComponent>(
-                                movComponentRessource
-                            );
+                        auto charComponent = charComponentRessource.getReader();
+                        auto movComponent = movComponentRessource.getWriter();
 
                         movComponent->setVelocity(Vec2Df(0,0));
                         movComponent->setBaseVelocity(Vec2Df(0,0));
@@ -136,15 +122,9 @@ namespace Character
                     }
                     else if (action.getType() == LookAtAction::Type)
                     {
-                        ConcurrentWriter<Geometry::RotationComponent> rotComponent =
-                            getConcurrentWriter<Ecs::Component, Geometry::RotationComponent>(
-                                rotComponentRessource
-                            );
+                        auto rotComponent = rotComponentRessource.getWriter();
+                        auto movComponent = movComponentRessource.getWriter();
 
-                        ConcurrentWriter<Physics::MovementComponent> movComponent =
-                            getConcurrentWriter<Ecs::Component, Physics::MovementComponent>(
-                                movComponentRessource
-                            );
                         const LookAtAction& lookAction =
                             dynamic_cast<const LookAtAction&>(action);
 
@@ -187,10 +167,7 @@ namespace Character
                     else if (action.getType() == StartHandAction::Type)
                     {
                         {
-                            ConcurrentWriter<Physics::MovementComponent> movComponent =
-                                getConcurrentWriter<Ecs::Component, Physics::MovementComponent>(
-                                    movComponentRessource
-                                );
+                            auto movComponent = movComponentRessource.getWriter();
 
                             movComponent->setVelocity(
                                 Vec2Df(0, 0)
@@ -201,9 +178,7 @@ namespace Character
                         outsideQueue_ << new Graphics::Render::AnimateActionEvent(entity, StartHandAction::Type);
                         createAttackArea(world, entity);
 
-                        getConcurrentWriter<Ecs::Component, CharacterComponent>(
-                            charComponentRessource
-                        )->setAttacking(true);
+                        charComponentRessource.getWriter()->setAttacking(true);
                     }
                     else if (action.getType() == StopHandAction::Type)
                     {
@@ -212,20 +187,14 @@ namespace Character
                     }
 
                     if (stopAttack &&
-                            getConcurrentReader<Ecs::Component, CharacterComponent>(
-                                charComponentRessource
-                            )->isAttacking()
+                        charComponentRessource.getReader()->isAttacking()
                        )
                     {
                         world->removeEntity(
-                            getConcurrentReader<Ecs::Component, CharacterComponent>(
-                                charComponentRessource
-                            )->getAttackArea()
+                            charComponentRessource.getReader()->getAttackArea()
                         );
 
-                        getConcurrentWriter<Ecs::Component, CharacterComponent>(
-                            charComponentRessource
-                        )->setAttacking(false);
+                        charComponentRessource.getWriter()->setAttacking(false);
                     }
                 }
                 else
@@ -233,9 +202,8 @@ namespace Character
                     std::list<Ecs::Entity> entitiesToRemove;
                     {
                         ConcurrentReader<GroupComponent> groupComponent =
-                            getConcurrentReader<Ecs::Component, GroupComponent>(
-                                world->getEntityComponent(entity, GroupComponent::Type)
-                            );
+                            world->getEntityComponent(entity, GroupComponent::Type)
+                            .getReader();
 
 
                         if(action.getType() == DieAction::Type)

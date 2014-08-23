@@ -73,6 +73,16 @@ namespace Threading
             }
         }
 
+        template <typename U>
+        operator ConcurrentReader<U>()
+        {
+            const std::shared_ptr<U> newData = std::static_pointer_cast<U, T>(data_);
+            return ConcurrentReader<U>(
+                lock_,
+                newData
+            );
+        }
+
         const T& operator*()
         {
             return *data_;
@@ -119,6 +129,16 @@ namespace Threading
             }
         }
 
+        template <typename U>
+        operator ConcurrentWriter<U>()
+        {
+            std::shared_ptr<U> newData = std::static_pointer_cast<U, T>(data_);
+            return ConcurrentWriter<U>(
+                lock_,
+                newData
+            );
+        }
+
         T& operator*()
         {
             return *data_;
@@ -158,6 +178,12 @@ namespace Threading
             return *this;
         }
 
+        ConcurrentRessource(std::shared_ptr<T> data, std::shared_ptr<Lock> lock):
+            lock_(lock),
+            data_(data)
+        {
+        }
+
 
         ConcurrentReader<T> getReader()
         {
@@ -167,6 +193,18 @@ namespace Threading
         ConcurrentWriter<T> getWriter()
         {
             return ConcurrentWriter<T>(lock_, data_);
+        }
+
+        template<typename U>
+        operator ConcurrentRessource<U>()
+        {
+            std::shared_ptr<U> newData = std::static_pointer_cast<U, T>(data_);
+
+            auto newResource = ConcurrentRessource<U>(
+                    newData,
+                    lock_
+            );
+            return newResource;
         }
 
         template<typename U, typename V>
