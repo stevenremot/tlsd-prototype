@@ -36,6 +36,7 @@
 #include "tests/worldGeneration.h"
 #include "tests/physics.h"
 #include "tests/input.h"
+#include "tests/lua.h"
 #include "Application/Application.h"
 
 using std::cout;
@@ -72,6 +73,7 @@ int main()
     // PhysicsTest::testMovementSystem();
     // InputTest::testPlayerSystem();
     // InputTest::testCoordinates();
+    // LuaTest::testInterpreter();
 
     Application::Application app;
     app.start();

@@ -24,6 +24,7 @@
 #include "../Threading/ConcurrentRessource.h"
 #include "../Ecs/World.h"
 #include "../World/World.h"
+#include "../Lua/Vm.h"
 #include "EventBoot.h"
 #include "GraphicsBoot.h"
 #include "UpdateBoot.h"
@@ -71,9 +72,11 @@ namespace Application
         friend void applicationAiBootCallback(Application& application, BootInterface& aiBoot);
 
     private:
+        Lua::Vm vm_;
         EventBoot eventBoot_;
         Threading::ConcurrentRessource<Ecs::World> ecsWorld_;
         World::World world_;
+
         GraphicsBoot graphicsBoot_;
         UpdateBoot updateBoot_;
         GenerationBoot generationBoot_;

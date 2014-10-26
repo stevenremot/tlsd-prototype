@@ -72,6 +72,7 @@ namespace Application
     }
 
     Application::Application():
+        vm_(),
         eventBoot_(applicationEventBootCallback, *this),
         ecsWorld_(new Ecs::World(eventBoot_.getEventManager().getEventQueue())),
         world_(),
@@ -144,10 +145,25 @@ namespace Application
             world->addComponent(badGuy, aiComponent);
         }
 
+        std::unique_ptr<Lua::Thread> intepreter = vm_.createThread();
         running_ = true;
         while (running_)
         {
-            Threading::sleep(Core::makeDurationMillis(1000));
+            std::cout << ">> ";
+            if (!std::cin.eof())
+            {
+                char command[256];
+                std::cin.getline(command, sizeof(command));
+
+                try
+                {
+                    intepreter->doString(command);
+                }
+                catch(const Lua::Thread::CodeError& e)
+                {
+                    std::cout << "Error : " << e.what() << std::endl;
+                }
+            }
         }
 
     }
