@@ -41,7 +41,7 @@ namespace Application
     class Application : public Event::EventListenerInterface
     {
     public:
-        Application();
+        Application(const Random::Seed& seed);
 
         void start();
 
@@ -71,11 +71,13 @@ namespace Application
         friend void applicationAnimationBootCallback(Application& application, BootInterface& graphicsBoot);
         friend void applicationAiBootCallback(Application& application, BootInterface& aiBoot);
 
+        const Random::Seed& getSeed() const;
     private:
         Lua::Vm vm_;
         EventBoot eventBoot_;
         Threading::ConcurrentRessource<Ecs::World> ecsWorld_;
         World::World world_;
+        const Random::Seed seed_;
 
         GraphicsBoot graphicsBoot_;
         UpdateBoot updateBoot_;

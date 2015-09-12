@@ -34,6 +34,9 @@
 #include "../tests/stateMachine.h"
 #include "../AI/SubSystems/NavigationSubsystem.h"
 
+// TODO for lua VM, remove later
+#include "../Lua/Api/Random.h"
+
 namespace Application
 {
     void applicationEventBootCallback(Application& application, BootInterface& eventBoot)
@@ -71,11 +74,12 @@ namespace Application
         application.startLoop();
     }
 
-    Application::Application():
+    Application::Application(const Random::Seed& seed):
         vm_(),
         eventBoot_(applicationEventBootCallback, *this),
         ecsWorld_(new Ecs::World(eventBoot_.getEventManager().getEventQueue())),
         world_(),
+        seed_(seed),
         graphicsBoot_(applicationGraphicsBootCallback, *this),
         updateBoot_(applicationUpdateBootCallback, *this),
         generationBoot_(applicationGenerationBootCallback, *this),
@@ -83,7 +87,9 @@ namespace Application
         animationBoot_(applicationAnimationBootCallback, *this),
         aiBoot_(applicationAiBootCallback, *this),
         running_(false)
-    {}
+    {
+        Lua::Api::Random::setup(vm_, seed);
+    }
 
     void Application::start()
     {
@@ -171,5 +177,10 @@ namespace Application
     void Application::call(const Event::Event& event)
     {
         running_ = false;
+    }
+
+    const Random::Seed& Application::getSeed() const
+    {
+        return seed_;
     }
 }

@@ -21,6 +21,7 @@
 #define LUA_VM_H
 
 #include <memory>
+#include <functional>
 
 #include <lua5.2/lua.hpp>
 
@@ -42,12 +43,15 @@ namespace Lua
         Vm& operator=(const Vm& vm) = delete;
         ~Vm();
 
+        void doWithState(const std::function<void(lua_State*const L)>& body);
+
         /**
          * Create a new state.
          *
          * The state is derived from the main lua state.
          */
         std::unique_ptr<Thread> createThread();
+
     private:
         lua_State* L_;
     };

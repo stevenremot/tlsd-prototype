@@ -75,7 +75,7 @@ int main()
     // InputTest::testCoordinates();
     // LuaTest::testInterpreter();
 
-    Application::Application app;
+    Application::Application app(42);
     app.start();
 
     return 0;

@@ -42,4 +42,9 @@ namespace Lua
             )
         );
     }
+
+    void Vm::doWithState(const std::function<void(lua_State*const L)>& body)
+    {
+        body(L_);
+    }
 }

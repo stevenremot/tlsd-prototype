@@ -43,7 +43,7 @@ namespace Application
         World::Generation::ChunkGenerator generator(
             getApplication().getWorld(),
             getApplication().getEcsWorld(),
-            42
+            getApplication().getSeed()
         );
 
         for (int i = -1; i <= 1; i++)
