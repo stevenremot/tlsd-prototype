@@ -17,31 +17,24 @@
     <http://www.gnu.org/licenses/>.
 */
 
-#ifndef APPLICATION_BOOT_INTERFACE_H
-#define APPLICATION_BOOT_INTERFACE_H
+#ifndef APPLICATION_LUA_LIB_BOOT_H
+#define APPLICATION_LUA_LIB_BOOT_H
 
-#include <memory>
-
-#include "../Threading/Thread.h"
+#include "BootInterface.h"
 
 namespace Application
 {
     class Application;
 
-    /**
-     * Interface for objects that boots threads.
-     */
-    class BootInterface
+    class LuaLibBoot: public BootInterface
     {
     public:
-        typedef std::function<void ()> Callback;
-        virtual void start(Callback callback) = 0;
+        LuaLibBoot(Application& application);
+
+        virtual void start(Callback callback);
+    private:
+        Application& application_;
     };
 }
 
 #endif
-
-// Emacs local variables
-// Local variables:
-// mode: c++
-// End:

@@ -50,7 +50,7 @@ namespace Application
         }
     }
 
-    void GraphicsBoot::start()
+    void GraphicsBoot::start(Callback callback)
     {
         Threading::ConcurrentRessource<Ecs::World>& ecsWorld =
             getApplication().getEcsWorld();
@@ -85,6 +85,6 @@ namespace Application
 
         setThread(new Threading::Thread(graphicsThreadables, 60));
         getThread().start();
-        finishBoot();
+        callback();
     }
 }

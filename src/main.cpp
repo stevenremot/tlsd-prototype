@@ -37,6 +37,15 @@
 #include "tests/physics.h"
 #include "tests/input.h"
 #include "tests/lua.h"
+
+#include "Application/LuaLibBoot.h"
+#include "Application/EventBoot.h"
+#include "Application/GraphicsBoot.h"
+#include "Application/UpdateBoot.h"
+#include "Application/GenerationBoot.h"
+#include "Application/CharacterBoot.h"
+#include "Application/AnimationBoot.h"
+#include "Application/AiBoot.h"
 #include "Application/Application.h"
 
 using std::cout;
@@ -75,7 +84,19 @@ int main()
     // InputTest::testCoordinates();
     // LuaTest::testInterpreter();
 
-    Application::Application app(42);
+    Event::EventManager eventManager;
+
+    Application::Application app(42, eventManager);
+    app
+        .addBooter(new Application::LuaLibBoot(app))
+        .addBooter(new Application::EventBoot(app, eventManager))
+        .addBooter(new Application::GraphicsBoot(app))
+        .addBooter(new Application::UpdateBoot(app))
+        .addBooter(new Application::GenerationBoot(app))
+        .addBooter(new Application::CharacterBoot(app))
+        .addBooter(new Application::AnimationBoot(app))
+        .addBooter(new Application::AiBoot(app));
+
     app.start();
 
     return 0;

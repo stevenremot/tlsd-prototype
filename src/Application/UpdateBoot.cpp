@@ -24,7 +24,7 @@
 
 namespace Application
 {
-    void UpdateBoot::start()
+    void UpdateBoot::start(Callback callback)
     {
         Event::EventQueue& queue = getApplication().getEventManager().getEventQueue();
 
@@ -39,6 +39,6 @@ namespace Application
 
         setThread(new Threading::Thread(threadables, 120));
         getThread().start();
-        finishBoot();
+        callback();
     }
 }

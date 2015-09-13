@@ -20,24 +20,25 @@
 #ifndef APPLICATION_EVENT_BOOT_H
 #define APPLICATION_EVENT_BOOT_H
 
-#include "BootInterface.h"
+#include "ThreadBoot.h"
 #include "../Event/EventManager.h"
 
 namespace Application
 {
-    class EventBoot: public BootInterface
+    class EventBoot: public ThreadBoot
     {
     public:
-        EventBoot(Callback callback, Application& application):
-            BootInterface(callback, application)
+        EventBoot(Application& application, Event::EventManager& eventManager):
+            ThreadBoot(application),
+            eventManager_(eventManager)
         {}
 
-        virtual void start();
+        virtual void start(Callback callback);
 
         Event::EventManager& getEventManager() { return eventManager_; }
 
     private:
-        Event::EventManager eventManager_;
+        Event::EventManager& eventManager_;
     };
 }
 

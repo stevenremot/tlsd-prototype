@@ -20,7 +20,7 @@
 #ifndef APPLICATION_GRAPHICS_BOOT_H
 #define APPLICATION_GRAPHICS_BOOT_H
 
-#include "BootInterface.h"
+#include "ThreadBoot.h"
 #include "../Ecs/World.h"
 
 #include "../Graphics/Device.h"
@@ -36,11 +36,11 @@ namespace Application
     /**
      * Boots graphics thread.
      */
-    class GraphicsBoot: public BootInterface
+    class GraphicsBoot: public ThreadBoot
     {
     public:
-        GraphicsBoot(Callback callback, Application& application):
-            BootInterface(callback, application),
+        GraphicsBoot(Application& application):
+            ThreadBoot(application),
             device_(NULL),
             scene_(NULL),
             receiver_(NULL),
@@ -50,7 +50,7 @@ namespace Application
         {}
 
 
-        virtual void start();
+        virtual void start(Callback callback);
 
     protected:
 

@@ -36,7 +36,7 @@ namespace Application
         }
     }
 
-    void GenerationBoot::start()
+    void GenerationBoot::start(Callback callback)
     {
         // TODO should this manual generation remain ?
         // I think it should be in an event.
@@ -72,6 +72,6 @@ namespace Application
 
         setThread(new Threading::Thread(threadables, 1));
         getThread().start();
-        finishBoot();
+        callback();
     }
 }

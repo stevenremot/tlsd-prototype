@@ -19,6 +19,8 @@
 
 #include "Application.h"
 
+#include <iostream>
+
 // TODO includes for group, remove later
 #include "../Character/GroupComponent.h"
 #include "../Character/EntityCreator.h"
@@ -34,66 +36,37 @@
 #include "../tests/stateMachine.h"
 #include "../AI/SubSystems/NavigationSubsystem.h"
 
-// TODO for lua VM, remove later
-#include "../Lua/Api/Random.h"
-
 namespace Application
 {
-    void applicationEventBootCallback(Application& application, BootInterface& eventBoot)
-    {
-        application.graphicsBoot_.start();
-    }
-
-    void applicationGraphicsBootCallback(Application& application, BootInterface& graphicsBoot)
-    {
-        application.updateBoot_.start();
-    }
-
-    void applicationUpdateBootCallback(Application& application, BootInterface& graphicsBoot)
-    {
-        application.generationBoot_.start();
-    }
-
-    void applicationGenerationBootCallback(Application& application, BootInterface& graphicsBoot)
-    {
-        application.characterBoot_.start();
-    }
-
-    void applicationCharacterBootCallback(Application& application, BootInterface& graphicsBoot)
-    {
-        application.animationBoot_.start();
-    }
-
-    void applicationAnimationBootCallback(Application& application, BootInterface& graphicsBoot)
-    {
-        application.aiBoot_.start();
-    }
-
-    void applicationAiBootCallback(Application& application, BootInterface& aiBoot)
-    {
-        application.startLoop();
-    }
-
-    Application::Application(const Random::Seed& seed):
+    Application::Application(const Random::Seed& seed, Event::EventManager& eventManager):
         vm_(),
-        eventBoot_(applicationEventBootCallback, *this),
-        ecsWorld_(new Ecs::World(eventBoot_.getEventManager().getEventQueue())),
+        ecsWorld_(new Ecs::World(eventManager.getEventQueue())),
+        eventManager_(eventManager),
         world_(),
         seed_(seed),
-        graphicsBoot_(applicationGraphicsBootCallback, *this),
-        updateBoot_(applicationUpdateBootCallback, *this),
-        generationBoot_(applicationGenerationBootCallback, *this),
-        characterBoot_(applicationCharacterBootCallback, *this),
-        animationBoot_(applicationAnimationBootCallback, *this),
-        aiBoot_(applicationAiBootCallback, *this),
         running_(false)
     {
-        Lua::Api::Random::setup(vm_, seed);
     }
 
     void Application::start()
     {
-        eventBoot_.start();
+        runBoot(0);
+    }
+
+    void Application::runBoot(unsigned int bootIndex)
+    {
+        if (bootIndex < booters_.size())
+        {
+            booters_.at(bootIndex)->start(
+                [this, bootIndex]() {
+                    this->runBoot(bootIndex + 1);
+                }
+            );
+        }
+        else
+        {
+            startLoop();
+        }
     }
 
     void Application::startLoop()
@@ -113,7 +86,7 @@ namespace Application
                 Geometry::Vec3Df(0,0,0),
                 Character::Statistics(100, 25, 20, 5),
                 group,
-                eventBoot_.getEventManager().getEventQueue()
+                getEventManager().getEventQueue()
             );
 
             Ecs::Entity badGuy = Character::createCharacter(
@@ -122,7 +95,7 @@ namespace Application
                 Geometry::Vec3Df(0, 0, 0),
                 Character::Statistics(70, 20, 20, 5),
                 group,
-                eventBoot_.getEventManager().getEventQueue()
+                getEventManager().getEventQueue()
             );
 
             AI::AiComponent* aiComponent = new AI::AiComponent(

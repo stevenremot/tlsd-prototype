@@ -42,8 +42,15 @@ static int returnSeed(lua_State* L)
 
 static int createNumberGenerator(lua_State* L)
 {
+    int top = lua_gettop(L);
+
+    Random::Seed seed = (top == 0)
+        ? getSeed(L)
+        : static_cast<Random::Seed>(luaL_checkint(L, 1));
+
     NumberGenerator* generator = static_cast<NumberGenerator*>(lua_newuserdata(L, sizeof(NumberGenerator)));
-    *generator = NumberGenerator(getSeed(L));
+
+    *generator = NumberGenerator(seed);
     luaL_getmetatable(L, NUMBER_GENERATOR_METATABLE);
     lua_setmetatable(L, -2);
     return 1;
@@ -120,7 +127,9 @@ void Lua::Api::Random::setup(Lua::Vm& vm, const ::Random::Seed& seed)
             lua_setfield(L, -2, "number_generator");
 
             // Registering lib
-            lua_setglobal(L, "random");
+            lua_getglobal(L, "tlsd");
+            lua_insert(L, 2);
+            lua_setfield(L, 2, "random");
         }
     );
 }

@@ -20,7 +20,7 @@
 #ifndef APPLICATION_AI_BOOT_H
 #define APPLICATION_AI_BOOT_H
 
-#include "BootInterface.h"
+#include "ThreadBoot.h"
 
 #include "../AI/AiSystem.h"
 #include "../AI/Sensor/SensorSystem.h"
@@ -28,17 +28,17 @@
 
 namespace Application
 {
-    class AiBoot: public BootInterface
+    class AiBoot: public ThreadBoot
     {
     public:
-        AiBoot(Callback callback, Application& application):
-            BootInterface(callback, application),
+        AiBoot(Application& application):
+            ThreadBoot( application),
             aiSystem_(NULL),
             sensorSystem_(NULL),
             targetingSystem_(NULL)
         {}
 
-        virtual void start();
+        virtual void start(Callback callback);
 
     protected:
         virtual void cleanUp();

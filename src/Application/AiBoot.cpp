@@ -23,7 +23,7 @@
 
 namespace Application
 {
-    void AiBoot::start()
+    void AiBoot::start(Callback callback)
     {
         Threading::ConcurrentRessource<Ecs::World>& world =
             getApplication().getEcsWorld();
@@ -39,7 +39,7 @@ namespace Application
 
         setThread(new Threading::Thread(threadables, 20));
         getThread().start();
-        finishBoot();
+        callback();
     }
 
     void AiBoot::cleanUp()

@@ -38,7 +38,7 @@ namespace Application
         }
     }
 
-    void CharacterBoot::start()
+    void CharacterBoot::start(Callback callback)
     {
         Event::ListenerRegister& reg = getApplication().getEventManager().getListenerRegister();
         Event::EventQueue& queue = getApplication().getEventManager().getEventQueue();
@@ -61,6 +61,6 @@ namespace Application
 
         setThread(new Threading::Thread(threadables, 60));
         getThread().start();
-        finishBoot();
+        callback();
     }
 }

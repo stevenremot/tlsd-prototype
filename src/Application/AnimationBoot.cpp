@@ -35,7 +35,7 @@ namespace Application
         }
     }
 
-    void AnimationBoot::start()
+    void AnimationBoot::start(Callback callback)
     {
         animationSystem_ = new Graphics::Render::AnimationSystem(
             getApplication().getEcsWorld(),
@@ -50,6 +50,6 @@ namespace Application
 
         setThread(new Threading::Thread(animThreadables, 60));
         getThread().start();
-        finishBoot();
+        callback();
     }
 }

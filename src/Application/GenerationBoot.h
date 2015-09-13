@@ -20,20 +20,20 @@
 #ifndef APPLICATION_GENERATION_BOOT_H
 #define APPLICATION_GENERATION_BOOT_H
 
-#include "BootInterface.h"
+#include "ThreadBoot.h"
 #include "../World/Generation/ChunkGenerationSystem.h"
 
 namespace Application
 {
-    class GenerationBoot: public BootInterface
+    class GenerationBoot: public ThreadBoot
     {
     public:
-        GenerationBoot(Callback callback, Application& application):
-            BootInterface(callback, application),
+        GenerationBoot(Application& application):
+            ThreadBoot(application),
             generationSystem_(NULL)
         {}
 
-        virtual void start();
+        virtual void start(Callback callback);
 
     protected:
 

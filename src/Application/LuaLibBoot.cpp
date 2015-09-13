@@ -17,31 +17,27 @@
     <http://www.gnu.org/licenses/>.
 */
 
-#ifndef APPLICATION_BOOT_INTERFACE_H
-#define APPLICATION_BOOT_INTERFACE_H
+#include "LuaLibBoot.h"
 
-#include <memory>
+#include "Application.h"
 
-#include "../Threading/Thread.h"
+#include "../Lua/Api/Random.h"
 
 namespace Application
 {
-    class Application;
+    LuaLibBoot::LuaLibBoot(Application& application):
+        application_(application)
+    {}
 
-    /**
-     * Interface for objects that boots threads.
-     */
-    class BootInterface
+    void LuaLibBoot::start(Callback callback)
     {
-    public:
-        typedef std::function<void ()> Callback;
-        virtual void start(Callback callback) = 0;
-    };
+        application_.getVm().doWithState(
+            [](lua_State* L) {
+                lua_newtable(L);
+                lua_setglobal(L, "tlsd");
+            }
+        );
+        Lua::Api::Random::setup(application_.getVm(), application_.getSeed());
+        callback();
+    }
 }
-
-#endif
-
-// Emacs local variables
-// Local variables:
-// mode: c++
-// End:

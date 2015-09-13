@@ -25,13 +25,9 @@
 #include "../Ecs/World.h"
 #include "../World/World.h"
 #include "../Lua/Vm.h"
-#include "EventBoot.h"
-#include "GraphicsBoot.h"
-#include "UpdateBoot.h"
-#include "GenerationBoot.h"
-#include "CharacterBoot.h"
-#include "AnimationBoot.h"
-#include "AiBoot.h"
+#include "../Random/NumberGenerator.h"
+
+#include "BootInterface.h"
 
 namespace Application
 {
@@ -41,7 +37,7 @@ namespace Application
     class Application : public Event::EventListenerInterface
     {
     public:
-        Application(const Random::Seed& seed);
+        Application(const Random::Seed& seed, Event::EventManager& enventManager);
 
         void start();
 
@@ -50,7 +46,7 @@ namespace Application
 
         Event::EventManager& getEventManager()
         {
-            return eventBoot_.getEventManager();
+            return eventManager_;
         }
 
         Threading::ConcurrentRessource<Ecs::World>& getEcsWorld()
@@ -63,29 +59,32 @@ namespace Application
             return world_;
         }
 
-        friend void applicationEventBootCallback(Application& application, BootInterface& eventBoot);
-        friend void applicationGraphicsBootCallback(Application& application, BootInterface& graphicsBoot);
-        friend void applicationUpdateBootCallback(Application& application, BootInterface& graphicsBoot);
-        friend void applicationGenerationBootCallback(Application& application, BootInterface& graphicsBoot);
-        friend void applicationCharacterBootCallback(Application& application, BootInterface& graphicsBoot);
-        friend void applicationAnimationBootCallback(Application& application, BootInterface& graphicsBoot);
-        friend void applicationAiBootCallback(Application& application, BootInterface& aiBoot);
+        Application& addBooter(BootInterface* booter)
+        {
+            booters_.push_back(std::unique_ptr<BootInterface>(booter));
+            return *this;
+        }
 
         const Random::Seed& getSeed() const;
+
+        Lua::Vm& getVm()
+        {
+            return vm_;
+        }
+
     private:
         Lua::Vm vm_;
-        EventBoot eventBoot_;
+        // EventBoot eventBoot_;
         Threading::ConcurrentRessource<Ecs::World> ecsWorld_;
+        Event::EventManager& eventManager_;
         World::World world_;
         const Random::Seed seed_;
 
-        GraphicsBoot graphicsBoot_;
-        UpdateBoot updateBoot_;
-        GenerationBoot generationBoot_;
-        CharacterBoot characterBoot_;
-        AnimationBoot animationBoot_;
-        AiBoot aiBoot_;
+        std::vector< std::unique_ptr<BootInterface> > booters_;
+
         bool running_;
+
+        void runBoot(unsigned int bootIndex);
 
         void startLoop();
     };

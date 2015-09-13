@@ -20,23 +20,23 @@
 #ifndef APPLICATION_CHARACTER_BOOT_H
 #define APPLICATION_CHARACTER_BOOT_H
 
-#include "BootInterface.h"
+#include "ThreadBoot.h"
 
 #include "../Character/CharacterSystem.h"
 #include "../Character/StatSystem.h"
 
 namespace Application
 {
-    class CharacterBoot: public BootInterface
+    class CharacterBoot: public ThreadBoot
     {
     public:
-        CharacterBoot(Callback callback, Application& application):
-            BootInterface(callback, application),
+        CharacterBoot(Application& application):
+            ThreadBoot(application),
             characterSystem_(NULL),
             statSystem_(NULL)
         {}
 
-        virtual void start();
+        virtual void start(Callback callback);
 
     protected:
         virtual void cleanUp();

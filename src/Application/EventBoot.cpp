@@ -21,12 +21,12 @@
 
 namespace Application
 {
-    void EventBoot::start()
+    void EventBoot::start(Callback callback)
     {
         std::vector<Threading::ThreadableInterface*> threadables;
         threadables.push_back(&eventManager_);
         setThread(new Threading::Thread(threadables, 1000));
         getThread().start();
-        finishBoot();
+        callback();
     }
 }

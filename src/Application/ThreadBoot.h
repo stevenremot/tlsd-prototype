@@ -17,12 +17,13 @@
     <http://www.gnu.org/licenses/>.
 */
 
-#ifndef APPLICATION_BOOT_INTERFACE_H
-#define APPLICATION_BOOT_INTERFACE_H
+#ifndef APPLICATION_THREAD_BOOT_H
+#define APPLICATION_THREAD_BOOT_H
 
 #include <memory>
 
 #include "../Threading/Thread.h"
+#include "BootInterface.h"
 
 namespace Application
 {
@@ -31,11 +32,44 @@ namespace Application
     /**
      * Interface for objects that boots threads.
      */
-    class BootInterface
+    class ThreadBoot: public BootInterface
     {
     public:
-        typedef std::function<void ()> Callback;
-        virtual void start(Callback callback) = 0;
+        ThreadBoot(Application& application):
+            thread_(nullptr),
+            application_(application)
+        {}
+
+        virtual ~ThreadBoot()
+        {
+            if (thread_ != nullptr)
+            {
+                thread_->stop();
+                cleanUp();
+            }
+        }
+
+        Threading::Thread& getThread()
+        {
+            return *thread_;
+        }
+
+        Application& getApplication()
+        {
+            return application_;
+        }
+
+    protected:
+        void setThread(Threading::Thread* thread)
+        {
+            thread_ = std::unique_ptr<Threading::Thread>(thread);
+        }
+
+        virtual void cleanUp() {};
+
+    private:
+        std::unique_ptr<Threading::Thread> thread_;
+        Application& application_;
     };
 }
 

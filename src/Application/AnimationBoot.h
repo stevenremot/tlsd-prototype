@@ -20,20 +20,20 @@
 #ifndef APPLICATION_ANIMATION_BOOT_H
 #define APPLICATION_ANIMATION_BOOT_H
 
-#include "BootInterface.h"
+#include "ThreadBoot.h"
 #include "../Graphics/Render/AnimationSystem.h"
 
 namespace Application
 {
-    class AnimationBoot: public BootInterface
+    class AnimationBoot: public ThreadBoot
     {
     public:
-        AnimationBoot(Callback callback, Application& application):
-            BootInterface(callback, application),
+        AnimationBoot(Application& application):
+            ThreadBoot(application),
             animationSystem_(NULL)
         {}
 
-        virtual void start();
+        virtual void start(Callback callback);
 
     protected:
         virtual void cleanUp();

@@ -20,23 +20,23 @@
 #ifndef APPLICATION_UPDATE_BOOT_H
 #define APPLICATION_UPDATE_BOOT_H
 
-#include "BootInterface.h"
+#include "ThreadBoot.h"
 
 #include "../Physics/MovementSystem.h"
 #include "../Physics/CollisionSystem.h"
 
 namespace Application
 {
-    class UpdateBoot: public BootInterface
+    class UpdateBoot: public ThreadBoot
     {
     public:
-        UpdateBoot(Callback callback, Application& application):
-            BootInterface(callback, application),
+        UpdateBoot(Application& application):
+            ThreadBoot(application),
             movementSystem_(NULL),
             collisionSystem_(NULL)
         {}
 
-        virtual void start();
+        virtual void start(Callback callback);
 
     protected:
 
