@@ -27,8 +27,11 @@
 #include "CityBiome.h"
 #include "PlainBiome.h"
 #include "DesertBiome.h"
+
 #include "../Geometry/Vec2D.h"
 #include "../Geometry/Polygon2D.h"
+
+#include "../Random/PerlinNoise.h"
 
 namespace World
 {
@@ -39,25 +42,8 @@ namespace World
     class BiomeMap
     {
     public:
+        void setPerlinCoef(int x, int y, const std::vector<Geometry::Vec2Df>& perlinCoef);
 
-        /**
-         * This exception is raised when trying to calculate the biome value
-         * when the coefficients are not initialized
-         *
-         */
-        class UninitializedCoefficientsException: public std::exception
-        {
-        public:
-            const char* what() const throw()
-            {
-                return "Trying to get the biome in a uninitialized area.";
-            }
-        };
-
-        void setPerlinCoef(int x, int y, const std::vector<Geometry::Vec2Df>& perlinCoef)
-        {
-            perlinCoefs_[Geometry::Vec2Di(x, y)] = perlinCoef;
-        }
         void addCityPolygon(const Geometry::Polygon2D& cityPolygon);
         /**
          * Returns the biome at the given position
@@ -66,23 +52,22 @@ namespace World
          */
         BiomeInterface& getBiome(const Geometry::Vec2Df& position);
 
-        const std::vector<Geometry::Polygon2D>& getCityPolygons() {return cityPolygons_;}
+        const std::vector<Geometry::Polygon2D>& getCityPolygons()
+        {
+            return cityPolygons_;
+        }
 
     private:
-        std::map<Geometry::Vec2Di, std::vector<Geometry::Vec2Df> > perlinCoefs_;
+        Random::PerlinNoise humidityNoise_;
+        Random::PerlinNoise temperatureNoise_;
+
         std::vector<Geometry::Polygon2D> cityPolygons_;
         std::vector<Geometry::Polygon2D> cityPolygonsExtended_;
+
         CityBiome cityBiome_;
         MountainBiome mountainBiome_;
         PlainBiome plainBiome_;
         DesertBiome desertBiome_;
-        float computePerlinNoise(
-            const Geometry::Vec2Df& position,
-            const Geometry::Vec2Df& perlinCoefficient00,
-            const Geometry::Vec2Df& perlinCoefficient10,
-            const Geometry::Vec2Df& perlinCoefficient01,
-            const Geometry::Vec2Df& perlinCoefficient11
-        );
     };
 }
 

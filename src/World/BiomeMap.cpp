@@ -22,63 +22,24 @@
 #include "../Geometry/Vec2D.h"
 #include "../Geometry/Polygon2D.h"
 
+using Geometry::Vec2Df;
+
 namespace World
 {
+    void BiomeMap::setPerlinCoef(int x, int y, const std::vector<Vec2Df>& perlinCoef)
 
-    void BiomeMap::addCityPolygon(const Geometry::Polygon2D& cityPolygon)
-        {
-            cityPolygons_.push_back(cityPolygon);
-            cityPolygonsExtended_.push_back(cityPolygon.offset(static_cast<float>(World::ChunkSize) / std::sqrt(2.0))[0]);
-        }
-
-    float BiomeMap::computePerlinNoise(
-        const Geometry::Vec2Df& position,
-        const Geometry::Vec2Df& perlinCoefficient00,
-        const Geometry::Vec2Df& perlinCoefficient10,
-        const Geometry::Vec2Df& perlinCoefficient01,
-        const Geometry::Vec2Df& perlinCoefficient11
-    )
     {
-        float chunkSize = World::ChunkSize;
-        // Getting the position in the chunk
-        float x = position.getX() - chunkSize / 2;
-        float y = position.getY() - chunkSize / 2;
-
-        
-        int i = floor(x / chunkSize);
-        int j = floor(y / chunkSize);
-        float x0 = x - i*chunkSize;
-        float y0 = y - j*chunkSize;
-
-        float n00, n01, n10, n11;
-        // Computing the Perlin noise interpolation
-        try
-        {
-            n00 = perlinCoefficient00.dot(Geometry::Vec2Df(x0, y0));
-            n10 = perlinCoefficient10.dot(Geometry::Vec2Df(x0 - chunkSize, y0));
-            n01 = perlinCoefficient01.dot(Geometry::Vec2Df(x0, y0 - chunkSize));
-            n11 = perlinCoefficient11.dot(Geometry::Vec2Df(x0 - chunkSize, y0 - chunkSize));
-        }
-        catch(const std::out_of_range& e)
-        {
-            throw UninitializedCoefficientsException();
-        }
-
-        float xNorm = x0 / chunkSize;
-        float yNorm = y0 / chunkSize;
-
-        float interpolantX = xNorm * xNorm * xNorm * (xNorm * (xNorm * 6 - 15) + 10);
-        float interpolantY = yNorm * yNorm * yNorm * (yNorm * (yNorm * 6 - 15) + 10);
-
-        float nx0 = n00 * (1 - interpolantX) + n10 * interpolantX;
-        float nx1 = n01 * (1 - interpolantX) + n11 * interpolantX;
-
-        float nxy = nx0 * (1 - interpolantY) + nx1 * interpolantY;
-
-        return nxy;
+        humidityNoise_.setCoefficient(Geometry::Vec2Di(x, y), perlinCoef[0]);
+        temperatureNoise_.setCoefficient(Geometry::Vec2Di(x, y), perlinCoef[1]);
     }
 
-    BiomeInterface& BiomeMap::getBiome(const Geometry::Vec2Df& position)
+    void BiomeMap::addCityPolygon(const Geometry::Polygon2D& cityPolygon)
+    {
+        cityPolygons_.push_back(cityPolygon);
+        cityPolygonsExtended_.push_back(cityPolygon.offset(static_cast<float>(World::ChunkSize) / std::sqrt(2.0))[0]);
+    }
+
+    BiomeInterface& BiomeMap::getBiome(const Vec2Df& position)
     {
         unsigned int length = cityPolygonsExtended_.size();
         // Checking the position of the cities
@@ -90,28 +51,9 @@ namespace World
             }
         }
 
-        float chunkSize = World::ChunkSize;
-        // Getting the position in the chunk
-        float x = position.getX() - chunkSize / 2;
-        float y = position.getY() - chunkSize / 2;
-
-        int i = floor(x / chunkSize);
-        int j = floor(y / chunkSize); 
-
-        float nxy1 = computePerlinNoise(
-            position,
-            perlinCoefs_.at(Geometry::Vec2Di(i, j))[0],
-            perlinCoefs_.at(Geometry::Vec2Di(i + 1, j))[0],
-            perlinCoefs_.at(Geometry::Vec2Di(i, j + 1))[0],
-            perlinCoefs_.at(Geometry::Vec2Di(i + 1,j + 1))[0]
-        );
-        float nxy2 = computePerlinNoise(
-            position,
-            perlinCoefs_.at(Geometry::Vec2Di(i, j))[1],
-            perlinCoefs_.at(Geometry::Vec2Di(i + 1, j))[1],
-            perlinCoefs_.at(Geometry::Vec2Di(i, j + 1))[1],
-            perlinCoefs_.at(Geometry::Vec2Di(i + 1, j + 1))[1]
-        );
+        Vec2Df noisePos = (position / World::ChunkSize) - Vec2Df(0.5, 0.5);
+        float nxy1 = humidityNoise_.computeAt(noisePos);
+        float nxy2 = temperatureNoise_.computeAt(noisePos);
 
         // Threshold of the noise value
         // TODO externalize
