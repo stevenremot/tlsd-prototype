@@ -17,16 +17,27 @@
     <http://www.gnu.org/licenses/>.
 */
 
-#include "EventBoot.h"
+#include "LuaLibBoot.h"
+
+#include "../Application.h"
+
+#include "../../Lua/Api/Random.h"
 
 namespace Application
 {
-    void EventBoot::start(Callback callback)
+    LuaLibBoot::LuaLibBoot(Application& application):
+        application_(application)
+    {}
+
+    void LuaLibBoot::start(Callback callback)
     {
-        std::vector<Threading::ThreadableInterface*> threadables;
-        threadables.push_back(&eventManager_);
-        setThread(new Threading::Thread(threadables, 1000));
-        getThread().start();
+        application_.getVm().doWithState(
+            [](lua_State* L) {
+                lua_newtable(L);
+                lua_setglobal(L, "tlsd");
+            }
+        );
+        Lua::Api::Random::setup(application_.getVm(), application_.getSeed());
         callback();
     }
 }

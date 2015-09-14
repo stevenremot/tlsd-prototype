@@ -27,7 +27,7 @@
 #include "../Lua/Vm.h"
 #include "../Random/NumberGenerator.h"
 
-#include "BootInterface.h"
+#include "Boot/BootInterface.h"
 
 namespace Application
 {

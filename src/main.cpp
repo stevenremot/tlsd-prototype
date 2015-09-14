@@ -38,20 +38,15 @@
 #include "tests/input.h"
 #include "tests/lua.h"
 
-#include "Application/LuaLibBoot.h"
-#include "Application/EventBoot.h"
-#include "Application/GraphicsBoot.h"
-#include "Application/UpdateBoot.h"
-#include "Application/GenerationBoot.h"
-#include "Application/CharacterBoot.h"
-#include "Application/AnimationBoot.h"
-#include "Application/AiBoot.h"
+#include "Application/Boot/LuaLibBoot.h"
+#include "Application/Boot/EventBoot.h"
+#include "Application/Boot/GraphicsBoot.h"
+#include "Application/Boot/UpdateBoot.h"
+#include "Application/Boot/GenerationBoot.h"
+#include "Application/Boot/CharacterBoot.h"
+#include "Application/Boot/AnimationBoot.h"
+#include "Application/Boot/AiBoot.h"
 #include "Application/Application.h"
-
-using std::cout;
-using std::endl;
-using std::string;
-using std::vector;
 
 int main()
 {

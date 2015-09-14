@@ -17,38 +17,27 @@
     <http://www.gnu.org/licenses/>.
 */
 
-#include "AnimationBoot.h"
+#include "UpdateBoot.h"
 
-#include "Application.h"
+#include "../Application.h"
+#include "../../Ecs/ComponentCreatedEvent.h"
 
 namespace Application
 {
-    void AnimationBoot::cleanUp()
+    void UpdateBoot::start(Callback callback)
     {
-        if (animationSystem_ != NULL)
-        {
-            animationSystem_->unregisterListeners(
-                getApplication().getEventManager().getListenerRegister()
-            );
+        Event::EventQueue& queue = getApplication().getEventManager().getEventQueue();
 
-            delete animationSystem_;
-        }
-    }
+        movementSystem_ = new Physics::MovementSystem(getApplication().getEcsWorld(), queue);
 
-    void AnimationBoot::start(Callback callback)
-    {
-        animationSystem_ = new Graphics::Render::AnimationSystem(
-            getApplication().getEcsWorld(),
-            getApplication().getEventManager().getEventQueue()
-        );
-        animationSystem_->registerListeners(
-            getApplication().getEventManager().getListenerRegister()
-        );
+        collisionSystem_ =
+            new Physics::CollisionSystem(getApplication().getEcsWorld(), queue, movementSystem_->getTimer());
 
-        std::vector<Threading::ThreadableInterface*> animThreadables;
-        animThreadables.push_back(animationSystem_);
+        std::vector<Threading::ThreadableInterface*> threadables;
+        threadables.push_back(movementSystem_);
+        threadables.push_back(collisionSystem_);
 
-        setThread(new Threading::Thread(animThreadables, 60));
+        setThread(new Threading::Thread(threadables, 120));
         getThread().start();
         callback();
     }

@@ -17,29 +17,52 @@
     <http://www.gnu.org/licenses/>.
 */
 
-#ifndef APPLICATION_ANIMATION_BOOT_H
-#define APPLICATION_ANIMATION_BOOT_H
+#ifndef APPLICATION_GRAPHICS_BOOT_H
+#define APPLICATION_GRAPHICS_BOOT_H
 
 #include "ThreadBoot.h"
-#include "../Graphics/Render/AnimationSystem.h"
+#include "../../Ecs/World.h"
+
+#include "../../Graphics/Device.h"
+#include "../../Graphics/Render/Scene.h"
+#include "../../Graphics/Render/RenderSystem.h"
+#include "../../Graphics/Gui/HudSystem.h"
+#include "../../Input/IrrlichtInputReceiver.h"
+#include "../../Input/PlayerSystem.h"
+
 
 namespace Application
 {
-    class AnimationBoot: public ThreadBoot
+    /**
+     * Boots graphics thread.
+     */
+    class GraphicsBoot: public ThreadBoot
     {
     public:
-        AnimationBoot(Application& application):
+        GraphicsBoot(Application& application):
             ThreadBoot(application),
-            animationSystem_(NULL)
+            device_(NULL),
+            scene_(NULL),
+            receiver_(NULL),
+            playerSystem_(NULL),
+            renderSystem_(NULL),
+            hudSystem_(NULL)
         {}
+
 
         virtual void start(Callback callback);
 
     protected:
+
         virtual void cleanUp();
 
     private:
-        Graphics::Render::AnimationSystem* animationSystem_;
+        Graphics::Device* device_;
+        Graphics::Render::Scene* scene_;
+        Input::IrrlichtInputReceiver* receiver_;
+        Input::PlayerSystem* playerSystem_;
+        Graphics::Render::RenderSystem* renderSystem_;
+        Graphics::Gui::HudSystem* hudSystem_;
     };
 }
 
