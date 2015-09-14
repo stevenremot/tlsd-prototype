@@ -47,6 +47,7 @@
 #include "Application/Boot/AnimationBoot.h"
 #include "Application/Boot/AiBoot.h"
 #include "Application/Boot/GameSceneBoot.h"
+#include "Application/Boot/LuaInterpreterBoot.h"
 #include "Application/Application.h"
 
 int main()
@@ -92,7 +93,8 @@ int main()
         .addBooter(new Application::CharacterBoot(app))
         .addBooter(new Application::AnimationBoot(app))
         .addBooter(new Application::AiBoot(app))
-        .addBooter(new Application::GameSceneBoot(app));
+        .addBooter(new Application::GameSceneBoot(app))
+        .addBooter(new Application::LuaInterpreterBoot(app));
 
     app.start();
 

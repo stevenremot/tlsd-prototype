@@ -46,6 +46,7 @@ namespace Lua
         typedef std::function<void ()> Closer;
 
         Thread(lua_State* L, Closer closer);
+        Thread(Thread&& state);
         Thread(const Thread& state) = delete;
         Thread& operator=(const Thread& state) = delete;
 

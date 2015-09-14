@@ -39,9 +39,19 @@ namespace Lua
     {
     }
 
+    Thread::Thread(Thread&& state):
+        L_(state.L_),
+        closer_(state.closer_)
+    {
+        state.L_ = nullptr;
+    }
+
     Thread::~Thread()
     {
-        closer_();
+        if (L_ != nullptr)
+        {
+            closer_();
+        }
     }
 
     void Thread::doString(const std::string& code)

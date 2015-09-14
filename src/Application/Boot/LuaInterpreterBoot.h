@@ -17,31 +17,31 @@
     <http://www.gnu.org/licenses/>.
 */
 
-#ifndef GRAPHICS_RENDER_RENDERSYSTEM_H
-#define GRAPHICS_RENDER_RENDERSYSTEM_H
+#ifndef APPLICATION_LUA_INTERPRETER_BOOT_H
+#define APPLICATION_LUA_INTERPRETER_BOOT_H
 
-#include "../../Ecs/System.h"
-#include "../../Event/EventListenerInterface.h"
+#include "ThreadBoot.h"
 
-#include "../../Event/EventManager.h"
+#include "../../Lua/Interpreter.h"
 
-namespace Graphics
+namespace Application
 {
-    namespace Render
-    {
-        class RenderSystem : public Ecs::System, public Event::EventListenerInterface
-        {
-        public:
-            RenderSystem(Threading::ConcurrentRessource<Ecs::World>& world,
-                         Event::EventQueue& eventQueue);
-            virtual ~RenderSystem();
+    class Application;
 
-            // EventListenerInterface
-            virtual void call(const Event::Event& event);
-        private:
-            Event::EventQueue& eventQueue_;
-        };
-    }
+    class LuaInterpreterBoot: public ThreadBoot
+    {
+    public:
+        LuaInterpreterBoot(Application& application):
+            ThreadBoot(application),
+            interpreter_(nullptr)
+        {}
+
+        virtual void start(Callback callback);
+        virtual void cleanUp();
+
+    private:
+        Lua::Interpreter* interpreter_;
+    };
 }
 
-#endif // GRAPHICS_RENDER_RENDERSYSTEM_H
+#endif

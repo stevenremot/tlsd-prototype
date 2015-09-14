@@ -56,25 +56,10 @@ namespace Application
 
     void Application::startLoop()
     {
-        std::unique_ptr<Lua::Thread> intepreter = vm_.createThread();
         running_ = true;
         while (running_)
         {
-            std::cout << ">> ";
-            if (!std::cin.eof())
-            {
-                char command[256];
-                std::cin.getline(command, sizeof(command));
-
-                try
-                {
-                    intepreter->doString(command);
-                }
-                catch(const Lua::Thread::CodeError& e)
-                {
-                    std::cout << "Error : " << e.what() << std::endl;
-                }
-            }
+            Threading::sleep(Core::makeDurationMillis(1000));
         }
 
     }

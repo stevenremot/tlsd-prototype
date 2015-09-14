@@ -17,31 +17,28 @@
     <http://www.gnu.org/licenses/>.
 */
 
-#ifndef GRAPHICS_RENDER_RENDERSYSTEM_H
-#define GRAPHICS_RENDER_RENDERSYSTEM_H
+#include "LuaInterpreterBoot.h"
 
-#include "../../Ecs/System.h"
-#include "../../Event/EventListenerInterface.h"
+#include "../Application.h"
 
-#include "../../Event/EventManager.h"
-
-namespace Graphics
+namespace Application
 {
-    namespace Render
+    void LuaInterpreterBoot::start(Callback callback)
     {
-        class RenderSystem : public Ecs::System, public Event::EventListenerInterface
-        {
-        public:
-            RenderSystem(Threading::ConcurrentRessource<Ecs::World>& world,
-                         Event::EventQueue& eventQueue);
-            virtual ~RenderSystem();
+        std::vector<Threading::ThreadableInterface*> luaThreadables;
+        interpreter_ = new Lua::Interpreter(getApplication().getVm());
+        luaThreadables.push_back(interpreter_);
+        setThread(new Threading::Thread(luaThreadables, 0));
+        getThread().start();
+        callback();
+    }
 
-            // EventListenerInterface
-            virtual void call(const Event::Event& event);
-        private:
-            Event::EventQueue& eventQueue_;
-        };
+    void LuaInterpreterBoot::cleanUp()
+    {
+        if (interpreter_ != nullptr)
+        {
+            delete interpreter_;
+            interpreter_ = nullptr;
+        }
     }
 }
-
-#endif // GRAPHICS_RENDER_RENDERSYSTEM_H
