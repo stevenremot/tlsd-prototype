@@ -21,21 +21,6 @@
 
 #include <iostream>
 
-// TODO includes for group, remove later
-#include "../Character/GroupComponent.h"
-#include "../Character/EntityCreator.h"
-#include "../Character/Statistics.h"
-
-// TODO for ai, remove later
-#include "../AI/AiComponent.h"
-#include "../AI/BasicAiModule.h"
-#include "../AI/MemoryComponent.h"
-#include "../AI/Sensor/SensorComponent.h"
-#include "../AI/SubSystems/TargetingComponent.h"
-#include "../AI/Sensor/SightSensor.h"
-#include "../tests/stateMachine.h"
-#include "../AI/SubSystems/NavigationSubsystem.h"
-
 namespace Application
 {
     Application::Application(const Random::Seed& seed, Event::EventManager& eventManager):
@@ -71,59 +56,6 @@ namespace Application
 
     void Application::startLoop()
     {
-        // TODO set z at 0, not 150
-        {
-            Threading::ConcurrentWriter<Ecs::World> world = ecsWorld_.getWriter();
-
-
-            Ecs::Entity group = world->createEntity();
-            Character::GroupComponent* groupComponent = new Character::GroupComponent();
-            world->addComponent(group, groupComponent);
-
-            Character::createPlayer(
-                world,
-                Geometry::Vec3Df(150,150,150),
-                Geometry::Vec3Df(0,0,0),
-                Character::Statistics(100, 25, 20, 5),
-                group,
-                getEventManager().getEventQueue()
-            );
-
-            Ecs::Entity badGuy = Character::createCharacter(
-                world,
-                Geometry::Vec3Df(160, 160, 150),
-                Geometry::Vec3Df(0, 0, 0),
-                Character::Statistics(70, 20, 20, 5),
-                group,
-                getEventManager().getEventQueue()
-            );
-
-            AI::AiComponent* aiComponent = new AI::AiComponent(
-                badGuy,
-                getEventManager().getEventQueue()
-            );
-            AI::Sensor::SensorComponent* sensorComponent =
-                new AI::Sensor::SensorComponent(badGuy);
-
-            AI::BasicAiModule* aiModule = new AI::BasicAiModule(StateMachineTest::Idle);
-            StateMachineTest::setupStateMachine(*aiModule);
-            aiComponent->setAiModule(aiModule);
-
-            // Add a sight sensor
-            AI::Sensor::SensorManager& sensorsManager = sensorComponent->getSensorsManager();
-            sensorsManager.addSensor(AI::Sensor::SightSensor::Type);
-
-            // Add navigation and targeting subsytems
-            AI::Subsystem::SubSystemsManager& subsystemsManager = aiComponent->getSubsystemsManager();
-
-            subsystemsManager.addSubsystem(AI::Subsystem::NavigationSubSystem::Type);
-
-            world->addComponent(badGuy, new AI::MemoryComponent());
-            world->addComponent(badGuy, sensorComponent);
-            world->addComponent(badGuy, new AI::Subsystem::TargetingComponent());
-            world->addComponent(badGuy, aiComponent);
-        }
-
         std::unique_ptr<Lua::Thread> intepreter = vm_.createThread();
         running_ = true;
         while (running_)
