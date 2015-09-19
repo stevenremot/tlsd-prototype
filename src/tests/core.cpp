@@ -30,9 +30,13 @@ namespace CoreTest
 {
     void testDirIterator()
     {
-        for (auto fileName : Core::DirIterator("."))
+        for (auto file : Core::DirIterator("."))
         {
-            cout << "File : " << fileName << endl;
+            cout << "File : " << file.getName()
+                 << (file.exists() ? "(exists)" : "")
+                 << endl;
         }
+
+        cout << "File /blahblah" << (Core::File("/blahblah").exists() ? "exists" : "does not exist");
     }
 }

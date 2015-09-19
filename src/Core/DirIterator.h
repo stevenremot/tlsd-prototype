@@ -25,6 +25,8 @@
 
 #include <dirent.h>
 
+#include "File.h"
+
 namespace Core
 {
     /**
@@ -49,7 +51,7 @@ namespace Core
             std::string errorMsg_;
         };
 
-        class InternalIterator: public std::iterator<std::forward_iterator_tag, std::string>
+        class InternalIterator: public std::iterator<std::forward_iterator_tag, File>
         {
         public:
             InternalIterator(const std::string& dirName, bool showHiddenFiles);
@@ -63,9 +65,10 @@ namespace Core
             InternalIterator& operator++();
             bool operator==(const InternalIterator&);
             bool operator!=(const InternalIterator&);
-            std::string operator*();
+            File operator*();
         private:
             DIR* directory_;
+            std::string dirName_;
             struct dirent* currentFile_;
             bool showHiddenFiles_;
 

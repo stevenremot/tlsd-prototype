@@ -21,7 +21,6 @@
 
 namespace Core
 {
-
     //////////////////////////////////////////////////////////////////////
     // Internal iterator /////////////////////////////////////////////////
     //////////////////////////////////////////////////////////////////////
@@ -29,7 +28,8 @@ namespace Core
     DirIterator::InternalIterator::InternalIterator(
         const std::string& dirName,
         bool showHiddenFiles
-    ): showHiddenFiles_(showHiddenFiles)
+    ): dirName_(dirName),
+       showHiddenFiles_(showHiddenFiles)
     {
         directory_ = opendir(dirName.c_str());
         if (directory_ == nullptr)
@@ -78,9 +78,9 @@ namespace Core
         return currentFile_ != other.currentFile_;
     }
 
-    std::string DirIterator::InternalIterator::operator*()
+    File DirIterator::InternalIterator::operator*()
     {
-        return currentFile_->d_name;
+        return File(File::joinPaths(dirName_, currentFile_->d_name));
     }
 
     void DirIterator::InternalIterator::getNextFile()
