@@ -1,21 +1,28 @@
 # Executable
 ############
 
-program
+bin
 
 # Backup
 #########
+
 *~
 
 # Tags db
 ##########
 
 TAGS
+GPATH
+GRTAGS
+GSYMS
+GTAGS
 
 # Build junk
 ############
 
+.sconf_temp
 .sconsign.dblite
+config.log
 *.o
 
 # code::blocks crap

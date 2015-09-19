@@ -82,10 +82,38 @@ else:
 # Source definition
 sources = Glob('src/*/*.cpp') + Glob('src/*/*/*.cpp') + Glob('src/*/*/*/*.cpp')
 includedLibs = Glob('libs/*.cpp')
-main = Glob('src/main.cpp')
+tlsd_main = Glob('src/tlsd.cpp')
+interpreter_main = Glob('src/interpreter.cpp')
+tests_main = Glob('src/tests.cpp')
+
+def create_obj(sources):
+    """Return a list of static object builder for each source.
+
+    This prevents the build process to fail because each source is
+    associated to a different environment and is used more than one
+    time (one time by program)
+
+    For more information, see :
+    http://stackoverflow.com/questions/6194900/how-to-work-around-scons-warning-two-different-environments-were-specified-fo
+    """
+    return [env.Object(src) for src in sources]
 
 # Program definition
-env.Program('program', sources + includedLibs + main, LIBS=libs)
+env.Program(
+    'bin/tlsd',
+    create_obj(sources + includedLibs + tlsd_main),
+    LIBS=libs
+)
+env.Program(
+    'bin/interpreter',
+    create_obj(sources + includedLibs + interpreter_main),
+    LIBS=libs
+)
+env.Program(
+    'bin/tests',
+    create_obj(sources + includedLibs + tests_main),
+    LIBS=libs
+)
 
 # Emacs local variables
 # Local variables:

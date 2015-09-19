@@ -17,10 +17,6 @@
     <http://www.gnu.org/licenses/>.
 */
 
-#include <cstdlib>
-#include <iostream>
-#include <vector>
-
 #include "tests/animation.h"
 #include "tests/event.h"
 #include "tests/ecs.h"
@@ -38,21 +34,9 @@
 #include "tests/input.h"
 #include "tests/lua.h"
 
-#include "Application/Boot/LuaLibBoot.h"
-#include "Application/Boot/EventBoot.h"
-#include "Application/Boot/GraphicsBoot.h"
-#include "Application/Boot/UpdateBoot.h"
-#include "Application/Boot/GenerationBoot.h"
-#include "Application/Boot/CharacterBoot.h"
-#include "Application/Boot/AnimationBoot.h"
-#include "Application/Boot/AiBoot.h"
-#include "Application/Boot/GameSceneBoot.h"
-#include "Application/Boot/LuaInterpreterBoot.h"
-#include "Application/Application.h"
-
 int main()
 {
-    // EventTest::testEvents();
+    EventTest::testEvents();
     // EcsTest::testEcs();
     // EcsTest::testSharedEntity();
     // GeometryTest::testVectors();
@@ -80,23 +64,6 @@ int main()
     // InputTest::testPlayerSystem();
     // InputTest::testCoordinates();
     // LuaTest::testInterpreter();
-
-    Event::EventManager eventManager;
-
-    Application::Application app(42, eventManager);
-    app
-        .addBooter(new Application::LuaLibBoot(app))
-        .addBooter(new Application::EventBoot(app, eventManager))
-        .addBooter(new Application::GraphicsBoot(app))
-        .addBooter(new Application::UpdateBoot(app))
-        .addBooter(new Application::GenerationBoot(app))
-        .addBooter(new Application::CharacterBoot(app))
-        .addBooter(new Application::AnimationBoot(app))
-        .addBooter(new Application::AiBoot(app))
-        .addBooter(new Application::GameSceneBoot(app))
-        .addBooter(new Application::LuaInterpreterBoot(app));
-
-    app.start();
 
     return 0;
 }
