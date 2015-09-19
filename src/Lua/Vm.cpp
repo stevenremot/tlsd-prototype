@@ -47,4 +47,9 @@ namespace Lua
     {
         body(L_);
     }
+
+    void Vm::doFile(const std::string& fileName)
+    {
+        luaL_dofile(L_, fileName.c_str());
+    }
 }

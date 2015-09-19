@@ -22,6 +22,7 @@
 #include "../Application.h"
 
 #include "../../Lua/Api/Random.h"
+#include "../../Lua/ModLoader.h"
 
 namespace Application
 {
@@ -38,6 +39,10 @@ namespace Application
             }
         );
         Lua::Api::Random::setup(application_.getVm(), application_.getSeed());
+
+        Lua::ModLoader loader("./mods/");
+        loader.loadMods(application_.getVm());
+
         callback();
     }
 }

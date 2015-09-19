@@ -44,6 +44,7 @@ namespace Lua
         ~Vm();
 
         void doWithState(const std::function<void(lua_State*const L)>& body);
+        void doFile(const std::string& fileName);
 
         /**
          * Create a new state.
