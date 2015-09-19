@@ -33,10 +33,12 @@
 #include "tests/physics.h"
 #include "tests/input.h"
 #include "tests/lua.h"
+#include "tests/core.h"
 
 int main()
 {
-    EventTest::testEvents();
+    // EventTest::testEvents();
+    CoreTest::testDirIterator();
     // EcsTest::testEcs();
     // EcsTest::testSharedEntity();
     // GeometryTest::testVectors();
