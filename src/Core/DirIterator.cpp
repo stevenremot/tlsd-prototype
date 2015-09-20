@@ -47,7 +47,7 @@ namespace Core
         showHiddenFiles_(false)
     {}
 
-    DirIterator::InternalIterator::InternalIterator(DirIterator::InternalIterator::InternalIterator&& other)
+    DirIterator::InternalIterator::InternalIterator(DirIterator::InternalIterator&& other)
     {
         directory_ = other.directory_;
         currentFile_ = other.currentFile_;

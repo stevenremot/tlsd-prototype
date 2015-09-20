@@ -35,6 +35,11 @@ namespace Random
         return *this;
     }
 
+    bool PerlinNoise::hasCoefficient(const Geometry::Vec2Di& position) const
+    {
+        return coefficients_.count(position) == 1;
+    }
+
     float PerlinNoise::computeAt(const Geometry::Vec2Df& position) const
     {
         int i = floor(position.getX());

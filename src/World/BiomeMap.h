@@ -28,6 +28,9 @@
 #include "PlainBiome.h"
 #include "DesertBiome.h"
 
+#include "../Lua/Thread.h"
+#include "../Core/Error.h"
+
 #include "../Geometry/Vec2D.h"
 #include "../Geometry/Polygon2D.h"
 
@@ -42,7 +45,13 @@ namespace World
     class BiomeMap
     {
     public:
-        void setPerlinCoef(int x, int y, const std::vector<Geometry::Vec2Df>& perlinCoef);
+        class Error: public Core::Error
+        {
+        public:
+            Error(const std::string& errorMsg): Core::Error(errorMsg) {}
+        };
+
+        BiomeMap(Lua::Thread& luaThread);
 
         void addCityPolygon(const Geometry::Polygon2D& cityPolygon);
         /**
@@ -58,8 +67,7 @@ namespace World
         }
 
     private:
-        Random::PerlinNoise humidityNoise_;
-        Random::PerlinNoise temperatureNoise_;
+        Lua::Thread& luaThread_;
 
         std::vector<Geometry::Polygon2D> cityPolygons_;
         std::vector<Geometry::Polygon2D> cityPolygonsExtended_;

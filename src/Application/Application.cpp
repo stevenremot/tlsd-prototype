@@ -27,7 +27,7 @@ namespace Application
         vm_(),
         ecsWorld_(new Ecs::World(eventManager.getEventQueue())),
         eventManager_(eventManager),
-        world_(),
+        world_(vm_),
         seed_(seed),
         running_(false)
     {

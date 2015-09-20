@@ -26,6 +26,7 @@
 #include "Chunk.h"
 #include "BiomeMap.h"
 #include "../Geometry/Vec2D.h"
+#include "../Lua/Vm.h"
 
 namespace World
 {
@@ -39,6 +40,11 @@ namespace World
         static const unsigned int ChunkSize;
         static const unsigned int TreeDensity;
         static const unsigned int MaximalHeight;
+
+        World(Lua::Vm& vm):
+            luaThread_(vm.createThread()),
+            biomeMap_(*luaThread_)
+        {}
 
         /**
          * Return the chunk at indexes (x, y)
@@ -54,12 +60,12 @@ namespace World
          */
         bool getChunk(int x, int y, Chunk& chunk)
         {
-            try
+            if (chunks_.count(Geometry::Vec2Di(x, y)) > 0)
             {
                 chunk = chunks_.at(Geometry::Vec2Di(x, y));
                 return true;
             }
-            catch (const std::out_of_range& e)
+            else
             {
                 return false;
             }
@@ -68,11 +74,6 @@ namespace World
         void setChunk(int x, int y, const Chunk& chunk)
         {
             chunks_[Geometry::Vec2Di(x, y)] = chunk;
-        }
-
-        void setBiomeMap(const BiomeMap& biomeMap)
-        {
-            biomeMap_ = biomeMap;
         }
 
         /**
@@ -86,6 +87,7 @@ namespace World
         const BiomeMap& getBiomeMap() const { return biomeMap_; };
 
     private:
+        std::unique_ptr<Lua::Thread> luaThread_;
         std::map<Geometry::Vec2Di, Chunk> chunks_;
         BiomeMap biomeMap_;
     };

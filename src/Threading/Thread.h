@@ -72,7 +72,7 @@ namespace Threading
         Thread(std::vector<ThreadableInterface*> threadables, int loopPerSecond):
             threadables_(threadables),
             running_(false),
-            loopDelay_(1000 / loopPerSecond)
+            loopDelay_(loopPerSecond == 0 ? 0 : 1000 / loopPerSecond)
         {}
 
         void start();

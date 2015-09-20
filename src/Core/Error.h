@@ -17,26 +17,28 @@
     <http://www.gnu.org/licenses/>.
 */
 
-#ifndef WORLD_COEFFICIENTS_GENERATOR_H
-#define WORLD_COEFFICIENTS_GENERATOR_H
+#ifndef DEF_CORE_ERROR_H
+#define DEF_CORE_ERROR_H
 
-#include <vector>
+#include <exception>
+#include <string>
 
-#include "../../Random/NumberGenerator.h"
-#include "../GroundCoefficients.h"
-#include "../../Geometry/Vec2D.h"
-
-namespace World
+namespace Core
 {
-
-    namespace Generation
+    class Error: public std::exception
     {
-        /*
-         * Generate 3 octaves of coefficients for the simplex noise
-         */
-        GroundCoefficients generateGroundCoefficients(Random::NumberGenerator& rng);
-    }
+    public:
+        Error(const std::string& errorMsg):
+            errorMsg_(errorMsg)
+        {}
 
+        virtual const char* what() const noexcept
+        {
+            return errorMsg_.c_str();
+        }
+    private:
+        std::string errorMsg_;
+    };
 }
 
 #endif

@@ -115,62 +115,62 @@ namespace WorldTest
     }
 
 
-    void testGroundModel()
-    {
-        BiomeMap biomeMap;
-        World::World world;
-        NumberGenerator rng(1);
-        /*vector<Vec2Df> points;
-        points.push_back(Vec2Df(0.0, 0.0));
-        points.push_back(Vec2Df(512.0, 0.0));
-        points.push_back(Vec2Df(512.0, 512.0));
-        points.push_back(Vec2Df(0.0, 512.0));
+    // void testGroundModel()
+    // {
+    //     BiomeMap biomeMap;
+    //     World::World world;
+    //     NumberGenerator rng(1);
+    //     /*vector<Vec2Df> points;
+    //     points.push_back(Vec2Df(0.0, 0.0));
+    //     points.push_back(Vec2Df(512.0, 0.0));
+    //     points.push_back(Vec2Df(512.0, 512.0));
+    //     points.push_back(Vec2Df(0.0, 512.0));
 
-        Polygon2D poly(points);
-        biomeMap.addCityPolygon(poly);*/
-        for (unsigned int i = 0; i < 25; i++)
-        {
-        biomeMap.setPerlinCoef(i/5,i%5,World::Generation::generatePerlinCoefficient(rng));
-        }
-        world.setBiomeMap(biomeMap);
-        for (unsigned int i = 0; i<25; i++)
-        {
-            Chunk chunk;
-            chunk.setState(Chunk::PreparedState);
-            chunk.setCoefficients(World::Generation::generateGroundCoefficients(rng));
-            if (i==6 || i==7 || i==8 || i==11 || i==12 || i==13 || i==16 || i==17 || i==18)
-            {
-                chunk.setState(Chunk::GeneratedState);
-            }
-            world.setChunk(i/5,i%5,chunk);
-        }
+    //     Polygon2D poly(points);
+    //     biomeMap.addCityPolygon(poly);*/
+    //     for (unsigned int i = 0; i < 25; i++)
+    //     {
+    //     biomeMap.setPerlinCoef(i/5,i%5,World::Generation::generatePerlinCoefficient(rng));
+    //     }
+    //     world.setBiomeMap(biomeMap);
+    //     for (unsigned int i = 0; i<25; i++)
+    //     {
+    //         Chunk chunk;
+    //         chunk.setState(Chunk::PreparedState);
+    //         chunk.setCoefficients(World::Generation::generateGroundCoefficients(rng));
+    //         if (i==6 || i==7 || i==8 || i==11 || i==12 || i==13 || i==16 || i==17 || i==18)
+    //         {
+    //             chunk.setState(Chunk::GeneratedState);
+    //         }
+    //         world.setChunk(i/5,i%5,chunk);
+    //     }
 
-        Model3D model11, model21, model31, model12, model22, model32, model13, model23, model33;
-        Physics::GroundCollisionBody c11, c21, c31, c12, c22, c32, c13, c23, c33;
-        // World::computeGroundModel(world, 1, 1, model11, c11);
-        // World::computeGroundModel(world, 2, 1, model21, c21);
-        // World::computeGroundModel(world, 3, 1, model31, c31);
-        // World::computeGroundModel(world, 1, 2, model12, c12);
-        World::computeGroundModel(world, 2, 2, model22, c22);
-        // World::computeGroundModel(world, 3, 2, model32, c32);
-        // World::computeGroundModel(world, 1, 3, model13, c13);
-        // World::computeGroundModel(world, 2, 3, model23, c23);
-        // World::computeGroundModel(world, 3, 3, model33, c33);
+    //     Model3D model11, model21, model31, model12, model22, model32, model13, model23, model33;
+    //     Physics::GroundCollisionBody c11, c21, c31, c12, c22, c32, c13, c23, c33;
+    //     // World::computeGroundModel(world, 1, 1, model11, c11);
+    //     // World::computeGroundModel(world, 2, 1, model21, c21);
+    //     // World::computeGroundModel(world, 3, 1, model31, c31);
+    //     // World::computeGroundModel(world, 1, 2, model12, c12);
+    //     World::computeGroundModel(world, 2, 2, model22, c22);
+    //     // World::computeGroundModel(world, 3, 2, model32, c32);
+    //     // World::computeGroundModel(world, 1, 3, model13, c13);
+    //     // World::computeGroundModel(world, 2, 3, model23, c23);
+    //     // World::computeGroundModel(world, 3, 3, model33, c33);
 
-        Test::SvgDrawer svg(128, 512);
+    //     Test::SvgDrawer svg(128, 512);
 
-        for (unsigned int i = 0; i < model22.getVertices().size(); i++)
-        {
-            const Geometry::Vec3Df& vertex = model22.getVertices()[i];
+    //     for (unsigned int i = 0; i < model22.getVertices().size(); i++)
+    //     {
+    //         const Geometry::Vec3Df& vertex = model22.getVertices()[i];
 
-            if (vertex.getX() < 128 && vertex.getY() < 128)
-            {
-                svg.drawCircle(vertex.getX() - 64, vertex.getZ() - 256, 1, "red");
-            }
-        }
+    //         if (vertex.getX() < 128 && vertex.getY() < 128)
+    //         {
+    //             svg.drawCircle(vertex.getX() - 64, vertex.getZ() - 256, 1, "red");
+    //         }
+    //     }
 
-        svg.end();
+    //     svg.end();
 
-        std::cout << svg.getContent().str();
-    }
+    //     std::cout << svg.getContent().str();
+    // }
 }

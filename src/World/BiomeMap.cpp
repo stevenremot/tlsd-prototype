@@ -18,6 +18,7 @@
 */
 
 #include "BiomeMap.h"
+
 #include "World.h"
 #include "../Geometry/Vec2D.h"
 #include "../Geometry/Polygon2D.h"
@@ -26,12 +27,9 @@ using Geometry::Vec2Df;
 
 namespace World
 {
-    void BiomeMap::setPerlinCoef(int x, int y, const std::vector<Vec2Df>& perlinCoef)
-
-    {
-        humidityNoise_.setCoefficient(Geometry::Vec2Di(x, y), perlinCoef[0]);
-        temperatureNoise_.setCoefficient(Geometry::Vec2Di(x, y), perlinCoef[1]);
-    }
+    BiomeMap::BiomeMap(Lua::Thread& luaThread)
+        :luaThread_(luaThread)
+    {}
 
     void BiomeMap::addCityPolygon(const Geometry::Polygon2D& cityPolygon)
     {
@@ -51,17 +49,38 @@ namespace World
             }
         }
 
-        Vec2Df noisePos = (position / World::ChunkSize) - Vec2Df(0.5, 0.5);
-        float nxy1 = humidityNoise_.computeAt(noisePos);
-        float nxy2 = temperatureNoise_.computeAt(noisePos);
+        std::string biomeName;
 
-        // Threshold of the noise value
-        // TODO externalize
-        if (nxy1 >= 0 && nxy2 < 0)
+        luaThread_.doWithState([&biomeName, position](lua_State* L) {
+                lua_getglobal(L, "tlsd");
+                lua_getfield(L, -1, "biomes");
+                lua_getfield(L, -1, "get_biome_at");
+
+                lua_pushnumber(L, position.getX());
+                lua_pushnumber(L, position.getY());
+
+                if (lua_pcall(L, 2, 1, 0) != 0)
+                {
+                    throw Error(
+                        std::string("Error calling tlsd.biomes.get_biome_at : ") +
+                        lua_tostring(L, -1)
+                    );
+                }
+
+                if (!lua_isstring(L, -1))
+                {
+                    throw Error("tlsd.biomes.get_biome_at did not return a string");
+                }
+
+                biomeName = lua_tostring(L, -1);
+                lua_pop(L, -1);
+            });
+
+        if (biomeName == "mountain")
         {
             return mountainBiome_;
         }
-        else if (nxy1 < 0 && nxy2 < 0)
+        else if (biomeName == "desert")
         {
             return desertBiome_;
         }
@@ -69,7 +88,6 @@ namespace World
         {
             return plainBiome_;
         }
-
     }
 
 }

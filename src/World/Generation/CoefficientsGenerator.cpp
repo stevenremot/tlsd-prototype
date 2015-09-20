@@ -19,26 +19,10 @@
 
 #include "CoefficientsGenerator.h"
 
-// Uses intermediary variables for rng because of a strange clang bug that
-// outputs different values if we use rng.getUniform directly as function's
-// argument.
-
 namespace World
 {
     namespace Generation
     {
-        std::vector<Geometry::Vec2Df> generatePerlinCoefficient(Random::NumberGenerator& rng)
-        {
-            std::vector<Geometry::Vec2Df> perlinCoefs;
-            float n1 = rng.getUniform(-1.0, 1.0), n2 = rng.getUniform(-1.0, 1.0);
-            perlinCoefs.push_back(Geometry::Vec2Df(n1, n2));
-            n1 = rng.getUniform(-1.0, 1.0);
-            n2 = rng.getUniform(-1.0, 1.0);
-            perlinCoefs.push_back(Geometry::Vec2Df(n1, n2));
-            return perlinCoefs;
-
-        }
-
         GroundCoefficients generateGroundCoefficients(Random::NumberGenerator& rng)
         {
 

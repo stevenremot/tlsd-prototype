@@ -32,7 +32,7 @@ Return a number following a poisson distribution of the provided `mean`
 
 ### Perlin noise
 
-#### `tlsd.random.perlin_noise.create() -> perlin_noise`
+#### `tlsd.random.perlin_noise.new() -> perlin_noise`
 
 Create a new perlin noise generator.
 
@@ -41,6 +41,10 @@ It contains no coefficient at startup, they must be added one by one later.
 #### `perlin_noise:set_coefficient(posX: integer, posY: integer, coefX: number, coefY: number)`
 
 Add a the perlin coefficient `(coefX, coefY)` at position `(posX, posY)`.
+
+#### `perlin_noise.has_coefficient(posX: integer, posY: integer) -> boolean`
+
+Return true if a coefficient has been set at position `(posX, posY)`.
 
 #### `perlin_noise.compute_at(posX: number, posY: number) -> number`
 

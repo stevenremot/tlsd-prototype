@@ -43,8 +43,7 @@ int main()
         .addBooter(new Application::CharacterBoot(app))
         .addBooter(new Application::AnimationBoot(app))
         .addBooter(new Application::AiBoot(app))
-        .addBooter(new Application::GameSceneBoot(app))
-        .addBooter(new Application::LuaInterpreterBoot(app));
+        .addBooter(new Application::GameSceneBoot(app));
 
     app.start();
 

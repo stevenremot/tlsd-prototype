@@ -63,6 +63,11 @@ namespace Random
         );
 
         /**
+         * Return true if there is a coefficient set for this position.
+         */
+        bool hasCoefficient(const Geometry::Vec2Di& position) const;
+
+        /**
          *Compute the perlin noise at the given position.
          *
          * @param position

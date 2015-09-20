@@ -25,6 +25,8 @@
 
 #include <lua5.2/lua.hpp>
 
+#include "../Core/Error.h"
+
 namespace Lua
 {
     /**
@@ -33,14 +35,10 @@ namespace Lua
     class Thread
     {
     public:
-        class CodeError: public std::exception
+        class CodeError: public Core::Error
         {
         public:
-            CodeError(const char* error);
-            const char* what() const throw();
-
-        private:
-            const char* error_;
+            CodeError(const std::string& errorMsg): Error(errorMsg) {}
         };
 
         typedef std::function<void ()> Closer;
@@ -58,6 +56,14 @@ namespace Lua
         void doString(const std::string& code);
 
         void doString(const char* code);
+
+        /**
+         * Execute a body, passing the lua state to it.
+         */
+        void doWithState(std::function<void (lua_State*)> body)
+        {
+            body(L_);
+        }
 
     private:
         lua_State* L_;

@@ -150,9 +150,6 @@ namespace World
 
             Random::NumberGenerator rng(getChunkSeed(x, y));
 
-            BiomeMap& biomeMap = world_.getBiomeMap();
-            biomeMap.setPerlinCoef(x, y, generatePerlinCoefficient(rng));
-
             currentChunk.setCoefficients(generateGroundCoefficients(rng));
 
             currentChunk.setState(Chunk::PreparedState);

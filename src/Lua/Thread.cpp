@@ -23,16 +23,6 @@
 
 namespace Lua
 {
-    Thread::CodeError::CodeError(const char* error)
-    {
-        error_ = error;
-    }
-
-    const char* Thread::CodeError::what() const throw()
-    {
-        return error_;
-    }
-
     Thread::Thread(lua_State* L, Thread::Closer closer):
         L_(L),
         closer_(closer)
@@ -66,7 +56,7 @@ namespace Lua
         {
             std::string s = lua_tostring(L_, -1);
             lua_pop(L_, 1);
-            throw CodeError(s.c_str());
+            throw CodeError(s);
         }
     }
 }

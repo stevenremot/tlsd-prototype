@@ -121,6 +121,24 @@ static int setPerlinNoiseCoeff(lua_State* L)
     return 0;
 }
 
+static int hasPerlinNoiseCoeff(lua_State* L)
+{
+    PerlinNoise& noise = getPerlinNoiseArg(L);
+    int posX = luaL_checkint(L, 2);
+    int posY = luaL_checkint(L, 3);
+
+    if (noise.hasCoefficient(Geometry::Vec2Di(posX, posY)))
+    {
+        lua_pushboolean(L, 1);
+    }
+    else
+    {
+        lua_pushboolean(L, 0);
+    }
+
+    return 1;
+}
+
 static int computePerlinNoiseAt(lua_State* L)
 {
     PerlinNoise& noise = getPerlinNoiseArg(L);
@@ -169,6 +187,7 @@ static const struct luaL_Reg perlinNoiseLib [] = {
 
 static const struct luaL_Reg perlinNoiseObjLib [] = {
     {"set_coefficient", setPerlinNoiseCoeff},
+    {"has_coefficient", hasPerlinNoiseCoeff},
     {"compute_at", computePerlinNoiseAt},
     {"__gc", destroyPerlinNoise},
     {NULL, NULL}
@@ -183,6 +202,7 @@ static void setupNumberGenerator(lua_State* L, const ::Random::Seed& seed)
     lua_setfield(L, -2, "__index");
 
     luaL_setfuncs(L, randomGenObjLib, 0);
+    lua_pop(L, 1);
 
     // Creating number generator lib
     luaL_newlibtable(L, randomGenLib);
@@ -229,8 +249,8 @@ void Lua::Api::Random::setup(Lua::Vm& vm, const ::Random::Seed& seed)
 
             // Registering lib
             lua_getglobal(L, "tlsd");
-            lua_insert(L, 2);
-            lua_setfield(L, 2, "random");
+            lua_insert(L, -2);
+            lua_setfield(L, -2, "random");
         }
     );
 }
