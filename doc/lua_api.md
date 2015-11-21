@@ -1,17 +1,23 @@
-# Documentation of the Lua API
+Documentation of the Lua API
+============================
 
-## Random
+Random
+------
 
 The `tlsd.random` module contains all basic primitives for random number
 generation.
 
+
 ### Utility functions
+
 
 #### `tlsd.random.get_seed() -> number`
 
 Return the world seed representation as an integer.
 
+
 ### Number generator
+
 
 #### `tlsd.random.number_generator.new([seed: integer > 0]) -> number_generator`
 
@@ -30,7 +36,9 @@ Return a random number between `min` and `max`, following a uniform distribution
 
 Return a number following a poisson distribution of the provided `mean`
 
+
 ### Perlin noise
+
 
 #### `tlsd.random.perlin_noise.new() -> perlin_noise`
 
@@ -52,3 +60,23 @@ Compute the Perlin noise value at position `(posX, posY)`.
 
 If the coefficients around this position are not set, an error is
 triggered.
+
+Biomes
+------
+
+### `tlsd.biome.define_generator(name: string, generator (x: number, y: number) -> string)`
+
+Define a new generator.
+
+`name` is the name of the generator, to set it in the configuration.
+
+`generator` is a function taking a 2D world coordinate and returning
+the name of the biome at this position.
+
+### `tlsd.biomes.get_biome_at(x: number, y: number) -> string`
+
+Return the name of the biome at position `(x, y)`.
+
+If a biome generator is in the configuration key
+`tlsd.config.biomes.generator`, it will be used to determine the
+biome. Otherwise, it will be `tlsd:default` generator.
